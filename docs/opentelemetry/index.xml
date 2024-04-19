@@ -1,0 +1,127 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Opentelemetry</title><link>https://pin-yi.me/docs/opentelemetry/</link><description>Recent content in Opentelemetry on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/docs/opentelemetry/index.xml" rel="self" type="application/rss+xml"/><item><title>如何透過 OpenTelemetry 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上</title><link>https://pin-yi.me/docs/opentelemetry/opentelemetry-ingress-nginx-controller/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/docs/opentelemetry/opentelemetry-ingress-nginx-controller/</guid><description>
+&lt;p>由於最近公司想要導入 Datadog，在測試過程中順便導入 OpenTelemetry 來收集 Metrics 與 Traces 並送到 Datadog 上 ～&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;p>🔥 這個範例比較特別，因為 Datadog 有提供 Ingress Nginx Controller 的 integrations，可以透過 Datadog Agent 來收集 Metrics，不需要透過 OpenTelemetry Collector 來收集。
+( Datadog Agent 請參考：&lt;a href="https://docs.datadoghq.com/containers/kubernetes/" target="_blank" rel="noopener">https://docs.datadoghq.com/containers/kubernetes/&lt;/a> )&lt;/p>
+&lt;p>程式部分也同步上傳到 github 上，&lt;a href="https://github.com/880831ian/opentelemetry-ingress-nginx-controller" target="_blank" rel="noopener">可以點我前往&lt;/a>&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;h2>檔案說明&lt;span class="absolute -mt-20" id="檔案說明">&lt;/span>
+&lt;a href="#%e6%aa%94%e6%a1%88%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>
+&lt;p>otel-collector.yaml：
+OpenTelemetry Collector 的設定檔，主要是設定要收集哪些 metrics、traces，並且要送到哪個 exporter，要注意的是 exporters 的 datadog 需要設定 site、api_key，以及 image 要記得用 otel/opentelemetry-collector-contrib，才會有 datadog 的 exporter。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>ingress-nginx-values.yaml：
+Ingress Nginx Controller 的設定檔，這邊的 podAnnotations 是為了讓 Ingress Nginx Controller 的 Pod 能夠透過 Datadog agent 收集 metrics 到 Datadog 才加上的。&lt;/p>
+&lt;p>config 裡面的設定有很多，主要都是 openTelemetry 的設定，要注意的是 enable-opentelemetry 要設為 true，另外 otlp-collector-host 以及 otlp-collector-port 要送到哪個 collector 等等也要記得設定。
+另外如果想要將 LOG 與 Trace 串再一起，記得要把 log-format 設為 json，並且帶入，trace_id 與 span_id ( 這邊有多帶 dd.trace_id 是為了讓 datadog 可以自動串接 LOG &amp;amp; Trace )。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>nginx.yaml：
+一個簡單的 Nginx 整套服務 (Deployment、Service、Ingress)，要注意的是 Ingress 需要設定 annotations kubernetes.io/ingress.class: nginx (這個是 Ingress Nginx Controller 的預設 class name)，才會被 Ingress Nginx Controller 接管 (才會有 Load Balancer 的 IP)&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;!-- raw HTML omitted -->
+&lt;h2>執行步驟&lt;span class="absolute -mt-20" id="執行步驟">&lt;/span>
+&lt;a href="#%e5%9f%b7%e8%a1%8c%e6%ad%a5%e9%a9%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ol>
+&lt;li>
+&lt;p>先 clone 這個 repo (廢話 xD)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>先建立 OpenTelemetry Collector，執行以下指令：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>helm upgrade collector &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> opentelemetry-collector &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --repo https://open-telemetry.github.io/opentelemetry-helm-charts &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --install &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --create-namespace &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --namespace opentelemetry &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> -f &lt;span style="color:#e6db74">&amp;#34;otel-collector.yaml&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;/li>
+&lt;li>
+&lt;p>再建立 Ingress Nginx Controller，執行以下指令：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>helm upgrade ingress-nginx &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> ingress-nginx &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --repo https://kubernetes.github.io/ingress-nginx &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --install &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --create-namespace &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --namespace ingress-nginx &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> -f &lt;span style="color:#e6db74">&amp;#34;ingress-nginx-values.yaml&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;/li>
+&lt;li>
+&lt;p>接著建立測試用 Nginx 服務，執行以下指令：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl apply -f nginx.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;/li>
+&lt;/ol>
+&lt;!-- raw HTML omitted -->
+&lt;h2>測試&lt;span class="absolute -mt-20" id="測試">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當你執行完上面的步驟後，你會發現有產生兩個 namespace，一個是 ingress-nginx，另一個是 opentelemetry，並且會有 OpenTelemetry Collector、Ingress Nginx Controller、Nginx 等服務，如下：&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;p>&lt;figure>
+&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/1.png" title="啟動服務" alt="" loading="lazy" />
+&lt;figcaption>啟動服務&lt;/figcaption>
+&lt;/figure>&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;p>我們試著打 &lt;code>http://nginx.example.com/&lt;/code> (測試網址，需要先在 /etc/hosts 綁定 Ingress Nginx Controller 咬住的 Load Balancer IP)，查看一下 Datadog 的 LOG，看看是否有收到 Nginx 的 LOG (此收集 LOG 的方式是透過在 cluster 上安裝 Datadog 的 agent)，如下：&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;p>&lt;figure>
+&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/2.png" title="Datadog LOG" alt="" loading="lazy" />
+&lt;figcaption>Datadog LOG&lt;/figcaption>
+&lt;/figure>&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;p>接著查看 Datadog APM 的 trace，如下：&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;p>&lt;figure>
+&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/3.png" title="Datadog APM" alt="" loading="lazy" />
+&lt;figcaption>Datadog APM&lt;/figcaption>
+&lt;/figure>&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;p>由於我們在後面目前沒有串其他服務，所以只有一個 span，之後還有另外兩篇文章是介紹如何串其他服務 (會增加服務以及部分設定)，可以參考看看：&lt;a href="https://github.com/880831ian/opentelemetry-roadrunner" target="_blank" rel="noopener">opentelemetry-roadrunner&lt;/a>、&lt;a href="https://github.com/880831ian/opentelemetry-nodejs" target="_blank" rel="noopener">opentelemetry-nodejs&lt;/a>&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;p>順便看一下透過 Datadog Agent 收集的 Ingress Nginx Controller 的 Metrics，如下：&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;p>&lt;figure>
+&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/4.png" title="Datadog Ingress Nginx Controller 的 Metrics" alt="" loading="lazy" />
+&lt;figcaption>Datadog Ingress Nginx Controller 的 Metrics&lt;/figcaption>
+&lt;/figure>&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;p>可以用這些 Metrics 來做 Dashboard，如下：&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;p>&lt;figure>
+&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/5.png" title="Datadog Dashboard" alt="" loading="lazy" />
+&lt;figcaption>Datadog Dashboard&lt;/figcaption>
+&lt;/figure>&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;h2>結論&lt;span class="absolute -mt-20" id="結論">&lt;/span>
+&lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>透過 OpenTelemetry Collector 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上，這樣就可以透過 Ingress Nginx Controller 的 Metrics 來做監控了，對於 RD 再開發上，有 Traces 也更方便 RD 他們找到程式的瓶頸 (有可能是服務導致的)。&lt;/p>
+&lt;!-- raw HTML omitted -->
+&lt;h2>參考&lt;span class="absolute -mt-20" id="參考">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Configure Nginx Ingress Controller to use JSON log format：&lt;a href="https://dev.to/bzon/send-gke-nginx-ingress-controller-logs-to-stackdriver-2ih4" target="_blank" rel="noopener">https://dev.to/bzon/send-gke-nginx-ingress-controller-logs-to-stackdriver-2ih4&lt;/a>&lt;/p>
+&lt;p>淺談 OpenTelemetry - Collector Compoents：&lt;a href="https://ithelp.ithome.com.tw/articles/10290703" target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10290703&lt;/a>&lt;/p></description></item></channel></rss>
