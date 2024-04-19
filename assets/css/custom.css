@@ -1,0 +1,7 @@
+.overflow-x-hidden {
+  overflow-x: hidden;
+  width: 400px;
+}
+.code-block .filename {
+  color: #ffff;
+}
