@@ -1,8 +1,6 @@
 ---
 title: "正式環境上踩到 StatefulSet 的雷，拿到 P1 的教訓"
 weight: 3
-# next: /blog/guide
-# prev: /blog
 ---
 
 此文章要來記錄一下前陣子在公司的正式環境踩到 StatefulSet 的雷，事情是這樣的，我們有些服務，是使用 StatefulSet 來建置，至於為什麼不用 Deployment，這個說來話長 (也不是因為需要特定的 Pod 名稱、或是網路標記等等)，我們這邊先不討論，這個 StatefulSet 服務是 Nginx + PHP-FPM，為了避免流量進入到 processes 已經被用光的 Pod 中，我們在 StatefulSet 的 PHP Container 上有設定 readiness，readiness 的設定長得像以下：
@@ -84,13 +82,13 @@ StatefulSet 在 podManagementPolicy 預設 OrderedReady 的模式，故意讓 re
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/1.png "StatefulSet 設定")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/1.png "StatefulSet 設定")
 
 - Pod 狀態：
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/2.png "Pod 狀態")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/2.png "Pod 狀態")
 
 <br>
 
@@ -108,7 +106,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/3.png "下指令調整後的 StatefulSet 設定")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/3.png "下指令調整後的 StatefulSet 設定")
 
 <br>
 
@@ -116,7 +114,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/4.png "下指令調整後的 Pod 狀態")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/4.png "下指令調整後的 Pod 狀態")
 
 <br>
 
@@ -128,7 +126,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/5.png "使用 yaml 調整後的 StatefulSet 設定")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/5.png "使用 yaml 調整後的 StatefulSet 設定")
 
 <br>
 
@@ -136,7 +134,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/6.png "使用 yaml 調整後的 Pod 狀態")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/6.png "使用 yaml 調整後的 Pod 狀態")
 
 <br>
 
@@ -152,13 +150,13 @@ StatefulSet 在 podManagementPolicy Parallel 的模式，故意讓 readiness 卡
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/7.png "StatefulSet 設定")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/7.png "StatefulSet 設定")
 
 - Pod 狀態：
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/8.png "Pod 狀態")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/8.png "Pod 狀態")
 
 <br>
 
@@ -176,7 +174,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/9.png "下指令調整後的 StatefulSet 設定")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/9.png "下指令調整後的 StatefulSet 設定")
 
 <br>
 
@@ -184,7 +182,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/10.png "下指令調整後的 Pod 狀態")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/10.png "下指令調整後的 Pod 狀態")
 
 <br>
 
@@ -196,7 +194,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/11.png "使用 yaml 調整後的 StatefulSet 設定")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/11.png "使用 yaml 調整後的 StatefulSet 設定")
 
 <br>
 
@@ -204,7 +202,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/12.png "使用 yaml 調整後的 Pod 狀態")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/12.png "使用 yaml 調整後的 Pod 狀態")
 
 <br>
 
@@ -218,7 +216,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-![](/k8s-statefulset-podmanagementpolicy/13.png "OrderedReady 模式切成 Parallel 模式")
+![](/kubernetes/k8s-statefulset-podmanagementpolicy/13.png "OrderedReady 模式切成 Parallel 模式")
 
 <br>
 

@@ -1,8 +1,6 @@
 ---
 title: "想使用 Nginx Upstream Proxy 到外部服務，並帶入對應的 header 該怎麼做？"
 weight: 3
-# next: /blog/guide
-# prev: /blog
 ---
 
 此文章要來記錄一下最近在公司服務入口遇到的一些小問題，以及解決的方法。簡單說明一下，我們的服務入口是用 Nginx 來當作 proxy server，將不同路徑或是 servername 導到對應的後端程式，或是外部的服務上(例如 AWS cloudfront.net)，本篇要測試的是如果使用要同時使用 upstream 到外部服務，且需要帶 host header 該怎麼做。
@@ -79,7 +77,7 @@ location /aaa {
 
 <br>
 
-![](/nginx-upstream-set-host-header/1.png "nginx 原本寫法")
+![](/nginx/nginx-upstream-set-host-header/1.png "nginx 原本寫法")
 
 <br>
 
@@ -150,10 +148,10 @@ location /aaa {
 
 <br>
 
-![](/nginx-upstream-set-host-header/2.png "使用多層的 nginx proxy 處理")
+![](/nginx/nginx-upstream-set-host-header/2.png "使用多層的 nginx proxy 處理")
 
 <br>
 
 ## 參考
 
-[Make nginx to pass hostname of the upstream when reverseproxying](https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying)
+Make nginx to pass hostname of the upstream when reverseproxying：[https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying](https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying)

@@ -58,3 +58,18 @@ params:
     enable: false
 
   displayUpdatedDate: true
+
+  comments:
+    enable: true
+    type: giscus
+    giscus:
+      repo: 880831ian/880831ian.github.io
+      repoId: R_kgDOLwVzsQ
+      category: General
+      categoryId: DIC_kwDOLwVzsc4CezU3
+      mapping: pathname
+      strict: 0
+      reactionsEnabled: 1
+      emitMetadata: 0
+      inputPosition: top
+      lang: zh-TW
