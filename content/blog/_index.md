@@ -1,5 +1,6 @@
 ---
 linkTitle: "Blog"
+type: docs
 title: 說明與介紹
 ---
 

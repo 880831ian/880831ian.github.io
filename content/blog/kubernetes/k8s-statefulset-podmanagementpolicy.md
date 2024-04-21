@@ -1,5 +1,6 @@
 ---
 title: "正式環境上踩到 StatefulSet 的雷，拿到 P1 的教訓"
+type: docs
 weight: 3
 ---
 

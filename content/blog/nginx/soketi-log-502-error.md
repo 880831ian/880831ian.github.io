@@ -1,5 +1,6 @@
 ---
 title: "Soketi WebSocket Server LOG 不定時出現 502 error 以及 connect() failed (111: Connection refused)"
+type: docs
 weight: 4
 ---
 

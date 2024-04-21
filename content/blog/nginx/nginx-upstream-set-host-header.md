@@ -1,5 +1,6 @@
 ---
 title: "想使用 Nginx Upstream Proxy 到外部服務，並帶入對應的 header 該怎麼做？"
+type: docs
 weight: 3
 ---
 

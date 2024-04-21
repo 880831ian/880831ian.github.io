@@ -14,7 +14,7 @@ menu:
   main:
     - identifier: blog
       name: Blog
-      pageRef: /docs
+      pageRef: /blog
       weight: 1
     - identifier: projects
       name: 專案成就
