@@ -43,6 +43,7 @@ params:
     logo:
       path: images/logo.jpeg
       dark: images/logo.jpeg
+    width: full
 
   page:
     width: full
