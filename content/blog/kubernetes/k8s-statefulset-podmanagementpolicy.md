@@ -97,7 +97,7 @@ StatefulSet 在 podManagementPolicy 預設 OrderedReady 的模式，故意讓 re
 
 我們這時候下指令調整 Pod 數量，看看會發生什麼事：
 
-```
+```shell
 kubectl scale sts my-statefulset --replicas=5
 ```
 
@@ -165,7 +165,7 @@ StatefulSet 在 podManagementPolicy Parallel 的模式，故意讓 readiness 卡
 
 我們這時候下指令調整 Pod 數量，看看會發生什麼事：
 
-```
+```shell
 kubectl scale sts my-statefulset --replicas=5
 ```
 

@@ -39,14 +39,12 @@ params:
 
   navbar:
     displayTitle: true
-    displayLogo: false
+    displayLogo: true
     logo:
-      path: images/logo.svg
-      dark: images/logo-dark.svg
-    width: full
+      path: images/logo.jpeg
+      dark: images/logo.jpeg
 
   page:
-    # full (100%), wide (90rem), normal (1280px)
     width: full
 
   theme:
@@ -58,6 +56,7 @@ params:
     enable: false
 
   displayUpdatedDate: true
+  dateFormat: "2006, January 2"
 
   comments:
     enable: true
@@ -73,3 +72,7 @@ params:
       emitMetadata: 0
       inputPosition: top
       lang: zh-TW
+
+services:
+  googleAnalytics:
+    ID: G-VY0HEQXXJQ
