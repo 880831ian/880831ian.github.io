@@ -80,7 +80,7 @@ title="Copy code"
 &lt;!-- raw HTML omitted -->
 &lt;h4>使用指令調整 Pod 數量&lt;span class="absolute -mt-20" id="使用指令調整-pod-數量">&lt;/span>
 &lt;a href="#%e4%bd%bf%e7%94%a8%e6%8c%87%e4%bb%a4%e8%aa%bf%e6%95%b4-pod-%e6%95%b8%e9%87%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們這時候下指令調整 Pod 數量，看看會發生什麼事：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>kubectl scale sts my-statefulset --replicas=5&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl scale sts my-statefulset --replicas&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">5&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
 &lt;button
 class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
 title="Copy code"
@@ -144,7 +144,7 @@ title="Copy code"
 &lt;!-- raw HTML omitted -->
 &lt;h4>使用指令調整 Pod 數量&lt;span class="absolute -mt-20" id="使用指令調整-pod-數量-1">&lt;/span>
 &lt;a href="#%e4%bd%bf%e7%94%a8%e6%8c%87%e4%bb%a4%e8%aa%bf%e6%95%b4-pod-%e6%95%b8%e9%87%8f-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們這時候下指令調整 Pod 數量，看看會發生什麼事：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>kubectl scale sts my-statefulset --replicas=5&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl scale sts my-statefulset --replicas&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">5&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
 &lt;button
 class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
 title="Copy code"
