@@ -10,6 +10,11 @@ module:
   imports:
     - path: github.com/imfing/hextra
 
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+
 menu:
   main:
     - identifier: blog
