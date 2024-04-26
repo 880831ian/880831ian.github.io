@@ -11,5 +11,5 @@ sidebar:
 <!--more-->
 
 {{< cards >}}
-{{< card link="gcp-log-reduce-cloud-logging-api" title="如何過濾 GCP LOG，減少 Cloud Logging API 的花費" >}}
+{{< card link="gcp-log-reduce-cloud-logging-api" title="如何過濾 GCP LOG，減少 Cloud Logging API 的花費" image="/gcp/gcp-log-reduce-cloud-logging-api/cover.webp" >}}
 {{< /cards >}}

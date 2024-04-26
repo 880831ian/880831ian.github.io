@@ -1,23 +1,17 @@
 ---
 linkTitle: "Blog"
 type: docs
-title: 說明與介紹
+title: 介紹與聲明
 ---
 
-👋 尼好，歡迎來看我的
+## 介紹
+
+👋 你好、妳好、大家好，歡迎來到我的~~秘密花園~~，這邊主要會記錄我研究一個新的技術或工具、以及處理一些 SRE 遇到的靈異事件問題的小天地。
+
+會開始寫 Blog 的初衷主要是我的小腦袋瓜，如果不寫下來，過陣子很容易就忘記 (´\_ゝ`)，當然也希望可以幫助到有相同問題的人 (可以使用搜尋功能來快速找到相關文檔喔)，如果有任何問題或建議，歡迎在下方留言。
 
 <!--more-->
 
-## What is Hextra?
+## 聲明
 
-Hextra is a modern, fast and batteries-included [Hugo][hugo] theme built with [Tailwind CSS][tailwind-css].
-Designed for building beautiful websites for documentation, blogs, and websites, it provides out-of-the-box features and flexibility to meet various requirements.
-
-## Features
-
-- **Beautiful Design** - Inspired by Nextra, Hextra utilizes Tailwind CSS to offer a modern design that makes your site look outstanding.
-- **Responsive Layout and Dark Mode** - It looks great on all devices, from mobile, tablet to desktop. Dark mode is also supported to accommodate various lighting conditions.
-- **Fast and Lightweight** - Powered by Hugo, a lightning-fast static-site generator housed in a single binary file, Hextra keeps its footprint minimal. No JavaScript or Node.js are needed to use it.
-- **Full-text Search** - Built-in offline full-text search powered by FlexSearch, no additional configuration required.
-- **Battery-included** - Markdown, syntax highlighting, LaTeX math formulae, diagrams and Shortcodes elements to enhance your content. Table of contents, breadcrumbs, pagination, sidebar navigation and more are all automatically generated.
-- **Multi-language and SEO Ready** - Multi-language sites made easy with Hugo's multilingual mode. Out-of-the-box support is included for SEO tags, Open Graph, and Twitter Cards.
+由於在學習新的技術或工具時，會參考網路上許多的文件和照片，雖然會加上自己的見解與實作內容改寫而成，且會於文章後附上相關資料來源，如有侵犯到您的權益，請於下方告知，我會立即刪除相關內容，謝謝 (๑•́ ₃ •̀๑)。

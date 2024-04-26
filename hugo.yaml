@@ -29,12 +29,15 @@ menu:
       name: 關於我
       pageRef: /about
       weight: 2
-    - name: Search
+    - name: 代管服務狀態
       weight: 3
+      url: "https://status.pin-yi.me/status/pin-yi"
+    - name: Search
+      weight: 4
       params:
         type: search
     - name: GitHub
-      weight: 4
+      weight: 5
       url: "https://github.com/880831ian/"
       params:
         icon: github

@@ -3,18 +3,22 @@ title: 關於我
 toc: false
 ---
 
-Hextra is designed to be a simple, fast, and flexible theme for building modern static websites. It is especially well-suited for documentation websites but can also be used for various types of sites, such as blogs, portfolios, and more.
+<img src="/images/logo.jpeg" width="350" />
 
-Hugo, like Jekyll, is a static site generator. What sets Hugo apart is that it is a single binary, making it easy to install and run on various platforms. It is also extremely fast and reliable, capable of rendering a site with thousands of pages in milliseconds.
+<br>
 
-Hextra is built with a mindset focused on having a minimal footprint. To get started, no extra dependencies like Node.js packages are required; all you need is a single YAML configuration file, along with your Markdown content. Thus, we can focus on writing quality content instead of setting up tooling.
+哈囉大家好，我叫莊品毅，也可以叫我 Ian，目前是一位 Site Reliability Engineering (SRE) 工程師，主要負責維護公司的 Google Cloud Platform (GCP) 雲端相關服務，包含 GKE、GCE、GCS、GLB 等等，除此之外也熟悉使用 Terraform + Terragrunt 來管理雲端大量的 IaC 資源，配合 Prometheus、Datadog、EFK 等監控工具來確保服務的穩定性，協助 RD 建立 CICD 部署流程。
 
-## Credits
+在下班空閒時間，我喜歡閱讀技術相關的文件、部落格，也會參加一些線下技術社群的活動，例如 DevOpsDay，希望能夠透過這些活動來學習更多的知識，歡迎大家使用下方 giscus 留言系統留言交流。
 
-Hextra cannot be built without the following tools and inspirations:
+<br>
 
-- [Hugo](https://gohugo.io/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Heroicons](https://heroicons.com/)
-- [Nextra](https://nextra.vercel.app/)
-- [Next.js](https://nextjs.org/)
+## 工作經驗
+
+{{% steps %}}
+
+### 凡谷興業有限公司 - SRE 工程師
+
+(2022/02 - 現在)
+
+{{% /steps %}}

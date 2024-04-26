@@ -8,7 +8,7 @@ weight: 4
 
 <br>
 
-![](/nginx/soketi-log-502-error/1.png "出錯的 LOG")
+<img src="/nginx/soketi-log-502-error/1.png" width="1200" />
 
 <br>
 
@@ -26,7 +26,7 @@ weight: 4
 
 <br>
 
-![](/nginx/soketi-log-502-error/2.png "入口 nginx 設定")
+<img src="/nginx/soketi-log-502-error/2.png" width="800" />
 
 <br>
 
@@ -138,7 +138,7 @@ server {
 
 <br>
 
-![](/nginx/soketi-log-502-error/3.png "Pod 終止的過程")
+<img src="/nginx/soketi-log-502-error/3.png" width="800" />
 
 <br>
 
@@ -191,7 +191,7 @@ export default function () {
 
 <br>
 
-![](/nginx/soketi-log-502-error/4.png "k6 壓測過程")
+<img src="/nginx/soketi-log-502-error/4.png" width="800" />
 
 <br>
 
@@ -199,7 +199,7 @@ export default function () {
 
 <br>
 
-![](/nginx/soketi-log-502-error/5.png "k6 壓測結果")
+<img src="/nginx/soketi-log-502-error/5.png" width="800" />
 
 <br>
 

@@ -8,7 +8,7 @@ weight: 3
 
 <br>
 
-![](/opentelemetry/opentelemetry-observability/1.png "軟體架構以及基礎設施的演進")
+<img src="/opentelemetry/opentelemetry-observability/1.png" width="800" />
 
 <br>
 
@@ -42,7 +42,7 @@ Traces （後面詳細介紹）
 
 <br>
 
-![](/opentelemetry/opentelemetry-observability/2.png "可觀測性三大支柱")
+<img src="/opentelemetry/opentelemetry-observability/2.png" width="400" />
 
 <br>
 
@@ -72,7 +72,7 @@ SpanID：是一條請求路徑中單個操作唯一的 ID。追蹤路徑是由�
 
 <br>
 
-![](/opentelemetry/opentelemetry-observability/3.png "Trace 示意圖")
+<img src="/opentelemetry/opentelemetry-observability/3.png" width="700" />
 
 <br>
 
@@ -82,13 +82,15 @@ SpanID：是一條請求路徑中單個操作唯一的 ID。追蹤路徑是由�
 
 <br>
 
-![](/opentelemetry/opentelemetry-observability/4.png "ECK Trace 示意圖")
+<img src="/opentelemetry/opentelemetry-observability/4.png" width="1200" />
+
+<br>
 
 上面的圖片中，可以看到 call /product/XXXX 後，會經過需多的 Span，隨便點擊一個 Span 可以看到它記錄的 Trace-Context，以及都會包含 TraceID 及 SpanID
 
 <br>
 
-![](/opentelemetry/opentelemetry-observability/5.png "ECK Trace 示意圖")
+<img src="/opentelemetry/opentelemetry-observability/5.png" width="900" />
 
 <br>
 
@@ -125,7 +127,7 @@ Opentelemetry 是雲原生的可觀測性(Observability)框架，提供標準化
 
 <br>
 
-![](/opentelemetry/opentelemetry-observability/6.jpg "Opentelemetry")
+<img src="/opentelemetry/opentelemetry-observability/6.jpg" width="500" />
 
 <br>
 

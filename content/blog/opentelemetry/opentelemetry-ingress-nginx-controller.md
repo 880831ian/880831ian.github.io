@@ -72,7 +72,7 @@ weight: 3
 
 <br>
 
-![](/opentelemetry/opentelemetry-ingress-nginx-controller/1.png "啟動服務")
+<img src="/opentelemetry/opentelemetry-ingress-nginx-controller/1.png" width="800" />
 
 <br>
 
@@ -80,7 +80,7 @@ weight: 3
 
 <br>
 
-![](/opentelemetry/opentelemetry-ingress-nginx-controller/2.png "Datadog LOG")
+<img src="/opentelemetry/opentelemetry-ingress-nginx-controller/2.png" width="1200" />
 
 <br>
 
@@ -88,7 +88,7 @@ weight: 3
 
 <br>
 
-![](/opentelemetry/opentelemetry-ingress-nginx-controller/3.png "Datadog APM")
+<img src="/opentelemetry/opentelemetry-ingress-nginx-controller/3.png" width="1200" />
 
 <br>
 
@@ -100,7 +100,7 @@ weight: 3
 
 <br>
 
-![](/opentelemetry/opentelemetry-ingress-nginx-controller/4.png "Datadog Ingress Nginx Controller 的 Metrics")
+<img src="/opentelemetry/opentelemetry-ingress-nginx-controller/4.png" width="900" />
 
 <br>
 
@@ -108,7 +108,7 @@ weight: 3
 
 <br>
 
-![](/opentelemetry/opentelemetry-ingress-nginx-controller/5.png "Datadog Dashboard")
+<img src="/opentelemetry/opentelemetry-ingress-nginx-controller/5.png" width="1000" />
 
 <br>
 
