@@ -32,8 +32,10 @@ title="Copy code"
 &lt;a href="#%e8%a7%a3%e6%b1%ba%e8%be%a6%e6%b3%95" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當下想趕快解決 readiness 這個問題，調整 &lt;code>timeoutSeconds&lt;/code> 後，單純 apply 是沒有用的，要記得刪掉卡住的 Pod，讓他重新建立，才會套用新的設定 (但我們當下太在意為甚麼 Pod 會卡住，沒有想到要先把 readiness 問題修掉 xD，我們當下的解法是先將流量導到地端正常的服務上)。&lt;/p>
 &lt;p>另外 Google 也說，假如我們還是必須使用 StatefulSet 來建立服務，建議我們把 podManagementPolicy 改成 &lt;code>Parallel&lt;/code>，它會有點像是 Deployment 的感覺，不會等待其他 Pod 變成 Ready 狀態，所以可以讓我們就算在 readiness 卡住的情況下，也可以自動擴縮服務。&lt;/p>
 &lt;br>
-&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
-&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-blue-200 bg-blue-100 text-blue-900 dark:border-blue-200/30 dark:bg-blue-900/30 dark:text-blue-200">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;div class="select-none text-xl" style="font-family: 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol';">
+ℹ️
+&lt;/div>&lt;/div>
 &lt;div class="w-full min-w-0 leading-7">
 &lt;div class="mt-6 leading-7 first:mt-0">
 &lt;p>StatefulSet podManagementPolicy 參數說明&lt;/p>
@@ -65,18 +67,12 @@ title="Copy code"
 &lt;li>當下的 StatefulSet 設定：&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/1.png" title="StatefulSet 設定" alt="" loading="lazy" />
-&lt;figcaption>StatefulSet 設定&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/1.png" width="800"/>
 &lt;ul>
 &lt;li>Pod 狀態：&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/2.png" title="Pod 狀態" alt="" loading="lazy" />
-&lt;figcaption>Pod 狀態&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/2.png" width="800"/>
 &lt;br>
 &lt;h4>使用指令調整 Pod 數量&lt;span class="absolute -mt-20" id="使用指令調整-pod-數量">&lt;/span>
 &lt;a href="#%e4%bd%bf%e7%94%a8%e6%8c%87%e4%bb%a4%e8%aa%bf%e6%95%b4-pod-%e6%95%b8%e9%87%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們這時候下指令調整 Pod 數量，看看會發生什麼事：&lt;/p>
@@ -93,33 +89,21 @@ title="Copy code"
 &lt;br>
 &lt;p>我們先看 StatefulSet 的 yaml 可以看到 Pod replicas 已經改變，也可以看 generation 有更新，代表 StatefulSet 本身有接收到調整設定的請求。&lt;/p>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/3.png" title="下指令調整後的 StatefulSet 設定" alt="" loading="lazy" />
-&lt;figcaption>下指令調整後的 StatefulSet 設定&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/3.png" width="800"/>
 &lt;br>
 &lt;p>看了一下 Pod 數量，也是一樣卡住，且 Pod 數量也沒有變化。&lt;/p>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/4.png" title="下指令調整後的 Pod 狀態" alt="" loading="lazy" />
-&lt;figcaption>下指令調整後的 Pod 狀態&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/4.png" width="800"/>
 &lt;br>
 &lt;h4>使用 yaml 調整 Pod 數量&lt;span class="absolute -mt-20" id="使用-yaml-調整-pod-數量">&lt;/span>
 &lt;a href="#%e4%bd%bf%e7%94%a8-yaml-%e8%aa%bf%e6%95%b4-pod-%e6%95%b8%e9%87%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們直接調整 StatefulSet yaml 的 Pod 數量，看看會發生什麼事：&lt;/p>
 &lt;p>一樣我們先看 StatefulSet 的 yaml 可以看到 Pod replicas 已經改變(這裡應該切別的 Pod 數量，切回 3 個好像沒有意義 xD)，也可以看 generation 有更新。&lt;/p>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/5.png" title="使用 yaml 調整後的 StatefulSet 設定" alt="" loading="lazy" />
-&lt;figcaption>使用 yaml 調整後的 StatefulSet 設定&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/5.png" width="800"/>
 &lt;br>
 &lt;p>看了一下 Pod 數量，也是一樣卡住，且 Pod 數量也沒有變化。&lt;/p>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/6.png" title="使用 yaml 調整後的 Pod 狀態" alt="" loading="lazy" />
-&lt;figcaption>使用 yaml 調整後的 Pod 狀態&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/6.png" width="800"/>
 &lt;br>
 &lt;p>所以代表在 OrderedReady 的模式下，Pod 卡住時，無法對 Pod 進行任何操作，必須要手動刪除卡住的 Pod 才吃得到最新的設定。&lt;/p>
 &lt;br>
@@ -129,18 +113,12 @@ title="Copy code"
 &lt;li>當下的 StatefulSet 設定：&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/7.png" title="StatefulSet 設定" alt="" loading="lazy" />
-&lt;figcaption>StatefulSet 設定&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/7.png" width="800"/>
 &lt;ul>
 &lt;li>Pod 狀態：&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/8.png" title="Pod 狀態" alt="" loading="lazy" />
-&lt;figcaption>Pod 狀態&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/8.png" width="800"/>
 &lt;br>
 &lt;h4>使用指令調整 Pod 數量&lt;span class="absolute -mt-20" id="使用指令調整-pod-數量-1">&lt;/span>
 &lt;a href="#%e4%bd%bf%e7%94%a8%e6%8c%87%e4%bb%a4%e8%aa%bf%e6%95%b4-pod-%e6%95%b8%e9%87%8f-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們這時候下指令調整 Pod 數量，看看會發生什麼事：&lt;/p>
@@ -157,43 +135,28 @@ title="Copy code"
 &lt;br>
 &lt;p>我們先看 StatefulSet 的 yaml 可以看到 Pod replicas 已經改變，也可以看 generation 有更新，代表 StatefulSet 本身有接收到調整設定的請求。&lt;/p>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/9.png" title="下指令調整後的 StatefulSet 設定" alt="" loading="lazy" />
-&lt;figcaption>下指令調整後的 StatefulSet 設定&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/9.png" width="800"/>
 &lt;br>
 &lt;p>看了一下 Pod 數量，就算 my-statefulset-2 卡住，還是可以擴到 5 個 Pod。&lt;/p>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/10.png" title="下指令調整後的 Pod 狀態" alt="" loading="lazy" />
-&lt;figcaption>下指令調整後的 Pod 狀態&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/10.png" width="800"/>
 &lt;br>
 &lt;h4>使用 yaml 調整 Pod 數量&lt;span class="absolute -mt-20" id="使用-yaml-調整-pod-數量-1">&lt;/span>
 &lt;a href="#%e4%bd%bf%e7%94%a8-yaml-%e8%aa%bf%e6%95%b4-pod-%e6%95%b8%e9%87%8f-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們直接調整 StatefulSet yaml 的 Pod 數量，看看會發生什麼事：&lt;/p>
 &lt;p>一樣我們先看 StatefulSet 的 yaml 可以看到 Pod replicas 已經改變，也可以看 generation 有更新。&lt;/p>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/11.png" title="使用 yaml 調整後的 StatefulSet 設定" alt="" loading="lazy" />
-&lt;figcaption>使用 yaml 調整後的 StatefulSet 設定&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/11.png" width="800"/>
 &lt;br>
 &lt;p>看了一下 Pod 數量，也不會管其他 Pod 是否 Ready，一樣可以縮小成 2 個 Pod。&lt;/p>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/12.png" title="使用 yaml 調整後的 Pod 狀態" alt="" loading="lazy" />
-&lt;figcaption>使用 yaml 調整後的 Pod 狀態&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/12.png" width="800"/>
 &lt;br>
 &lt;h2>結論&lt;span class="absolute -mt-20" id="結論">&lt;/span>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>後來我們重新檢查了一下為什麼 processes 會用完，結果發現是 RD 的程式邏輯，導致每筆 Request 必須等待前一筆 Request 做完，才會開始動作，讓 processes 一直被占用，沒辦法即時消化，導致 processes 用完，又加上服務是使用 StatefulSet，預設模式的 OrderedReady，必須等待前一個 Pod 是 Ready 才可以自動擴縮，所以當我們 Hpa 想要擴縮，來增加可用的 processes 數量，也因為沒辦法擴縮，最後導致這一連串的問題 😕。&lt;/p>
 &lt;br>
 &lt;p>另外，如果想要從 OrderedReady 模式切成 Parallel 模式 (反正過來也是)，必須先將原本的 StatefulSet 給刪除，才可以調整：&lt;/p>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/13.png" title="OrderedReady 模式切成 Parallel 模式" alt="" loading="lazy" />
-&lt;figcaption>OrderedReady 模式切成 Parallel 模式&lt;/figcaption>
-&lt;/figure>&lt;/p>
+&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/13.png" width="800" />
 &lt;br>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Kubernetes — 健康檢查：&lt;a href="https://medium.com/learn-or-die/kubernetes-%E5%81%A5%E5%BA%B7%E6%AA%A2%E6%9F%A5-59ee2a798115" target="_blank" rel="noopener">https://medium.com/learn-or-die/kubernetes-%E5%81%A5%E5%BA%B7%E6%AA%A2%E6%9F%A5-59ee2a798115&lt;/a>&lt;/p>
@@ -267,11 +230,7 @@ title="Copy code"
 &lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;p>&lt;figure>
-&lt;img src="https://pin-yi.me/kubernetes/pod-veth-name-provided-eth0-already-exists/1.png" title="Google Support 回覆" alt="" loading="lazy" />
-&lt;figcaption>Google Support 回覆&lt;/figcaption>
-&lt;/figure>&lt;/p>
-&lt;br>
+&lt;img src="https://pin-yi.me/kubernetes/pod-veth-name-provided-eth0-already-exists/1.png" width="800" />
 &lt;br>
 &lt;h2>參考&lt;span class="absolute -mt-20" id="參考">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Node 節點禁止調度（平滑維護）方式- cordon，drain，delete：&lt;a href="https://www.cnblogs.com/kevingrace/p/14412254.html" target="_blank" rel="noopener">https://www.cnblogs.com/kevingrace/p/14412254.html&lt;/a>&lt;/p></description></item></channel></rss>
