@@ -205,7 +205,7 @@ alt="啟動服務" width="800">&lt;figcaption>
 &lt;p>啟動服務&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;p>t&lt;br>&lt;/p>
+&lt;br>
 &lt;p>我們試著打 &lt;code>http://nginx.example.com/&lt;/code> (測試網址，需要先在 /etc/hosts 綁定 Ingress Nginx Controller 咬住的 Load Balancer IP)，查看一下 Datadog 的 LOG，看看是否有收到 Nginx 的 LOG (此收集 LOG 的方式是透過在 cluster 上安裝 Datadog 的 agent)，如下：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/2.png"
