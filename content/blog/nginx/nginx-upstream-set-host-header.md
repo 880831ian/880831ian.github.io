@@ -9,6 +9,7 @@ weight: 3
 <br>
 
 {{< callout note >}}
+
 Nginx 的 upstream 是什麼？
 
 通常我們 proxy_pass 的寫法會是這樣：
@@ -78,7 +79,7 @@ location /aaa {
 
 <br>
 
-<img src="/nginx/nginx-upstream-set-host-header/1.png" width="800" />
+{{< figure src="/nginx/nginx-upstream-set-host-header/1.png" width="800" caption="nginx 原本寫法" >}}
 
 <br>
 
@@ -149,7 +150,7 @@ location /aaa {
 
 <br>
 
-<img src="/nginx/nginx-upstream-set-host-header/2.png" width="800" />
+{{< figure src="/nginx/nginx-upstream-set-host-header/2.png" width="800" caption="使用多層的 nginx proxy 處理" >}}
 
 <br>
 

@@ -83,13 +83,13 @@ StatefulSet 在 podManagementPolicy 預設 OrderedReady 的模式，故意讓 re
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/1.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/1.png" width="800" caption="StatefulSet 設定" >}}
 
 - Pod 狀態：
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/2.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/2.png" width="800" caption="Pod 狀態" >}}
 
 <br>
 
@@ -107,7 +107,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/3.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/3.png" width="800" caption="下指令調整後的 StatefulSet 設定" >}}
 
 <br>
 
@@ -115,7 +115,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/4.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/4.png" width="800" caption="下指令調整後的 Pod 狀態" >}}
 
 <br>
 
@@ -127,7 +127,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/5.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/5.png" width="800" caption="使用 yaml 調整後的 StatefulSet 設定" >}}
 
 <br>
 
@@ -135,7 +135,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/6.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/6.png" width="800" caption="使用 yaml 調整後的 Pod 狀態" >}}
 
 <br>
 
@@ -151,13 +151,13 @@ StatefulSet 在 podManagementPolicy Parallel 的模式，故意讓 readiness 卡
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/7.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/7.png" width="800" caption="StatefulSet 設定" >}}
 
 - Pod 狀態：
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/8.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/8.png" width="800" caption="Pod 狀態" >}}
 
 <br>
 
@@ -175,7 +175,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/9.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/9.png" width="800" caption="下指令調整後的 StatefulSet 設定" >}}
 
 <br>
 
@@ -183,7 +183,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/10.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/10.png" width="800" caption="下指令調整後的 Pod 狀態" >}}
 
 <br>
 
@@ -195,7 +195,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/11.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/11.png" width="800" caption="使用 yaml 調整後的 StatefulSet 設定" >}}
 
 <br>
 
@@ -203,7 +203,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/12.png" width="800"/>
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/12.png" width="800" caption="使用 yaml 調整後的 Pod 狀態" >}}
 
 <br>
 
@@ -217,7 +217,7 @@ kubectl scale sts my-statefulset --replicas=5
 
 <br>
 
-<img src="/kubernetes/k8s-statefulset-podmanagementpolicy/13.png" width="800" />
+{{< figure src="/kubernetes/k8s-statefulset-podmanagementpolicy/13.png" width="800" caption="OrderedReady 模式切成 Parallel 模式" >}}
 
 <br>
 
