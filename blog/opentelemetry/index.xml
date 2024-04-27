@@ -1,7 +1,11 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Opentelemetry</title><link>https://pin-yi.me/blog/opentelemetry/</link><description>Recent content in Opentelemetry on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/opentelemetry/index.xml" rel="self" type="application/rss+xml"/><item><title>什麼是 Opentelemetry？可觀測性 (Observability) 又是什麼？</title><link>https://pin-yi.me/blog/opentelemetry/opentelemetry-observability/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/opentelemetry/opentelemetry-observability/</guid><description>
 &lt;p>在介紹 Opentelemetry 之前，我們要先了解一下目前軟體架構以及基礎設施的演進：&lt;/p>
 &lt;br>
-&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/1.png" width="800" />
+&lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/1.png"
+alt="軟體架構以及基礎設施的演進" width="800">&lt;figcaption>
+&lt;p>軟體架構以及基礎設施的演進&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;br>
 &lt;p>第一階段在軟體架構設計上較為簡單，不會有什麼特別需要拆分出來的程式，所以都是一整包的程式，再測試以及除錯也比較不會有什麼問題。基礎設施都是使用 VM 或是使用放在 IDC 的機房來當 Server。&lt;/p>
 &lt;p>第二階段隨著雲端技術的推出，會開始將服務搬上雲供應商提供的 IaaS 服務，或是使用私有雲給企業放置較機密的內容，其他則放置公有雲上，達成混合雲的模式。&lt;/p>
@@ -18,7 +22,11 @@
 &lt;p>Logs 當問題發生時，可以用來查看故障時正在執行哪些服務，以及產生的錯誤資訊。&lt;/p>
 &lt;p>Traces （後面詳細介紹）&lt;/p>
 &lt;br>
-&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/2.png" width="400" />
+&lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/2.png"
+alt="可觀測性三大支柱" width="400">&lt;figcaption>
+&lt;p>可觀測性三大支柱&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;br>
 &lt;p>我們對於 Metrics 跟 Logs 有基本的了解，所以我這邊會注重在 Traces 的部分：&lt;/p>
 &lt;p>當有多個微服務的複雜分散式系統，用戶的請求會由系統中的多個微服務進行處理。Metrics 跟 Logs 可以提供我們有關系統如何去處理這些請求的一些資訊，但沒有辦法提供微服務的詳細訊息以及他是如何影響客戶端的請求。這時候就需要透過 Trace 來協助我們追蹤。&lt;/p>
@@ -33,16 +41,28 @@
 &lt;p>TraceID：是唯一的 ID，用於識別整個分散式追蹤的一條請求路徑。在下方圖片中，當請求進入時，就會被賦予一個 TraceID，所有有經過的 Span 都會記錄此 TraceID，這樣才可以把不同服務依據 TraceID 關聯成同一個請求。&lt;/p>
 &lt;p>SpanID：是一條請求路徑中單個操作唯一的 ID。追蹤路徑是由多個 Span 組成，每個 Span 都代表一個操作或特定的時間段。當請求進入時，每個服務就會產生一個 Span 來代表它處理請求的的時間。這些 Span 使用 TraceID 來連接再一起，形成完整的請求追蹤。&lt;/p>
 &lt;br>
-&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/3.png" width="700" />
+&lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/3.png"
+alt="Trace 示意圖" width="650">&lt;figcaption>
+&lt;p>Trace 示意圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;br>
 &lt;p>那要怎麼查看每個 Span 的紀錄內容呢，就需要 Trace-Context：&lt;/p>
 &lt;p>會放置一些用於追蹤和識別請求的上下文信息，例如 Trace ID、Span ID 和其他相關的數據。這些上下文信息可以是一些關鍵的數據，可以幫助我們在整個分佈式系統中追蹤請求的路徑，並將相關請求和操作關聯起來。&lt;/p>
 &lt;br>
-&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/4.png" width="1200" />
+&lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/4.png"
+alt="ECK Trace 示意圖" width="1200">&lt;figcaption>
+&lt;p>ECK Trace 示意圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;br>
 &lt;p>上面的圖片中，可以看到 call /product/XXXX 後，會經過需多的 Span，隨便點擊一個 Span 可以看到它記錄的 Trace-Context，以及都會包含 TraceID 及 SpanID&lt;/p>
 &lt;br>
-&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/5.png" width="900" />
+&lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/5.png"
+alt="ECK Trace 示意圖" width="900">&lt;figcaption>
+&lt;p>ECK Trace 示意圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;br>
 &lt;p>Trace 優點可以看到跨維度看到中間的資訊，對於找到問題以及瓶頸十分方便，但缺點就是因為需要在 Span 中產生 ID 以及內容，需要在程式裡面加入一定的套件以及調整程式碼。&lt;/p>
 &lt;br>
@@ -67,7 +87,11 @@
 &lt;p>我們可以看一下官網的說明：&lt;/p>
 &lt;p>Opentelemetry 是雲原生的可觀測性(Observability)框架，提供標準化的 API、SDK 與協議自動檢測、蒐集、導出遙測數據資料 (Metrics、Log、Trace)，並支援 W3C 定義的 Http trace-context 規範，降低開發者在搜集遙測數據上的困難度，以及方便進行後續分析以及性能的優化。&lt;/p>
 &lt;br>
-&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/6.jpg" width="500" />
+&lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-observability/6.jpg"
+alt="Opentelemetry" width="500">&lt;figcaption>
+&lt;p>Opentelemetry&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;br>
 &lt;p>在 OpenTelemetry 核心元件如下：&lt;/p>
 &lt;ul>
@@ -176,25 +200,45 @@ title="Copy code"
 &lt;h2>測試&lt;span class="absolute -mt-20" id="測試">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當你執行完上面的步驟後，你會發現有產生兩個 namespace，一個是 ingress-nginx，另一個是 opentelemetry，並且會有 OpenTelemetry Collector、Ingress Nginx Controller、Nginx 等服務，如下：&lt;/p>
 &lt;br>
-&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/1.png" width="800" />
-&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/1.png"
+alt="啟動服務" width="800">&lt;figcaption>
+&lt;p>啟動服務&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>t&lt;br>&lt;/p>
 &lt;p>我們試著打 &lt;code>http://nginx.example.com/&lt;/code> (測試網址，需要先在 /etc/hosts 綁定 Ingress Nginx Controller 咬住的 Load Balancer IP)，查看一下 Datadog 的 LOG，看看是否有收到 Nginx 的 LOG (此收集 LOG 的方式是透過在 cluster 上安裝 Datadog 的 agent)，如下：&lt;/p>
 &lt;br>
-&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/2.png" width="1200" />
+&lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/2.png"
+alt="Datadog LOG" width="1200">&lt;figcaption>
+&lt;p>Datadog LOG&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;br>
 &lt;p>接著查看 Datadog APM 的 trace，如下：&lt;/p>
 &lt;br>
-&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/3.png" width="1200" />
+&lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/3.png"
+alt="Datadog APM" width="1200">&lt;figcaption>
+&lt;p>Datadog APM&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;br>
 &lt;p>由於我們在後面目前沒有串其他服務，所以只有一個 span，之後還有另外兩篇文章是介紹如何串其他服務 (會增加服務以及部分設定)，可以參考看看：&lt;a href="https://github.com/880831ian/opentelemetry-roadrunner" target="_blank" rel="noopener">opentelemetry-roadrunner&lt;/a>、&lt;a href="https://github.com/880831ian/opentelemetry-nodejs" target="_blank" rel="noopener">opentelemetry-nodejs&lt;/a>&lt;/p>
 &lt;br>
 &lt;p>順便看一下透過 Datadog Agent 收集的 Ingress Nginx Controller 的 Metrics，如下：&lt;/p>
 &lt;br>
-&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/4.png" width="900" />
+&lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/4.png"
+alt="Datadog Ingress Nginx Controller 的 Metrics" width="900">&lt;figcaption>
+&lt;p>Datadog Ingress Nginx Controller 的 Metrics&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;br>
 &lt;p>可以用這些 Metrics 來做 Dashboard，如下：&lt;/p>
 &lt;br>
-&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/5.png" width="1000" />
+&lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/5.png"
+alt="Datadog Dashboard" width="1000">&lt;figcaption>
+&lt;p>Datadog Dashboard&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;br>
 &lt;h2>結論&lt;span class="absolute -mt-20" id="結論">&lt;/span>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>透過 OpenTelemetry Collector 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上，這樣就可以透過 Ingress Nginx Controller 的 Metrics 來做監控了，對於 RD 再開發上，有 Traces 也更方便 RD 他們找到程式的瓶頸 (有可能是服務導致的)。&lt;/p>
