@@ -288,5 +288,5 @@ alt="Google Support 回覆" width="800">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>參考&lt;span class="absolute -mt-20" id="參考">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Node 節點禁止調度（平滑維護）方式- cordon，drain，delete：&lt;a href="https://www.cnblogs.com/kevingrace/p/14412254.html" target="_blank" rel="noopener">https://www.cnblogs.com/kevingrace/p/14412254.html&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Node 節點禁止調度（平滑維護）方式- cordon，drain，delete：&lt;a href="https://www.cnblogs.com/kevingrace/p/14412254.html" target="_blank" rel="noopener">https://www.cnblogs.com/kevingrace/p/14412254.html&lt;/a>&lt;/p></description></item></channel></rss>

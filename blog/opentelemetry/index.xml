@@ -243,6 +243,6 @@ alt="Datadog Dashboard" width="1000">&lt;figcaption>
 &lt;h2>結論&lt;span class="absolute -mt-20" id="結論">&lt;/span>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>透過 OpenTelemetry Collector 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上，這樣就可以透過 Ingress Nginx Controller 的 Metrics 來做監控了，對於 RD 再開發上，有 Traces 也更方便 RD 他們找到程式的瓶頸 (有可能是服務導致的)。&lt;/p>
 &lt;br>
-&lt;h2>參考&lt;span class="absolute -mt-20" id="參考">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Configure Nginx Ingress Controller to use JSON log format：&lt;a href="https://dev.to/bzon/send-gke-nginx-ingress-controller-logs-to-stackdriver-2ih4" target="_blank" rel="noopener">https://dev.to/bzon/send-gke-nginx-ingress-controller-logs-to-stackdriver-2ih4&lt;/a>&lt;/p>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Configure Nginx Ingress Controller to use JSON log format：&lt;a href="https://dev.to/bzon/send-gke-nginx-ingress-controller-logs-to-stackdriver-2ih4" target="_blank" rel="noopener">https://dev.to/bzon/send-gke-nginx-ingress-controller-logs-to-stackdriver-2ih4&lt;/a>&lt;/p>
 &lt;p>淺談 OpenTelemetry - Collector Compoents：&lt;a href="https://ithelp.ithome.com.tw/articles/10290703" target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10290703&lt;/a>&lt;/p></description></item></channel></rss>
