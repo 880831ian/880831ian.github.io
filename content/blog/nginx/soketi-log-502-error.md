@@ -203,7 +203,7 @@ export default function () {
 
 <br>
 
-## 參考
+## 參考資料
 
 [Nginx] 解決 connect() failed (111: Connection refused) while connecting to upstream：[https://wshs0713.github.io/posts/8c1276a7/](https://wshs0713.github.io/posts/8c1276a7/)
 

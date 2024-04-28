@@ -154,6 +154,6 @@ location /aaa {
 
 <br>
 
-## 參考
+## 參考資料
 
 Make nginx to pass hostname of the upstream when reverseproxying：[https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying](https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying)

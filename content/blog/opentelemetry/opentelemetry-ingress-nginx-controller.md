@@ -118,7 +118,7 @@ weight: 3
 
 <br>
 
-## 參考
+## 參考資料
 
 Configure Nginx Ingress Controller to use JSON log format：[https://dev.to/bzon/send-gke-nginx-ingress-controller-logs-to-stackdriver-2ih4](https://dev.to/bzon/send-gke-nginx-ingress-controller-logs-to-stackdriver-2ih4)
 

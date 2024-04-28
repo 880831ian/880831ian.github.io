@@ -76,6 +76,6 @@ Google Support 經過查詢後，回覆說：這個問題是因為 Pod 被強制
 
 <br>
 
-## 參考
+## 參考資料
 
 Node 節點禁止調度（平滑維護）方式- cordon，drain，delete：[https://www.cnblogs.com/kevingrace/p/14412254.html](https://www.cnblogs.com/kevingrace/p/14412254.html)
