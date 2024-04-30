@@ -146,4 +146,87 @@ alt="檢查 LOG 是否不會再出現">&lt;figcaption>
 &lt;br>
 &lt;/div>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Routing and storage overview &lt;a href="https://cloud.google.com/logging/docs/routing/overview" target="_blank" rel="noopener">https://cloud.google.com/logging/docs/routing/overview&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Routing and storage overview &lt;a href="https://cloud.google.com/logging/docs/routing/overview" target="_blank" rel="noopener">https://cloud.google.com/logging/docs/routing/overview&lt;/a>&lt;/p></description></item><item><title>Google Kubernetes Engine CronJob 會有短暫時間沒有執行 Job</title><link>https://pin-yi.me/blog/gcp/gke-cronjob-not-working/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-cronjob-not-working/</guid><description>
+&lt;p>前陣子公司建立在 Google Kubernetes Engine 叢集上的 CronJob 服務會有短暫時間沒有執行 Job。先前情提要一下，此 CronJob 的設定是每分鐘都會執行 (圖一)，所以理當來說 Log 應該要可以看到每分鐘都有此 CronJob 的紀錄，但有時候會發生 CronJob 短暫時間都沒有執行的狀況，找了一陣子都沒有找到原因，最後開支援單請 Google 那邊協助查看，終於找到原因拉 😍。那就跟我一起看一下發生的過程，以及 Google 幫我們找到的原因，以及要如何解決等等～&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/1.png"
+alt="(圖一) CronJob schedule 時間為每分鐘執行" width="600">&lt;figcaption>
+&lt;p>(圖一) CronJob schedule 時間為每分鐘執行&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>問題發生以及問題原因&lt;span class="absolute -mt-20" id="問題發生以及問題原因">&lt;/span>
+&lt;a href="#%e5%95%8f%e9%a1%8c%e7%99%bc%e7%94%9f%e4%bb%a5%e5%8f%8a%e5%95%8f%e9%a1%8c%e5%8e%9f%e5%9b%a0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們使用 Google Cloud Platform 裡面的記錄功能，可以看到 (圖二)，在每分鐘執行的 Log 中，有短暫時間沒有執行 Job，但這個時間除了 CronJob 以外，其他的服務都是好的。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/2.png"
+alt="(圖二) Google Cloud Platform 記錄有短暫沒有執行" width="700">&lt;figcaption>
+&lt;p>(圖二) Google Cloud Platform 記錄有短暫沒有執行&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>找了一陣子都沒有找到原因，於是我們開支援單請 Google 那邊協助查看，Google 那邊找了一陣子後終於找到原因拉！！！我們一起來看看吧 (圖三)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/3.png"
+alt="(圖三) Google 支援單回覆" width="700">&lt;figcaption>
+&lt;p>(圖三) Google 支援單回覆&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>就如同 Google 所說，使用提供的指令參數來查詢，叢集在該時段有發生 master control plane 的升級，如 (圖四)，再加上我們建的這個 cluster 是使用 zonal cluster (圖五)，所以叢集只有一個 control plane，當 control plane 在更新時，會無法部署新的 workload，導致該 CronJob 沒有執行 Job。參考資料 [1]&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/4.png"
+alt="(圖四) 發生 master control plane 的升級" width="700">&lt;figcaption>
+&lt;p>(圖四) 發生 master control plane 的升級&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/5.png"
+alt="(圖五) 有問題的叢集位置類型" width="450">&lt;figcaption>
+&lt;p>(圖五) 有問題的叢集位置類型&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>Google 的建議是可以考慮使用另一個 regional cluster，讓 master node 在更新時不會只在單一地區，或是一樣使用舊的 zonal cluster，透過設定 Maintenance window 或者 Maintenance exclusions 來降低服務受到 workload 的影響。參考資料 [2]&lt;/p>
+&lt;br>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+&lt;ol>
+&lt;li>
+&lt;p>就算把 node_pool 裡面的自動升級給停掉，也沒有辦法解決此問題！因為此 master control plane (也就是 master node) 的升級，不是 worker node 的 node pool 升級，是由 GKE 負責維護的，所以他們會定期升級 control plane，也沒辦法停止此類的升級。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>若已經建立好 zonal cluster 後，想要改成 regional cluster ，是沒有辦法使用修改的方式，一定只能重建 cluster，所以大家在建立時要注意～&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>解決問題&lt;span class="absolute -mt-20" id="解決問題">&lt;/span>
+&lt;a href="#%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>最後我們選擇將叢集給整個重建，來確保 CronJob 不會有沒有執行到的狀況發生，重建叢集跟搬服務的過程很辛苦的 😰 希望大家不要發生 QQ，最後我們來看一下重建完後，在 master control plane 更新的時候，還會不會有 CronJob 沒有執行的情況發生。&lt;/p>
+&lt;br>
+&lt;p>新叢集使用 regional cluster 來建立，在 2/1 也有 master control plane 的升級。 (圖六)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/6.png"
+alt="(圖六) 發生 master control plane 的升級" width="700">&lt;figcaption>
+&lt;p>(圖六) 發生 master control plane 的升級&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>查看 CronJob 執行的紀錄可以發現並沒有 Job 沒有執行的情況發生。 (圖七)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/7.png"
+alt="(圖七) 叢集位置類型" width="700">&lt;figcaption>
+&lt;p>(圖七) 叢集位置類型&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/8.png"
+alt="(圖八) 新叢集位置類型" width="450">&lt;figcaption>
+&lt;p>(圖八) 新叢集位置類型&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>[1] Standard cluster upgrades：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades&lt;/a>&lt;/p>
+&lt;p>[2] maintenance-windows-and-exclusions：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions&lt;/a>&lt;/p></description></item></channel></rss>
