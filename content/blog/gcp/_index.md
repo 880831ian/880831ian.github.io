@@ -12,4 +12,5 @@ sidebar:
 
 {{< cards >}}
 {{< card link="gcp-log-reduce-cloud-logging-api" title="如何過濾 GCP LOG，減少 Cloud Logging API 的花費" image="/gcp/gcp-log-reduce-cloud-logging-api/cover.webp" >}}
+{{< card link="gke-cronjob-not-working" title="Google Kubernetes Engine CronJob 會有短暫時間沒有執行 Job" image="/gcp/gke-cronjob-not-working/cover.webp" >}}
 {{< /cards >}}
