@@ -1,4 +1,854 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Terraform</title><link>https://pin-yi.me/blog/terraform/</link><description>Recent content in Terraform on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/terraform/index.xml" rel="self" type="application/rss+xml"/><item><title>Terraform 如何多人共同開發 (將 tfstate 存在後端)</title><link>https://pin-yi.me/blog/terraform/terraform-tfstate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/terraform/terraform-tfstate/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Terraform</title><link>https://pin-yi.me/blog/terraform/</link><description>Recent content in Terraform on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/terraform/index.xml" rel="self" type="application/rss+xml"/><item><title>什麼是 IaC ? Terraform 又是什麼？</title><link>https://pin-yi.me/blog/terraform/terraform/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/terraform/terraform/</guid><description>
+&lt;p>跟上一篇 Snyk 一樣，本系列也是去參加 DevOpsDay Taipei 2022 活動聽到各位產業大佬目前在使用的名詞以及技術，想說回家也充實一下自己，了解一下在 DevOpsDay 最常出現的 IaC 是什麼？以及聽說很方便的 Terraform 又是什麼，將學習的過程打成此篇筆記，歡迎大家多交流，那我們就開始囉。&lt;/p>
+&lt;p>目前打算寫本篇介紹 IaC 以及 Terraform 以外，之後還想寫另外兩篇說明 Terraform 如何共同維護開發(將 .tfstate 檔案存在 gitlab or gcs 上)、怎麼把 Terraform 轉成 module，最後導入 Terragrunt 達到 DRY 等等，也會有用 Terraform 建立 GCE 以及 GKE。大家可以持續關注此篇文章，最後會在文章後附上連結 😍&lt;/p>
+&lt;br>
+&lt;h2>什麼是 IaC ?&lt;span class="absolute -mt-20" id="什麼是-iac-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-iac-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>IaC 全名是 Infrastructure as Code (基礎設施即代碼)，從字面意思就可以略知一二，也就是把基礎設施變成程式碼，在還沒有這些 IaC 工具之前，大家都是開啟 WEB UI 畫面來進行建置或設定，雖然使用 UI 點一點就建好了，但這些步驟都沒有被紀錄下來 (git)，也沒有辦法透過其他人一起 Review 的方式來避免人為操作錯誤。因此有了 IaC 這些工具，可以將實際的操作流程，轉換成程式碼或是其他像是 JSON、Yaml 的方式給紀錄下來，以下是導入 IaC 帶來的好處：&lt;/p>
+&lt;br>
+&lt;ol>
+&lt;li>建置 CI/CD 自動化 (不需要再仰賴 UI 進行操作)&lt;/li>
+&lt;li>版本控制 (大家可以透過 MR 規定 code review，避免出現人為錯誤)&lt;/li>
+&lt;li>重複使用 (可以將常用的變成參數代入，減少建置時間)&lt;/li>
+&lt;li>環境一致性&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>(以上 IaC 說明來自 &lt;a href="https://blog.wu-boy.com/2021/02/introduction-to-infrastructure-as-code-terraform-vs-pulumi/" target="_blank" rel="noopener">小惡魔 - 初探 Infrastructure as Code 工具 Terraform vs Pulumi &lt;/a>文章，寫得真的很好，推推)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/iac.png"
+alt="Infrastructure as Code 初心企服行研07：认识「基础设施即代码」(Infrastructure as Code) — 初心内参" width="800">&lt;figcaption>
+&lt;p>Infrastructure as Code &lt;a href="https://www.36dianping.com/info/15473.html" target="_blank" rel="noopener">初心企服行研07：认识「基础设施即代码」(Infrastructure as Code) — 初心内参&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>Terraform 又是什麼？&lt;span class="absolute -mt-20" id="terraform-又是什麼">&lt;/span>
+&lt;a href="#terraform-%e5%8f%88%e6%98%af%e4%bb%80%e9%ba%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>IaC 的工具有很多種，接著我們就來介紹其中一個工具 - Terraform，Terraform 是什麼呢？根據官網的說明可以知道，Terraform 是 &lt;a href="https://www.hashicorp.com/" target="_blank" rel="noopener">HashiCorp&lt;/a> 所開發的基礎設施即代碼工具。它可以使用人類方便讀的配置文件來定義資源和基礎設施，以下有使用 Terraform 幾個優點：&lt;/p>
+&lt;br>
+&lt;ol>
+&lt;li>Terraform 可以管理多個雲平台上的基礎架構&lt;/li>
+&lt;li>使用人類可讀的配置語言來幫助我們快速編寫基礎設施代碼&lt;/li>
+&lt;li>可以將配置提交給版本控制，安全地在基礎架構上進行協作&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;h3>管理任何基礎設施&lt;span class="absolute -mt-20" id="管理任何基礎設施">&lt;/span>
+&lt;a href="#%e7%ae%a1%e7%90%86%e4%bb%bb%e4%bd%95%e5%9f%ba%e7%a4%8e%e8%a8%ad%e6%96%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Terraform 提供插件讓 Terraform 可以通過其 API 與雲平台和其他服務進行交互。HashiCorp 和 Terraform 社區編寫了 3193 多個提供商來管理像 AWS、Azure、GCP、Kubernetes、Helm、GitHub 等資源，可以到 &lt;a href="https://registry.terraform.io/browse/providers?_gl=1*a2tlfj*_ga*MTc0NDA4ODQ5MC4xNjYzOTI0ODI5*_ga_P7S46ZYEKW*MTY2NDE4MjM4NC40LjEuMTY2NDE4Mjc5Ny4wLjAuMA.." target="_blank" rel="noopener">Terraform Registry&lt;/a> 查看更多平台或服務的提供者，當然如果沒有找到想要的提供者，也可以自己編寫自己的套件。&lt;/p>
+&lt;br>
+&lt;h3>標準化部署工作流程&lt;span class="absolute -mt-20" id="標準化部署工作流程">&lt;/span>
+&lt;a href="#%e6%a8%99%e6%ba%96%e5%8c%96%e9%83%a8%e7%bd%b2%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>提供商會將基礎設施的每個單元 (例如建立 VM 或是 VPC) 定義為資源。你可以將來自不同提供者的資源組合，變成模組，讓我們可以用一致的語言和工作流程去管理他們。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/terraform.jpg"
+alt="Terraform 什麼是 Terraform 的基礎設施即代碼？" width="800">&lt;figcaption>
+&lt;p>Terraform &lt;a href="https://learn.hashicorp.com/tutorials/terraform/infrastructure-as-code?in=terraform/aws-get-started" target="_blank" rel="noopener">什麼是 Terraform 的基礎設施即代碼？&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>安裝 Terraform&lt;span class="absolute -mt-20" id="安裝-terraform">&lt;/span>
+&lt;a href="#%e5%ae%89%e8%a3%9d-terraform" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>安裝 Terraform 的方式有很多種，我就以我在使用的 Mac OS 為例，其他可以參考 &lt;a href="https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started#install-terraform" target="_blank" rel="noopener">Install Terraform&lt;/a>：&lt;/p>
+&lt;br>
+&lt;h3>安裝步驟&lt;span class="absolute -mt-20" id="安裝步驟">&lt;/span>
+&lt;a href="#%e5%ae%89%e8%a3%9d%e6%ad%a5%e9%a9%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>先安裝 HashiCorp tap，這是 HashiCorp 在 Homebrew 的儲存庫：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>brew tap hashicorp/tap&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol start="2">
+&lt;li>使用 hashicorp/tap/terraform&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>brew install hashicorp/tap/terraform&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>如何驗證是否安裝成功&lt;span class="absolute -mt-20" id="如何驗證是否安裝成功">&lt;/span>
+&lt;a href="#%e5%a6%82%e4%bd%95%e9%a9%97%e8%ad%89%e6%98%af%e5%90%a6%e5%ae%89%e8%a3%9d%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>打開一個新的 Terminal，使用 &lt;code>terraform -help&lt;/code> 檢查是否有安裝成功，也可以在 &lt;code>-help&lt;/code> 後面加入參數來查看該參數的功能與更多訊息&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/1.png"
+alt="驗證 Terraform 安裝成功 Install Terraform" width="800">&lt;figcaption>
+&lt;p>驗證 Terraform 安裝成功 &lt;a href="https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started#install-terraform" target="_blank" rel="noopener">Install Terraform&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>自動補全指令&lt;span class="absolute -mt-20" id="自動補全指令">&lt;/span>
+&lt;a href="#%e8%87%aa%e5%8b%95%e8%a3%9c%e5%85%a8%e6%8c%87%e4%bb%a4" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>可以啟動終端機上的 Tab 自動補全功能，執行以下指令，再重開終端機，就會出現了：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>terraform -install-autocomplete&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>想要解除自動補全 (雖然應該不會拉)，執行以下指令：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>terraform -uninstall-autocomplete&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/8.png"
+alt="放上成果圖片" width="800">&lt;figcaption>
+&lt;p>放上成果圖片&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>快速入門&lt;span class="absolute -mt-20" id="快速入門">&lt;/span>
+&lt;a href="#%e5%bf%ab%e9%80%9f%e5%85%a5%e9%96%80" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當我們安裝好，想要最快的了解 Terraform ，當然是自己動手做一次，我們依照官網的教學，可以在一分鐘內使用 Docker 配置好 NGINX 伺服器，那我們開始囉！&lt;/p>
+&lt;br>
+&lt;ol>
+&lt;li>首先，我們必須要先安裝好 Docker，下載 &lt;a href="https://docs.docker.com/desktop/install/mac-install/" target="_blank" rel="noopener">Mac 版 Docker 桌面&lt;/a>&lt;/li>
+&lt;li>建立一個資料夾，並進入該資料夾內&lt;/li>
+&lt;li>將以下 Terraform 配置文件貼到檔案中，並取名 &lt;code>main.tf&lt;/code>：(&lt;a href="https://github.com/880831ian/terraform/tree/master/docker_container" target="_blank" rel="noopener">同步到 GitHub 需要程式碼的可以前往查看&lt;/a>)&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">provider&lt;/span> &lt;span style="color:#e6db74">&amp;#34;docker&amp;#34;&lt;/span> {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">resource&lt;/span> &lt;span style="color:#e6db74">&amp;#34;docker_image&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;nginx&amp;#34;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">name&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;nginx:1.23&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">keep_locally&lt;/span> = &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">resource&lt;/span> &lt;span style="color:#e6db74">&amp;#34;docker_container&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;nginx&amp;#34;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">image&lt;/span> = &lt;span style="color:#a6e22e">docker_image&lt;/span>.&lt;span style="color:#a6e22e">nginx&lt;/span>.&lt;span style="color:#a6e22e">name&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">name&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;nginx&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">ports&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">internal&lt;/span> = &lt;span style="color:#ae81ff">80&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">external&lt;/span> = &lt;span style="color:#ae81ff">8000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol start="4">
+&lt;li>再開一個檔案取名為 &lt;code>provider.tf&lt;/code>，將以下配置文件貼到檔案中：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">terraform&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">required_providers&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">docker&lt;/span> = {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">source&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;kreuzwerker/docker&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">version&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;~&amp;gt; 2.13.0&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>(以上程式碼來自官網 &lt;a href="https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started#quick-start-tutorial" target="_blank" rel="noopener">安裝 Terraform#快速入門&lt;/a> 加上小修改)&lt;/p>
+&lt;br>
+&lt;p>先來簡單說明一下 Terraform 程式碼格式，Terraform 的檔案副檔名是 &lt;code>*.tf&lt;/code>，採用名為 HCL (HashiCorp Configuration Language) 的組態語言來描述基礎架構。&lt;/p>
+&lt;p>(補充說明：只要是同一個目錄下有 .tf 檔案結尾的，Terraform 都會去執行，所以檔案名稱可以自己取名，但為了方便管理都會使用 main、provider、backend、output 的檔案來放置對應的內容)&lt;/p>
+&lt;p>HCL 是一種宣告式的語言，讓你直接寫下期望的基礎架構，而不是寫下過程的每一個步驟。&lt;/p>
+&lt;br>
+&lt;h4>檔案介紹&lt;span class="absolute -mt-20" id="檔案介紹">&lt;/span>
+&lt;a href="#%e6%aa%94%e6%a1%88%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們先看 &lt;code>provider.tf&lt;/code> 檔案，檔案內會先寫好需要的供應商來源以及版本 (版本有點像是對應供應商提供的 api 版本)&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">terraform&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">required_providers&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#960050;background-color:#1e0010">供應商名稱&lt;/span> &lt;span style="color:#f92672">=&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">source&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;供應商來源&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">version&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;~&amp;gt; 所使用的版本&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>&lt;code>main.tf&lt;/code> 檔案內的 &lt;code>provider&lt;/code> 區塊會寫供應商的相關設定，假設我們使用 google 就會在裡面先設定好 project id 等。&lt;/p>
+&lt;p>&lt;code>resource&lt;/code> 區塊會需要寫雲端資源名稱以及自定義的名稱，雲端資源名稱這項是不可以更改的，假設我們要使用 docker 的 container 服務，這邊就需要填寫 docker_container。自定義的名稱可以是你想要為使用這個雲端資源去定義的名稱。&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">provider&lt;/span> &lt;span style="color:#e6db74">&amp;#34;供應商名稱&amp;#34;&lt;/span> {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">resource&lt;/span> &lt;span style="color:#e6db74">&amp;#34;雲端資源名稱&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;自定義的名稱&amp;#34;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#960050;background-color:#1e0010">屬性&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#960050;background-color:#1e0010">值&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>所以我們已上面的 Docker 配置好 NGINX 伺服器為例，provider 我們這次使用的是 &lt;code>docker&lt;/code>， resource 我們可以拆開來寫，&lt;/p>
+&lt;p>像是第一個 resource &lt;code>docker_image&lt;/code> 我們幫他取叫 nginx，裡面就是放有關 image 的設定，詳細的 image 設定可以參考 &lt;a href="https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/image" target="_blank" rel="noopener">Resource (docker_image)&lt;/a>，&lt;/p>
+&lt;p>第二個 resource &lt;code>docker_container&lt;/code> 一樣叫 nginx，裡面用的 image 是拿前面的 docker_image resource name 來使用，一樣詳細可以參考 &lt;a href="https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/container" target="_blank" rel="noopener">Resource (docker_container)&lt;/a>。&lt;/p>
+&lt;br>
+&lt;p>小提醒，如果不知道要怎麼寫 provider 供應商設定，可以打開 &lt;a href="https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/container" target="_blank" rel="noopener">terraform 官網找到該供應商&lt;/a>，點選右邊的 USE PROVIDER&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/11.png"
+alt="官方教學" width="400">&lt;figcaption>
+&lt;p>官方教學&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到官方教學要怎麼使用這個供應商。&lt;/p>
+&lt;br>
+&lt;h4>指令說明&lt;span class="absolute -mt-20" id="指令說明">&lt;/span>
+&lt;a href="#%e6%8c%87%e4%bb%a4%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>接著有幾個指令要帶大家認識：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>terraform init&lt;/code>：初始化項目，下載 tf 檔案中所需要的外掛套件&lt;/li>
+&lt;li>&lt;code>terraform plan&lt;/code>：會產生一份執行計劃。上面會寫著它將會做哪些事，你可以驗證是否符合你預期的設計&lt;/li>
+&lt;li>&lt;code>terraform apply&lt;/code>：實際運作，把基礎架構建置完成。在完成之後，會把目前的狀態儲存到一份檔案中 (*.tfstate)&lt;/li>
+&lt;li>&lt;code>terraform destroy&lt;/code>：會銷毀用 Terraform 起的服務&lt;/li>
+&lt;li>&lt;code>terraform fmt&lt;/code>：幫你整理好 tf 文件&lt;/li>
+&lt;li>&lt;code>terraform validate&lt;/code>：靜態檢查 tf 文件&lt;/li>
+&lt;/ul>
+&lt;p>附上懶人指令&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>alias ti=&amp;#39;terraform init&amp;#39;
+alias ta=&amp;#39;terraform apply&amp;#39;
+alias tp=&amp;#39;terraform plan&amp;#39;
+alias td=&amp;#39;terraform destroy&amp;#39;&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>由於在 apply 的時候會跳出詢問視窗，如果是要寫成腳本，可以把指令改成 &lt;code>terraform apply -auto-approve&lt;/code> 就不需要輸入 yes 了！&lt;/p>
+&lt;br>
+&lt;h4>實際操作&lt;span class="absolute -mt-20" id="實際操作">&lt;/span>
+&lt;a href="#%e5%af%a6%e9%9a%9b%e6%93%8d%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>有上面的指令後，我們來實際操作看看：&lt;/p>
+&lt;br>
+&lt;ol>
+&lt;li>首先到該 &lt;code>main.tf&lt;/code> 檔案目錄下，先使用 &lt;code>terraform apply&lt;/code> 來測試看看：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/2.png"
+alt="無法直接執行 apply" width="900">&lt;figcaption>
+&lt;p>無法直接執行 apply&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>會發現沒有辦法直接用 &lt;code>terraform apply&lt;/code> 指令來建置服務，我們看一下他提示的說明，他說他找不到 lock file，需要先進行初始化才可以執行，所以我們的建置流程是先 init &amp;ndash;&amp;gt; apply&lt;/p>
+&lt;br>
+&lt;h5>terraform init&lt;span class="absolute -mt-20" id="terraform-init">&lt;/span>
+&lt;a href="#terraform-init" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ol start="2">
+&lt;li>我們先執行 &lt;code>terraform init&lt;/code>，可以看到他會下載 tf 檔案中所需要的外掛套件 (docker)&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/3.png"
+alt="terraform init" width="800">&lt;figcaption>
+&lt;p>terraform init&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>當我們初始化後，資料夾會多一個檔案 (.terraform.lock.hcl) 以及資料夾 (.terraform)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/9.png"
+alt="init 前後檔案差異" width="650">&lt;figcaption>
+&lt;p>init 前後檔案差異&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>&lt;code>.terraform.lock.hcl&lt;/code>：是 Terraform 中用於鎖定和管理外部提供者（providers）版本的檔案。它的主要功能是確保在不同的環境中使用相同的外部提供者版本，以避免在團隊合作或不同環境中引入不一致性和問題。&lt;/p>
+&lt;p>&lt;code>.terraform/&lt;/code>：資料夾主要用於存儲初始化和管理基礎架構相關的臨時文件。&lt;/p>
+&lt;br>
+&lt;h5>terraform plan&lt;span class="absolute -mt-20" id="terraform-plan">&lt;/span>
+&lt;a href="#terraform-plan" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ol start="3">
+&lt;li>接著我們使用 &lt;code>terraform plan&lt;/code> 來查看我們的計劃，可以看到他會列出我們所寫的 tf 裡面有用到的 resource，除了我們有設定的屬性，其他的屬性也會顯示出來，可以更方便地讓我們知道這個 resource 有哪些屬性可以設定&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/4.png"
+alt="terraform plan" width="600">&lt;figcaption>
+&lt;p>terraform plan&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h5>terraform apply&lt;span class="absolute -mt-20" id="terraform-apply">&lt;/span>
+&lt;a href="#terraform-apply" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ol start="4">
+&lt;li>最後我們檢查都沒有問題，就可以使用 &lt;code>terraform apply&lt;/code> 來建置，apply 其實跟 plan 一樣都會先讓我們看一下計劃，但會跳出詢問是否要執行，除非你輸入 &lt;code>yes&lt;/code>，否則就跟 plan 單純顯示計劃內容，最後我們就可以看到他成功在 docker 上面建立 nginx 服務&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/5.png"
+alt="terraform apply" width="800">&lt;figcaption>
+&lt;p>terraform apply&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/6.png"
+alt="查看 docker nginx 以及檢查其服務" width="800">&lt;figcaption>
+&lt;p>查看 docker nginx 以及檢查其服務&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>當我們 apply 完，服務也建立後，查看一下資料夾後會發現，又多了一個檔案 &lt;code>terraform.tfstate&lt;/code>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/10.png"
+alt="多了一個檔案 terraform.tfstate" width="800">&lt;figcaption>
+&lt;p>多了一個檔案 terraform.tfstate&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>&lt;code>terraform.tfstate&lt;/code>： 是 Terraform 的狀態檔案，它包含了基礎架構的狀態和資源的詳細信息。預設情況下，這個檔案是本地的並且只存在於 Terraform 初始化和操作的目錄中。(但要如何實現共同維護同一個 IaC 呢，敬待後續分享 🤣)&lt;/p>
+&lt;br>
+&lt;h5>terraform destory&lt;span class="absolute -mt-20" id="terraform-destory">&lt;/span>
+&lt;a href="#terraform-destory" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ol start="5">
+&lt;li>另外，當你想要移除服務時，可以使用 &lt;code>terraform destroy&lt;/code> 來將服務給移除&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/7.png"
+alt="terraform destroy" width="700">&lt;figcaption>
+&lt;p>terraform destroy&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h5>terraform import&lt;span class="absolute -mt-20" id="terraform-import">&lt;/span>
+&lt;a href="#terraform-import" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ol start="6">
+&lt;li>最後還有一個蠻重要的，就是我們已經有很多服務都是使用 WEB UI 方式建立的服務，那我們要怎麼把它變成 tf 檔案呢？&lt;/li>
+&lt;/ol>
+&lt;p>跟我們剛剛說的 &lt;code>terraform.tfstate&lt;/code> 檔案有關，他會儲存我們 IaC 的狀態，所以我們才可以透過他知道現在是對資源做新增、修改、刪除哪個操作&lt;/p>
+&lt;p>那當這個檔案不見時，如果再重新下 &lt;code>terraform apply&lt;/code>，他會認為你是新增狀態，但實際上 docker 服務還是啟動的狀態，所以就會錯誤，會跟你說他已經存在。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/12.png"
+alt="測試沒有 terraform.tfstate 直接下 terraform apply" width="700">&lt;figcaption>
+&lt;p>測試沒有 terraform.tfstate 直接下 terraform apply&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>所以這時候我們要把線上服務的資源轉成 tf ，第一步要先把 resource 的框架給寫出來，其他可以先留空白，如下 &lt;code>main.tf&lt;/code>：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">provider&lt;/span> &lt;span style="color:#e6db74">&amp;#34;docker&amp;#34;&lt;/span> {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">resource&lt;/span> &lt;span style="color:#e6db74">&amp;#34;docker_image&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;nginx&amp;#34;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">name&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;nginx:1.23&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">keep_locally&lt;/span> = &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">resource&lt;/span> &lt;span style="color:#e6db74">&amp;#34;docker_container&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;nginx&amp;#34;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>接著使用 &lt;code>terraform import&lt;/code> 來將線上服務的資源套用到我們 main.tf 裡面的 resource，所以會長得像：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">terraform&lt;/span> &lt;span style="color:#a6e22e">import&lt;/span> &lt;span style="color:#a6e22e">docker_container&lt;/span>.&lt;span style="color:#a6e22e">nginx&lt;/span> &lt;span style="color:#ae81ff">7&lt;/span>&lt;span style="color:#a6e22e">f363ea3f6a64b5432ae3627f490b3e297abf80f196bce9c028ec2eb82706f12&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>import 後面會加上 main.tf resource 名稱 docker_container，以及我們取名的 nginx，最後帶 container id (&lt;code>docker ps&lt;/code> 查詢)，就可以匯出 terraform.tfstate 檔案囉，詳細的 import 可以參考&lt;a href="https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/container#import" target="_blank" rel="noopener">每個供應商資源的網頁(這邊以 docker 為例)&lt;/a>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/13.png"
+alt="terraform import 匯出 terraform.tfstate" width="700">&lt;figcaption>
+&lt;p>terraform import 匯出 terraform.tfstate&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h5>terraform show&lt;span class="absolute -mt-20" id="terraform-show">&lt;/span>
+&lt;a href="#terraform-show" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>當我們匯出後，可以看一下 terraform.tfstate，它會是一個 json 格式，如果要轉成 tf 格式，還需要使用 &lt;code>terraform show&lt;/code> 來將 terraform.tfstate 檔案轉成 tf 格式，如下：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/14.png"
+alt="terraform show 將 terraform.tfstate 轉成 tf" width="700">&lt;figcaption>
+&lt;p>terraform show 將 terraform.tfstate 轉成 tf&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>如果透過上述的方式來轉成 tf，會發現在重新 apply 時，會出現錯誤，這邊以 gce 的當範例，轉完的 tf 設定，有些是 tf 不支援的參數，只會顯示在 tfstate，所以還需要手動刪除。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/15.png"
+alt="轉換後還需將不用的設定給移除" width="700">&lt;figcaption>
+&lt;p>轉換後還需將不用的設定給移除&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>初探 Infrastructure as Code 工具 Terraform vs Pulumi：&lt;a href="https://blog.wu-boy.com/2021/02/introduction-to-infrastructure-as-code-terraform-vs-pulumi/" target="_blank" rel="noopener">https://blog.wu-boy.com/2021/02/introduction-to-infrastructure-as-code-terraform-vs-pulumi/&lt;/a>&lt;/p>
+&lt;p>今晚我想認識 Terraform：&lt;a href="https://ithelp.ithome.com.tw/articles/10233759" target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10233759&lt;/a>&lt;/p></description></item><item><title>使用 Terraform 建立 Google Compute Engine</title><link>https://pin-yi.me/blog/terraform/terraform-gce/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/terraform/terraform-gce/</guid><description>
+&lt;p>嗨嗨大家好，距離上一篇筆記又隔了 3 個月，最近公司有專案在忙，沒時間把上次提到的 Terraform 應用筆記寫完，現在他來拉～～～ 😂 我們這次的主題是使用 Terraform 來建立 Google Compute Engine 的機器，想知道要怎麼用一段程式碼就可以建立、修改、刪除 Google Compute Engine 的機器一定要來看這一篇～我們開始囉 🧑‍💻&lt;/p>
+&lt;br>
+&lt;h2>撰寫 Google Compute Engine tf 檔案&lt;span class="absolute -mt-20" id="撰寫-google-compute-engine-tf-檔案">&lt;/span>
+&lt;a href="#%e6%92%b0%e5%af%ab-google-compute-engine-tf-%e6%aa%94%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>相信大家有先看完上一篇 &lt;a href="https://blog.pin-yi.me/terraform/" target="_blank" rel="noopener">什麼是 IaC ? Terraform 又是什麼？&lt;/a> 才來看這一篇的對吧 😎，對於 Terraform 的程式架構及指令，我們這邊就不多做介紹，我們直接來看程式要怎麼寫～(程式碼主要是參考&lt;a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance" target="_blank" rel="noopener">官方文件&lt;/a>，加上一些其他的設定來做介紹，程式碼也會同步到 Github ，需要的也可以去 Clone 來使用歐！ &lt;a href="https://github.com/880831ian/terraform-gce" target="_blank" rel="noopener">Github 程式碼連結&lt;/a> )&lt;/p>
+&lt;br>
+&lt;p>小提醒：由於程式碼較長，我將他拆開來說明 💖&lt;/p>
+&lt;br>
+&lt;h3>選擇供應者以及對應的專案&lt;span class="absolute -mt-20" id="選擇供應者以及對應的專案">&lt;/span>
+&lt;a href="#%e9%81%b8%e6%93%87%e4%be%9b%e6%87%89%e8%80%85%e4%bb%a5%e5%8f%8a%e5%b0%8d%e6%87%89%e7%9a%84%e5%b0%88%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">provider&lt;/span> &lt;span style="color:#e6db74">&amp;#34;google&amp;#34;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">project&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;gcp-20210526-001&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>由於我們要建立的 Google Compute Engine 是由 Google 所提供的 api 來建立的，所以一開始要先設定好提供者的名稱 google 以及我們要在哪一個 GCP 的專案 ID&lt;/p>
+&lt;br>
+&lt;h3>resource 設定&lt;span class="absolute -mt-20" id="resource-設定">&lt;/span>
+&lt;a href="#resource-%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來的設定都會放在以下的 google_compute_instance resource 內，為了方便介紹，就不會標明 google_compute_instance，詳細完整程式碼請參考 GitLab &lt;a href="https://github.com/880831ian/terraform-gce" target="_blank" rel="noopener">Github 程式碼連結&lt;/a>&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">resource&lt;/span> &lt;span style="color:#e6db74">&amp;#34;google_compute_instance&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;default&amp;#34;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h4>基本設定&lt;span class="absolute -mt-20" id="基本設定">&lt;/span>
+&lt;a href="#%e5%9f%ba%e6%9c%ac%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">name&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;test&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">description&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;我是 test 機器&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">machine_type&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;n2-standard-8&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">zone&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;asia-east1-b&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tags&lt;/span> = [&lt;span style="color:#e6db74">&amp;#34;test&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">labels&lt;/span> = {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">env&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;test&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">deletion_protection&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;true&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>name：GCE 要求資源的唯一名稱。如果有更改此項會直接強制創建的新資源 &lt;font color='red'>(必填)&lt;/font>&lt;/li>
+&lt;li>description：對此資源的簡單說明 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>machine_type：要創建的機器類型 &lt;font color='red'>(必填)&lt;/font>&lt;/li>
+&lt;li>zone：創建機器的所在區域，若沒有填寫，則會使用提供者的區域 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>tags：附加到實體的網路標籤列表 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>labels：一組分配給 disk 的 key/value 標籤 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>deletion_protection：刪除保護，預設是 &lt;code>false&lt;/code>，當我們使用 &lt;code>terraform destroy&lt;/code> 刪除 GCE 時，必須先改成 &lt;code>false&lt;/code>，才可以刪除，否則會無法刪除且 Terraform 運行也會失敗，算是一個保護機制，後面再刪除 Google Compute Engine 時會測試畫面 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h4>啟動 disk 設定&lt;span class="absolute -mt-20" id="啟動-disk-設定">&lt;/span>
+&lt;a href="#%e5%95%9f%e5%8b%95-disk-%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">boot_disk&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">initialize_params&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">image&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;debian-cloud/debian-10-buster-v20210512&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">type&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;pd-balanced&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">size&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;50&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>image：初始化此 disk 的 image &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>type：GCE disk 類型 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>size：image 大小，已 &lt;code>GB&lt;/code> 為單位，如果未指定，將會繼承其初始化 disk 的 image 大小 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h4>網路設定&lt;span class="absolute -mt-20" id="網路設定">&lt;/span>
+&lt;a href="#%e7%b6%b2%e8%b7%af%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">network_interface&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">network&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;projects/rd-gateway/global/networks/rd-common&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">subnetwork&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;projects/rd-gateway/regions/asia-east1/subnetworks/rd-common-asia-east1-pid-cicd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">access_config&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">nat_ip&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>network：設定附加到的網路名稱或是 self_link &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>subnetwork：設定附加到的子網路名稱或是 self_link &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>nat_ip：如果想要有外網的 ip，必須加上此參數，才會產生一組外網 ip &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h4>權限設定&lt;span class="absolute -mt-20" id="權限設定">&lt;/span>
+&lt;a href="#%e6%ac%8a%e9%99%90%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">service_account&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">email&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;676962704505-compute@developer.gserviceaccount.com&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">scopes&lt;/span> = [&lt;span style="color:#e6db74">&amp;#34;storage-rw&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;logging-write&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;monitoring-write&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;service-control&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;service-management&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;trace&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>email：服務帳戶電子郵件地址。如果未提供，則使用預設的 Google Compute Engine 服務帳戶 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>scopes：服務範圍列表，可以&lt;a href="https://cloud.google.com/sdk/gcloud/reference/alpha/compute/instances/set-scopes#--scopes" target="_blank" rel="noopener">點我查看範圍&lt;/a>的完整列表 &lt;font color='red'>(必填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>以上只是我在建立 Google Compute Engine 最簡單的設定，當然還有很多其他的設定，可以參考 &lt;a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance" target="_blank" rel="noopener">registry.terraform.io/providers (google_compute_instance)&lt;/a> 裡面有更多的 resource 設定，有需要的就自己來看看吧 🧐&lt;/p>
+&lt;br>
+&lt;h2>建立 Google Compute Engine&lt;span class="absolute -mt-20" id="建立-google-compute-engine">&lt;/span>
+&lt;a href="#%e5%bb%ba%e7%ab%8b-google-compute-engine" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當我們寫好 Google Compute Engine tf 檔案後，我們接著把他建立，建立前要先使用 &lt;code>terraform init&lt;/code> 來做初始化&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/1.png"
+alt="terraform init" width="700">&lt;figcaption>
+&lt;p>terraform init&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接著可以先使用 &lt;code>terraform plan&lt;/code> 來查看我們的設定是否是我們想要的，或是直接用 &lt;code>terraform apply&lt;/code> 來建立 Google Compute Engine&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/2.png"
+alt="terraform apply" width="700">&lt;figcaption>
+&lt;p>terraform apply&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到成功建立我們的 test Google Compute Engine（也可以看到因為我們有開 nat_ip 所以有外部 IP）&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/3.png"
+alt="GCP Google Compute Engine" width="700">&lt;figcaption>
+&lt;p>GCP Google Compute Engine&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>修改 Google Compute Engine&lt;span class="absolute -mt-20" id="修改-google-compute-engine">&lt;/span>
+&lt;a href="#%e4%bf%ae%e6%94%b9-google-compute-engine" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當我們發現我們建立的 Google Compute Engine 參數有錯，想要修改時，我們只需要修改程式碼部分，並重新下一次 &lt;code>terraform apply&lt;/code> 來修改 Google Compute Engine，就會看到以下畫面 (有些設定檔是不能修改的，若修改他會重新創建一個新的機器，像是 name 之類的，使用時要小心一點 😉)&lt;/p>
+&lt;p>我們拿剛剛提到的 nat_ip，我們先把它註解掉，再下 &lt;code>terraform apply&lt;/code> 看看機器有什麼變化～&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/4.png"
+alt="terraform changed" width="700">&lt;figcaption>
+&lt;p>terraform changed&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到他會提示說，他會改變 network_interface，也移除 access_config 的設定，執行後的 Resources 也會從剛剛的 added 變成 changed，我們看一下 GCP 有沒有改變：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/5.png"
+alt="terraform changed" width="700">&lt;figcaption>
+&lt;p>terraform changed&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到原本的外部 IP 位置被改掉了～ &lt;font color='red'>最後提醒&lt;/font>：如果有使用 terraform 來修改資源設定，不能動到特定的項目，不然他的流程是先把原本的給刪掉，再重新建立一個新的，原本的機器沒有備份，東西就會不見歐～&lt;/p>
+&lt;br>
+&lt;h2>刪除 Google Compute Engine&lt;span class="absolute -mt-20" id="刪除-google-compute-engine">&lt;/span>
+&lt;a href="#%e5%88%aa%e9%99%a4-google-compute-engine" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>最後假如我們要刪除 Google Compute Engine，也可以使用 terraform 的指令來刪除，我們順便來測試一下上面有設定的 deletion_protection 刪除保護機制是不是正常～&lt;/p>
+&lt;p>目前 deletion_protection 還是 &lt;code>true&lt;/code>，我們直接下 &lt;code>terraform destroy&lt;/code>，看看是否可以刪除 Google Compute Engine&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/6.png"
+alt="terraform destroy" width="900">&lt;figcaption>
+&lt;p>terraform destroy&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到他會提醒你說 Deletion Protection is enabled，必須先把他改成 &lt;code>false&lt;/code> terraform apply 後才可以刪除～&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/7.png"
+alt="改成 false 在下 terraform apply" width="900">&lt;figcaption>
+&lt;p>改成 false 在下 terraform apply&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>現在 deletion_protection 是 &lt;code>false&lt;/code>，我們就可以下 &lt;code>terraform destroy&lt;/code> 來刪除 Google Compute Engine 🔪&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/8.png"
+alt="terraform destroy" width="700">&lt;figcaption>
+&lt;p>terraform destroy&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/9.png"
+alt="Google Compute Engine 刪除中&amp;amp;hellip;" width="500">&lt;figcaption>
+&lt;p>Google Compute Engine 刪除中&amp;hellip;&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>以上就是簡單的使用 Terraform 建立 Google Compute Engine 介紹囉～歡迎大家留言指教，明天的文章是介紹如何使用 Terraform 建立 GKE 💕&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>registry.terraform.io/providers (google_compute_instance)：&lt;a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance" target="_blank" rel="noopener">https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance&lt;/a>&lt;/p></description></item><item><title>使用 Terraform 建立 Google Kubernetes Engine</title><link>https://pin-yi.me/blog/terraform/terraform-gke/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/terraform/terraform-gke/</guid><description>
+&lt;p>我們接續昨天的建立 Google Kubernetes Engine 文章，今天要來介紹的是如何用 Terraform 建立 Google Kubernetes Engine，由於使用 terraform 去建立、修改、刪除的指令大家應該都清楚了，那我今天的文章就不在多說，直接來介紹一下要怎麼撰寫 Google Kubernetes Engine tf 檔案 😏&lt;/p>
+&lt;br>
+&lt;h2>撰寫 Google Kubernetes Engine tf 檔案&lt;span class="absolute -mt-20" id="撰寫-google-kubernetes-engine-tf-檔案">&lt;/span>
+&lt;a href="#%e6%92%b0%e5%af%ab-google-kubernetes-engine-tf-%e6%aa%94%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>程式碼會同步到 Github ，需要的也可以去 Clone 來使用歐！ &lt;a href="https://github.com/880831ian/terraform-gke" target="_blank" rel="noopener">Github 程式碼連結&lt;/a>，小提醒：由於程式碼較長，我將他拆開來說明 💖&lt;/p>
+&lt;p>由於等等程式碼較長，所以我在前面這邊先做說明，GKE 的結構是 叢集(cluster) &amp;gt; 節點池(node_pool) &amp;gt; 節點(node)，本次的介紹範例，會有一個叢集裡面有一個節點池，節點池裡面有 6 個節點數量，範例裡面會加上我比較常用到的一些設定，以及一些文件裡面的用法，大家可以依照自己的需求來使用參數：&lt;/p>
+&lt;br>
+&lt;h3>限制使用的版本&lt;span class="absolute -mt-20" id="限制使用的版本">&lt;/span>
+&lt;a href="#%e9%99%90%e5%88%b6%e4%bd%bf%e7%94%a8%e7%9a%84%e7%89%88%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在上一篇 &lt;a href="https://pin-yi.me/terraform-gce/" target="_blank" rel="noopener">使用 Terraform 建立 Google Compute Engine&lt;/a>，我們知道 Terraform 其實就是對應的提供商，提供對應的 api 來讓我們可以用 terraform 去建置很多 IaC，但供應商提供的 api 會隨著版本而有所更動，可能換了一個版本，原本可以使用的 resource 參數就會有所不同，所以我們可以在一開始，先設定好這隻 tf 要使用的供應商及對應的版本，可以參考以下程式碼：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">terraform&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">required_providers&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">google&lt;/span> = {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">source&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;hashicorp/google&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">version&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;~&amp;gt; 4.38.0&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到我們把 google 這個供應商裡面設定好他的 source 以及 version，這樣就算之後 goolge 有更新 terraform 的 api，我們也不需要去更換參數就可以使用了～&lt;/p>
+&lt;br>
+&lt;h3>選擇供應者以及對應的專案&lt;span class="absolute -mt-20" id="選擇供應者以及對應的專案">&lt;/span>
+&lt;a href="#%e9%81%b8%e6%93%87%e4%be%9b%e6%87%89%e8%80%85%e4%bb%a5%e5%8f%8a%e5%b0%8d%e6%87%89%e7%9a%84%e5%b0%88%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">provider&lt;/span> &lt;span style="color:#e6db74">&amp;#34;google&amp;#34;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">project&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;project&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>除了可以使用專案 ID 以外，當然也可以使用專案的名稱拉 🥳&lt;/p>
+&lt;br>
+&lt;h3>resource 設定&lt;span class="absolute -mt-20" id="resource-設定">&lt;/span>
+&lt;a href="#resource-%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>google_container_cluster&lt;span class="absolute -mt-20" id="google_container_cluster">&lt;/span>
+&lt;a href="#google_container_cluster" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">resource&lt;/span> &lt;span style="color:#e6db74">&amp;#34;google_container_cluster&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;cluster&amp;#34;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">name&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;test&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">location&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;asia-southeast1-b&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">min_master_version&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;1.22.12-gke.300&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">network&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;projects/gcp-202011216-001/global/networks/XXXX&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">subnetwork&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;projects/gcp-202011216-001/regions/asia-southeast1/subnetworks/XXXX&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">default_max_pods_per_node&lt;/span> = &lt;span style="color:#ae81ff">64&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">remove_default_node_pool&lt;/span> = &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">initial_node_count&lt;/span> = &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">enable_intranode_visibility&lt;/span> = &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">ip_allocation_policy&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">cluster_secondary_range_name&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;gke-pods&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">services_secondary_range_name&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;gke-service&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">resource_labels&lt;/span> = {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;env&amp;#34;&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;test&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">addons_config&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">http_load_balancing&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">disabled&lt;/span> = &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">horizontal_pod_autoscaling&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">disabled&lt;/span> = &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">network_policy_config&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">disabled&lt;/span> = &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">master_auth&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">client_certificate_config&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">issue_client_certificate&lt;/span> = &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">private_cluster_config&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">enable_private_endpoint&lt;/span> = &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">enable_private_nodes&lt;/span> = &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">master_ipv4_cidr_block&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;172.16.0.0/28&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">logging_config&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">enable_components&lt;/span> = [&lt;span style="color:#e6db74">&amp;#34;SYSTEM_COMPONENTS&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;WORKLOADS&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">monitoring_config&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">enable_components&lt;/span> = [&lt;span style="color:#e6db74">&amp;#34;SYSTEM_COMPONENTS&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">node_config&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">machine_type&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;e2-medium&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">disk_size_gb&lt;/span> = &lt;span style="color:#ae81ff">100&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">disk_type&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;pd-standard&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">image_type&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;COS_CONTAINERD&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">oauth_scopes&lt;/span> = [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;https://www.googleapis.com/auth/devstorage.read_only&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;https://www.googleapis.com/auth/logging.write&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;https://www.googleapis.com/auth/monitoring&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;https://www.googleapis.com/auth/servicecontrol&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;https://www.googleapis.com/auth/service.management.readonly&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;https://www.googleapis.com/auth/trace.append&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">metadata&lt;/span> = {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">disable&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#a6e22e">legacy&lt;/span>&lt;span style="color:#f92672">-&lt;/span>&lt;span style="color:#a6e22e">endpoints&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;true&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>name：叢集的名稱，在這個專案及區域唯一名稱 &lt;font color='red'>(必填)&lt;/font>&lt;/li>
+&lt;li>location：要將此叢集建立在哪一個區域 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>min_master_version：master 的最低版本 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>network：叢集連接到的 Google Compute Engine 網絡的名稱或 self_link &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>subnetwork：啟動叢集的 Google Compute Engine 子網的名稱或 self_link &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>default_max_pods_per_node：此叢集中每個節點的預設最大 pod 數 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>remove_default_node_pool：如果設定為 &lt;code>true&lt;/code>，則在創建叢集時會幫我們刪除預設的節點池。會使用到這個的原因是因為 terraform 沒辦法修改預設節點池的名稱，所以我的做法是，會新增要的節點池，在使用這個參數把預設的給刪掉&lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>initial_node_count：要在此叢集的預設節點池中創建的節點數 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>enable_intranode_visibility：是否為此叢集啟用了節點內可見性 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>ip_allocation_policy：為 VPC 原生叢集分配叢集 IP &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>resource_labels：應用於叢集的 GCE 資源標籤 key/value &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>addons_config
+&lt;ul>
+&lt;li>http_load_balancing：是否要啟用 HTTP (L7) 的負載平衡 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>horizontal_pod_autoscaling：是否要啟用 HPA 水平 Pod 自動擴展 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>network_policy_config：是否要啟用網路策略 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>master_auth
+&lt;ul>
+&lt;li>client_certificate_config：是否要啟用該叢集客戶端證書授權 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>private_cluster_config
+&lt;ul>
+&lt;li>enable_private_endpoint：是否要啟用叢集專用的私有端點，禁止公共端點的訪問 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>enable_private_nodes：是否要啟用私有叢集功能，在叢集創建私有端點 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>master_ipv4_cidr_block：私有端點 IP 範圍 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>logging_config：叢集的日誌記錄配置
+&lt;ul>
+&lt;li>enable_components (公開日誌的 GKE 組件) 設定，包含：&lt;code>SYSTEM_COMPONENTS&lt;/code>、&lt;code>APISERVER&lt;/code>、&lt;code>CONTROLLER_MANAGER&lt;/code>、&lt;code>SCHEDULER&lt;/code>、&lt;code>WORKLOADS&lt;/code> &lt;font color='red'>(必填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>monitoring_config：叢集的監控配置
+&lt;ul>
+&lt;li>enable_components (GKE 組件公開指標) 設定，包含：&lt;code>SYSTEM_COMPONENTS&lt;/code>、&lt;code>APISERVER&lt;/code>、&lt;code>CONTROLLER_MANAGER&lt;/code>、&lt;code>SCHEDULER&lt;/code> &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>node_config：創建預設節點池參數
+&lt;ul>
+&lt;li>machine_type：Google Compute Engine 機器類型，預設為 &lt;code>e2-medium&lt;/code> &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>disk_size_gb：每個節點的 disk 大小，以 GB 為單位。允許最小為 10 GB，預設為 100 GB &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>disk_type：連接到每個節點的 disk 類型，有 &lt;code>pd-standard&lt;/code>、&lt;code>pd-balanced&lt;/code> 或 &lt;code>pd-ssd&lt;/code>，預設為 &lt;code>pd-standard&lt;/code> &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>image_type：創建新節點池後 NAP 使用的預設 image 類型。該值必須是 [&lt;code>COS_CONTAINERD&lt;/code>、&lt;code>COS&lt;/code>、&lt;code>UBUNTU_CONTAINERD&lt;/code>、&lt;code>UBUNTU&lt;/code>] 之一。&lt;code>COS&lt;/code> 和 &lt;code>UBUNTU&lt;/code> 已於 GKE 1.24 棄用 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>oauth_scopes：在預設服務帳戶下的所有節點虛擬機上可用的一組 Google API 範圍。 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>metadata：分配給叢集中實例的 key/value &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h4>google_container_node_pool&lt;span class="absolute -mt-20" id="google_container_node_pool">&lt;/span>
+&lt;a href="#google_container_node_pool" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-tf" data-lang="tf">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">resource&lt;/span> &lt;span style="color:#e6db74">&amp;#34;google_container_node_pool&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;aaa&amp;#34;&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">name&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;aaa&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">project&lt;/span> = &lt;span style="color:#e6db74">&amp;#34;project&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">location&lt;/span> = &lt;span style="color:#a6e22e">google_container_cluster&lt;/span>.&lt;span style="color:#a6e22e">cluster&lt;/span>.&lt;span style="color:#a6e22e">location&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">cluster&lt;/span> = &lt;span style="color:#a6e22e">google_container_cluster&lt;/span>.&lt;span style="color:#a6e22e">cluster&lt;/span>.&lt;span style="color:#a6e22e">name&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">node_count&lt;/span> = &lt;span style="color:#ae81ff">6&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">node_locations&lt;/span> = [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">google_container_cluster&lt;/span>.&lt;span style="color:#a6e22e">cluster&lt;/span>.&lt;span style="color:#a6e22e">location&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">node_config&lt;/span> {&lt;span style="color:#75715e">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"> # 省略 ... 與上面的 google_container_cluster 相同
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">management&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">auto_repair&lt;/span> = &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">auto_upgrade&lt;/span> = &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">upgrade_settings&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">max_surge&lt;/span> = &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">max_unavailable&lt;/span> = &lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>name：節點池名稱 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>project：創建節點池的項目 ID &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>location：叢集所在位置，可以使用資源名稱 (google_container_node_pool) +命名 (cluster) + 參數 (location) 來代表 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>cluster：叢集名稱，可以使用資源名稱 (google_container_node_pool) +命名 (cluster) + 參數 (name) 來代表 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>node_count：節點數量 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>node_locations：節點區域 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>management：節點管理配置
+&lt;ul>
+&lt;li>auto_repair：是否要自動修復 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>auto_upgrade：是否要自動升級 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>upgrade_settings：指定節點升級設定及方式
+&lt;ul>
+&lt;li>max_surge：升級期間可以添加到節點池的額外節點數 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;li>max_unavailable：升級期間可以同時不可用的節點數 &lt;font color='blue'>(選填)&lt;/font>&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>可以看到有很多設定都是選填的，所以不需要像我範例一樣，把所有的都打出來，可以參考官方文件，將自己想要的設定寫出來，並注意其他參數的預設值是多少，就可以打造屬於自己的 Terraform 建立 Google Kubernetes Engine IaC 程式囉～&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>registry.terraform.io/providers (google_container_cluster)：&lt;a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster" target="_blank" rel="noopener">https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_cluster&lt;/a>&lt;/p>
+&lt;p>registry.terraform.io/providers (google_container_node_pool)：&lt;a href="https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_node_pool" target="_blank" rel="noopener">https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/container_node_pool&lt;/a>&lt;/p></description></item><item><title>Terraform 如何多人共同開發 (將 tfstate 存在後端)</title><link>https://pin-yi.me/blog/terraform/terraform-tfstate/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/terraform/terraform-tfstate/</guid><description>
 &lt;p>此篇是接續上一篇 &lt;a href="https://pin-yi.me/terraform/" target="_blank" rel="noopener">什麼是 IaC ? Terraform 又是什麼？&lt;/a>的 Terraform 文章，我們在上一篇有提到 &lt;code>terraform apply&lt;/code> 完後，會多一個檔案 &lt;code>*.tfstate&lt;/code>，這個檔案是用來存放服務狀態的檔案，它包含基礎架構的狀態和資源的詳細信息。假設大家都在自己的本地去 apply 同一個服務，會導致每個人的 tfstate 檔案內容不同，有可能去覆蓋掉其他人已經調整的內容，因此我們必須將此 tfstate 檔案存放在一個地方，讓大家都去使用同一份檔案來調整資源。&lt;/p>
 &lt;br>
 &lt;p>我們常用的儲存方式會將 tfstate 存在 &lt;code>gitlab&lt;/code> 或 &lt;code>gcs&lt;/code> (gcp 架構為例)，以下會簡單說明要如何把 tfstate 存到後端以及各頁面的功能：&lt;/p>
