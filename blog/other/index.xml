@@ -249,4 +249,139 @@ alt="功能與安全設定" width="850">&lt;figcaption>
 &lt;br>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>BookStack 簡介：&lt;a href="https://docs.ossii.com.tw/books/bookstack/page/bookstack" target="_blank" rel="noopener">https://docs.ossii.com.tw/books/bookstack/page/bookstack&lt;/a>&lt;/p>
-&lt;p>BookStack Installation：&lt;a href="https://www.bookstackapp.com/docs/admin/installation/" target="_blank" rel="noopener">https://www.bookstackapp.com/docs/admin/installation/&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>BookStack Installation：&lt;a href="https://www.bookstackapp.com/docs/admin/installation/" target="_blank" rel="noopener">https://www.bookstackapp.com/docs/admin/installation/&lt;/a>&lt;/p></description></item><item><title>找出程式碼、開源套件、容器的安全漏洞工具 - Snyk</title><link>https://pin-yi.me/blog/other/snyk/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/other/snyk/</guid><description>
+&lt;p>前幾天有機會可以去參加 DevOpsDays Taipei 2022 活動，聽到了一門有關於如何將 Security 加入 DevOps - GitLab CI/CD with Snyk 的講座，覺得蠻有趣的，想說順便紀錄一下這幾天去聽的內容，文章底下有附上本次大會的共筆以及該講者於自己部落格所發的文章，歡迎大家先行查看歐 😆&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/devops.jpg"
+alt="DevOps 圖片 (醫院 DevOps 如何落地(1) ─ DevOps 與醫院)" width="500">&lt;figcaption>
+&lt;p>DevOps 圖片 &lt;a href="https://www.cio.com.tw/how-hospital-devops-landed-1-devops-and-hospitals/" target="_blank" rel="noopener">(醫院 DevOps 如何落地(1) ─ DevOps 與醫院&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們平常熟知的 DevOps 文化應該是像上面這張圖一樣，可以透過自動化「軟體交付」和「架構變更」的流程，來使得構建、測試、發布軟體能夠更加地快捷、頻繁和可靠。&lt;/p>
+&lt;br>
+&lt;p>通常在 Development 跟 Operations 之外還有一個專門負責檢查程式有無漏洞或是安全性問題的單位，那我們試想一下，如果在 Dev 或是 Ops 中間先加上了檢查安全的步驟，是不是可以讓整體流程效率更加提升呢！？ 可以免去程式寫完才發現有安全性問題的漏洞，需要重新修改，而是在部署前，或是程式開發中就先被檢查出來。&lt;/p>
+&lt;br>
+&lt;p>對於資訊安全方面，開發人員進行開發時，必須關注目前的寫法是不是安全的，除了開發人員的程式碼外，還要注意使用的開源程式或是套件是不是已經有被掃出漏洞，加上現在越來越多人使用容器化，對於 Container Images 裡面所包含的套件安全也是一大問題。&lt;/p>
+&lt;br>
+&lt;p>所以單純的自動化整合與部署已經不能滿足需求，就像下圖一樣，開始有了 DevSecOps 這個詞產生，在 DevOps 的 CI/CD 流程中加入資安解決方案，藉由資安解決方案來減少開發人員去檢查程式漏洞的時間，也讓 DevOps 快速迭代更加的完整。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/devsecops.png"
+alt="DevSecOps 圖片 (Apps Built Better: Why DevSecOps is Your Security Team’s Silver Bullet)" width="450">&lt;figcaption>
+&lt;p>DevSecOps 圖片 (&lt;a href="https://threatpost.com/apps-built-better-devsecops-security-silver-bullet/167793/" target="_blank" rel="noopener">Apps Built Better: Why DevSecOps is Your Security Team’s Silver Bullet&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>Snyk&lt;span class="absolute -mt-20" id="snyk">&lt;/span>
+&lt;a href="#snyk" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那我們這次要使用的工具是 - Snyk，我先簡單介紹一下這個公司以及工具，它是位於波士頓的網絡安全公司，專門從事雲計算，提供增輕鬆集成，可以將安全掃描結合到 IDE、Repository、CI/CD 等，連續掃描以及一鍵修復等功能。他本身是一個 SaaS 的服務，所以需要到官網註冊一個帳號才能使用，也支援不同的 SSO 登入，詳細可以參考&lt;a href="https://app.snyk.io/login?cta=sign-up&amp;amp;loc=nav&amp;amp;page=homepage" target="_blank" rel="noopener">註冊畫面&lt;/a>。&lt;/p>
+&lt;br>
+&lt;p>這個工具主要提供了 4 種掃描的功能， 分別是：&lt;/p>
+&lt;ul>
+&lt;li>Code&lt;/li>
+&lt;li>Open Source&lt;/li>
+&lt;li>Container&lt;/li>
+&lt;li>IaC&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>那我們會依照這４種功能依序介紹，詳細的可以參考 &lt;a href="https://docs.snyk.io/#explore-snyk-products" target="_blank" rel="noopener">Snyk User Documentation # Explore Snyk products&lt;/a>。&lt;/p>
+&lt;br>
+&lt;h3>Code&lt;span class="absolute -mt-20" id="code">&lt;/span>
+&lt;a href="#code" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>能夠直接掃描目前開發 Project 的程式碼有沒有安全性的問題，可以大幅減少開發人員去檢查程式漏洞的時間，目前支援了以下三種掃描方式：&lt;/p>
+&lt;ul>
+&lt;li>IDE Plugins&lt;/li>
+&lt;li>Web&lt;/li>
+&lt;li>CLI&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h4>IDE Plugins&lt;span class="absolute -mt-20" id="ide-plugins">&lt;/span>
+&lt;a href="#ide-plugins" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>IDE 我們這邊以 VS Code 為例來說明，如果有在用 VS Code 的大家應該知道 VS Code 有一個 Marketplace，可以安裝很多不同的套件 Plugins，之後有時間也會寫一篇好用的 Plugins 文章，大家可以在持續關注我歐 😍&lt;/p>
+&lt;ol>
+&lt;li>首先先開啟左側的 Marketplace，搜尋 &lt;code>Snyk&lt;/code>，&lt;del>選擇下載量最高的準沒錯&lt;/del>，選擇 Snyk Security - Code and Open Source Dependencies。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/ide.png"
+alt="VS Code Marketplace 安裝 Snyk" width="1000">&lt;figcaption>
+&lt;p>VS Code Marketplace 安裝 Snyk&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>安裝完後，在左側欄位應該就會看到 Snyk 的狗狗 Logo，如果沒有登入過，會先要求你登入 Snyk 並授權給 Plugins 使用。最後當你開啟專案時，會開始掃描程式碼，並且會依照開源套件安全性、程式碼安全性來分類，會顯示套件遇到什麼漏洞需要升級以及程式碼哪一段會有安全性的問題，能夠讓開發人員在第一時間就修復安全問題。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/ide2.png"
+alt="IDE Plugins 掃描" width="1000">&lt;figcaption>
+&lt;p>IDE Plugins 掃描&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Web&lt;span class="absolute -mt-20" id="web">&lt;/span>
+&lt;a href="#web" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>登入 Snyk 網站，直接加入對應的 Project，會直接於網頁上掃描漏洞，並提示錯誤內容。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/web.png"
+alt="選擇加入 project" width="500">&lt;figcaption>
+&lt;p>選擇加入 project&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/web1.png"
+alt="掃描漏洞並顯示錯誤內容" width="800">&lt;figcaption>
+&lt;p>掃描漏洞並顯示錯誤內容&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>CLI&lt;span class="absolute -mt-20" id="cli">&lt;/span>
+&lt;a href="#cli" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>要使用 CLI 需要先安裝 Snyk CLI，我們一樣使用 Homebrew 來安裝：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>brew tap snyk/tap
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>brew install snyk&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>當然除了 Homebrew 以外還有其他的安裝方式，例如：curl 下載執行檔、npm、yarn、docker 執行等等，詳細可以參考以下&lt;a href="https://docs.snyk.io/snyk-cli/install-the-snyk-cli" target="_blank" rel="noopener">安裝連結&lt;/a>。&lt;/p>
+&lt;br>
+&lt;p>可以直接使用以下指令才進行測試 &lt;code>sync test&lt;/code>，還有其他 CLI 指令，詳細可以參考 &lt;a href="https://docs.snyk.io/snyk-cli" target="_blank" rel="noopener">Snyk CLI&lt;/a>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/cli.png"
+alt="CLI 掃描 (官網)" width="800">&lt;figcaption>
+&lt;p>CLI 掃描 (&lt;a href="https://docs.snyk.io/snyk-cli" target="_blank" rel="noopener">官網&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>Open Source&lt;span class="absolute -mt-20" id="open-source">&lt;/span>
+&lt;a href="#open-source" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>能夠掃描目前開發的 Project 中有沒有使用到有漏洞的 library，目前支援以下圖片語言，詳細可以參考 &lt;a href="https://docs.snyk.io/products/snyk-open-source/language-and-package-manager-support" target="_blank" rel="noopener">Open Source - Supported languages and package managers&lt;/a>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/open.png"
+alt="Open Source library 掃描 (官網)" width="600">&lt;figcaption>
+&lt;p>Open Source library 掃描 (&lt;a href="https://docs.snyk.io/products/snyk-open-source/language-and-package-manager-support" target="_blank" rel="noopener">官網&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>Container&lt;span class="absolute -mt-20" id="container">&lt;/span>
+&lt;a href="#container" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在 Container image 中會存放著不同的 base image ，在 base image 中又會使用不同的 library。所以這些 container 的安全性也是需要被關注的。&lt;/p>
+&lt;p>可以直接使用 web 來選擇相對的 Container 倉庫去做掃描，如果有安裝上面說的 Snyk CLI，也可以使用該指令執行 &lt;code>snyk container test &amp;lt;container image&amp;gt;&lt;/code>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/container.png"
+alt="Container 掃描" width="800">&lt;figcaption>
+&lt;p>Container 掃描&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>Iac&lt;span class="absolute -mt-20" id="iac">&lt;/span>
+&lt;a href="#iac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Snyk 的基礎設施即代碼 (IaC) 可幫助開發人員編寫安全的基礎設施配置，預防錯誤的設定產生，並且支援多種格式：&lt;/p>
+&lt;ul>
+&lt;li>K8s YAML&lt;/li>
+&lt;li>HashiCorp Terraform&lt;/li>
+&lt;li>AWS CloudFormation&lt;/li>
+&lt;li>Azure Resource Manager (ARM)&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>DevOpsDays Taipei 2022 共同筆記 - 在你的 DevOps 中加入一點 Security — GitLab CI/CD with Snyk - 鄭荃樺 (Barry.Cheng)
+：&lt;a href="https://hackmd.io/@DevOpsDay/2022/%2F%40DevOpsDay%2FHkm1iY6xi" target="_blank" rel="noopener">https://hackmd.io/@DevOpsDay/2022/%2F%40DevOpsDay%2FHkm1iY6xi&lt;/a>&lt;/p>
+&lt;p>身為 DevOps 工程師，使用 Snyk 掃描漏洞也是很正常的：&lt;a href="https://barry-cheng.medium.com/%E8%BA%AB%E7%82%BAdevops%E5%B7%A5%E7%A8%8B%E5%B8%AB-%E4%BD%BF%E7%94%A8snyk%E6%8E%83%E6%8F%8F%E6%BC%8F%E6%B4%9E%E4%B9%9F%E6%98%AF%E5%BE%88%E6%AD%A3%E5%B8%B8%E7%9A%84-d7d8f2ad2304" target="_blank" rel="noopener">https://barry-cheng.medium.com/%E8%BA%AB%E7%82%BAdevops%E5%B7%A5%E7%A8%8B%E5%B8%AB-%E4%BD%BF%E7%94%A8snyk%E6%8E%83%E6%8F%8F%E6%BC%8F%E6%B4%9E%E4%B9%9F%E6%98%AF%E5%BE%88%E6%AD%A3%E5%B8%B8%E7%9A%84-d7d8f2ad2304&lt;/a>&lt;/p>
+&lt;p>在你的 DevOps 中加入一點 Security — GitLab CI/CD with Snyk (講師簡報)：&lt;a href="https://s.itho.me/ccms_slides/2022/9/26/3a2ac1ef-4143-4328-9fef-066782ac7dc6.pdf" target="_blank" rel="noopener">https://s.itho.me/ccms_slides/2022/9/26/3a2ac1ef-4143-4328-9fef-066782ac7dc6.pdf&lt;/a>&lt;/p></description></item></channel></rss>
