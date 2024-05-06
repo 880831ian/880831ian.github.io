@@ -15,6 +15,8 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 
 {{< card link="blog/kubernetes/k8s-statefulset-podmanagementpolicy" title="在正式環境上踩到 StatefulSet 的雷，拿到 P1 的教訓" image="/kubernetes/k8s-statefulset-podmanagementpolicy/cover.webp">}}
 {{< card link="blog/kubernetes/pod-veth-name-provided-eth0-already-exists" title="部署 Pod 遇到 container veth name provided (eth0) already exists 錯誤" image="/kubernetes/pod-veth-name-provided-eth0-already-exists/cover.webp">}}
+{{< card link="blog/kubernetes/k8s-hpa" title="Kubernetes (K8s) HorizontalPodAutoscaler (HPA) 原理與實作" image="/kubernetes/k8s-hpa/cover.webp">}}
+{{< card link="blog/kubernetes/gcp-k8s-hpa-php-custom-metrics" title="Kubernetes (K8s) 自定義 PHP HorizontalPodAutoscaler (HPA) 指標" image="/kubernetes/gcp-k8s-hpa-php-custom-metrics/cover.webp">}}
 
 {{< card link="blog/nginx/nginx-upstream-set-host-header" title="想使用 Nginx Upstream Proxy 到外部服務，並帶入對應的 header 該怎麼做？" image="/nginx/nginx-upstream-set-host-header/cover.webp">}}
 {{< card link="blog/nginx/soketi-log-502-error" title="Soketi WebSocket Server LOG 不定時出現 502 error 以及 connect() failed (111: Connection refused)" image="/nginx/soketi-log-502-error/cover.webp">}}
@@ -34,4 +36,5 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 {{< card link="blog/opentelemetry/opentelemetry-ingress-nginx-controller" title="如何透過 OpenTelemetry 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上" image="/opentelemetry/opentelemetry-ingress-nginx-controller/cover.webp">}}
 
 {{< card link="blog/other/bookstack" title="Bookstack 開源知識庫筆記平台安裝 (K8s + docker)" image="/other/bookstack/cover.webp">}}
+{{< card link="snyk" title="找出程式碼、開源套件、容器的安全漏洞工具 - Snyk" image="/other/snyk/cover.webp">}}
 {{< /cards>}}
