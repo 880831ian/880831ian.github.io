@@ -229,4 +229,1059 @@ alt="(圖八) 新叢集位置類型" width="450">&lt;figcaption>
 &lt;br>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>[1] Standard cluster upgrades：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades&lt;/a>&lt;/p>
-&lt;p>[2] maintenance-windows-and-exclusions：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>[2] maintenance-windows-and-exclusions：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions&lt;/a>&lt;/p></description></item><item><title>Google Cloud Platform (GCP) - IAM 與管理</title><link>https://pin-yi.me/blog/gcp/iam/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/iam/</guid><description>
+&lt;p>IAM 的全名是 Identity and Access Management，當我們藉由 IAM，可以授與特定 Google Cloud 資源的 &lt;strong>精細&lt;/strong> 訪問權限，並防止對其他資源的訪問。疑！？為什麼是精細？我們接著看下去，我們可以採用最小權限安全原則，該原則要求任何人都不應擁有超出實際所需的權限。&lt;/p>
+&lt;br>
+&lt;h2>IAM 的工作原理&lt;span class="absolute -mt-20" id="iam-的工作原理">&lt;/span>
+&lt;a href="#iam-%e7%9a%84%e5%b7%a5%e4%bd%9c%e5%8e%9f%e7%90%86" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們先來了解一下 IAM 的工作原理，藉由 IAM，我們可以定義誰 (哪一個身份) 對哪些資源有哪種的訪問權限 (角色) 來管理訪問權限控制。什麼是資源？例如， Compute Engine 虛擬機 (GCE)、Google Kubernetes Engine (GKE) 集群和 Cloud Storage 存儲分區都是 Google Cloud 資源，我們用於整理資源的組織或資料夾、項目等也都是資源&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/logo.png"
+alt="GCP IAM Logo" width="150">&lt;figcaption>
+&lt;p>GCP IAM Logo&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們可以把它理解成&lt;/p>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+什麼 『 人 』，可以對什麼『 資源 』，做什麼『 事情 』
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>IAM 不會直接向用戶授與資源的訪問權限，而是將權限分成多個角色，然後將這些角色授與經過身份驗證的主帳號。(以前 IAM 會將主帳號稱為成員，目前部分 API 仍然使用此術語。)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/iam-overview-basics.png"
+alt="IAM 中的權限管理" width="800">&lt;figcaption>
+&lt;p>IAM 中的權限管理&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到這張圖片，訪問權限管理主要包含三個部分：&lt;/p>
+&lt;ul>
+&lt;li>主帳號 (Principal)：主帳號可以是 Google 帳號 (針對用戶)、服務帳號 (針對應用和計算工作負載)、Google 群組或 Workspace 帳號或可以訪問資源的 Cloud Identity 網域等等&lt;/li>
+&lt;li>角色 (Role)：一個角色對應一組權限，權限決定了可以對資源執行的操作。向主帳號授與某個腳色， 代表授與該角色包含的所有權限給主帳號&lt;/li>
+&lt;li>政策 (Policy)：允許政策 (Allow Policy) 是將一個或多個主體綁定在各個角色，當想要定義誰 (主體) 對資源擁有何種類型的訪問 (角色) 時，可以創建允許政策並將其附加到資源。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h2>IAM 測試&lt;span class="absolute -mt-20" id="iam-測試">&lt;/span>
+&lt;a href="#iam-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>接下來，我們來測試看看 IAM 實際設定以及用途吧！ 我們會使用 GCP 所以提供的 &lt;a href="https://www.cloudskillsboost.google/focuses/551?parent=catalog" target="_blank" rel="noopener">[Qwiklabs] Cloud IAM：Qwik Start&lt;/a> 來進行測試，之後的步驟會跟 Cloud IAM：Qwik Start 內容一樣，所以大家可以邊操作邊參考呦！那我們開始囉 🙃&lt;/p>
+&lt;p>進入網頁後，請先登入自己的 Google 帳號，接著點選左上角的 &lt;strong>Start Lab&lt;/strong>，會跳出與下面圖片類似的內容：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/1.png"
+alt="測試用的帳號密碼" width="250">&lt;figcaption>
+&lt;p>測試用的帳號密碼&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>這邊會提供兩組的帳號及密碼，分別是 Username1 以及 Username2 (後面會以 Username 1 跟 2 來說明)，密碼會用共用，且會在同一個專案下。&lt;/p>
+&lt;br>
+&lt;h3>用第一個 Username1 登入 GCP&lt;span class="absolute -mt-20" id="用第一個-username1-登入-gcp">&lt;/span>
+&lt;a href="#%e7%94%a8%e7%ac%ac%e4%b8%80%e5%80%8b-username1-%e7%99%bb%e5%85%a5-gcp" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>點選 &lt;strong>Open Google Console&lt;/strong> 按鈕來開啟 GCP 主控台&lt;/li>
+&lt;li>登入的帳號就輸入第一個 Username1 &lt;student-03-XXXXXX>，密碼輸入共用密碼 &lt;lsLrXXXXX>，最後登入&lt;/li>
+&lt;li>登入成功會進入 GCP 主控台，會跳出下方圖片內容，國家選擇台灣，點選同意 &lt;strong>Terms of Service&lt;/strong>，最後按 &lt;strong>AGREE AND CONTINUE&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/2.png"
+alt="登入 Username 1 GCP 主控台" width="1000">&lt;figcaption>
+&lt;p>登入 Username 1 GCP 主控台&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>用第二個 Username2 登入 GCP&lt;span class="absolute -mt-20" id="用第二個-username2-登入-gcp">&lt;/span>
+&lt;a href="#%e7%94%a8%e7%ac%ac%e4%ba%8c%e5%80%8b-username2-%e7%99%bb%e5%85%a5-gcp" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>步驟與第一個相同，這邊就不在重複，但建議使用無痕，避免 Username1 跟 Username2 搶來搶去，以及登入帳號要選 Username2，應該不會選錯吧 🤣&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>Username1 IAM 主控台&lt;span class="absolute -mt-20" id="username1-iam-主控台">&lt;/span>
+&lt;a href="#username1-iam-%e4%b8%bb%e6%8e%a7%e5%8f%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>到 Username1 的 GCP 主控台首頁&lt;/li>
+&lt;li>點選左側的 menu &amp;gt; &lt;strong>IAM 與管理&lt;/strong>&lt;/li>
+&lt;li>點擊頁面上方的 &lt;strong>+ADD&lt;/strong> 按鈕，可以從下拉選單去查看各式各項的專案相關角色，可以看到超級多的角色設定，所以我們一開始才會說他是可以設定 ** 精細** 的訪問權限&lt;/li>
+&lt;li>我們選擇 &lt;strong>Base&lt;/strong>，右側有 4 種角色，分別是瀏覽者 (Browser)、編輯者 (Editor)、所有者 (Owner)、檢視者 (Viewer)，詳細區別請看下面 👇👇&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/3.png"
+alt="ADD IAM" width="1000">&lt;figcaption>
+&lt;p>ADD IAM&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>此表是取 Google Cloud IAM 文章&lt;a href="https://cloud.google.com/iam/docs/understanding-roles#primitive_roles" target="_blank" rel="noopener">基本角色&lt;/a>中的定義，簡單說明 4 種角色的差別：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">角色名稱&lt;/th>
+&lt;th style="text-align:center">權限&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">role/viewer (檢視者)&lt;/td>
+&lt;td style="text-align:center">不影響狀態的只讀操作權限，例如：查看 (但不修改) 現有資源或是資料&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">role/editor (編輯者)&lt;/td>
+&lt;td style="text-align:center">所有查看者權限，以及修改狀態的操作權限，例如：更改現有資源&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">role/owner (擁有者)&lt;/td>
+&lt;td style="text-align:center">以下操作的所有編輯權限： 1. 管理項目和項目內的所有資源角色及權限 2. 為項目設置帳單&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">role/browser (瀏覽者)&lt;/td>
+&lt;td style="text-align:center">讀取權限以及瀏覽項目的層次結構，包含資料夾、組織和 IAM 政策。但此角色不包含查看項目中資源的權限&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>我們的 Username1 為 owner，Username2 為 viewer&lt;/p>
+&lt;br>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+Google 建議：Base 角色包含所有 Google Cloud 服務的數千個權限。除非別無選擇，否則不要授與用戶 Base 角色，請設定最有限的自訂義角色或是可以滿足該需求的角色即可
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>切換到 Username2 IAM 主控台&lt;span class="absolute -mt-20" id="切換到-username2-iam-主控台">&lt;/span>
+&lt;a href="#%e5%88%87%e6%8f%9b%e5%88%b0-username2-iam-%e4%b8%bb%e6%8e%a7%e5%8f%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們可以在表格裡面收尋 Username1 跟 Username2 的帳號，可以看一下他們授與的角色是否與上面說的一致，大概可以參考以下圖片：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/4.png"
+alt="Username1 跟 Username2 權限" width="1000">&lt;figcaption>
+&lt;p>Username1 跟 Username2 權限&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>在 Username2 因為是 Viewer 權限，所以點擊上面的 &lt;strong>+ ADD&lt;/strong>，不會反應，會跳出以下照片內容：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/5.png"
+alt="Username2 權限不足" width="500">&lt;figcaption>
+&lt;p>Username2 權限不足&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>再切回 Username1 Cloud Storage&lt;span class="absolute -mt-20" id="再切回-username1-cloud-storage">&lt;/span>
+&lt;a href="#%e5%86%8d%e5%88%87%e5%9b%9e-username1-cloud-storage" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>接下來我們要建立一個 GCS 儲存空間，點選 menu &amp;gt; &lt;strong>Cloud Storage&lt;/strong> &amp;gt; &lt;strong>Browser&lt;/strong>&lt;/li>
+&lt;li>點選 &lt;strong>Create a bucket&lt;/strong>&lt;/li>
+&lt;li>給予他一個獨特的名稱，以及在 Choose where to store your data 選擇 Multi-Region&lt;/li>
+&lt;li>最後點選 &lt;strong>CREATE&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/6.png"
+alt="Create a bucket" width="1000">&lt;figcaption>
+&lt;p>Create a bucket&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>上傳範例檔案&lt;span class="absolute -mt-20" id="上傳範例檔案">&lt;/span>
+&lt;a href="#%e4%b8%8a%e5%82%b3%e7%af%84%e4%be%8b%e6%aa%94%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>進入新建立的 Cloud Storage，點選 &lt;strong>Upload fiiles&lt;/strong> 按鈕&lt;/li>
+&lt;li>上傳一個 txt 檔案，可以先取名為 &lt;code>sample.txt&lt;/code>，或是上傳後使用最後三個小點圖案內的 Rename 來修改名稱&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/7.png"
+alt="Upload sample.txt fiiles" width="1200">&lt;figcaption>
+&lt;p>Upload sample.txt fiiles&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>驗證專案檢視者存取權限&lt;span class="absolute -mt-20" id="驗證專案檢視者存取權限">&lt;/span>
+&lt;a href="#%e9%a9%97%e8%ad%89%e5%b0%88%e6%a1%88%e6%aa%a2%e8%a6%96%e8%80%85%e5%ad%98%e5%8f%96%e6%ac%8a%e9%99%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>我們再切換回 Username2 的主控台，選擇 menu &amp;gt; &lt;strong>Cloud Storage&lt;/strong> &amp;gt; &lt;strong>Browser&lt;/strong>&lt;/li>
+&lt;li>就可以看到跟上面一樣的儲存區&lt;/li>
+&lt;/ol>
+&lt;p>Username2 被授與 &amp;ldquo;檢視者 Viewer&amp;rdquo; 角色，這個角色有不影響狀態的只讀權限。這個範例中說明這個功能，他僅能檢視，沒有辦法上傳&lt;/p>
+&lt;br>
+&lt;h3>移除專案存取權限&lt;span class="absolute -mt-20" id="移除專案存取權限">&lt;/span>
+&lt;a href="#%e7%a7%bb%e9%99%a4%e5%b0%88%e6%a1%88%e5%ad%98%e5%8f%96%e6%ac%8a%e9%99%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>我們再次切回 Username 主控台，選擇 menu &amp;gt; &lt;strong>IAM 與管理&lt;/strong> ，找到 Username2 旁邊的鉛筆圖案&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/8.png"
+alt="修改 Username2 權限" width="1200">&lt;figcaption>
+&lt;p>修改 Username2 權限&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>點擊角色名稱的垃圾桶來移除 Username2 的檢視者權限，點擊 &lt;strong>Save&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/9.png"
+alt="移除 Username2 權限" width="550">&lt;figcaption>
+&lt;p>移除 Username2 權限&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+這個動作要完成生效到所有服務上，所以會需要一點時間，詳細可以參考&lt;a href="https://cloud.google.com/iam/docs/faq" target="_blank" rel="noopener">點我&lt;/a>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>檢查 Username2 是否有存取權限&lt;span class="absolute -mt-20" id="檢查-username2-是否有存取權限">&lt;/span>
+&lt;a href="#%e6%aa%a2%e6%9f%a5-username2-%e6%98%af%e5%90%a6%e6%9c%89%e5%ad%98%e5%8f%96%e6%ac%8a%e9%99%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>切換到 Username2 主控台，選擇 menu &amp;gt; &lt;strong>Cloud Storage&lt;/strong> &amp;gt; &lt;strong>Browser&lt;/strong>&lt;/li>
+&lt;li>會發現出現以下的錯誤訊息，代表我們移除權限成功&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/10.png"
+alt="Username2 沒有權限" width="800">&lt;figcaption>
+&lt;p>Username2 沒有權限&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>新增儲存角色&lt;span class="absolute -mt-20" id="新增儲存角色">&lt;/span>
+&lt;a href="#%e6%96%b0%e5%a2%9e%e5%84%b2%e5%ad%98%e8%a7%92%e8%89%b2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>我們再次切換到 Username1 主控版，選擇 menu &amp;gt; &amp;gt; &lt;strong>IAM 與管理&lt;/strong>，點選上方 &lt;strong>+ ADD&lt;/strong>，在 New principals 上貼上 Username2 的帳號，Role 選擇 &lt;strong>Storage Object Viewer&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/11.png"
+alt="新增 Username2 角色" width="600">&lt;figcaption>
+&lt;p>新增 Username2 角色&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/12.png"
+alt="查看 Username2 權限" width="1000">&lt;figcaption>
+&lt;p>查看 Username2 權限&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>檢查 Username2 是否有存取權限&lt;span class="absolute -mt-20" id="檢查-username2-是否有存取權限-1">&lt;/span>
+&lt;a href="#%e6%aa%a2%e6%9f%a5-username2-%e6%98%af%e5%90%a6%e6%9c%89%e5%ad%98%e5%8f%96%e6%ac%8a%e9%99%90-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>切換到 Username2 主控台，因為 Username2 沒有專案檢視者的角色，所以看不到專案以及任何的資源，但這個使用者對我們剛剛設定的 Cloud Storage 有特別的存取權&lt;/li>
+&lt;li>打開右上角的 Activate Cloud Shell 命令列工具 ，如下圖：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/13.png"
+alt="開啟 Activate Cloud Shell 命令列工具" width="1200">&lt;figcaption>
+&lt;p>開啟 Activate Cloud Shell 命令列工具&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>輸入以下指令&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gsutil ls gs://&amp;lt;剛剛建的 Cloud Storage 名稱&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>如果出現跟下方圖片一樣，就代表我們設定成功囉！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/14.png"
+alt="Username2 Storage Object Viewer 權限" width="600">&lt;figcaption>
+&lt;p>Username2 Storage Object Viewer 權限&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>最後的最後，如果有跟我們一步一步來的朋友，在 &lt;a href="https://www.cloudskillsboost.google/focuses/551?parent=catalog" target="_blank" rel="noopener">[Qwiklabs] Cloud IAM：Qwik Start&lt;/a> 頁面中，應該會看到一個叫 Check my progress 的按鈕，做完每一步驟，都可以點一下，他會自動去判斷你是否有完成這項動作歐！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/15.png"
+alt="Check my progress" width="600">&lt;figcaption>
+&lt;p>Check my progress&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>到這邊就完成了我們在 IAM 的測試囉～我們知道 IAM 可以設定很多的角色，以及測試了查看、新增、修改、刪除角色的功能，希望大家會喜歡今天的文章 🥰&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>IAM 概覽：&lt;a href="https://cloud.google.com/iam/docs/overview" target="_blank" rel="noopener">https://cloud.google.com/iam/docs/overview&lt;/a>&lt;/p>
+&lt;p>什麼是 Cloud IAM？GCP 權限管理服務介紹：&lt;a href="https://blog.cloud-ace.tw/identity-security/what-is-cloud-iam/" target="_blank" rel="noopener">https://blog.cloud-ace.tw/identity-security/what-is-cloud-iam/&lt;/a>&lt;/p></description></item><item><title>Google Cloud Platform (GCP) - Compute Engine</title><link>https://pin-yi.me/blog/gcp/compute-engine/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/compute-engine/</guid><description>
+&lt;p>跟大家介紹一下今天的主題 Google Compute Engine(GCE)，GCE 是 Google Cloud 上的基礎架構服務 (IaaS)，該平台可以提供大規模的虛擬機器以及相關的基礎建設 (包含硬碟、網路、附載平衡器&amp;hellip; 等等)來建置及運作您的服務，那我們可以將 GCE 服務的主要功能劃分成以下幾點：&lt;/p>
+&lt;br>
+&lt;h2>Google Compute Engine 特色&lt;span class="absolute -mt-20" id="google-compute-engine-特色">&lt;/span>
+&lt;a href="#google-compute-engine-%e7%89%b9%e8%89%b2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>穩健的網路功能&lt;span class="absolute -mt-20" id="穩健的網路功能">&lt;/span>
+&lt;a href="#%e7%a9%a9%e5%81%a5%e7%9a%84%e7%b6%b2%e8%b7%af%e5%8a%9f%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>提供使用者擁有穩健的網路功能，以運行各項應用程式及服務。&lt;/p>
+&lt;br>
+&lt;h3>自訂網路與預設網路&lt;span class="absolute -mt-20" id="自訂網路與預設網路">&lt;/span>
+&lt;a href="#%e8%87%aa%e8%a8%82%e7%b6%b2%e8%b7%af%e8%88%87%e9%a0%90%e8%a8%ad%e7%b6%b2%e8%b7%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>GCE 包含內部與外部的網路連線能力，讓使用者可以透過自訂規劃來建置屬於自己服務適用的網路，而在 GCE 服務開通當下，也提供預設的 default network，內建常用的路由與防火牆設定 (例如：SSH、RDP、ICMP&amp;hellip; 等)，供入門使用者直接使用。&lt;/p>
+&lt;br>
+&lt;h3>防火牆規則&lt;span class="absolute -mt-20" id="防火牆規則">&lt;/span>
+&lt;a href="#%e9%98%b2%e7%81%ab%e7%89%86%e8%a6%8f%e5%89%87" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>除了預設防火牆規則外，使用者也可以透過自建防火牆來開放可以連入的 IP。&lt;/p>
+&lt;br>
+&lt;h3>各區域的 HTTP(S) 的負載平衡&lt;span class="absolute -mt-20" id="各區域的-https-的負載平衡">&lt;/span>
+&lt;a href="#%e5%90%84%e5%8d%80%e5%9f%9f%e7%9a%84-https-%e7%9a%84%e8%b2%a0%e8%bc%89%e5%b9%b3%e8%a1%a1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>為 Layer 7 的負載平衡設備，透過設定可以串連多台主機或是主機群組，讓服務不再只是依賴於單點存在的伺服器。Layer 7 的負載平衡更可以識別路由規劃，進一步可以提供不同路由的重導規則設定，也可以提供 CDN 的 Cache 功能。&lt;/p>
+&lt;br>
+&lt;h3>網路的負載平衡&lt;span class="absolute -mt-20" id="網路的負載平衡">&lt;/span>
+&lt;a href="#%e7%b6%b2%e8%b7%af%e7%9a%84%e8%b2%a0%e8%bc%89%e5%b9%b3%e8%a1%a1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>為 Layer4 的負載平衡設備，可以透過 Protocol 與 Port 的方式來重導外部流量到 GCE 主機或主機群，並可以透過 Health Check 的方式，讓流量僅通過健康的主機，避免服務中斷。&lt;/p>
+&lt;br>
+&lt;h3>子網路&lt;span class="absolute -mt-20" id="子網路">&lt;/span>
+&lt;a href="#%e5%ad%90%e7%b6%b2%e8%b7%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>透過 CIDR 的方式設定 GCE Network 中的各子網路範圍，並可以透過路由的方式串接各子網路中間的通訊，讓 GCE 網路的設計規劃可以更有彈性，也可以讓子網路的規劃來實作更安全的雲端網路架構。&lt;/p>
+&lt;br>
+&lt;h2>Google Compute Engine 測試&lt;span class="absolute -mt-20" id="google-compute-engine-測試">&lt;/span>
+&lt;a href="#google-compute-engine-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們使用 cloudskillsboost 提供的 &lt;a href="https://www.cloudskillsboost.google/focuses/3563?locale=zh_TW&amp;amp;parent=catalog" target="_blank" rel="noopener">Creating a Virtual Machine &lt;/a> 來做練習，打開後，請先登入自己的 Google 帳號，接著點選左上角的 &lt;strong>Start Lab&lt;/strong>，會跳出與下面圖片類似的內容：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/1.png"
+alt="測試用的帳號密碼" width="250">&lt;figcaption>
+&lt;p>測試用的帳號密碼&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>新增新的 VM 實例&lt;span class="absolute -mt-20" id="新增新的-vm-實例">&lt;/span>
+&lt;a href="#%e6%96%b0%e5%a2%9e%e6%96%b0%e7%9a%84-vm-%e5%af%a6%e4%be%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>點選 &lt;strong>Open Google Console&lt;/strong> 按鈕來開啟 GCP 主控台&lt;/li>
+&lt;li>登入帳號就使用上面圖片所提供的帳號密碼來進行登入&lt;/li>
+&lt;li>登入成功會進入 GCP 主控台，點選左側的 menu &amp;gt; &lt;strong>Compute Engine&lt;/strong> &amp;gt; &lt;strong>VM Instances&lt;/strong>，可以參考下方圖片&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/2.png"
+alt="新增 VM 實例" width="600">&lt;figcaption>
+&lt;p>新增 VM 實例&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="4">
+&lt;li>點選 &lt;strong>CREATE INSTANCE&lt;/strong>，請依照下方表格來進行設定：&lt;/li>
+&lt;/ol>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">標題&lt;/th>
+&lt;th style="text-align:center">設定值&lt;/th>
+&lt;th style="text-align:center">說明&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">Name&lt;/td>
+&lt;td style="text-align:center">gcelab&lt;/td>
+&lt;td style="text-align:center">虛擬機實例的名稱&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">Region&lt;/td>
+&lt;td style="text-align:center">us-central1（愛荷華州）&lt;/td>
+&lt;td style="text-align:center">有關區域的更多信息，請參閱 Compute Engine 指南 &lt;a href="https://cloud.google.com/compute/docs/regions-zones" target="_blank" rel="noopener">Regions and zones&lt;/a>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">Zone&lt;/td>
+&lt;td style="text-align:center">us-central1-f&lt;/td>
+&lt;td style="text-align:center">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">Series&lt;/td>
+&lt;td style="text-align:center">N1&lt;/td>
+&lt;td style="text-align:center">&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">Machine type&lt;/td>
+&lt;td style="text-align:center">n1-standard-2&lt;/td>
+&lt;td style="text-align:center">這是一個 2 vCPU、7.5 GB RAM 實例&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">Boot disk&lt;/td>
+&lt;td style="text-align:center">New balanced persistent disk/10 GB/Debian GNU/Linux 10&lt;/td>
+&lt;td>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">Firewall&lt;/td>
+&lt;td style="text-align:center">Allow HTTP taffic&lt;/td>
+&lt;td style="text-align:center">&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/3.png"
+alt="VM 實例 (Name、Region、Zone、Series)" width="800">&lt;figcaption>
+&lt;p>VM 實例 (Name、Region、Zone、Series)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/4.png"
+alt="VM 實例 (Machine type、Boot disk、Firewall)" width="800">&lt;figcaption>
+&lt;p>VM 實例 (Machine type、Boot disk、Firewall)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="5">
+&lt;li>新增完後，大約需要等待一分鐘，新的虛擬機就會列在 &lt;strong>VM Instances&lt;/strong> 頁面上。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/5.png"
+alt="VM 實例" width="1000">&lt;figcaption>
+&lt;p>VM 實例&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>安裝 NGINX Web 服務器&lt;span class="absolute -mt-20" id="安裝-nginx-web-服務器">&lt;/span>
+&lt;a href="#%e5%ae%89%e8%a3%9d-nginx-web-%e6%9c%8d%e5%8b%99%e5%99%a8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>點擊 VM instances 實例最後的 SSH，會開啟 SSH 用戶端&lt;/li>
+&lt;li>在 SSH 終端，要先獲得 &lt;code>root&lt;/code> 訪問權限，才更方便的進行後續的動作，請先使用一下指令：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>sudo su -&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol start="3">
+&lt;li>利用 &lt;code>root&lt;/code> 用戶，來更新操作系統：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>apt-get update&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/6.png"
+alt="更新操作系統" width="1000">&lt;figcaption>
+&lt;p>更新操作系統&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="4">
+&lt;li>安裝 NGINX：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>apt-get nginx -y&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/7.png"
+alt="安裝 NGINX" width="1000">&lt;figcaption>
+&lt;p>安裝 NGINX&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="5">
+&lt;li>最後確認 NGINX 是否運行：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>ps auwx | grep nginx&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/8.png"
+alt="確認 NGINX 是否運行" width="1000">&lt;figcaption>
+&lt;p>確認 NGINX 是否運行&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="6">
+&lt;li>可以打開瀏覽器瀏覽 &lt;code>http://外部 IP/&lt;/code> 或是使用 &lt;code>curl 外部IP&lt;/code>，外部 IP 會在跟剛剛 VM 實例的 External IP 欄位呦～&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/9.png"
+alt="curl 外部 IP" width="700">&lt;figcaption>
+&lt;p>curl 外部 IP&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="7">
+&lt;li>完成後，記得可以點選 &lt;strong>Check my progress&lt;/strong> 來檢查進度吧！&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/10.png"
+alt="Check my progress" width="500">&lt;figcaption>
+&lt;p>Check my progress&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>使用 gcloud 創建一個新實例&lt;span class="absolute -mt-20" id="使用-gcloud-創建一個新實例">&lt;/span>
+&lt;a href="#%e4%bd%bf%e7%94%a8-gcloud-%e5%89%b5%e5%bb%ba%e4%b8%80%e5%80%8b%e6%96%b0%e5%af%a6%e4%be%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們剛剛是使用網頁版來新增，當然也可以使用 gcloud 指令來新增，這個工具有預先裝在 &lt;a href="https://cloud.google.com/shell#how_do_i_get_started" target="_blank" rel="noopener">Google Cloud Shell&lt;/a> 中。Cloud Shell 是一個基於 Debian 的虛擬機，包含了常用的開發工具 (&lt;code>gcloud&lt;/code>、&lt;code>git&lt;/code> 等工具)，另外你也可以將 gcloud 下載至本機上來做使用，請閱讀&lt;a href="https://cloud.google.com/sdk/gcloud/" target="_blank" rel="noopener"> gcloud 命令行工具指南&lt;/a>&lt;/p>
+&lt;br>
+&lt;ol>
+&lt;li>在 Cloud Shell 中，使用 &lt;code>gcloud&lt;/code> 來新增新的虛擬機實例：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud compute instances create gcelab2 --machine-type n1-standard-2 --zone us-central1-f&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>就會跳出以下圖片的內容，過一陣子去查看 VM Instances 也可以看到我們所新增的虛擬機實例歐～&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/11.png"
+alt="Check my progress" width="1000">&lt;figcaption>
+&lt;p>Check my progress&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>到這邊就完成了我們 Google Compute Engine 測試囉～我們知道可以新增 GCE 將實體主機的內容，移植到雲端上囉！希望大家會喜歡今天的文章 🥰&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Compute Engine 基本介紹：&lt;a href="https://gdgcloud-taipei.gitbook.io/google-cloud-platform-in-practice/google-cloud-shang-de-yun-suan-fu-wu/compute-engine/compute-engine-ji-ben-jie-shao" target="_blank" rel="noopener">https://gdgcloud-taipei.gitbook.io/google-cloud-platform-in-practice/google-cloud-shang-de-yun-suan-fu-wu/compute-engine/compute-engine-ji-ben-jie-shao&lt;/a>&lt;/p>
+&lt;p>Creating a Virtual Machine：&lt;a href="https://www.cloudskillsboost.google/focuses/3563?locale=zh_TW&amp;amp;parent=catalog" target="_blank" rel="noopener">https://www.cloudskillsboost.google/focuses/3563?locale=zh_TW&amp;amp;parent=catalog&lt;/a>&lt;/p></description></item><item><title>Google Cloud Platform (GCP) - Cloud Source Repositories</title><link>https://pin-yi.me/blog/gcp/cloud-source-repositories/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/cloud-source-repositories/</guid><description>
+&lt;p>跟大家介紹一下今天的主題 Cloud Source Repositories，聽到 Source Repositories 是不是感覺跟什麼東西很像呀，沒錯，就跟我們的 GitHub or GitLab 一樣，可以用來存放我們的程式碼的儲存庫，我們來看看官方怎麼介紹他吧：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/1.png"
+alt="官方介紹 Cloud Source Repositories" width="800">&lt;figcaption>
+&lt;p>官方介紹 Cloud Source Repositories&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>很好歐，非常簡單明瞭 🤣，沒錯，Cloud Source Repositories 就是託管在 Google Cloud 上功能齊全(？)的私有 Git 儲存庫。為什麼會打一個問號呢？是因為他其實沒有那麼好用，所以我們通常的做法，還是會依靠 GitHab 或是 GitLab 來存放程式碼，再透過鏡像 (mirror) 的方式到 Google Cloud Source Repositories。 那我們就開始囉～&lt;/p>
+&lt;br>
+&lt;h2>Cloud Source Repositories 測試&lt;span class="absolute -mt-20" id="cloud-source-repositories-測試">&lt;/span>
+&lt;a href="#cloud-source-repositories-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>建立 GitLab Project&lt;span class="absolute -mt-20" id="建立-gitlab-project">&lt;/span>
+&lt;a href="#%e5%bb%ba%e7%ab%8b-gitlab-project" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>首先，我們用 GitLab 來當示範，如何透過鏡像 (mirror) 到 Cloud Source Repositories 上面，我們先在 GitLab 上建立一個 Project：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/2.png"
+alt="建立 GitLab Project" width="800">&lt;figcaption>
+&lt;p>建立 GitLab Project&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>使用 gcloud 指令建立 Source Repo&lt;span class="absolute -mt-20" id="使用-gcloud-指令建立-source-repo">&lt;/span>
+&lt;a href="#%e4%bd%bf%e7%94%a8-gcloud-%e6%8c%87%e4%bb%a4%e5%bb%ba%e7%ab%8b-source-repo" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>首先，一定要先裝 &lt;code>gcloud&lt;/code> 指令到本機，這個步驟，前面文章也有說過，這邊就不在說明，我們先使用一下指令來查看目前所在的 GCP 專案：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud config get-value project&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>正常來說，如果有先用 config 設定好，會直接跳出你目前的專案 ID，如果沒有跳出來，請使用下面指令來設定：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud config set project &amp;lt;project id&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol start="2">
+&lt;li>接著我們要啟動該專案的 Cloud Source Repositories API：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud services enable sourcerepo.googleapis.com&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol start="3">
+&lt;li>創建 Cloud Source Repositories&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud source repos create &amp;lt;repo name&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ol start="4">
+&lt;li>完成後，開啟 GCP 檢查一下是否有建立成功～點擊左側 menu &amp;gt; &lt;strong>Source Repositories&lt;/strong>，&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/3.png"
+alt="開啟 Source Repositories" width="800">&lt;figcaption>
+&lt;p>開啟 Source Repositories&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/4.png"
+alt="成功建立 Source Repositories" width="1000">&lt;figcaption>
+&lt;p>成功建立 Source Repositories&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>將程式碼新增至存放區中&lt;span class="absolute -mt-20" id="將程式碼新增至存放區中">&lt;/span>
+&lt;a href="#%e5%b0%87%e7%a8%8b%e5%bc%8f%e7%a2%bc%e6%96%b0%e5%a2%9e%e8%87%b3%e5%ad%98%e6%94%be%e5%8d%80%e4%b8%ad" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>我們要在這一步來設定鏡像 (mirror)，首先我們看剛剛上面建立好的 Source Repositories，其中有一個&lt;strong>手動產生的憑證&lt;/strong>，點選 &lt;strong>產生及儲存 Git 憑證&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/5.png"
+alt="產生及儲存 Git 憑證" width="650">&lt;figcaption>
+&lt;p>產生及儲存 Git 憑證&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>點完後會需要先登入你的 GCP 帳號，登入完後會出現以下內容：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/6.png"
+alt="Configure Git" width="800">&lt;figcaption>
+&lt;p>Configure Git&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>接著把藍色框框內的輸入到終端機內&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/7.png"
+alt="Configure Git" width="800">&lt;figcaption>
+&lt;p>Configure Git&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="4">
+&lt;li>接著請複製以下指令貼到終端機內，會生成憑證密碼：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>grep &lt;span style="color:#e6db74">&amp;#39;source.developers.google.com&amp;#39;&lt;/span> ~/.gitcookies | tail -1 | cut -d&lt;span style="color:#f92672">=&lt;/span> -f2&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/8.png"
+alt="生成憑證密碼" width="800">&lt;figcaption>
+&lt;p>生成憑證密碼&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="5">
+&lt;li>接著請複製以下指令貼到終端機內，將用戶名存儲在 CSR_USER 環境變量中：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>CSR_USER&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>grep &lt;span style="color:#e6db74">&amp;#39;source.developers.google.com&amp;#39;&lt;/span> ~/.gitcookies | &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> tail -1 | cut -d&lt;span style="color:#e6db74">$&amp;#39;\t&amp;#39;&lt;/span> -f7 | cut -d&lt;span style="color:#f92672">=&lt;/span> -f1&lt;span style="color:#66d9ef">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/9.png"
+alt="用戶名存儲在 CSR_USER 環境變量中" width="800">&lt;figcaption>
+&lt;p>用戶名存儲在 CSR_USER 環境變量中&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="6">
+&lt;li>接著請複製以下指令貼到終端機內，將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中 (repo name 要改成你在 gcp 上面的 repo)：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>CSR_REPO&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>gcloud source repos describe &amp;lt;repo name&amp;gt; --format&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;value(url)&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/10.png"
+alt="將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中" width="800">&lt;figcaption>
+&lt;p>將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="7">
+&lt;li>接著請複製以下指令貼到終端機內，將存儲庫的 URL（包括用戶名）印到終端機上：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>echo $CSR_REPO | sed &lt;span style="color:#e6db74">&amp;#34;s/:\/\//:\/\/&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>CSR_USER&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">@/&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/11.png"
+alt="存儲庫的 URL（包括用戶名）印到終端機上" width="800">&lt;figcaption>
+&lt;p>存儲庫的 URL（包括用戶名）印到終端機上&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>經過上面操作，我們可以在第 4 步驟拿到密碼，以及在第 7 步驟拿到完整的 GCP URL，接著我們要到 GItLab Mirror 來設定鏡像。&lt;/p>
+&lt;br>
+&lt;h3>到 GitLab Mirror 設定鏡像&lt;span class="absolute -mt-20" id="到-gitlab-mirror-設定鏡像">&lt;/span>
+&lt;a href="#%e5%88%b0-gitlab-mirror-%e8%a8%ad%e5%ae%9a%e9%8f%a1%e5%83%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>先從右側 muen &amp;gt; 選擇 &lt;strong>Settings&lt;/strong> &amp;gt; 點選 &lt;strong>Repository&lt;/strong>，找到 &lt;strong>Mirroring repositories&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/12.png"
+alt="GitLab Mirror 設定鏡像" width="800">&lt;figcaption>
+&lt;p>GitLab Mirror 設定鏡像&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>將剛剛拿到的 URL 以及密碼各別輸入 Git repository URL 以及 Password，記得要選擇 Mirror direction，因為我們是要將 gitlab 的鏡像到 GCP 的 Cloud Source Repositories，所以我們要選擇 &lt;strong>PUSH&lt;/strong>，最後按下 &lt;strong>Mirror repository&lt;/strong>：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/13.png"
+alt="GitLab Mirror 設定鏡像" width="800">&lt;figcaption>
+&lt;p>GitLab Mirror 設定鏡像&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>如果沒有跳出錯誤，基本上是沒有問題了！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/14.png"
+alt="GitLab Mirror 檢查" width="800">&lt;figcaption>
+&lt;p>GitLab Mirror 檢查&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>就可以試著在 gitlab 上面推程式，看看有沒有跑到 Cloud Source Repositories 上面囉！&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/15.png"
+alt="GitLab 推程式測試" width="800">&lt;figcaption>
+&lt;p>GitLab 推程式測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://cloud.google.com/source-repositories/docs" target="_blank" rel="noopener">Cloud Source Repositories documentation&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://cloud.google.com/architecture/mirroring-gitlab-repositories-to-cloud-source-repositories" target="_blank" rel="noopener">Mirroring GitLab repositories to Cloud Source Repositories&lt;/a>&lt;/p></description></item><item><title>Google Cloud Platform (GCP) - Container Registry</title><link>https://pin-yi.me/blog/gcp/container-registry/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/container-registry/</guid><description>
+&lt;p>跟大家介紹一下今天的主題 Container Registry，Container Registry 是儲存、管理和保護 Docker 容器映像檔的存放區，可以讓團隊透過同一項服務服務集中管理 Docker 映像檔、也可以執行安全漏洞分析，還能透過精密的存取權管理機制，來決定誰可以存取哪些內容。簡單來說他就是一個讓我們存放 Docker 映像檔的地方，他有以下幾個特點：&lt;/p>
+&lt;br>
+&lt;h2>Container Registry 特點&lt;span class="absolute -mt-20" id="container-registry-特點">&lt;/span>
+&lt;a href="#container-registry-%e7%89%b9%e9%bb%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ol>
+&lt;li>安全的私人 Docker 註冊資料庫：只需要幾分鐘的時間，即可開始在 Google Cloud Platform 中使用安全的私人 Docker 映像檔儲存空間，控管能夠存取、檢視或下載映像檔的人員，並在受到 Google 安全防護機制保護的基礎架構上穩定執行。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;ol start="2">
+&lt;li>自動建立及部署映像檔：在您修訂 Cloud Source Repositories 中的程式碼時，系統會自動建立映像檔並推送至私人註冊資料庫。您可以輕鬆設定持續整合/持續推送軟體更新管道，並整合至 Cloud Build，或是直接將管道部署至 Google Kubernetes Engine、App Engine、Cloud Functions 或 Firebase。(這個就是我們在&lt;a href="https://pin-yi.me/blog/gcp/cloud-build/" >下一篇文章&lt;/a>會使用到的功能)&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;ol start="3">
+&lt;li>深度安全漏洞掃描：在軟體部署週期的早期階段找出安全漏洞，藉此確保您可以安全地部署容器映像檔。資料庫會持續重新整理，讓您的安全漏洞掃描作業取得最新型惡意軟體的相關資訊。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;ol start="4">
+&lt;li>鎖定有風險的映像檔：運用二進位授權的原生整合功能來定義政策，避免部署與所設定政策相衝突的映像檔。您可以觸發容器映像檔的自動鎖定功能，禁止將有風險的映像檔部署至 Google Kubernetes Engine。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;ol start="5">
+&lt;li>原生支援 Docker：您不僅可以視需求定義多個註冊資料庫，也能使用標準的 Docker 指令列介面，將 Docker 映像檔推送和提取到您的私人 Container Registry。Docker 提供依據名稱和標記搜尋映像檔的功能，讓您可以順暢使用。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;ol start="6">
+&lt;li>快速的高可用性存取能力：您可使用我們遍布全球的區域性私人存放區，於全世界皆能享有最快速的回應時間。您可以就近將映像檔儲存在位於歐洲、亞洲或美國的運算執行個體中，並透過 Google 的高效能全球網路快速完成部署作業。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>上面有提到 Container Registry 其中一個特點就是掃描映像檔，會檢查有沒有奇怪的內容或是錯誤，讓我們在部署前可以先做檢查，底下是整個的流程圖：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/1.webp"
+alt="Container Registry 掃描流程圖" width="800">&lt;figcaption>
+&lt;p>Container Registry 掃描流程圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們可以延續上一篇文章 &lt;a href="https://pin-yi.me/blog/gcp/cloud-source-repositories/" >Cloud Source Repositories&lt;/a> 來說明上面圖片，一開始先 commit 到 GCP 上，也可以把它當成 Cloud Source Repositories，就著透過會透過&lt;a href="https://pin-yi.me/blog/gcp/cloud-build/" >下一篇要講的 Cloud Build&lt;/a> 來建置，並且掃描，如果沒有問題就會 Pubish 到 Container Registry 存放囉～&lt;/p>
+&lt;br>
+&lt;p>我們就簡單說明要怎麼查看我們的 Container Registry，點選則左側的 menu &amp;gt; 選擇 &lt;strong>Container Registry&lt;/strong> &amp;gt; 點擊 &lt;strong>映像檔&lt;/strong>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/2.png"
+alt="Container Registry" width="350">&lt;figcaption>
+&lt;p>Container Registry&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>一開始可能沒有任何的資料夾，之後當我們 Build 時，可以新增特定的資料夾來放我們的映像檔，可以參考下方圖片：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/3.png"
+alt="Container Registry 資料夾" width="750">&lt;figcaption>
+&lt;p>Container Registry 資料夾&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>進入該資料夾後，就可以看到裡面的映像檔案：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/4.png"
+alt="Container Registry 映像檔" width="1000">&lt;figcaption>
+&lt;p>Container Registry 映像檔&lt;/p>
+&lt;/figcaption>
+&lt;/figure></description></item><item><title>Google Cloud Platform (GCP) - Cloud Build</title><link>https://pin-yi.me/blog/gcp/cloud-build/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/cloud-build/</guid><description>
+&lt;p>跟大家介紹一下今天的主題 Cloud Build，Cloud Build 可以幫我們做持續建構、測試和部署，我們可以把它想成簡易版的 Jenkins，從整個映像檔案打包到部署，也就幾分鐘的事情，且內建許多指令。&lt;/p>
+&lt;br>
+&lt;p>我們今天文章，需要使用前幾天提到的 &lt;a href="https://pin-yi.me/blog/gcp/cloud-source-repositories/" >Cloud Source Repositories&lt;/a> 、&lt;a href="https://pin-yi.me/blog/gcp/compute-engine/" >Compute Engine&lt;/a>、&lt;a href="https://pin-yi.me/blog/gcp/container-registry/" >Container Registry&lt;/a>，我們需要先透過 GitLab 將程式鏡像到 Cloud Source Repositories，再透過 Cloud Build 觸發將 GitLab 上面的 Dockerfile 建置到 Container Registry 中，再部署到 Compute Engine VM 上。大家可以參考流程圖，會更清楚今天的流程！那我們就開始囉 🥸&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/1.png"
+alt="流程圖" width="1200">&lt;figcaption>
+&lt;p>流程圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>Cloud Source Repositories 測試&lt;span class="absolute -mt-20" id="cloud-source-repositories-測試">&lt;/span>
+&lt;a href="#cloud-source-repositories-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>前面 GitLab 鏡像設定，請先參考上上篇 &lt;a href="https://pin-yi.me/blog/gcp/cloud-source-repositories/" >Google Cloud Platform (GCP) - Cloud Source Repositories&lt;/a>，上上篇會帶大家從 GitLab 鏡像到 Cloud Source Repositories，所以我們就接續之前的內容，繼續往下開始學習吧～&lt;/p>
+&lt;br>
+&lt;ol>
+&lt;li>開啟 GCP，選擇左側的 menu &amp;gt; 點擊 &lt;strong>Cloud Build&lt;/strong> &amp;gt; 選擇 &lt;strong>觸發條件&lt;/strong>，點擊 &lt;strong>建立觸發條件&lt;/strong> 按鈕。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;ol start="2">
+&lt;li>輸入觸發條件的名稱，事件可以設定我們要怎麼進行觸發，我們這邊先選擇 &lt;strong>推送至分支的版本&lt;/strong> 來觸發，在來源選擇上上篇建立好的 Cloud Source Repositories 存放區，分支版本我們先使用預設的 master，也就是推程式到 master 他會就觸發 Cloud Build：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/2.png"
+alt="建立觸發條件 1" width="900">&lt;figcaption>
+&lt;p>建立觸發條件 1&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>設定類型我們選擇 Cloud Build 設定檔，他也是 Cloud Build 專用的設定檔，後面會帶大家寫一份 Cloud Build，位置當然是使用我們 Cloud Source Repositories 存放區，以及可以依照專案來修改 cloudbuild.yaml 放在專案的哪裡，最後都沒問題，就按下建立：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/3.png"
+alt="建立觸發條件 2" width="900">&lt;figcaption>
+&lt;p>建立觸發條件 2&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>撰寫 cloudbuild.yaml 設定檔&lt;span class="absolute -mt-20" id="撰寫-cloudbuildyaml-設定檔">&lt;/span>
+&lt;a href="#%e6%92%b0%e5%af%ab-cloudbuildyaml-%e8%a8%ad%e5%ae%9a%e6%aa%94" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在開始建立檔案前，先來跟大家說說檔案內有哪些設定吧：&lt;/p>
+&lt;br>
+&lt;p>首先 Cloud Build 建構器是裝有常用的程式語言和工具的容器映像。我們可以配置 Cloud Build，讓建構器中運行特定命令，我舉個例子讓大家了解：&lt;/p>
+&lt;p>以下程式碼是來自 &lt;a href="https://hub.docker.com/search?q=&amp;amp;type=image" target="_blank" rel="noopener">Docker Hub&lt;/a> 的 &lt;code>ubnutu&lt;/code> 映像檔中所執行的命令：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">steps&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;ubuntu&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">args&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;echo&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;hello world&amp;#34;&lt;/span>]&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到我們配置文件中 &lt;code>steps&lt;/code> 參數是指我們要建構的步驟， &lt;code>name&lt;/code> 字段指定 Docker 映像檔的位置，以及 &lt;code>args&lt;/code> 字段中是指定映像檔運行的命令。&lt;/p>
+&lt;p>我們的 Cloud Build 一樣會需要用 &lt;code>name&lt;/code> 來指定建構容器的映像檔，以及使用 &lt;code>args&lt;/code> 來執行我們映像檔所要運行的命令。&lt;/p>
+&lt;br>
+&lt;p>我們的 Cloud Build 設定檔中的 &lt;code>name&lt;/code> 常用的建構器映像檔如下：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">Builder&lt;/th>
+&lt;th style="text-align:center">名稱&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">bazel&lt;/td>
+&lt;td style="text-align:center">gcr.io/cloud-builders/bazel&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">docker&lt;/td>
+&lt;td style="text-align:center">gcr.io/cloud-builders/docker&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">git&lt;/td>
+&lt;td style="text-align:center">gcr.io/cloud-builders/git&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">gcloud&lt;/td>
+&lt;td style="text-align:center">gcr.io/cloud-builders/gcloud&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">gke-deploy&lt;/td>
+&lt;td style="text-align:center">gcr.io/cloud-builders/gke-deploy&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;p>接著我們來試著寫一個 cloudbuild.yaml 來建構我們的 nginx 服務，並部署到 Compute Engine 上。&lt;/p>
+&lt;br>
+&lt;p>我們先回到 Gitlab 該專案下的目錄，新增 cloudbuild.yaml 檔案，將複製以下內容：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">steps&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Docker Build&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcr.io/cloud-builders/docker&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">args&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;build&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;-t&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;gcr.io/$PROJECT_ID/ian-test:ian-nginx-test&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Docker Push&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcr.io/cloud-builders/docker&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">args&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;push&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;gcr.io/$PROJECT_ID/ian-test:ian-nginx-test&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Build VM&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcr.io/google.com/cloudsdktool/cloud-sdk&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">entrypoint&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcloud&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">args&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;compute&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;instances&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;create-with-container&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;ian-test-vm&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;--container-image&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;gcr.io/$PROJECT_ID/ian-test:ian-nginx-test&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">env&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;CLOUDSDK_COMPUTE_REGION=asia-east1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;CLOUDSDK_COMPUTE_ZONE=asia-east1-b&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>我們一個一個來說說的這個 cloudbuild.yaml 裡面的設定吧！(我以前面的註解來區分)&lt;/p>
+&lt;ul>
+&lt;li>Docker Build：這邊的 &lt;code>name&lt;/code> 我們用 &lt;code>gcr.io/cloud-builders/docker&lt;/code>，代表我們將使用 docker 建構器，&lt;code>args&lt;/code> 這邊下的意思是要把與 cloudbuild.yaml 放在一起的 Dokcerfile 給 build 起來，並改名為 gcr.io/$PROJECT_ID/ian-test:ian-nginx-test。&lt;/li>
+&lt;li>Docker Push：這邊一樣使用 &lt;code>gcr.io/cloud-builders/docker&lt;/code>，&lt;code>args&lt;/code> 指令部分變成我們要把他 push 到 gcr.io/$PROJECT_ID/ian-test 這個 Cloud Source Repositories，其中這個映像檔案的 tag 為 ian-nginx-test。&lt;/li>
+&lt;li>Build VM：這邊我們使用 &lt;code>gcr.io/google.com/cloudsdktool/cloud-sdk&lt;/code>，可以透過它來建立 VM，並且執行 tag 名為 ian-nginx-test 的映像檔，後面環境變數是來設定 VM 的區域等等。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+&lt;code>ian-test&lt;/code> 是 Container Registry 資料夾名稱，&lt;code>ian-nginx-test&lt;/code> 是 Container Registry 映像檔的 tag，&lt;code>ian-test-vm&lt;/code> 是我們建立 VM 的名字，所以要記得改成自己的命名歐！
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>撰寫 Dockerfile&lt;span class="absolute -mt-20" id="撰寫-dockerfile">&lt;/span>
+&lt;a href="#%e6%92%b0%e5%af%ab-dockerfile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來剛剛有提到 Docker Build 會將我們放在一起的 Dockerfile 給 build 起來，所以我們也要先寫好要用的 Dockerfile：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Dockerfile" data-lang="Dockerfile">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">FROM&lt;/span>&lt;span style="color:#e6db74"> nginx:latest&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">COPY&lt;/span> ./index.html /usr/share/nginx/html/&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>我們的 Dockerfile 很簡單，簡單寫了要使用的映像檔，以及將我們等等要測試的 index 複製到裡面&lt;/p>
+&lt;br>
+&lt;h3>撰寫測試 index.html&lt;span class="absolute -mt-20" id="撰寫測試-indexhtml">&lt;/span>
+&lt;a href="#%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6-indexhtml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-html" data-lang="html">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&amp;lt;!DOCTYPE html&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;lt;&lt;span style="color:#f92672">html&lt;/span> &lt;span style="color:#a6e22e">lang&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;en&amp;#34;&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">head&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">meta&lt;/span> &lt;span style="color:#a6e22e">charset&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;UTF-8&amp;#34;&lt;/span> /&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">meta&lt;/span> &lt;span style="color:#a6e22e">http-equiv&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;X-UA-Compatible&amp;#34;&lt;/span> &lt;span style="color:#a6e22e">content&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;IE=edge&amp;#34;&lt;/span> /&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">meta&lt;/span> &lt;span style="color:#a6e22e">name&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;viewport&amp;#34;&lt;/span> &lt;span style="color:#a6e22e">content&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;width=device-width, initial-scale=1.0&amp;#34;&lt;/span> /&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">title&lt;/span>&amp;gt;測試測試測試&amp;lt;/&lt;span style="color:#f92672">title&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;/&lt;span style="color:#f92672">head&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">body&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 我是測試檔案
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;/&lt;span style="color:#f92672">body&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;lt;/&lt;span style="color:#f92672">html&lt;/span>&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>這個測試檔案，會蓋過 nginx 的預設畫面，當我們成功將 VM 建立後，瀏覽 80 Port 時，應該會跳出這個測試的網頁。&lt;/p>
+&lt;br>
+&lt;h3>Commit 到 GitLab&lt;span class="absolute -mt-20" id="commit-到-gitlab">&lt;/span>
+&lt;a href="#commit-%e5%88%b0-gitlab" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當我們都新增好檔案後，我們就將程式推到我們前幾篇的 Cloud Source Repositories 已經鏡像的 GitLab 中，接著就是等待見證奇蹟的時候了ＸＤ&lt;/p>
+&lt;ol>
+&lt;li>當我們推送後，我們先檢查 Cloud Source Repositories 是否有成功從 GitLab 鏡像過來：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/4.png"
+alt="Cloud Source Repositories" width="700">&lt;figcaption>
+&lt;p>Cloud Source Repositories&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>檢查看看 Container Registry 是否多了名為 &lt;code>ian-test&lt;/code> 的資料夾，且裡面有一個 tag 為 &lt;code>ian-nginx-test&lt;/code> 的映像檔：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/5.png"
+alt="Container Registry" width="1000">&lt;figcaption>
+&lt;p>Container Registry&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>檢查一下 Cloud Build 的觸發條件是不是在運作，最後成功可以看到類似下方圖片內容：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/6.png"
+alt="Cloud Build 的觸發條件" width="1200">&lt;figcaption>
+&lt;p>Cloud Build 的觸發條件&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="4">
+&lt;li>檢查 Compute Engine 的 VM 是否有成功被建立：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/7.png"
+alt="Compute Engine" width="1200">&lt;figcaption>
+&lt;p>Compute Engine&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="5">
+&lt;li>最後就是測試這個映像檔案，是不是我們所 Build 的，測試方法很簡單，我們剛剛在 Dockerfile 有複製我們自己寫的 index.html 檔案，去蓋掉原本 nginx 的預設檔，所以我們可以瀏覽上面圖片的外部 IP，就可以看到我們所改的頁面囉！&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/8.png"
+alt="測試用 index.html" width="700">&lt;figcaption>
+&lt;p>測試用 index.html&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Cloud Builder：&lt;a href="https://cloud.google.com/build/docs/cloud-builders" target="_blank" rel="noopener">https://cloud.google.com/build/docs/cloud-builders&lt;/a>&lt;/p>
+&lt;p>Day27 - 用 Cloud Build 實作 CI 部分：&lt;a href="https://ithelp.ithome.com.tw/articles/10224727" target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10224727&lt;/a>&lt;/p></description></item></channel></rss>
