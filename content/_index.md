@@ -12,6 +12,11 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 
 {{< card link="blog/gcp/gcp-log-reduce-cloud-logging-api" title="如何過濾 GCP LOG，減少 Cloud Logging API 的花費" image="/gcp/gcp-log-reduce-cloud-logging-api/cover.webp">}}
 {{< card link="blog/gcp/gke-cronjob-not-working" title="Google Kubernetes Engine CronJob 會有短暫時間沒有執行 Job" image="/gcp/gke-cronjob-not-working/cover.webp">}}
+{{< card link="blog/gcp/iam" title="Google Cloud Platform (GCP) - IAM 與管理" image="/gcp/iam/cover.webp" >}}
+{{< card link="blog/gcp/compute-engine" title="Google Cloud Platform (GCP) - Compute Engine" image="/gcp/compute-engine/cover.webp" >}}
+{{< card link="blog/gcp/cloud-source-repositories" title="Google Cloud Platform (GCP) - Cloud Source Repositories" image="/gcp/cloud-source-repositories/cover.webp" >}}
+{{< card link="blog/gcp/container-registry" title="Google Cloud Platform (GCP) - Container Registry" image="/gcp/container-registry/cover.webp" >}}
+{{< card link="blog/gcp/cloud-build" title="Google Cloud Platform (GCP) - Cloud Build" image="/gcp/cloud-build/cover.webp" >}}
 
 {{< card link="blog/kubernetes/k8s-statefulset-podmanagementpolicy" title="在正式環境上踩到 StatefulSet 的雷，拿到 P1 的教訓" image="/kubernetes/k8s-statefulset-podmanagementpolicy/cover.webp">}}
 {{< card link="blog/kubernetes/pod-veth-name-provided-eth0-already-exists" title="部署 Pod 遇到 container veth name provided (eth0) already exists 錯誤" image="/kubernetes/pod-veth-name-provided-eth0-already-exists/cover.webp">}}
