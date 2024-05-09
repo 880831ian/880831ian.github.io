@@ -1,7 +1,7 @@
 ---
 title: "找出程式碼、開源套件、容器的安全漏洞工具 - Snyk"
 type: docs
-weight: 4
+weight: 60
 ---
 
 前幾天有機會可以去參加 DevOpsDays Taipei 2022 活動，聽到了一門有關於如何將 Security 加入 DevOps - GitLab CI/CD with Snyk 的講座，覺得蠻有趣的，想說順便紀錄一下這幾天去聽的內容，文章底下有附上本次大會的共筆以及該講者於自己部落格所發的文章，歡迎大家先行查看歐 😆

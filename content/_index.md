@@ -40,6 +40,7 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 {{< card link="blog/opentelemetry/opentelemetry-observability" title="什麼是 Opentelemetry？可觀測性 (Observability) 又是什麼？" image="/opentelemetry/opentelemetry-observability/cover.webp">}}
 {{< card link="blog/opentelemetry/opentelemetry-ingress-nginx-controller" title="如何透過 OpenTelemetry 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上" image="/opentelemetry/opentelemetry-ingress-nginx-controller/cover.webp">}}
 
+{{< card link="blog/other/git-merge-multiple-commit" title="如何合併多個 commit，且推到遠端呢？" image="/other/git-merge-multiple-commit/cover.webp">}}
 {{< card link="blog/other/bookstack" title="Bookstack 開源知識庫筆記平台安裝 (K8s + docker)" image="/other/bookstack/cover.webp">}}
 {{< card link="snyk" title="找出程式碼、開源套件、容器的安全漏洞工具 - Snyk" image="/other/snyk/cover.webp">}}
 {{< /cards>}}

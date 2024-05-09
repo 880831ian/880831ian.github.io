@@ -1,7 +1,7 @@
 ---
 title: "Bookstack 開源知識庫筆記平台安裝 (K8s + docker)"
 type: docs
-weight: 4
+weight: 59
 ---
 
 最近剛好有公司同事離職，想要把交接的資料給整理整理，雖然部門之前有架設專用的 wiki 給 RD 使用，但覺得介面沒有到很好用，於是就在網路上尋找，可以多人編輯的筆記系統，一開始有想過用 CodiMD (HackMD)，但考量到需要多層的架構來區分文件，最後選擇 [Bookstack](https://www.bookstackapp.com/) 這個開源知識庫筆平台來作為組內的筆記系統，以下會簡單說一下 Bookstack 的特色以及使用 K8s 跟 docker 的安裝教學。
