@@ -943,4 +943,85 @@ alt="Google Cloud Platform 的監控" width="1200">&lt;figcaption>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Autoscaling Deployments with Cloud Monitoring metric：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/autoscaling-metrics#custom-prometheus_1" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/tutorials/autoscaling-metrics#custom-prometheus_1&lt;/a>&lt;/p>
 &lt;p>GoogleCloudPlatform/k8s-stackdriver：&lt;a href="https://github.com/GoogleCloudPlatform/k8s-stackdriver/tree/master/custom-metrics-stackdriver-adapter" target="_blank" rel="noopener">https://github.com/GoogleCloudPlatform/k8s-stackdriver/tree/master/custom-metrics-stackdriver-adapter&lt;/a>&lt;/p>
 &lt;p>hipages/php-fpm_exporter：&lt;a href="https://github.com/hipages/php-fpm_exporter" target="_blank" rel="noopener">https://github.com/hipages/php-fpm_exporter&lt;/a>&lt;/p>
-&lt;p>Scaling PHP-FPM with custom metrics on GKE/kubernetes：&lt;a href="https://www.ashsmith.io/scaling-phpfpm-with-custom-metrics-gke" target="_blank" rel="noopener">https://www.ashsmith.io/scaling-phpfpm-with-custom-metrics-gke&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>Scaling PHP-FPM with custom metrics on GKE/kubernetes：&lt;a href="https://www.ashsmith.io/scaling-phpfpm-with-custom-metrics-gke" target="_blank" rel="noopener">https://www.ashsmith.io/scaling-phpfpm-with-custom-metrics-gke&lt;/a>&lt;/p></description></item><item><title>用大型社區來介紹 Kubernetes 元件</title><link>https://pin-yi.me/blog/kubernetes/k8s-plain/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-plain/</guid><description>
+&lt;p>前陣子對於 Kubernetes 部分內容還不是很清楚，在網路上閒逛的時候發現一篇很有趣的文章，標題是 『 &lt;a href="https://blog.pichuang.com.tw/20210111-Kubernetes-for-sales-and-marketing/#%E4%B8%AD%E7%BF%BB%E4%B8%AD%E7%9A%84-Kubernetes-%E7%B5%84%E4%BB%B6%E4%BB%8B%E7%B4%B9" target="_blank" rel="noopener">給行銷跟業務的 Kubernetes 101 中翻中介紹&lt;/a> 』，點進去後才發現，作者 &lt;a href="https://blog.pichuang.com.tw/about/" target="_blank" rel="noopener">Phil Huang&lt;/a> 將 Kubernetes 元件的內容用大型住戶社區來介紹，讓我更清楚每一個元件的意思，以下我會用我理解的以及作者的思考邏輯來去寫這篇筆記，再次感謝作者文章 😍&lt;/p>
+&lt;br>
+&lt;h2>Kubernetes 元件白話文&lt;span class="absolute -mt-20" id="kubernetes-元件白話文">&lt;/span>
+&lt;a href="#kubernetes-%e5%85%83%e4%bb%b6%e7%99%bd%e8%a9%b1%e6%96%87" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-plain/1.jpg"
+alt="大型社區示意圖 (圖片來源：蘋果地產)" width="550">&lt;figcaption>
+&lt;p>大型社區示意圖 (圖片來源：&lt;a href="https://tw.feature.appledaily.com/house/news/article/205878" target="_blank" rel="noopener">蘋果地產&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>可以看到上面這張圖片，他是一個很典型的大型社區，我們這次的 Kubernetes 元件白話文，會以大型社區來當作現實中的元件，以社區的例子來說明 Kubernetes 。&lt;/p>
+&lt;br>
+&lt;p>當然，我們之前的文章也有介紹過 Kubernetes，有興趣可以先飛回去看看！&lt;/p>
+&lt;p>&lt;a href="https://pin-yi.me/blog/kubernetes/k8s/" >Kubernetes (K8s) 介紹 - 基本&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://pin-yi.me/blog/kubernetes/k8s-advanced/" >Kubernetes (K8s) 介紹 - 進階 (Service、Ingress、StatefulSet、Deployment、ReplicaSet、ConfigMap)&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://pin-yi.me/blog/kubernetes/k8s-efk/" >Kubernetes (K8s) 搭配 EFK 實作 (Deployment、StatefulSet、DaemonSet)&lt;/a>&lt;/p>
+&lt;p>我們先想像一下我們建立 Kubernetes 完整的叢集服務，就好比是建立一個大型的社區，所以以下會將名詞與社區來做連結，那．．．開始囉！&lt;/p>
+&lt;br>
+&lt;h3>Kubernetes 元件&lt;span class="absolute -mt-20" id="kubernetes-元件">&lt;/span>
+&lt;a href="#kubernetes-%e5%85%83%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>Kubernetes：建立這個大型社區的藍圖，規劃的社區內的大大小小的設計。&lt;/li>
+&lt;li>虛擬化平台、公有雲平台、實體機器：就是我們要蓋社區的地皮。(虛擬化平台：vSphere/Proxmox/VMware、公有雲平台：AWS/GCP/Azuer、實體機器：就是實體機器 😂)&lt;/li>
+&lt;li>OS 作業系統：每棟大樓的骨架和地基。&lt;/li>
+&lt;li>Master Node：住戶管委會所居住大樓 (真好自己有所屬的大樓ＸＤ)，為了保證他們不會吵架，所以建議最少需要三棟。&lt;/li>
+&lt;li>Etcd Cluster：管委會的人，一樣為了怕一黨獨大(?，所以建議最少需要有三位管委，且互相投票選出一個頭頭。&lt;/li>
+&lt;li>Worker Node：就是偶們住戶所居住的大樓。&lt;/li>
+&lt;li>Pod：住戶，所以我們一棟 Worker Node 大樓，可以有很多 Pod 住戶。&lt;/li>
+&lt;li>Pod IP：每個住戶的門牌，既然是門牌，代表他也不會重複。&lt;/li>
+&lt;li>Container Registry：包裹集中的存放中心。&lt;/li>
+&lt;li>Container Images：還沒有被打開的包裹。&lt;/li>
+&lt;li>Containers：已經被打開且正在使用的包裹，那每個 Pod 住戶裡面，可以有一個或很多個以上的 Containers 包裹。&lt;/li>
+&lt;li>Service：社區裡面的社團，例如：羽球社、麻將社等等，可以集合大家的地方。&lt;/li>
+&lt;li>Service Mesh：社團的聯絡名冊，會記住誰是哪一個社團的成員。&lt;/li>
+&lt;li>Ingress Controller：社區的大門，可以指定讓社區成員都固定走同一個或是多個門的入口管控。&lt;/li>
+&lt;li>Egress Controller：社區的後門，可以指定讓社區成員都固定走同一個或是多個門的出口管控。&lt;/li>
+&lt;li>Internal DNS / Service Discovery：大樓住戶的電話簿。&lt;/li>
+&lt;li>External DNS：指向各大樓的路標。&lt;/li>
+&lt;li>OCI (Open Container Initiative)：制定大樓鋼筋水泥或是行李箱標準的組織。&lt;/li>
+&lt;li>CRI (Container Runtime Interface)：大樓鋼筋水泥的廠商。&lt;/li>
+&lt;li>CNI (Container Network Interface)：大樓水電系統的廠商。&lt;/li>
+&lt;li>CSI (Container Storage Interface)：大樓空間規劃的廠商。&lt;/li>
+&lt;li>Bastion：專門維護社區的工程車。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>常用套件&lt;span class="absolute -mt-20" id="常用套件">&lt;/span>
+&lt;a href="#%e5%b8%b8%e7%94%a8%e5%a5%97%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>Promethus：社區整體的監控中心 (Meterics)，一堆攝影機的管理室 XD&lt;/li>
+&lt;li>Grafana：監控中心裡面大型的 LED 儀表板。&lt;/li>
+&lt;li>Elaticsearch：社區整體的情資中心 (Logging)，這應該是一群愛八卦的大媽吧 😏&lt;/li>
+&lt;li>Kibana：情資中心裡面大型的 LED 訊息版。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h2>常見問題&lt;span class="absolute -mt-20" id="常見問題">&lt;/span>
+&lt;a href="#%e5%b8%b8%e8%a6%8b%e5%95%8f%e9%a1%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>作者也有整理了一些常見的問題，我把它整理一下挑選出幾個我自己一開始也會有疑問的問題，我們一起來看看吧！一樣我會用我所理解的意思來介紹 ~&lt;/p>
+&lt;h3>Q1：為什麼 Kubernetes 的最小單位是 Pod 這個要怎麼理解？&lt;span class="absolute -mt-20" id="q1為什麼-kubernetes-的最小單位是-pod-這個要怎麼理解">&lt;/span>
+&lt;a href="#q1%e7%82%ba%e4%bb%80%e9%ba%bc-kubernetes-%e7%9a%84%e6%9c%80%e5%b0%8f%e5%96%ae%e4%bd%8d%e6%98%af-pod-%e9%80%99%e5%80%8b%e8%a6%81%e6%80%8e%e9%ba%bc%e7%90%86%e8%a7%a3" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Ans ： 試想一下，難道管委會會管你的包裹裡面內容物放什麼嗎 XD&lt;/p>
+&lt;br>
+&lt;h3>Q2：Docker 在 Kubernetes 的角色是什麼？&lt;span class="absolute -mt-20" id="q2docker-在-kubernetes-的角色是什麼">&lt;/span>
+&lt;a href="#q2docker-%e5%9c%a8-kubernetes-%e7%9a%84%e8%a7%92%e8%89%b2%e6%98%af%e4%bb%80%e9%ba%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Ans ： 是眾多的 CRI (Container Runtime Interface) 選擇之一，也就是大樓的鋼筋水泥廠商有很多間，有一間叫做 Docker 的廠商特別有名。&lt;/p>
+&lt;br>
+&lt;h3>Q3：呈上，那 CRI/CNI/CSI 是不是也可以替換成其他的廠商？&lt;span class="absolute -mt-20" id="q3呈上那-cricnicsi-是不是也可以替換成其他的廠商">&lt;/span>
+&lt;a href="#q3%e5%91%88%e4%b8%8a%e9%82%a3-cricnicsi-%e6%98%af%e4%b8%8d%e6%98%af%e4%b9%9f%e5%8f%af%e4%bb%a5%e6%9b%bf%e6%8f%9b%e6%88%90%e5%85%b6%e4%bb%96%e7%9a%84%e5%bb%a0%e5%95%86" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Ans ： 當然可以，現在可以看到越來越多廠商都開始支援 Kubernetes 就是因為這個原因，因為一般情況下，Kubernetes 並不會特別限定 &lt;code>大樓鋼筋水泥廠商&lt;/code>、&lt;code>大樓水電系統廠商&lt;/code>、&lt;code>大樓空間規劃廠商&lt;/code>，只要有符合特定的標準即可，但要留意 Kubernetes 的版號也會受到這三個介面支援發行的版號所影響，要留意相容性的問題！&lt;/p>
+&lt;br>
+&lt;h3>Q4：整個住戶社區最重要的角色是什麼？&lt;span class="absolute -mt-20" id="q4整個住戶社區最重要的角色是什麼">&lt;/span>
+&lt;a href="#q4%e6%95%b4%e5%80%8b%e4%bd%8f%e6%88%b6%e7%a4%be%e5%8d%80%e6%9c%80%e9%87%8d%e8%a6%81%e7%9a%84%e8%a7%92%e8%89%b2%e6%98%af%e4%bb%80%e9%ba%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Ans ： 那三棟管委會大樓，和裡面的的三位委員，三位掛掉一位還可以維持正常運作，掛掉兩位會維持唯獨運作。&lt;/p>
+&lt;br>
+&lt;h3>Q5：Kubernetes、VM、Container 的差異性&lt;span class="absolute -mt-20" id="q5kubernetesvmcontainer-的差異性">&lt;/span>
+&lt;a href="#q5kubernetesvmcontainer-%e7%9a%84%e5%b7%ae%e7%95%b0%e6%80%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Ans ： 我們可以建立好一個大樓(VM)，隨意放置一個或是多個包裹(Containers)，必須手動管理這些包裹，如果資源不足或是這棟大樓倒了，就沒有辦法自動轉移這些包裹的內容了。&lt;/p>
+&lt;p>但如果是 Kubernetes，我們就可以建立多個大樓(VM)，透過 Kubernetes 所規定的放置計畫 (例如：Deployment、DaemonSet)，我們將可以統一調度這些 Pod，當某棟大樓資源不夠或是這棟大樓倒時，可以根據 Kubernetes 規則來進行搬遷或是擴充大樓。&lt;/p>
+&lt;br>
+&lt;h3>Q6：為什麼有人會把 Container 跟 Pod 混在一起講&lt;span class="absolute -mt-20" id="q6為什麼有人會把-container-跟-pod-混在一起講">&lt;/span>
+&lt;a href="#q6%e7%82%ba%e4%bb%80%e9%ba%bc%e6%9c%89%e4%ba%ba%e6%9c%83%e6%8a%8a-container-%e8%b7%9f-pod-%e6%b7%b7%e5%9c%a8%e4%b8%80%e8%b5%b7%e8%ac%9b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Ans ： 因為大部分的情況下，都是一個住戶(Pod)放一個包裹(Container)，，才會導致這樣的誤會。但實際上，一個住戶(Pod)是可以放一個或多個包裹在裡面的！&lt;/p>
+&lt;br>
+&lt;h3>Q7：什麼是 Node Scaling ?&lt;span class="absolute -mt-20" id="q7什麼是-node-scaling-">&lt;/span>
+&lt;a href="#q7%e4%bb%80%e9%ba%bc%e6%98%af-node-scaling-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Ans ： 可以把它理解成，當住戶太多時，Kubernetes 會自動或手動興建大樓，來把多出來的用戶給塞進去。&lt;/p>
+&lt;br>
+&lt;h3>Q8：在 Q5 有提到放置計畫是什麼意思？&lt;span class="absolute -mt-20" id="q8在-q5-有提到放置計畫是什麼意思">&lt;/span>
+&lt;a href="#q8%e5%9c%a8-q5-%e6%9c%89%e6%8f%90%e5%88%b0%e6%94%be%e7%bd%ae%e8%a8%88%e7%95%ab%e6%98%af%e4%bb%80%e9%ba%bc%e6%84%8f%e6%80%9d" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Ans ： 只要你有需要將包裹放在社區內，都必須提出部署計畫(Deployment) 給管委會審核，只要通過審核，他們依照你事先聲明的計畫，盡最大可能性來放置包裹。&lt;/p>
+&lt;p>所以當我們有任何變更計畫時，都需要重新提交一份新的部署計畫給管委會重新審核和接受。&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://blog.pichuang.com.tw/20210111-Kubernetes-for-sales-and-marketing/#%E4%B8%AD%E7%BF%BB%E4%B8%AD%E7%9A%84-Kubernetes-%E7%B5%84%E4%BB%B6%E4%BB%8B%E7%B4%B9" target="_blank" rel="noopener">給行銷跟業務的 Kubernetes 101 中翻中介紹&lt;/a>&lt;/p></description></item></channel></rss>
