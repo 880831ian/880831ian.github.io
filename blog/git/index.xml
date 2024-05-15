@@ -1,0 +1,570 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Git 相關</title><link>https://pin-yi.me/blog/git/</link><description>Recent content in Git 相關 on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/git/index.xml" rel="self" type="application/rss+xml"/><item><title>如何啟用 GitLab 的 Package Registry 以及將儲存位置從伺服器改到 GCS 上</title><link>https://pin-yi.me/blog/git/gitlab-package-registry-to-gcs/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/git/gitlab-package-registry-to-gcs/</guid><description>
+&lt;p>今天接到一個案子，RD 部門之後想要使用 GitLab 的 Package Registry 功能來發布套件，且不想把它存在 GitLab 伺服器上，希望可以直接存到 GCP 的 Google Cloud Storage 上，所以才會有了此篇筆記來記錄一下整個過程。&lt;/p>
+&lt;br>
+&lt;p>版本資訊&lt;/p>
+&lt;ul>
+&lt;li>GitLab 14.10 (有部分設定會於新版本棄用，請記得確認好自己的版本是否支援)&lt;/li>
+&lt;/ul>
+&lt;p>先說一下，我們的 GitLab 是使用 docker-compose 來建置，所以後續的實作內容都會以 docker-compose 的方式來介紹。&lt;/p>
+&lt;br>
+&lt;h2>啟動 GitLab 的 Package Registry&lt;span class="absolute -mt-20" id="啟動-gitlab-的-package-registry">&lt;/span>
+&lt;a href="#%e5%95%9f%e5%8b%95-gitlab-%e7%9a%84-package-registry" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先，我們當然要先啟動這項 Package Registry 功能，才可以再之後使用它，我們先看一下 GitLab 啟動的 docker-compose.yml 檔案：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">version&lt;/span>: &lt;span style="color:#e6db74">&amp;#39;3&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">services&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">gitlab&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#e6db74">&amp;#39;gitlab/gitlab-ee:14.10.5-ee.0&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">restart&lt;/span>: &lt;span style="color:#ae81ff">always&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">gitlab&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">hostname&lt;/span>: &lt;span style="color:#ae81ff">gitlab-pid&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">logging&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;json-file&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">max-size&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;100m&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">max-file&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;50&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">GITLAB_OMNIBUS_CONFIG&lt;/span>: |&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> external_url &amp;#39;${GITLAB_DOMAIN}&amp;#39;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> letsencrypt[&amp;#39;enable&amp;#39;] = false
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> gitlab_rails[&amp;#39;initial_root_password&amp;#39;] = &amp;#39;${GITLAB_ROOT_PASSWORD}&amp;#39;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> gitlab_rails[&amp;#39;gitlab_shell_ssh_port&amp;#39;] = &amp;#39;${GITLAB_HOST_SSH_PORT}&amp;#39;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> gitlab_rails[&amp;#39;backup_keep_time&amp;#39;] = 79200
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> gitlab_rails[&amp;#39;omniauth_allow_single_sign_on&amp;#39;] = [&amp;#39;google_oauth2&amp;#39;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> gitlab_rails[&amp;#39;omniauth_block_auto_created_users&amp;#39;] = false
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> gitlab_rails[&amp;#39;omniauth_sync_profile_from_provider&amp;#39;] = [&amp;#39;google_oauth2&amp;#39;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> gitlab_rails[&amp;#39;omniauth_sync_profile_attributes&amp;#39;] = [&amp;#39;name&amp;#39;, &amp;#39;email&amp;#39;]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> gitlab_rails[&amp;#39;omniauth_providers&amp;#39;] = [
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> {&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#ae81ff">略過．．．&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;${GITLAB_HOST_SSH_PORT}:22&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;${GITLAB_HOST_HTTP_PORT}:80&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;${GITLAB_HOST_HTTPS_PORT}:443&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;./config:/etc/gitlab&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;./logs:/var/log/gitlab&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#39;./data:/var/opt/gitlab&amp;#39;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>有些設定有略過或是省略不寫，大家就依照自己的設定來看就好～&lt;/p>
+&lt;br>
+&lt;h2>新增 Package Registry 設定&lt;span class="absolute -mt-20" id="新增-package-registry-設定">&lt;/span>
+&lt;a href="#%e6%96%b0%e5%a2%9e-package-registry-%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們在上方的 &lt;code>gitlab_rails['omniauth_providers'] = [ ... 略 ... ] &lt;/code> 之後加上新增 Package Registry 設定內容：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">gitlab_rails[&amp;#39;packages_enabled&amp;#39;] = true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">gitlab_rails[&amp;#39;packages_object_store_enabled&amp;#39;] = true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">gitlab_rails[&amp;#39;packages_object_store_remote_directory&amp;#39;] = &amp;#34;GCS 名稱&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">gitlab_rails[&amp;#39;packages_object_store_direct_upload&amp;#39;] = true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">gitlab_rails[&amp;#39;packages_object_store_background_upload&amp;#39;] = true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">gitlab_rails[&amp;#39;packages_object_store_proxy_download&amp;#39;] = true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">gitlab_rails[&amp;#39;packages_object_store_connection&amp;#39;] = {&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#39;provider&amp;#39;&lt;/span> &lt;span style="color:#ae81ff">=&amp;gt; &amp;#39;Google&amp;#39;,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#39;google_project&amp;#39;&lt;/span> &lt;span style="color:#ae81ff">=&amp;gt; &amp;#39;專案 ID&amp;#39;,&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#39;google_json_key_location&amp;#39;&lt;/span> &lt;span style="color:#ae81ff">=&amp;gt; &amp;#39;/etc/gitlab/google_key.json&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>packages_enabled：啟動 packages&lt;/li>
+&lt;li>packages_object_store_enabled：啟動 packages 對象存儲&lt;/li>
+&lt;li>packages_object_store_remote_directory：設定 packages 對象存儲位置，這邊要輸入 GCS 的名稱&lt;/li>
+&lt;li>packages_object_store_direct_upload：設定是否可以直接上傳到對象存儲位置&lt;/li>
+&lt;li>packages_object_store_background_upload：設定是否以後台方式上傳到對象存儲位置&lt;/li>
+&lt;li>packages_object_store_proxy_download：設定是否可以透過代理伺服器進行套件下載&lt;/li>
+&lt;li>packages_object_store_connection：設定連接到對象存儲，由於我們要存到 GCS 上面，需要有這三項 provider、google_project、google_json_key_location 才可以將 packages 存到 GCS 上。如果想用其他的儲存位置，例如 Amazon S3、Azure Blob storage 可以參考 &lt;a href="https://docs.gitlab.com/ee/administration/object_storage.html" target="_blank" rel="noopener">Object storage 詳細設定&lt;/a> ( 其中的 google_json_key_location 是要放可以讀寫 GCS 的 SA SECRET 檔案 )&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h2>先查看尚未重啟的 GitLab Package&lt;span class="absolute -mt-20" id="先查看尚未重啟的-gitlab-package">&lt;/span>
+&lt;a href="#%e5%85%88%e6%9f%a5%e7%9c%8b%e5%b0%9a%e6%9c%aa%e9%87%8d%e5%95%9f%e7%9a%84-gitlab-package" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>由於公司 GitLab 預設有先開啟 packages_enabled，所以我就拿同事用 Helm 寫的 CI，來做測試。當更新 value.yaml 後會自動打包 Package 放到 Package Registry 中，我們直接進入到預設 Package Registry 的儲存位置，是在 &lt;code>/var/opt/gitlab/gitlab-rails/shared/packages/&lt;/code>，用指令發現打包的 Package 的確存放於此 ，如下：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/gitlab-package-registry-to-gcs/1.png"
+alt="檢查是否還有 Package 在預設儲存位置 (尚未遷移)" width="800">&lt;figcaption>
+&lt;p>檢查是否還有 Package 在預設儲存位置 (尚未遷移)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>重啟設定後再次檢查 GitLab Package&lt;span class="absolute -mt-20" id="重啟設定後再次檢查-gitlab-package">&lt;/span>
+&lt;a href="#%e9%87%8d%e5%95%9f%e8%a8%ad%e5%ae%9a%e5%be%8c%e5%86%8d%e6%ac%a1%e6%aa%a2%e6%9f%a5-gitlab-package" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當我們重啟設定後，也有建立好可供我們權限 SA 的 GCS 後，會發現原本存在預設 &lt;code>/var/opt/gitlab/gitlab-rails/shared/packages/&lt;/code> 沒有自動跑到 GCS 上，是因為我們還需要手動下指令將他遷移過去，指令是 &lt;code>gitlab-rake &amp;quot;gitlab:packages:migrate&amp;quot;&lt;/code>，最後等他跑完我們在檢查一下預設儲存位置就發現已經沒有 Package 了&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/gitlab-package-registry-to-gcs/2.png"
+alt="檢查是否還有 Package 在預設儲存位置 (已遷移)" width="800">&lt;figcaption>
+&lt;p>檢查是否還有 Package 在預設儲存位置 (已遷移)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>開 GCS 網站來看會發現原先在預設儲存位置的 Package 都可以跑到 GCS 上：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/gitlab-package-registry-to-gcs/3.png"
+alt="查看已遷移到 Google Cloud Storage 的 Package" width="800">&lt;figcaption>
+&lt;p>查看已遷移到 Google Cloud Storage 的 Package&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>GitLab Package Registry administration：&lt;a href="https://docs.gitlab.com/14.10/ee/administration/packages/" target="_blank" rel="noopener">https://docs.gitlab.com/14.10/ee/administration/packages/&lt;/a>&lt;/p></description></item><item><title>如何合併多個 commit，且推到遠端呢？</title><link>https://pin-yi.me/blog/git/git-merge-multiple-commit/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/git/git-merge-multiple-commit/</guid><description>
+&lt;p>當我們在使用 Git 時，常常修改完內容後，會推 commit 到 github or gitlab，在一個分支上開發久了， commit 會累積很多，很雜且很亂，所以我們可以試著將 commit 給合併。&lt;/p>
+&lt;br>
+&lt;p>大家可以使用這個檔案來做練習：&lt;a href="https://github.com/880831ian/git-merge-multiple-commit" target="_blank" rel="noopener">點我 GoGo&lt;/a> 😉&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/1.png"
+alt="git commit" width="400">&lt;figcaption>
+&lt;p>git commit&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>可以看到上面這張圖，這個與&lt;a href="https://github.com/880831ian/git-merge-multiple-commit" target="_blank" rel="noopener">範例檔案&lt;/a>的 commit 相似(不同專案，所以 SHA-1 也會不同，為了模擬所以 commit 相同而已)，我們模擬在同一個分支底下，有很多的 commit，那我們試著把他給合併起來。先說明一下目前的 commit 狀況，我們在 master 分支上有 3 個 commit，且已經推到遠端上。所以我們本地修改後，還要讓遠端的也合併，這個步驟要怎麼做呢？大家可以先想想看，後面會告訴大家答案 🥰&lt;/p>
+&lt;br>
+&lt;h2>合併本地端 commit&lt;span class="absolute -mt-20" id="合併本地端-commit">&lt;/span>
+&lt;a href="#%e5%90%88%e4%bd%b5%e6%9c%ac%e5%9c%b0%e7%ab%af-commit" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們目的是想要讓 add 2.txt 與 add 3.txt 的 commit 合併成 add txt，可以先使用以下指令來找到他的 commit 的 SHA-1：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>git log&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/2.png"
+alt="git log 查看 commit 的 SHA-1" width="600">&lt;figcaption>
+&lt;p>git log 查看 commit 的 SHA-1&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>要怎麼合併呢？我們先使用 rebase 到不會變動的 commit，也就是 add 1.txt 這個 commit：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>git rebase -i 3b5bab9d5fb65b965ae55236734103b178f9daf2&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/3.png"
+alt="git rebase" width="600">&lt;figcaption>
+&lt;p>git rebase&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>下完後，會跳出上面圖片內容，可以看到上面是 rebase interactive (-i) 要執行的指令，下面是每個指令的簡單說明，我們本次會使用的只有 &lt;code>pick&lt;/code> 以及 &lt;code>squash&lt;/code>，分別的意思是：&lt;/p>
+&lt;ul>
+&lt;li>pick：會執行該 commit。&lt;/li>
+&lt;li>squash：會把這個版本的 commit 合併到前一個 commit。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>所以我們要將它改成以下：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>pick f8e5882 add 2.txt
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>squash 3eb0ef4 add 3.txt&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>也就是將 3eb0ef4 這個版本的 commit 合併到 f8e5882 的 commit，對應我們的例子，將 add 3.txt 合併到 add 2.txt 這個 commit。&lt;/p>
+&lt;p>儲存離開後，會跳出以下的畫面，他會告訴你原本兩個的 commit message 分別是 add 2.txt 以及 add 3.txt，這時候我們要輸入新的 commit message，也就是 add txt，建議可以把原本的訊息註解掉。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/4.png"
+alt="輸入新的 commit" width="600">&lt;figcaption>
+&lt;p>輸入新的 commit&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>儲存後，我們查看 &lt;code>git log&lt;/code>，就可以看到我們將 add 2.txt 跟 add 3.txt 合併成 add txt 😝&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/5.png"
+alt="查看目前合併狀態的 git log" width="600">&lt;figcaption>
+&lt;p>查看目前合併狀態的 git log&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>合併遠端 commit&lt;span class="absolute -mt-20" id="合併遠端-commit">&lt;/span>
+&lt;a href="#%e5%90%88%e4%bd%b5%e9%81%a0%e7%ab%af-commit" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以看到下方是我們已經將本機端的 commit 給合併，但遠端還是一樣有 3 個 commit，如果我們就這樣直接推上去，只會多一次的 commit，所以我們該怎辦呢 ?&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/6.png"
+alt="遠端與本地端的 commit 不同" width="450">&lt;figcaption>
+&lt;p>遠端與本地端的 commit 不同&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們就是要使用大家都害怕的：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>git push -f&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>強制覆蓋掉分支上的內容，但&lt;strong>切記切記&lt;/strong>，這個只適用於自己的分支上歐～不然會直接大爆炸 💣&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/7.png"
+alt="使用 git push -f 後的 commit" width="450">&lt;figcaption>
+&lt;p>使用 git push -f 後的 commit&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>如何合併多個 commits：&lt;a href="https://zerodie.github.io/blog/2012/01/19/git-rebase-i/" target="_blank" rel="noopener">https://zerodie.github.io/blog/2012/01/19/git-rebase-i/&lt;/a>&lt;/p>
+&lt;p>【狀況題】聽說 git push -f 這個指令很可怕，什麼情況可以使用它呢？：&lt;a href="https://gitbook.tw/chapters/github/using-force-push" target="_blank" rel="noopener">https://gitbook.tw/chapters/github/using-force-push&lt;/a>&lt;/p></description></item><item><title>部署 Laravel 於 Heroku 搭配 GitLab CI/CD</title><link>https://pin-yi.me/blog/git/laravel-gitlab-cicd-heroku/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/git/laravel-gitlab-cicd-heroku/</guid><description>
+&lt;p>經過上一篇文章 &lt;a href="../../git/gitlab-cicd/" >如何從頭打造專屬的 GitLab CI/CD&lt;/a> 的學習，讓我們了解到 GitLab CI/CD 的整個流程，接著我們本次要把 Laravel 給部署到 Heroku 透過 GitLab 的 CI/CD 去達成，不需要透過任何人工去測試，並上架程式到 HeroKu 上，全部都依賴 GitLab CI/CD，讓我們接著看下去吧！&lt;/p>
+&lt;br>
+&lt;p>當然，此文章程式碼也會同步到 Github ，需要的也可以去查看歐！要記得先確定一下自己的版本 &lt;a href="https://github.com/880831ian/Laravel-GitLab-CICD-Heroku" target="_blank" rel="noopener">Github 程式碼連結&lt;/a> 😏&lt;/p>
+&lt;h2>版本資訊&lt;span class="absolute -mt-20" id="版本資訊">&lt;/span>
+&lt;a href="#%e7%89%88%e6%9c%ac%e8%b3%87%e8%a8%8a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>macOS：11.6&lt;/li>
+&lt;li>Docker：Docker version 20.10.14, build a224086&lt;/li>
+&lt;li>Laravel Installer：2.3.0&lt;/li>
+&lt;li>Laravel Framework：9.14.1&lt;/li>
+&lt;li>gitlab.com：GitLab Enterprise Edition 15.1.0-pre&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>首先，我們第一步驟就是先建立一個 Laravel 專案，至於為什麼要選擇用 Laravel 來當作 GitLab CI/CD 的範例呢？因為 Laravel 內建有 PHPUnit 的測試腳本，可以讓我們在 CI 測試時，更好的展現 CI 的功能！，有關於 Laravel 相關內容，這邊一樣推薦兩篇文章給大家閱讀：🤣&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="../../code/laravel/" >Laravel 介紹 (使用 Laravel 從零到有開發出一個留言板功能並搭配 RESTful API 來實現 CRUD)&lt;/a>&lt;/li>
+&lt;li>&lt;a href="../../code/laravel-advanced/" >Laravel 進階 (內建會員系統、驗證 RESTful API 是否登入、使用 Repository 設計模式)&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>又工商了一波 XD&lt;/p>
+&lt;br>
+&lt;h2>建立 Laravel 專案&lt;span class="absolute -mt-20" id="建立-laravel-專案">&lt;/span>
+&lt;a href="#%e5%bb%ba%e7%ab%8b-laravel-%e5%b0%88%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>請大家依照 Laravel 官方文件來建立 Laravel 環境，也可以看小弟我的文章拉 👆👆👆，請記得要先安裝好 php 以及 composer，接著按照以下步驟來建立。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/create.png"
+alt="新建一個 Laravel 新專案" width="900">&lt;figcaption>
+&lt;p>新建一個 Laravel 新專案&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>這時候瀏覽 &lt;code>http://127.0.0.1:8000&lt;/code>，如果都正確，應該會看到 Laravel 的首頁&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/laravel.png"
+alt="Laravel 首頁" width="900">&lt;figcaption>
+&lt;p>Laravel 首頁&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>測試本地 Unit Test&lt;span class="absolute -mt-20" id="測試本地-unit-test">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6%e6%9c%ac%e5%9c%b0-unit-test" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>接著我們剛剛有提到選用 Laravel 的原因是 Laravel 有 PHPUnit 單元測試可以使用，所以我們現在先在本地端來測試 Unit Test，專案預設有放一個單元測試在 &lt;code>tests/Unit/ExampleTest.php&lt;/code>。我們先再次確認環境是否有安裝好，再來執行單元測試。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/unittest.png"
+alt="在本地端執行單元測試" width="900">&lt;figcaption>
+&lt;p>在本地端執行單元測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>執行後，應該都會是通過的畫面，如下圖：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/demo_test.png"
+alt="執行單元測試結果" width="900">&lt;figcaption>
+&lt;p>執行單元測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>GitLab CI 建置&lt;span class="absolute -mt-20" id="gitlab-ci-建置">&lt;/span>
+&lt;a href="#gitlab-ci-%e5%bb%ba%e7%bd%ae" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>上傳 Laravel 專案&lt;span class="absolute -mt-20" id="上傳-laravel-專案">&lt;/span>
+&lt;a href="#%e4%b8%8a%e5%82%b3-laravel-%e5%b0%88%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來我們要上傳含有 Unit Test 專案到 GitLab 上，步驟如下，如果已經熟悉如何將專案推到 GitLab，可以直接跳到 &lt;a href="#%e5%9c%a8-gitlab-%e4%b8%8a%e5%9f%b7%e8%a1%8c%e5%96%ae%e5%85%83%e6%b8%ac%e8%a9%a6" >在 GitLab 上執行單元測試&lt;/a>&lt;/p>
+&lt;ol>
+&lt;li>在 &lt;a href="https://gitlab.com" target="_blank" rel="noopener">gitlab.com&lt;/a> 上點選建立專案，選擇 &lt;strong>Create blank project&lt;/strong>，也可以直接瀏覽該網址 &lt;code>https://gitlab.com/projects/new#blank_project&lt;/code>。&lt;/li>
+&lt;li>輸入專案名稱可以選擇 Project deployment target 為 &lt;strong>Heroko&lt;/strong>，選擇 Public，最後按下 &lt;strong>Create project&lt;/strong>&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/gitlab.png"
+alt="在 GitLab 上建立新專案" width="800">&lt;figcaption>
+&lt;p>在 GitLab 上建立新專案&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>於專案資料夾下加入 remote 遠端 GitLab，並 Push 將專案推上去。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/gitlab_push.png"
+alt="將 Laravel 專案推到 GitLab 上" width="800">&lt;figcaption>
+&lt;p>將 Laravel 專案推到 GitLab 上&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>成功推上去，可以到 GitLab 上，看到我們剛剛的專案！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/gitlab_show.png"
+alt="成功推到 GitLab 上" width="800">&lt;figcaption>
+&lt;p>成功推到 GitLab 上&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>在 GitLab 上執行單元測試&lt;span class="absolute -mt-20" id="在-gitlab-上執行單元測試">&lt;/span>
+&lt;a href="#%e5%9c%a8-gitlab-%e4%b8%8a%e5%9f%b7%e8%a1%8c%e5%96%ae%e5%85%83%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>要在 GitLab 上執行 CI/CD 就需要有 Runner，這次我們選擇使用 &lt;a href="https://gitlab.com" target="_blank" rel="noopener">gitlab.com&lt;/a> 的 Shared runners，想要使用 Specific runners，可以查看上一篇 &lt;a href="../../git/gitlab-cicd/#%E8%87%AA%E6%9E%B6-runner-specific-runners" >如何從頭打造專屬的 GitLab CI/CD&lt;/a> 文章&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/runner.png"
+alt="本次使用 Share runners" width="800">&lt;figcaption>
+&lt;p>本次使用 Share runners&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接下來在專案的根目錄撰寫我們的 &lt;code>.gitlab-ci.yml&lt;/code> 檔案，之後再次上傳 GitLab，當我們根目錄有此檔案，GitLab-CI 就會讀取並依照內容啟動 Runner 來執行工作：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div class="filename">.gitlab-ci.yml&lt;/div>&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">lorisleiva/laravel-docker:latest&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">Unit_test&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">before_script&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">composer install --prefer-dist --no-ansi --no-interaction --no-progress --no-scripts&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">script&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./vendor/bin/phpunit --testsuit Unit --coverage-text --colors=never&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-8">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>說明一下這個 &lt;code>yml&lt;/code> 檔內的設定是在做什麼：&lt;/p>
+&lt;ul>
+&lt;li>image：因為我們執行 CI/CD 過程中，需要有 PHP、Compose、NPM 等工具，有這些套件管理工具就可以延伸去安裝更多套件，如果一開始沒有安裝，就會很麻煩，其中一個辦法就是去 Runner 環境修改並安裝，但因為方便以及我們這次使用 Share runners，所以不能修改別人的 Runner，另一個辦法是可以使用 &lt;code>image&lt;/code> 關鍵字，可以讓 Runner 切換到另一個環境去執行工作 (Job)，我們這邊使用 &lt;a href="https://github.com/lorisleiva/laravel-docker" target="_blank" rel="noopener">lorisleiva/laravel-docker:latest&lt;/a> ，他裡面已經幫我們安裝好上述的工具了！&lt;/li>
+&lt;li>Unit_test：這邊也是我們的 Job，那裡面主要是先用 composer install 去安裝我們需要的套件，最後在執行 phpunit 來做單元測試。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>上傳 .gitlab-ci.yml&lt;span class="absolute -mt-20" id="上傳-gitlab-ciyml">&lt;/span>
+&lt;a href="#%e4%b8%8a%e5%82%b3-gitlab-ciyml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接著我們使用以下指令將含有 &lt;code>.gitlab-ci.yml&lt;/code> 的專案上傳到 GitLab，並回到 GitLab 選擇 CI/CD，可以查看目前的 Pipelines，會有我們剛剛所新增的 Runner。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/gitlab-ci.png"
+alt="將 .gitlab-ci.yml 推到 GitLab" width="600">&lt;figcaption>
+&lt;p>將 &lt;code>.gitlab-ci.yml&lt;/code> 推到 GitLab&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/pipeline.png"
+alt="查看 Runner 已經進行執行單元測試檢測" width="700">&lt;figcaption>
+&lt;p>查看 Runner 已經進行執行單元測試檢測&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/runner-cicd.png"
+alt="可以看到 Runner 先安裝我們的環境，再執行單元測試的腳本" width="700">&lt;figcaption>
+&lt;p>可以看到 Runner 先安裝我們的環境，再執行單元測試的腳本&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>設置須通過測試才可以合併&lt;span class="absolute -mt-20" id="設置須通過測試才可以合併">&lt;/span>
+&lt;a href="#%e8%a8%ad%e7%bd%ae%e9%a0%88%e9%80%9a%e9%81%8e%e6%b8%ac%e8%a9%a6%e6%89%8d%e5%8f%af%e4%bb%a5%e5%90%88%e4%bd%b5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當我們有了測試還不夠，要怎麼確保每隻要上線 (合併到主分支) 的程式都有經過測試才上線呢？&lt;/p>
+&lt;p>接下來我們可以在 GitLab 裡面做這些設定，先到專案的 Setting → General → Merge requests → Merge checks 點選 &lt;strong>Pipelines must succeed&lt;/strong>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/mergechecks.png"
+alt="點選 Pipelines must succeed 來確保程式合併前都必須經過測試" width="700">&lt;figcaption>
+&lt;p>點選 &lt;strong>Pipelines must succeed&lt;/strong> 來確保程式合併前都必須經過測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>測試是否可以阻擋未成功情況&lt;span class="absolute -mt-20" id="測試是否可以阻擋未成功情況">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6%e6%98%af%e5%90%a6%e5%8f%af%e4%bb%a5%e9%98%bb%e6%93%8b%e6%9c%aa%e6%88%90%e5%8a%9f%e6%83%85%e6%b3%81" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們先模擬要開發新功能，所以在 master 最新 commit 下，建立一個新分支 &lt;code>new&lt;/code>&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>git checkout -b &lt;span style="color:#e6db74">&amp;#34;new&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>接著修改單元測試，故意新增錯誤的測試，開啟專案的 &lt;code>tests/Unit/ExampleTest.php&lt;/code>，最下面加上紅色框框程式碼：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/exampletest.png"
+alt="新增錯誤測試，還模擬看看是否能成功擋住" width="500">&lt;figcaption>
+&lt;p>新增錯誤測試，還模擬看看是否能成功擋住&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>&lt;code>assertEquals&lt;/code> 會檢查這兩個值是否相同，不同的話，就會跳出錯誤，所以我們故意輸入 1 和 2。&lt;/p>
+&lt;br>
+&lt;p>並將它上傳到 GitLab，並發出 Merge Request 看看會有什麼結果！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/gitlab-test.png"
+alt="將新增錯誤的 ExampleTest 加入暫存，推到 GitLab" width="600">&lt;figcaption>
+&lt;p>將新增錯誤的 ExampleTest 加入暫存，推到 GitLab&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/mergerequest.png"
+alt="並將 new 分支透過 Merge Request 來合併到 master" width="1000">&lt;figcaption>
+&lt;p>並將 new 分支透過 Merge Request 來合併到 master&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到我們合併在 Pipeline 測試時，因為 new 沒有通過測試，所以也沒有辦法進行合併！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/mergeerror.png"
+alt="分支 new 沒有通過測試，所以沒有進行 Merge" width="700">&lt;figcaption>
+&lt;p>分支 new 沒有通過測試，所以沒有進行 Merge&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>GitLab CD 建置&lt;span class="absolute -mt-20" id="gitlab-cd-建置">&lt;/span>
+&lt;a href="#gitlab-cd-%e5%bb%ba%e7%bd%ae" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們玩完 CI 後，接著要把程式部署到伺服器或是雲端上，這時候我們不需要透過人工手動的方式，只需要有 CD 來幫我們自動化部署就可以拉！如果不太清楚，可以參考這張圖片：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/gitlab_workflow.png"
+alt="GitLab CI/CD workflow (圖片來源：GitLab)" width="900">&lt;figcaption>
+&lt;p>GitLab CI/CD workflow (圖片來源：&lt;a href="https://docs.gitlab.com/ee/ci/introduction/" target="_blank" rel="noopener">GitLab&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>當我們剛剛進行 CI 的整合測試，最後經過 Review and approve 合併到主分支，這時候如果我們有設定 CD，CD 就會幫我們部署到服務上，我把 CD 流程轉成文字步驟說明：&lt;/p>
+&lt;br>
+&lt;ol>
+&lt;li>把新功能分支合併到 master 分支，代表功能已經可以上線&lt;/li>
+&lt;li>GitLab 觸發 Gitlab-CI 執行 pipeline&lt;/li>
+&lt;li>Gitlab-CI 執行自動化測試&lt;/li>
+&lt;li>Gitlab-CI 測試成功後，執行部署到正式伺服器&lt;/li>
+&lt;li>回傳執行結果至 GitLab&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>那想要達成自動化部署之前，必須能在遠端用指令下達部署更新！簡單來說有兩件事情：&lt;/p>
+&lt;ol>
+&lt;li>要先整理再更新專案時需要哪些指令，並將其寫成腳本&lt;/li>
+&lt;li>需要獲得伺服器的授權，可以對伺服器下達更新專案的腳本&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>我們以現在 Laravel 專案來說，套用上面講的兩件事情：&lt;/p>
+&lt;ol>
+&lt;li>腳本製作：上線新版本大概要執行以下圖片的內容&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/laravel_up.png"
+alt="Laravel 專案上線前會下達的指令" width="800">&lt;figcaption>
+&lt;p>Laravel 專案上線前會下達的指令&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>對遠端伺服器下指令：通常使用 ssh 與 伺服器做溝通，所以先在伺服器產生授權金鑰給要遠端控制的電腦，如果要給 Gitlab-CI 控制的話，也需要把金鑰存在 GitLab 上，通常使用 &lt;code>ssh user@remote.server 'git pull'&lt;/code> 來下達更新專案的指令&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>本篇我們要部署的是 PaaS 的 HeroKu，可以減少時間去架設環境，就可以達到我們想要的效果，那接著會帶大家從 Heroku 設定開始歐！先簡單介紹一下 Heroku：&lt;/p>
+&lt;p>Heroku 是一個支援多種程式語言的雲平台即時服務(PaaS)， 是一種雲端運算服務，提供運算平台與解決方案服務，PaaS 提供使用者將雲端基礎設施部署與建立至使用者端，或者藉此獲得使用程式語言、程式庫與服務。使用者不需要管理與控制雲端基礎設施（包含網路、伺服器、作業系統或儲存），但需要控制上層的應用程式部署與應用代管的環境。&lt;/p>
+&lt;br>
+&lt;h3>創建 Heroku 專案&lt;span class="absolute -mt-20" id="創建-heroku-專案">&lt;/span>
+&lt;a href="#%e5%89%b5%e5%bb%ba-heroku-%e5%b0%88%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>那要使用 Heroku 當然需要一組帳號拉，建立帳號我應該不用再多介紹了吧 🤡  我們直接到 Heroku 頁面，右上角 New，點選 Create new app，輸入本次專案名稱，我就取叫 &lt;code>laravel-gitlab-cicd-heroku&lt;/code> (這個不能與別人重複，因為他會生成專屬網頁)， 進去後，點選右上角有一個 &lt;strong>Open app&lt;/strong>，就會跳出這個專案專屬的網頁：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/herokuapp.png"
+alt="Heroku 專屬網頁" width="1000">&lt;figcaption>
+&lt;p>Heroku 專屬網頁&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>設定 HeroKu 與 GitLab 連線&lt;span class="absolute -mt-20" id="設定-heroku-與-gitlab-連線">&lt;/span>
+&lt;a href="#%e8%a8%ad%e5%ae%9a-heroku-%e8%88%87-gitlab-%e9%80%a3%e7%b7%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>先點選右上角個人頭像 → Account setrtings → 在 Account 往下滑 → API Key，點選 &lt;strong>Reveal&lt;/strong> 並將該 API 記住，這是等等透過 GitLab 部署時會用到的 API Token：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/token.png"
+alt="取得部署的 API Token" width="1000">&lt;figcaption>
+&lt;p>取得部署的 API Token&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>回到 GitLab 專案底下，Settings → CI/CD → Variables，他可以將變數設定在這邊，再讓 &lt;code>.gitlab-ci.yml&lt;/code> 來抓取變數，設定以下兩個變數：(詳細可以參考&lt;a href="https://docs.gitlab.com/ee/ci/variables/index.html#add-a-cicd-variable-to-a-project" target="_blank" rel="noopener">官網&lt;/a>)&lt;/p>
+&lt;ol>
+&lt;li>Key 名稱(HEROKU_PRODUCTION_PROJECT_NAME)，Value 值(設定我們剛剛在 Heroku 部署的專案名稱，我的是 &lt;code>laravel-gitlab-cicd-heroku&lt;/code>)&lt;/li>
+&lt;li>Key 名稱(HEROKU_PRODUCTION_API_KEY)，Value 值(這個就是我們上面的 API Key，每個人都要用自己的歐！上面的我已經重設了 😎  )&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/variables.png"
+alt="gitLab 設定 Variables" width="800">&lt;figcaption>
+&lt;p>gitLab 設定 Variables&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;ul>
+&lt;li>這邊要注意先把預設的 Protect variable 給關閉，他預設會只能在受保護的分支或標籤運行，但我們這此以簡單為主，所以這些設定都先關掉。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>新增 Heroku 識別檔案&lt;span class="absolute -mt-20" id="新增-heroku-識別檔案">&lt;/span>
+&lt;a href="#%e6%96%b0%e5%a2%9e-heroku-%e8%ad%98%e5%88%a5%e6%aa%94%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來我們要新增一個檔案名為 &lt;code>Procfile&lt;/code>，它是 Heroku 部署更新時會啟動的對象，注意他沒有副檔名，我們在裡面輸入以下：(我們使用合併後的 master)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/procfile.png"
+alt="新增 HeroKu 識別檔案" width="650">&lt;figcaption>
+&lt;p>新增 HeroKu 識別檔案&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>它代表我們網頁服務使用 apache2 指令運行並把入口指向專案資料夾中的 laravel 專案的入口資料夾。&lt;/p>
+&lt;br>
+&lt;h3>修改 .gitlab-ci.yml&lt;span class="absolute -mt-20" id="修改-gitlab-ciyml">&lt;/span>
+&lt;a href="#%e4%bf%ae%e6%94%b9-gitlab-ciyml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們修改原本用來 CI 的腳本，來設定自動化部署的任務 Job 及腳本&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div class="filename">.gitlab-ci.yml&lt;/div>&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">lorisleiva/laravel-docker:latest&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">Production_Deploy&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">stage&lt;/span>: &lt;span style="color:#ae81ff">Production_Deploy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">before_script&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">apk add ruby ruby-dev ruby-irb ruby-rake ruby-io-console ruby-bigdecimal ruby-json ruby-bundler yarn ruby-rdoc &amp;gt;&amp;gt; /dev/null&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">apk update&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">gem install dpl &amp;gt;&amp;gt; /dev/null&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">script&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">dpl --provider=heroku --app=$HEROKU_PRODUCTION_PROJECT_NAME --api-key=$HEROKU_PRODUCTION_API_KEY&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-8">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>最後上傳 GitLab 來觸發 Gitlab-CI 執行自動化部署 (上傳指令就不多說囉，想必大家都會了吧！，不會的話可以去看 &lt;a href="../../git/git/" >Git 介紹&lt;/a>，裡面有詳細的介紹 😍  )&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/cd_pass.png"
+alt="觸發 Gitlab-CI 執行自動化部署" width="700">&lt;figcaption>
+&lt;p>觸發 Gitlab-CI 執行自動化部署&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到部署成功，我們也來看看 Runner 運作狀況：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/cd_runner.png"
+alt="Runner 運作狀況" width="800">&lt;figcaption>
+&lt;p>Runner 運作狀況&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>看到他成功將服務給部署到 &lt;code>https://laravel-gitlab-cicd-heroku.herokuapp.com/&lt;/code>。&lt;/p>
+&lt;br>
+&lt;p>既然已經部署好了，當然要去看一下我們的網頁啊，但當我們打開部署好的網頁，會發現跳出 500 Error，雖然他與我們 CI/CD 沒有關係，但我們還是試著解決，那這個問題會發生是因為我們沒有給環境變數的 APP_KEY，這個 Key 可以在專案的 .env 取得，拿到後開啟 Heroku → Setting → Config vars 將 APP_KEY 設定上去。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/key.png"
+alt="Runner 運作狀況" width="900">&lt;figcaption>
+&lt;p>Runner 運作狀況&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>最後重新整理 &lt;code>https://laravel-gitlab-cicd-heroku.herokuapp.com/&lt;/code>，就可以看到我們部署上去的網站囉！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/laravel-gitlab-cicd-heroku/laravel_show.png"
+alt="透過 CD 部署到 Heroku 的 Laravel 首頁" width="1000">&lt;figcaption>
+&lt;p>透過 CD 部署到 Heroku 的 Laravel 首頁&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Gitlab-CI 入門實作教學 - 單元測試篇：&lt;a href="https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f" target="_blank" rel="noopener">https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f&lt;/a>&lt;/p>
+&lt;p>Gitlab-CI 自動化部屬部署：&lt;a href="https://medium.com/@nick03008/%E6%95%99%E5%AD%B8-gitlab-ci-%E5%85%A5%E9%96%80%E5%AF%A6%E4%BD%9C-%E8%87%AA%E5%8B%95%E5%8C%96%E9%83%A8%E7%BD%B2%E7%AF%87-ci-cd-%E7%B3%BB%E5%88%97%E5%88%86%E4%BA%AB%E6%96%87-cbb5100a73d4" target="_blank" rel="noopener">https://medium.com/@nick03008/%E6%95%99%E5%AD%B8-gitlab-ci-%E5%85%A5%E9%96%80%E5%AF%A6%E4%BD%9C-%E8%87%AA%E5%8B%95%E5%8C%96%E9%83%A8%E7%BD%B2%E7%AF%87-ci-cd-%E7%B3%BB%E5%88%97%E5%88%86%E4%BA%AB%E6%96%87-cbb5100a73d4&lt;/a>&lt;/p>
+&lt;p>部署 Laravel 於 Heroku 搭配 Gitlab CI/CD：&lt;a href="https://medium.com/@vip131430g/%E9%83%A8%E7%BD%B2-laravel-%E6%96%BC-heroku-%E6%90%AD%E9%85%8D-gitlab-ci-cd-6d59a66aebdb" target="_blank" rel="noopener">https://medium.com/@vip131430g/%E9%83%A8%E7%BD%B2-laravel-%E6%96%BC-heroku-%E6%90%AD%E9%85%8D-gitlab-ci-cd-6d59a66aebdb&lt;/a>&lt;/p></description></item></channel></rss>
