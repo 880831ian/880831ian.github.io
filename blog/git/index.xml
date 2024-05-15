@@ -92,7 +92,7 @@ title="Copy code"
 &lt;h2>先查看尚未重啟的 GitLab Package&lt;span class="absolute -mt-20" id="先查看尚未重啟的-gitlab-package">&lt;/span>
 &lt;a href="#%e5%85%88%e6%9f%a5%e7%9c%8b%e5%b0%9a%e6%9c%aa%e9%87%8d%e5%95%9f%e7%9a%84-gitlab-package" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>由於公司 GitLab 預設有先開啟 packages_enabled，所以我就拿同事用 Helm 寫的 CI，來做測試。當更新 value.yaml 後會自動打包 Package 放到 Package Registry 中，我們直接進入到預設 Package Registry 的儲存位置，是在 &lt;code>/var/opt/gitlab/gitlab-rails/shared/packages/&lt;/code>，用指令發現打包的 Package 的確存放於此 ，如下：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/gitlab-package-registry-to-gcs/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-package-registry-to-gcs/1.png"
 alt="檢查是否還有 Package 在預設儲存位置 (尚未遷移)" width="800">&lt;figcaption>
 &lt;p>檢查是否還有 Package 在預設儲存位置 (尚未遷移)&lt;/p>
 &lt;/figcaption>
@@ -101,7 +101,7 @@ alt="檢查是否還有 Package 在預設儲存位置 (尚未遷移)" width="800
 &lt;h2>重啟設定後再次檢查 GitLab Package&lt;span class="absolute -mt-20" id="重啟設定後再次檢查-gitlab-package">&lt;/span>
 &lt;a href="#%e9%87%8d%e5%95%9f%e8%a8%ad%e5%ae%9a%e5%be%8c%e5%86%8d%e6%ac%a1%e6%aa%a2%e6%9f%a5-gitlab-package" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當我們重啟設定後，也有建立好可供我們權限 SA 的 GCS 後，會發現原本存在預設 &lt;code>/var/opt/gitlab/gitlab-rails/shared/packages/&lt;/code> 沒有自動跑到 GCS 上，是因為我們還需要手動下指令將他遷移過去，指令是 &lt;code>gitlab-rake &amp;quot;gitlab:packages:migrate&amp;quot;&lt;/code>，最後等他跑完我們在檢查一下預設儲存位置就發現已經沒有 Package 了&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/gitlab-package-registry-to-gcs/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-package-registry-to-gcs/2.png"
 alt="檢查是否還有 Package 在預設儲存位置 (已遷移)" width="800">&lt;figcaption>
 &lt;p>檢查是否還有 Package 在預設儲存位置 (已遷移)&lt;/p>
 &lt;/figcaption>
@@ -109,7 +109,7 @@ alt="檢查是否還有 Package 在預設儲存位置 (已遷移)" width="800">&
 &lt;br>
 &lt;p>開 GCS 網站來看會發現原先在預設儲存位置的 Package 都可以跑到 GCS 上：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/gitlab-package-registry-to-gcs/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-package-registry-to-gcs/3.png"
 alt="查看已遷移到 Google Cloud Storage 的 Package" width="800">&lt;figcaption>
 &lt;p>查看已遷移到 Google Cloud Storage 的 Package&lt;/p>
 &lt;/figcaption>
