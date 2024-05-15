@@ -10,7 +10,7 @@ weight: 60
 
 大家可以使用這個檔案來做練習：[點我 GoGo](https://github.com/880831ian/git-merge-multiple-commit) 😉
 
-{{< figure src="/other/git-merge-multiple-commit/1.png" width="400" caption="git commit" >}}
+{{< figure src="/git/git-merge-multiple-commit/1.png" width="400" caption="git commit" >}}
 
 可以看到上面這張圖，這個與[範例檔案](https://github.com/880831ian/git-merge-multiple-commit)的 commit 相似(不同專案，所以 SHA-1 也會不同，為了模擬所以 commit 相同而已)，我們模擬在同一個分支底下，有很多的 commit，那我們試著把他給合併起來。先說明一下目前的 commit 狀況，我們在 master 分支上有 3 個 commit，且已經推到遠端上。所以我們本地修改後，還要讓遠端的也合併，這個步驟要怎麼做呢？大家可以先想想看，後面會告訴大家答案 🥰
 
@@ -26,7 +26,7 @@ git log
 
 <br>
 
-{{< figure src="/other/git-merge-multiple-commit/2.png" width="600" caption="git log 查看 commit 的 SHA-1" >}}
+{{< figure src="/git/git-merge-multiple-commit/2.png" width="600" caption="git log 查看 commit 的 SHA-1" >}}
 
 <br>
 
@@ -38,7 +38,7 @@ git rebase -i 3b5bab9d5fb65b965ae55236734103b178f9daf2
 
 <br>
 
-{{< figure src="/other/git-merge-multiple-commit/3.png" width="600" caption="git rebase" >}}
+{{< figure src="/git/git-merge-multiple-commit/3.png" width="600" caption="git rebase" >}}
 
 <br>
 
@@ -64,7 +64,7 @@ squash 3eb0ef4 add 3.txt
 
 <br>
 
-{{< figure src="/other/git-merge-multiple-commit/4.png" width="600" caption="輸入新的 commit" >}}
+{{< figure src="/git/git-merge-multiple-commit/4.png" width="600" caption="輸入新的 commit" >}}
 
 <br>
 
@@ -72,7 +72,7 @@ squash 3eb0ef4 add 3.txt
 
 <br>
 
-{{< figure src="/other/git-merge-multiple-commit/5.png" width="600" caption="查看目前合併狀態的 git log" >}}
+{{< figure src="/git/git-merge-multiple-commit/5.png" width="600" caption="查看目前合併狀態的 git log" >}}
 
 <br>
 
@@ -82,7 +82,7 @@ squash 3eb0ef4 add 3.txt
 
 <br>
 
-{{< figure src="/other/git-merge-multiple-commit/6.png" width="450" caption="遠端與本地端的 commit 不同" >}}
+{{< figure src="/git/git-merge-multiple-commit/6.png" width="450" caption="遠端與本地端的 commit 不同" >}}
 
 <br>
 
@@ -96,7 +96,7 @@ git push -f
 
 <br>
 
-{{< figure src="/other/git-merge-multiple-commit/7.png" width="450" caption="使用 git push -f 後的 commit" >}}
+{{< figure src="/git/git-merge-multiple-commit/7.png" width="450" caption="使用 git push -f 後的 commit" >}}
 
 <br>
 
