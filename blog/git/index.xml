@@ -120,7 +120,7 @@ alt="查看已遷移到 Google Cloud Storage 的 Package" width="800">&lt;figcap
 &lt;p>當我們在使用 Git 時，常常修改完內容後，會推 commit 到 github or gitlab，在一個分支上開發久了， commit 會累積很多，很雜且很亂，所以我們可以試著將 commit 給合併。&lt;/p>
 &lt;br>
 &lt;p>大家可以使用這個檔案來做練習：&lt;a href="https://github.com/880831ian/git-merge-multiple-commit" target="_blank" rel="noopener">點我 GoGo&lt;/a> 😉&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git/git-merge-multiple-commit/1.png"
 alt="git commit" width="400">&lt;figcaption>
 &lt;p>git commit&lt;/p>
 &lt;/figcaption>
@@ -140,7 +140,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git/git-merge-multiple-commit/2.png"
 alt="git log 查看 commit 的 SHA-1" width="600">&lt;figcaption>
 &lt;p>git log 查看 commit 的 SHA-1&lt;/p>
 &lt;/figcaption>
@@ -158,7 +158,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git/git-merge-multiple-commit/3.png"
 alt="git rebase" width="600">&lt;figcaption>
 &lt;p>git rebase&lt;/p>
 &lt;/figcaption>
@@ -186,7 +186,7 @@ title="Copy code"
 &lt;p>也就是將 3eb0ef4 這個版本的 commit 合併到 f8e5882 的 commit，對應我們的例子，將 add 3.txt 合併到 add 2.txt 這個 commit。&lt;/p>
 &lt;p>儲存離開後，會跳出以下的畫面，他會告訴你原本兩個的 commit message 分別是 add 2.txt 以及 add 3.txt，這時候我們要輸入新的 commit message，也就是 add txt，建議可以把原本的訊息註解掉。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git/git-merge-multiple-commit/4.png"
 alt="輸入新的 commit" width="600">&lt;figcaption>
 &lt;p>輸入新的 commit&lt;/p>
 &lt;/figcaption>
@@ -194,7 +194,7 @@ alt="輸入新的 commit" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>儲存後，我們查看 &lt;code>git log&lt;/code>，就可以看到我們將 add 2.txt 跟 add 3.txt 合併成 add txt 😝&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git/git-merge-multiple-commit/5.png"
 alt="查看目前合併狀態的 git log" width="600">&lt;figcaption>
 &lt;p>查看目前合併狀態的 git log&lt;/p>
 &lt;/figcaption>
@@ -203,7 +203,7 @@ alt="查看目前合併狀態的 git log" width="600">&lt;figcaption>
 &lt;h2>合併遠端 commit&lt;span class="absolute -mt-20" id="合併遠端-commit">&lt;/span>
 &lt;a href="#%e5%90%88%e4%bd%b5%e9%81%a0%e7%ab%af-commit" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以看到下方是我們已經將本機端的 commit 給合併，但遠端還是一樣有 3 個 commit，如果我們就這樣直接推上去，只會多一次的 commit，所以我們該怎辦呢 ?&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git/git-merge-multiple-commit/6.png"
 alt="遠端與本地端的 commit 不同" width="450">&lt;figcaption>
 &lt;p>遠端與本地端的 commit 不同&lt;/p>
 &lt;/figcaption>
@@ -222,7 +222,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>強制覆蓋掉分支上的內容，但&lt;strong>切記切記&lt;/strong>，這個只適用於自己的分支上歐～不然會直接大爆炸 💣&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/git-merge-multiple-commit/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git/git-merge-multiple-commit/7.png"
 alt="使用 git push -f 後的 commit" width="450">&lt;figcaption>
 &lt;p>使用 git push -f 後的 commit&lt;/p>
 &lt;/figcaption>
