@@ -1,7 +1,7 @@
 ---
 title: "如何合併多個 commit，且推到遠端呢？"
 type: docs
-weight: 50
+weight: 60
 ---
 
 當我們在使用 Git 時，常常修改完內容後，會推 commit 到 github or gitlab，在一個分支上開發久了， commit 會累積很多，很雜且很亂，所以我們可以試著將 commit 給合併。
