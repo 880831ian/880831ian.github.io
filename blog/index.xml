@@ -1,1 +1,74 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – 介紹與聲明</title><link>https://pin-yi.me/blog/</link><description>Recent content in 介紹與聲明 on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/index.xml" rel="self" type="application/rss+xml"/></channel></rss>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – 介紹與聲明</title><link>https://pin-yi.me/blog/</link><description>Recent content in 介紹與聲明 on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/index.xml" rel="self" type="application/rss+xml"/><item><title>朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座 (2024/05/29)</title><link>https://pin-yi.me/blog/lecture/20240529-devops-introduce/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/lecture/20240529-devops-introduce/</guid><description>
+&lt;h2>雲端和地端的差別&lt;span class="absolute -mt-20" id="雲端和地端的差別">&lt;/span>
+&lt;a href="#%e9%9b%b2%e7%ab%af%e5%92%8c%e5%9c%b0%e7%ab%af%e7%9a%84%e5%b7%ae%e5%88%a5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先，想問一下大家，你們知道雲端和地端的差別嗎？&lt;/p>
+&lt;br>
+&lt;h3>地端&lt;span class="absolute -mt-20" id="地端">&lt;/span>
+&lt;a href="#%e5%9c%b0%e7%ab%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們先來説説「地端」是什麼？地端的英文是 &lt;a href="https://en.wikipedia.org/wiki/On-premises_software" target="_blank" rel="noopener">On-Premises&lt;/a>，簡稱 On-Prem，代表所有安裝、運行都在個人電腦或公司自己內部的伺服器上所執行的運行方式。&lt;/p>
+&lt;p>最好的例子就是你電腦裡面裝的 Windows 作業系統、Office 文書軟體、或是公司內部的 ERP 系統等等。這些軟體都是安裝在你的電腦或公司伺服器上，並且由你自己或公司的 IT 團隊負責管理，所以這也是目前最普遍的ㄧ種軟體運行方式。&lt;/p>
+&lt;br>
+&lt;h4>地端的好處是什麼？&lt;span class="absolute -mt-20" id="地端的好處是什麼">&lt;/span>
+&lt;a href="#%e5%9c%b0%e7%ab%af%e7%9a%84%e5%a5%bd%e8%99%95%e6%98%af%e4%bb%80%e9%ba%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;ol>
+&lt;li>&lt;strong>控制權&lt;/strong>：你可以完全控制你的伺服器和軟體，不用擔心第三方服務商的服務品質，想把機器擺在哪裡就放哪裡、用什麼型號都可以自己決定。&lt;/li>
+&lt;li>&lt;strong>安全性&lt;/strong>：企業或是個人可以自行控制資料的存取權限，不用擔心第三方服務商的資料外洩問題。&lt;/li>
+&lt;li>&lt;strong>成本&lt;/strong>：一次性購買伺服器和軟體，不需要每個月支付雲端服務費用。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;h4>地端的缺點是什麼？&lt;span class="absolute -mt-20" id="地端的缺點是什麼">&lt;/span>
+&lt;a href="#%e5%9c%b0%e7%ab%af%e7%9a%84%e7%bc%ba%e9%bb%9e%e6%98%af%e4%bb%80%e9%ba%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;ol>
+&lt;li>&lt;strong>成本&lt;/strong>：一次性購買伺服器和軟體，需要花費大量的資金，且不確定是否符合需求使用。&lt;/li>
+&lt;li>&lt;strong>維護&lt;/strong>：需要自行管理伺服器和軟體，包括硬體維護、軟體更新、資料備份等等。&lt;/li>
+&lt;li>&lt;strong>擴充性&lt;/strong>：當使用者或是需求增加時，需要自行擴充伺服器和軟體，且需要花費大量的時間和金錢。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>那相信大家已經大致了解地端的定義了，接下來我們來看看「雲端」是什麼？&lt;/p>
+&lt;h3>雲端&lt;span class="absolute -mt-20" id="雲端">&lt;/span>
+&lt;a href="#%e9%9b%b2%e7%ab%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>「雲端」的英文是 Cloud，不需要安裝在個人電腦或公司伺服器上，而是透過網際網路存取的伺服器，以及在這些伺服器上執行的軟體或是資料庫。常見的例子有 Google 雲端硬碟、Dropbox、或是 Google Cloud、AWS、Azure 等雲端服務商。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/1.png"
+alt="如何使用雲端 圖片來源" width="700">&lt;figcaption>
+&lt;p>如何使用雲端 &lt;a href="https://www.cloudflare.com/zh-tw/learning/cloud/what-is-the-cloud/" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>雲端得以實現，是因為一種稱為虛擬化的技術。虛擬化允許在一台實體的電腦上建立許多模擬「虛擬」電腦，其行為如同具有自己硬體的實體電腦，這類電腦的術語稱為&lt;a href="https://www.cloudflare.com/zh-tw/learning/cloud/what-is-a-virtual-machine/" target="_blank" rel="noopener">虛擬機器&lt;/a>。虛擬主機簡單介紹到這邊，後面的 &lt;a href="#docker-%e4%bb%8b%e7%b4%b9" >Docker 介紹&lt;/a> 會在提到。&lt;/p>
+&lt;p>一個資料中心有多台的伺服器，一個伺服器可以執行許多虛擬「伺服器」，能夠為許多組織或是客戶提供不同的服務，即使個別伺服器故障，雲端供應商會在多個機器及多個區域備份服務。&lt;a href="https://www.youtube.com/watch?v=zDAYZU4A3w0&amp;amp;ab_channel=GoogleCloudTech" target="_blank" rel="noopener">Google Data Center 影片連結&lt;/a>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/1.webp"
+alt="Google Data Center 圖片來源" width="700">&lt;figcaption>
+&lt;p>Google Data Center &lt;a href="https://www.youtube.com/watch?v=kd33UVZhnAA&amp;amp;ab_channel=GoogleCloudTech" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>混合雲&lt;span class="absolute -mt-20" id="混合雲">&lt;/span>
+&lt;a href="#%e6%b7%b7%e5%90%88%e9%9b%b2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>混合雲 (Hybrid Cloud)&lt;/p>
+&lt;br>
+&lt;h3>雲端還是地端好，要如何選擇？&lt;span class="absolute -mt-20" id="雲端還是地端好要如何選擇">&lt;/span>
+&lt;a href="#%e9%9b%b2%e7%ab%af%e9%82%84%e6%98%af%e5%9c%b0%e7%ab%af%e5%a5%bd%e8%a6%81%e5%a6%82%e4%bd%95%e9%81%b8%e6%93%87" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>沒有一個明確的答案，要看你的需求和預算，以及公司的規模和發展方向。&lt;/p>
+&lt;p>假設你是一個小型公司，可能沒有太多資金去購買伺服器和軟體，也沒有太多人力去管理、或是者你的公司業務是跨國的，需要在全球提供服務以及需求高可用性，有臨時大量的流量，那麼雲端就是一個不錯的選擇。&lt;/p>
+&lt;br>
+&lt;h2>Docker 介紹和 Kubernetes 概念介紹&lt;span class="absolute -mt-20" id="docker-介紹和-kubernetes-概念介紹">&lt;/span>
+&lt;a href="#docker-%e4%bb%8b%e7%b4%b9%e5%92%8c-kubernetes-%e6%a6%82%e5%bf%b5%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
+&lt;h2>什麼是 CICD&lt;span class="absolute -mt-20" id="什麼是-cicd">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-cicd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
+&lt;h2>如何最快恢復網站&lt;span class="absolute -mt-20" id="如何最快恢復網站">&lt;/span>
+&lt;a href="#%e5%a6%82%e4%bd%95%e6%9c%80%e5%bf%ab%e6%81%a2%e5%be%a9%e7%b6%b2%e7%ab%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
+&lt;h2>網站維運日常&lt;span class="absolute -mt-20" id="網站維運日常">&lt;/span>
+&lt;a href="#%e7%b6%b2%e7%ab%99%e7%b6%ad%e9%81%8b%e6%97%a5%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
+&lt;h2>要走軟體工程師需要具備哪些技能？&lt;span class="absolute -mt-20" id="要走軟體工程師需要具備哪些技能">&lt;/span>
+&lt;a href="#%e8%a6%81%e8%b5%b0%e8%bb%9f%e9%ab%94%e5%b7%a5%e7%a8%8b%e5%b8%ab%e9%9c%80%e8%a6%81%e5%85%b7%e5%82%99%e5%93%aa%e4%ba%9b%e6%8a%80%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當然，想成為一個軟體工程師，你一定要會程式語言，例如 PHP、Python、JavaScript 等等&lt;/p>
+&lt;p>也可以看看 stackoverflow 每年的調查報告，了解目前最流行的程式語言是哪些：
+&lt;a href="https://survey.stackoverflow.co/2023/#most-popular-technologies-language" target="_blank" rel="noopener">https://survey.stackoverflow.co/2023/#most-popular-technologies-language&lt;/a>&lt;/p>
+&lt;p>但除了這些基本的技能外，還需要具備以下幾項技能：&lt;/p>
+&lt;br>
+&lt;h3>Git 版本控制&lt;span class="absolute -mt-20" id="git-版本控制">&lt;/span>
+&lt;a href="#git-%e7%89%88%e6%9c%ac%e6%8e%a7%e5%88%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Git 可以說是現代軟體工程師必備的技能之一，可以幫助你管理程式碼的版本，也是你跟其他工程師協作的最好工具。&lt;/p>
+&lt;br>
+&lt;h3>寫 Blog&lt;span class="absolute -mt-20" id="寫-blog">&lt;/span>
+&lt;a href="#%e5%af%ab-blog" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
+&lt;h3>溝通能力&lt;span class="absolute -mt-20" id="溝通能力">&lt;/span>
+&lt;a href="#%e6%ba%9d%e9%80%9a%e8%83%bd%e5%8a%9b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>自我學習&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>地端是什麼？可以吃嗎？：&lt;a href="https://wanchunghuang.com/what-is-on-premises/s" target="_blank" rel="noopener">https://wanchunghuang.com/what-is-on-premises/&lt;/a>&lt;/p>
+&lt;p>雲端 VS 地端，數位轉型怎麼選？：&lt;a href="https://blog.hackmd.io/zh/blog/2022/02/22/cloud-vs-on-premises" target="_blank" rel="noopener">https://blog.hackmd.io/zh/blog/2022/02/22/cloud-vs-on-premises&lt;/a>&lt;/p>
+&lt;p>什麼是雲端？ | 雲端定義： &lt;a href="https://www.cloudflare.com/zh-tw/learning/cloud/what-is-the-cloud/" target="_blank" rel="noopener">https://www.cloudflare.com/zh-tw/learning/cloud/what-is-the-cloud/&lt;/a>&lt;/p></description></item></channel></rss>
