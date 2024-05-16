@@ -29,9 +29,9 @@ menu:
       name: 關於我
       pageRef: /about
       weight: 2
-    - name: 代管服務狀態
-      weight: 3
-      url: "https://status.pin-yi.me/status/pin-yi"
+    # - name: 代管服務狀態
+    #   weight: 3
+    #   url: "https://status.pin-yi.me/status/pin-yi"
     - name: Search
       weight: 4
       params:

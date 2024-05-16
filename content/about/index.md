@@ -13,6 +13,15 @@ toc: false
 
 <br>
 
+## 聯絡方式
+
+- Email：[880831ian@gmail.com](880831ian@gmail.com)
+- LinkedIn：[https://www.linkedin.com/in/pinyi/](https://www.linkedin.com/in/pinyi/)
+- GitHub：[https://github.com/880831ian](https://github.com/880831ian)
+- Telegram：[https://t.me/pinyichuchu](https://t.me/pinyichuchu)
+
+<br>
+
 ## 工作經驗
 
 {{% steps %}}
