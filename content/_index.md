@@ -1,5 +1,6 @@
 ---
 title: "哈囉 歡迎來到 Pin-Yi の 部落格"
+# toc: false
 ---
 
 <br>
@@ -40,13 +41,14 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 {{< card link="blog/opentelemetry/opentelemetry-observability" title="什麼是 Opentelemetry？可觀測性 (Observability) 又是什麼？" image="/opentelemetry/opentelemetry-observability/cover.webp">}}
 {{< card link="blog/opentelemetry/opentelemetry-ingress-nginx-controller" title="如何透過 OpenTelemetry 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上" image="/opentelemetry/opentelemetry-ingress-nginx-controller/cover.webp">}}
 
+{{< card link="blog/git/gitlab-package-registry-to-gcs" title="如何啟用 GitLab 的 Package Registry 以及將儲存位置從伺服器改到 GCS 上" image="/git/gitlab-package-registry-to-gcs/cover.webp">}}
+{{< card link="blog/git/git-merge-multiple-commit" title="如何合併多個 commit，且推到遠端呢？" image="/git/git-merge-multiple-commit/cover.webp">}}
+{{< card link="blog/git/laravel-gitlab-cicd-heroku" title="部署 Laravel 於 Heroku 搭配 GitLab CI/CD" image="/git/laravel-gitlab-cicd-heroku/cover.webp">}}
+{{< card link="blog/git/gitlab-cicd" title="如何從頭打造專屬的 GitLab CI/CD" image="/git/gitlab-cicd/cover.webp">}}
+
 {{< card link="blog/other/linux-command" title="Linux 常用指令" image="/other/linux-command/cover.webp">}}
 {{< card link="blog/other/linux-clear-swap" title="清除 Linux 機器上的 Swap (Buff、Cache、Swap 比較)" image="/other/linux-clear-swap/cover.webp">}}
 {{< card link="blog/other/bookstack" title="Bookstack 開源知識庫筆記平台安裝 (K8s + docker)" image="/other/bookstack/cover.webp">}}
 {{< card link="blog/other/snyk" title="找出程式碼、開源套件、容器的安全漏洞工具 - Snyk" image="/other/snyk/cover.webp">}}
-
-{{< card link="blog/git/gitlab-package-registry-to-gcs" title="如何啟用 GitLab 的 Package Registry 以及將儲存位置從伺服器改到 GCS 上" image="/git/gitlab-package-registry-to-gcs/cover.webp">}}
-{{< card link="blog/git/git-merge-multiple-commit" title="如何合併多個 commit，且推到遠端呢？" image="/git/git-merge-multiple-commit/cover.webp">}}
-{{< card link="blog/git/laravel-gitlab-cicd-heroku" title="部署 Laravel 於 Heroku 搭配 GitLab CI/CD" image="/git/laravel-gitlab-cicd-heroku/cover.webp">}}
 
 {{< /cards>}}

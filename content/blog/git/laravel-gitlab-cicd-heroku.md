@@ -1,7 +1,7 @@
 ---
 title: "部署 Laravel 於 Heroku 搭配 GitLab CI/CD"
 type: docs
-weight: 70
+weight: 60
 ---
 
 經過上一篇文章 [如何從頭打造專屬的 GitLab CI/CD](../../git/gitlab-cicd/) 的學習，讓我們了解到 GitLab CI/CD 的整個流程，接著我們本次要把 Laravel 給部署到 Heroku 透過 GitLab 的 CI/CD 去達成，不需要透過任何人工去測試，並上架程式到 HeroKu 上，全部都依賴 GitLab CI/CD，讓我們接著看下去吧！

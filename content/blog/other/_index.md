@@ -1,7 +1,7 @@
 ---
 title: 其他(還想不到分類)
 type: docs
-weight: 2
+weight: 80
 sidebar:
   open: true
 ---
