@@ -567,4 +567,235 @@ alt="透過 CD 部署到 Heroku 的 Laravel 首頁" width="1000">&lt;figcaption>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Gitlab-CI 入門實作教學 - 單元測試篇：&lt;a href="https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f" target="_blank" rel="noopener">https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f&lt;/a>&lt;/p>
 &lt;p>Gitlab-CI 自動化部屬部署：&lt;a href="https://medium.com/@nick03008/%E6%95%99%E5%AD%B8-gitlab-ci-%E5%85%A5%E9%96%80%E5%AF%A6%E4%BD%9C-%E8%87%AA%E5%8B%95%E5%8C%96%E9%83%A8%E7%BD%B2%E7%AF%87-ci-cd-%E7%B3%BB%E5%88%97%E5%88%86%E4%BA%AB%E6%96%87-cbb5100a73d4" target="_blank" rel="noopener">https://medium.com/@nick03008/%E6%95%99%E5%AD%B8-gitlab-ci-%E5%85%A5%E9%96%80%E5%AF%A6%E4%BD%9C-%E8%87%AA%E5%8B%95%E5%8C%96%E9%83%A8%E7%BD%B2%E7%AF%87-ci-cd-%E7%B3%BB%E5%88%97%E5%88%86%E4%BA%AB%E6%96%87-cbb5100a73d4&lt;/a>&lt;/p>
-&lt;p>部署 Laravel 於 Heroku 搭配 Gitlab CI/CD：&lt;a href="https://medium.com/@vip131430g/%E9%83%A8%E7%BD%B2-laravel-%E6%96%BC-heroku-%E6%90%AD%E9%85%8D-gitlab-ci-cd-6d59a66aebdb" target="_blank" rel="noopener">https://medium.com/@vip131430g/%E9%83%A8%E7%BD%B2-laravel-%E6%96%BC-heroku-%E6%90%AD%E9%85%8D-gitlab-ci-cd-6d59a66aebdb&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>部署 Laravel 於 Heroku 搭配 Gitlab CI/CD：&lt;a href="https://medium.com/@vip131430g/%E9%83%A8%E7%BD%B2-laravel-%E6%96%BC-heroku-%E6%90%AD%E9%85%8D-gitlab-ci-cd-6d59a66aebdb" target="_blank" rel="noopener">https://medium.com/@vip131430g/%E9%83%A8%E7%BD%B2-laravel-%E6%96%BC-heroku-%E6%90%AD%E9%85%8D-gitlab-ci-cd-6d59a66aebdb&lt;/a>&lt;/p></description></item><item><title>如何從頭打造專屬的 GitLab CI/CD</title><link>https://pin-yi.me/blog/git/gitlab-cicd/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/git/gitlab-cicd/</guid><description>
+&lt;p>自從上次學完 Jenkins 及 Ansible CI/CD，就覺得 CI/CD 實在太酷了！能夠自動化的去持續整合 (Continuous Integration, CI) 以及持續佈署 (Continuous Deployment,CD) 專案，再加上這幾天複習了 Git 的使用方法，突然想到，要怎麼設定我們將程式推到遠端的 Git Repo，能夠再搭配 CI/CD 去做測試，並且把程式碼自動部署到正式的服務機器設備上呢？&lt;/p>
+&lt;br>
+&lt;p>那我們就開始囉！此篇會複習一下 CI/CD 並且說明 GitLab CI/CD 運作的原理，關於實作部分會放到下一篇文章 &lt;a href="../laravel-gitlab-cicd-heroku/" >部署 Laravel 於 Heroku 搭配 GitLab CI/CD&lt;/a>&lt;/p>
+&lt;p>對了工商一下，剛剛有提到的 Jenkins 及 Ansible CI/CD 總共有 3 篇文章，還沒看過的可以先飛過去看一下歐 👇👇👇&lt;/p>
+&lt;p>&lt;a href="../../rd/jenkins-ansible/" >Jenkins 及 Ansible IT 自動化 CI/CD 介紹&lt;/a>&lt;/p>
+&lt;p>&lt;a href="../../rd/jenkins/" >使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot&lt;/a>&lt;/p>
+&lt;p>&lt;a href="../../rd/ansible/" >Ansible 介紹與實作 (Inventory、Playbooks、Module、Template、Handlers)&lt;/a>&lt;/p>
+&lt;br>
+&lt;p>老樣子文章也會同步到 Github，會附上範例中的程式碼，有需要的也可以去查看歐！ &lt;a href="https://github.com/880831ian/GitLab-CICD" target="_blank" rel="noopener">Github 程式碼連結&lt;/a> 💓&lt;/p>
+&lt;br>
+&lt;h2>GitLab CI/CD&lt;span class="absolute -mt-20" id="gitlab-cicd">&lt;/span>
+&lt;a href="#gitlab-cicd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>GitLab CI/CD 是 GitLab 內建強大的工具，在 GitHub 被稱為 Github Actions，這個之後有空再來介紹 XD，回歸正題，GitLab CI/CD 可以讓我們持續整合和部署，且不需要使用第三方的應用程式來整合。我們來複習一下 &lt;code>持續整合 CI&lt;/code>、&lt;code>持續部署 CD &lt;/code> 他們是什麼吧：&lt;/p>
+&lt;br>
+&lt;h3>持續整合 CI&lt;span class="absolute -mt-20" id="持續整合-ci">&lt;/span>
+&lt;a href="#%e6%8c%81%e7%ba%8c%e6%95%b4%e5%90%88-ci" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>一個處於開發階段的專案或是軟體，它被我們放在 GitLab 的 Repository 裡，開發人員每天會推送不同的程式碼到 GitLab 上，GitLab 持續整合 CI 會在開發人員每次推送後，自動化的依照我們設定好的腳本進行建構與測試，從而減少開發中的專案發生錯誤的可能性。&lt;/p>
+&lt;p>這種做法就被稱作持續整合，對於我們提交給專案的每一個更改、甚至是開發分支，它都是自動且持續地建構和測試，確保新加入的變動，符合我們在專案中所設計的所有測試。&lt;/p>
+&lt;br>
+&lt;h3>持續部署 CD&lt;span class="absolute -mt-20" id="持續部署-cd">&lt;/span>
+&lt;a href="#%e6%8c%81%e7%ba%8c%e9%83%a8%e7%bd%b2-cd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>持續部署，讓我們不太需要手動的去部署專案服務，而是將其設置為自動化部署，完全不需要有人工去干涉，減少了人為的部署錯誤。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/cicd.jpg"
+alt="GitLab CI/CD (圖片來源：GitLab Agile Planning)" width="800">&lt;figcaption>
+&lt;p>GitLab CI/CD (圖片來源：&lt;a href="https://about.gitlab.com/solutions/agile-delivery/" target="_blank" rel="noopener">GitLab Agile Planning&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>大致了解是如何運作之後，我們接著聊聊上面有提到的 &lt;code>設定好的腳本&lt;/code>：&lt;/p>
+&lt;h3>.gitlab-ci.yml&lt;span class="absolute -mt-20" id="gitlab-ciyml">&lt;/span>
+&lt;a href="#gitlab-ciyml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>GitLab CI/CD 的工作原理是，要在專案根目錄新增一個名為 &lt;code>.gitlab-ci.yml&lt;/code> 的文件 (記得文件名稱開頭有 &lt;code>.&lt;/code> ，我一開始忘記要加，想說怎麼都沒有反應 😅 )，也就是我們上面說的 &lt;code>設定好的腳本&lt;/code>，可以先將所需建構、測試和部署的腳本編寫完成，以及定義很多規則，例如執行命令的先後順序、部署應用程式的位置以及指定是否自動運行或是手動觸發腳本等。&lt;/p>
+&lt;p>將 &lt;code>.gitlab-ci.yml&lt;/code> 文件放入 Repository 裡，就會觸發 CI，負責管理的 GitLab-CI 就會依照 &lt;code>.gitlab-ci.yml&lt;/code> 設定檔來啟動名為 &lt;code>GitLab Runner&lt;/code> 的工具來運行腳本，這個 &lt;code>GitLab Runner&lt;/code> 我們放到後面來說，我們先來說說 &lt;code>.gitlab-ci.yml&lt;/code> 這個設定檔要怎麼編寫，以及編寫後的流程。&lt;/p>
+&lt;br>
+&lt;p>這是一個示範的 &lt;code>.gitlab-ci.yml&lt;/code>，選自優良的 &lt;a href="https://docs.gitlab.com/ee/ci/quick_start/" target="_blank" rel="noopener">GitLab&lt;/a> XD，為了說明有小修改程式碼，程式碼也會放在 &lt;a href="https://github.com/880831ian/GitLab-CICD" target="_blank" rel="noopener">GitHub&lt;/a> 上歐：&lt;/p>
+&lt;ul>
+&lt;li>.gitlab-ci.yml&lt;/li>
+&lt;/ul>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">stages&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">build&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">test&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">deploy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">cache&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">paths&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">config/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">build-job&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">stage&lt;/span>: &lt;span style="color:#ae81ff">build&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">script&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">echo &amp;#34;Hello, $GITLAB_USER_LOGIN!&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">test-job1&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">stage&lt;/span>: &lt;span style="color:#ae81ff">test&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">script&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">echo &amp;#34;This job tests something&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">test-job2&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">stage&lt;/span>: &lt;span style="color:#ae81ff">test&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">before_script&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">echo &amp;#34;This job tests something, but takes more time than test-job1.&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">script&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">echo &amp;#34;After the echo commands complete, it runs the sleep command for 20 seconds&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">echo &amp;#34;which simulates a test that runs 20 seconds longer than test-job1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">sleep 20&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">deploy-prod&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">stage&lt;/span>: &lt;span style="color:#ae81ff">deploy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">script&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">echo &amp;#34;This job deploys something from the $CI_COMMIT_BRANCH branch.&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>那我來簡單說明一下上面這些設定檔案的功能：&lt;/p>
+&lt;ul>
+&lt;li>stages：代表這個 CI 設定檔有三個 stage 要跑，一個是 build、一個 test、一個 deploy，他們的順序也決定 CI 運作的順序，由 build → test → deploy，假如 test 沒有通過，就不會執行 deploy。&lt;/li>
+&lt;li>cache：我們在寫 CI 時，常常需要裝 package，但我不想每次都重新跑一次，所以可以寫一個 cache，不要讓 GitLab 每次都重新拉新的 package。&lt;/li>
+&lt;li>build-job、test-job1、test-job2、deploy-prod：代表我有 4 個 job 要執行，每個 job 裡面有不同的任務，也是顯示在 Pipeline 的名稱。&lt;/li>
+&lt;li>stage：他現在要執行的階段，對應到 stages。&lt;/li>
+&lt;li>before_script：可以把它當先需要先執行的指令，後面才會執行主要的 script 指令。所以需要安裝的可以先寫在這裡面。&lt;/li>
+&lt;li>script：主指令，在實際運行的腳本中，通常會見到多行的指令被依序執行。&lt;/li>
+&lt;li>$CI_COMMIT_BRANC：當然 &lt;code>.gitlab-ci.yml&lt;/code> 檔案也可以帶入參數，這個部分我們留到 &lt;a href="../laravel-gitlab-cicd-heroku/" >部署 Laravel 於 Heroku 搭配 GitLab CI/CD&lt;/a> 搭配實際操作來說明。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>當然 &lt;code>.gitlab-ci.yml&lt;/code> 有很多功能，上面只是簡單說明比較常用的，當你不確定自己寫的 CI 設定檔有沒有問題，沒關係就直接推上去，GitLab 還會先檢查一下設定檔是不是正確：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/error.png"
+alt="GitLab CI/CD 檢查格式有錯" width="600">&lt;figcaption>
+&lt;p>GitLab CI/CD 檢查格式有錯&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>當我們將 &lt;code>.gitlab-ci.yml&lt;/code> 連同專案一起推到 GitLab 上後，我們可以看到它會開始執行我們所寫的腳本，會顯示整個執行過程：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/ci.png"
+alt="GitLab CI/CD 執行過程" width="1000">&lt;figcaption>
+&lt;p>GitLab CI/CD 執行過程&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>查看執行的狀態：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/status.png"
+alt="GitLab CI/CD 狀態" width="800">&lt;figcaption>
+&lt;p>GitLab CI/CD 狀態&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>也可以在 GitLab Pipeline 看到執行的流程：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/pipeline.png"
+alt="GitLab CI/CD Pipeline" width="800">&lt;figcaption>
+&lt;p>GitLab CI/CD Pipeline&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>GitLab CI Runner&lt;span class="absolute -mt-20" id="gitlab-ci-runner">&lt;/span>
+&lt;a href="#gitlab-ci-runner" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們上面有提到，我們在 CI 跑腳本，需要一個 Server 來代替 GitLab 來讓我們執行，這個 Server 我們稱為 Runner。我們來看一下整個執行的圖片：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/gitlab-cicd.png"
+alt="Gitlab CI/CD 實際執行流程 (圖片來源：Gitlab-CI 入門實作教學 - 單元測試篇)" width="600">&lt;figcaption>
+&lt;p>Gitlab CI/CD 實際執行流程 (圖片來源：&lt;a href="https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f" target="_blank" rel="noopener">Gitlab-CI 入門實作教學 - 單元測試篇&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>那這個 Runner 有分成兩種：&lt;/p>
+&lt;ul>
+&lt;li>共享 Runner (Shared Runners)&lt;/li>
+&lt;li>自架 Runner (Specific Runners)&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h4>共享 Runner (Shared Runners)&lt;span class="absolute -mt-20" id="共享-runner-shared-runners">&lt;/span>
+&lt;a href="#%e5%85%b1%e4%ba%ab-runner-shared-runners" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>因為本文章以及後續 &lt;a href="../laravel-gitlab-cicd-heroku/" >部署 Laravel 於 Heroku 搭配 GitLab CI/CD&lt;/a> 文章所使用的平台是 &lt;a href="https://gitlab.com" target="_blank" rel="noopener">gitlab.com&lt;/a>，由官方所提供，所以我們直接使用共享 Runner，可以在 repository Settings → CI / CD → Runners 中找到，有不少官方提供的共享 Runner 可以使用，也不需要做任何設定。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/sharedrunners.png"
+alt="GitLab CI/CD 共享 Runner" width="800">&lt;figcaption>
+&lt;p>GitLab CI/CD 共享 Runner&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>但也有幾個缺點：&lt;/p>
+&lt;ul>
+&lt;li>因為是共享，所以 Server 資源也會共享，理論上多人使用的速度還是會比較慢。&lt;/li>
+&lt;li>以及如果是開源專案，是完全免費。但如果是私人專案，一個月有 400 分鐘的 CI 執行時間限制。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h4>自架 Runner (Specific Runners)&lt;span class="absolute -mt-20" id="自架-runner-specific-runners">&lt;/span>
+&lt;a href="#%e8%87%aa%e6%9e%b6-runner-specific-runners" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/gitlab-runner.jpg"
+alt="GitLab CI/CD 自架 Runner (圖片來源：Best Practice for DevOps on GitLab and GCP : GitLab Runner 簡介與安裝 - Day 7)" width="600">&lt;figcaption>
+&lt;p>GitLab CI/CD 自架 Runner (圖片來源：&lt;a href="https://ithelp.ithome.com.tw/articles/10214266" target="_blank" rel="noopener">Best Practice for DevOps on GitLab and GCP : GitLab Runner 簡介與安裝 - Day 7&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>GitLab Server 和 GitLab Runner 是 GitLab CI/CD 中不可或缺的兩者，但如果像公司是自架 GitLab，首先要先找一台電腦或是 Server 做為 Runner，那我們這邊以 Docker 作示範。&lt;/p>
+&lt;p>GitLab Runner 的建議建置步驟如下：&lt;/p>
+&lt;ol>
+&lt;li>準備/安裝一個 GitLab Server (這邊我們直接使用 &lt;a href="https://gitlab.com" target="_blank" rel="noopener">gitlab.com&lt;/a>)&lt;/li>
+&lt;li>安裝一個與 GitLab Server 對應版本的 GitLab Runner&lt;/li>
+&lt;li>在安裝 GitLab Runner 的設備上設定 &lt;a href="https://docs.gitlab.com/runner/executors/" target="_blank" rel="noopener">Executor&lt;/a>&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>什麼是 Executor ?&lt;/p>
+&lt;p>如果把 GitLab Runner 當成一個工廠來看，那 Executor 就是工廠內一個又一個的產線，同一個工廠內可以擁有不同種類的產線，Runner 與 Executor 之間的關係就是如此，這些產線會根據專案中 &lt;code>.gitlab-ci.yml&lt;/code> 的內容，決定產線以及如何產出開發者期望的產品。&lt;/p>
+&lt;p>另外 Executor 的種類非常多，可以看下方這些圖片，因為我們最常使用的就是 Docker，所以我們等等的範例，也是建置在 Docker 之上！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/executor.png"
+alt="GitLab Runner Executors" width="700">&lt;figcaption>
+&lt;p>GitLab Runner Executors&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>那我們就開始來實作我們的 GitLab Runner 吧：&lt;/p>
+&lt;ol>
+&lt;li>首先，我們回去剛剛在 repository Settings → CI / CD → Runners 左側的 Specific runners&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/specificrunners.png"
+alt="GitLab Runner Executors" width="700">&lt;figcaption>
+&lt;p>GitLab Runner Executors&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>可以看到一個註冊的 URL 以及 Token，這個我們在設定 Executor 會使用到！&lt;/p>
+&lt;br>
+&lt;ol start="2">
+&lt;li>接下來開始安裝 GitLab Runner，我們使用 Docker，以下是 Docker 執行的指令：本此使用 &lt;a href="https://hub.docker.com/layers/gitlab-runner/gitlab/gitlab-runner/alpine-v15.0.0/images/sha256-f44b39d92aa31186b4d6b986d1c3ffbf8ef4228c2e070410a7a417fb0aa159ce?context=explore" target="_blank" rel="noopener">gitlab-runner&lt;/a> 版本是 alpine-v15.0.0&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>docker run -d --name gitlab-runner --restart always &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span>-v ~/Shared/gitlab-runner/config:/etc/gitlab-runner &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span>-v /var/run/docker.sock:/var/run/docker.sock &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span>gitlab/gitlab-runner:alpine-v15.0.0&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol start="3">
+&lt;li>接著進入容器裡面，使用 &lt;code>docker exec -it gitlab-runner gitlab-runner register&lt;/code> 來註冊，可以參考下方圖片，輸入 URL 以及 自己的 Token：&lt;/li>
+&lt;/ol>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/register_executor.png"
+alt="GitLab Runner 註冊 Executors" width="1000">&lt;figcaption>
+&lt;p>GitLab Runner 註冊 Executors&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="4">
+&lt;li>可以回到 gitlab.com 查看 Specific runners 下方是否多了我們剛剛所註冊的 GitLab-Runner&lt;/li>
+&lt;/ol>
+&lt;figure>&lt;img src="https://pin-yi.me/git/gitlab-cicd/available_runners.png"
+alt="GitLab Available specific runners" width="700">&lt;figcaption>
+&lt;p>GitLab Available specific runners&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>GitLab CD&lt;span class="absolute -mt-20" id="gitlab-cd">&lt;/span>
+&lt;a href="#gitlab-cd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>GitLab CD 其實就是在 &lt;code>.gitlab-ci.yml&lt;/code> 後面加上我們要部署的設定，透過 CI 整合完，我們可以設定他要部署到哪一台機器或是設備上這部分就放到下一篇文章直接用實作來告訴大家要怎麼使用吧！，請大家接續看下一篇 &lt;a href="../laravel-gitlab-cicd-heroku/" >部署 Laravel 於 Heroku 搭配 GitLab CI/CD&lt;/a> ，一起學習吧 GoGo !&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Get started with GitLab CI/CD：&lt;a href="https://docs.gitlab.com/ee/ci/quick_start/" target="_blank" rel="noopener">https://docs.gitlab.com/ee/ci/quick_start/&lt;/a>&lt;/p>
+&lt;p>Best Practice for DevOps on GitLab and GCP : GitLab CI/CD - Day 6：&lt;a href="https://ithelp.ithome.com.tw/articles/10214114" target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10214114&lt;/a>&lt;/p>
+&lt;p>Gitlab-CI 入門實作教學 - 單元測試篇：&lt;a href="https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f" target="_blank" rel="noopener">https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f&lt;/a>&lt;/p>
+&lt;p>如何使用 GitLab CI：&lt;a href="https://medium.com/@mvpdw06/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-gitlab-ci-ebf0b68ce24b" target="_blank" rel="noopener">https://medium.com/@mvpdw06/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-gitlab-ci-ebf0b68ce24b&lt;/a>&lt;/p></description></item></channel></rss>
