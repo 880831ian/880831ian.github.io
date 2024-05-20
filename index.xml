@@ -21,8 +21,8 @@
 &lt;a href="#%e5%9c%b0%e7%ab%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們先來説説「地端」是什麼？地端的英文是 &lt;a href="https://en.wikipedia.org/wiki/On-premises_software" target="_blank" rel="noopener">On-Premises&lt;/a>，簡稱 On-Prem，代表所有安裝、運行都在個人電腦或公司自己內部的伺服器上所執行的運行方式。&lt;/p>
 &lt;p>最好的例子就是你電腦裡面裝的 Windows 作業系統、Office 文書軟體、或是公司內部的 ERP 系統等等。這些軟體都是安裝在你的電腦或公司伺服器上，並且由你自己或公司的 IT 團隊負責管理，所以這也是目前最普遍的ㄧ種軟體運行方式。&lt;/p>
 &lt;br>
-&lt;h4>地端的好處是什麼？&lt;span class="absolute -mt-20" id="地端的好處是什麼">&lt;/span>
-&lt;a href="#%e5%9c%b0%e7%ab%af%e7%9a%84%e5%a5%bd%e8%99%95%e6%98%af%e4%bb%80%e9%ba%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;ol>
+&lt;h4>地端的優點是什麼？&lt;span class="absolute -mt-20" id="地端的優點是什麼">&lt;/span>
+&lt;a href="#%e5%9c%b0%e7%ab%af%e7%9a%84%e5%84%aa%e9%bb%9e%e6%98%af%e4%bb%80%e9%ba%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;ol>
 &lt;li>&lt;strong>控制權&lt;/strong>：你可以完全控制你的伺服器和軟體，不用擔心第三方服務商的服務品質，想把機器擺在哪裡就放哪裡、用什麼型號都可以自己決定。&lt;/li>
 &lt;li>&lt;strong>安全性&lt;/strong>：企業或是個人可以自行控制資料的存取權限，不用擔心第三方服務商的資料外洩問題。&lt;/li>
 &lt;li>&lt;strong>成本&lt;/strong>：一次性購買伺服器和軟體，不需要每個月支付雲端服務費用。&lt;/li>
