@@ -1,7 +1,7 @@
 ---
 title: RD 使用的相關工具
 type: docs
-weight: 2
+weight: 20
 sidebar:
   open: true
 ---
