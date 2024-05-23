@@ -182,28 +182,58 @@ alt="Container 與 VM 的差異 圖片來源" width="700">&lt;figcaption>
 &lt;p>&lt;strong>更輕鬆的遷移和擴展&lt;/strong>：Docker 容器幾乎可以在任意的平台上執行，包括實體機器、虛擬機、公有雲、私有雲、個人電腦、伺服器等。 這種兼容性可以讓使用者把一個服務從一個平台直接遷移到另外一個。&lt;/p>
 &lt;/li>
 &lt;li>
-&lt;p>&lt;strong>更簡單的管理&lt;/strong>：使用 Docker，只需要小小的修改，就可以替代以往大量的更新工作。所有的修改都以增量的方式被分發和更新，從而實作自動化並且有效率的管理&lt;/p>
+&lt;p>&lt;strong>更簡單的管理&lt;/strong>：使用 Docker，只需要小小的修改，就可以替代以往大量的更新工作。所有的修改都以增量的方式被分發和更新，從而實作自動化並且有效率的管理。&lt;/p>
 &lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;h3>Docker 三大元素&lt;span class="absolute -mt-20" id="docker-三大元素">&lt;/span>
-&lt;a href="#docker-%e4%b8%89%e5%a4%a7%e5%85%83%e7%b4%a0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Docker 是由這三個東西所組成，了解後就可以知道整個 Docker 的生命週期。&lt;/p>
+&lt;h3>Docker 四大元素&lt;span class="absolute -mt-20" id="docker-四大元素">&lt;/span>
+&lt;a href="#docker-%e5%9b%9b%e5%a4%a7%e5%85%83%e7%b4%a0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Docker 是由這四個東西所組成，了解後就可以知道整個 Docker 的生命週期。&lt;/p>
 &lt;ul>
+&lt;li>Dockerfile&lt;/li>
 &lt;li>映像檔 (Image)&lt;/li>
 &lt;li>容器 (Container)&lt;/li>
 &lt;li>倉庫 (Repository)&lt;/li>
 &lt;/ul>
+&lt;br>
+&lt;h4>Dockerfile&lt;span class="absolute -mt-20" id="dockerfile">&lt;/span>
+&lt;a href="#dockerfile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>開發人員在使用 Docker 時發現，大多現成的 Docker 映像檔無法滿足他們的需求，因此需要一種能夠生成映像檔的工具。Dockerfile 是一種簡易的文件檔，裡面包含了建立新映像檔所需的指令。&lt;/p>
+&lt;p>Dockerfile 語法主要由 Command（命令）和 Argument （參數選擇）兩大元素組成。以下是一個簡易的 Dockerfile 示意圖：&lt;/p>
+&lt;p>命令式語法＋選擇參數（Command + Argument）&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/dockerfile.png"
+alt="Dockerfile 圖片來源" width="300">&lt;figcaption>
+&lt;p>Dockerfile &lt;a href="https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/#Repository%EF%BC%88%E5%80%89%E5%BA%AB%EF%BC%89" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
 &lt;h4>映像檔 (Image)&lt;span class="absolute -mt-20" id="映像檔-image">&lt;/span>
 &lt;a href="#%e6%98%a0%e5%83%8f%e6%aa%94-image" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>Docker 映像檔是一個唯獨的模板。&lt;/p>
 &lt;p>例如：一個映像檔可以用一個 Ubuntu Linux 作業系統當作基底，裡面只安裝 Nginx 或使用者想用的套件等。&lt;/p>
 &lt;p>我們會使用映像檔來建立 Docker 的容器 (Container) ，Docker 也提供很簡單的機制來建立映像檔或是更新現有的映像檔，也可以去下載別人已經做好的映像檔。&lt;/p>
 &lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/image.png"
+alt="Image 圖片來源" width="450">&lt;figcaption>
+&lt;p>Image &lt;a href="https://ragin.medium.com/docker-what-it-is-how-images-are-structured-docker-vs-vm-and-some-tips-part-1-d9686303590f" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
 &lt;h4>容器 (Container)&lt;span class="absolute -mt-20" id="容器-container">&lt;/span>
 &lt;a href="#%e5%ae%b9%e5%99%a8-container" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>Docker 是利用容器來執行應用程式。&lt;/p>
 &lt;p>每一個容器都是由映像檔所建立的的執行程式。它可以被啟動、開始、停止、刪除。且每一個容器都是相互隔離的，不會相互影響。&lt;/p>
 &lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/container.png"
+alt="Container 圖片來源" width="600">&lt;figcaption>
+&lt;p>Container &lt;a href="https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/#Repository%EF%BC%88%E5%80%89%E5%BA%AB%EF%BC%89" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
 &lt;h4>倉庫 (Repository)&lt;span class="absolute -mt-20" id="倉庫-repository">&lt;/span>
 &lt;a href="#%e5%80%89%e5%ba%ab-repository" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>倉庫是集中放置映像檔的所在地，倉庫分為公開倉庫 (Public) 和 私有倉庫 (Private) 兩種形式。最大的倉庫註冊伺服器當然是 &lt;a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker hub&lt;/a>，存放數量龐大的映像檔供使用者下載，使用者也可以在本地網路內建立一個私有倉庫。可以將倉庫的概念理解成跟 Git 相似。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/repository.png"
+alt="Repository 圖片來源" width="600">&lt;figcaption>
+&lt;p>Repository &lt;a href="https://logowik.com/docker-vector-logo-2767.html" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
 &lt;br>
 &lt;p>這樣講還是有點抽象，我們來看一個實際的例子：&lt;/p>
 &lt;p>首先我們先看一下 Docker 的 Logo，你們覺得這是什麼動物呢？&lt;/p>
@@ -222,8 +252,34 @@ alt="Docekr Logo 圖片來源" width="600">&lt;figcaption>
 &lt;/ul>
 &lt;p>海洋代表的是 Docker 的執行環境，不論是在哪個海洋 (計算環境)，都可以執行，鯨魚代表的是 Docker 這個平台 (或可以指 Image)，而貨櫃代表的是 Docker 的容器，也就是說我們可以有很多個 Container 在同一個 Image 上執行，且互不影響，能夠快速的部署和遷移，並在不同的環境中執行。&lt;/p>
 &lt;br>
-&lt;p>其他 Docker 詳細介紹可以參考我之前寫的文章：&lt;a href="../../docker/docker" >Docker 介紹 (如何使用 Docker-compose 建置 PHP+MySQl+Nginx 環境)&lt;/a>&lt;/p>
+&lt;p>由於時間關係，其他 Docker 詳細介紹以及資料可以參考我之前寫的文章：&lt;a href="../../docker/docker" >Docker 介紹 (如何使用 Docker-compose 建置 PHP+MySQl+Nginx 環境)&lt;/a>&lt;/p>
 &lt;br>
+&lt;h3>Docker 小試身手&lt;span class="absolute -mt-20" id="docker-小試身手">&lt;/span>
+&lt;a href="#docker-%e5%b0%8f%e8%a9%a6%e8%ba%ab%e6%89%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>為了大家能夠更了解 Docker 的使用，我們來實際操作一下：&lt;/p>
+&lt;ol>
+&lt;li>首先請大家先到 GitHub 下載範例程式碼：&lt;a href="https://github.com/880831ian/20240529-devops-introduce" target="_blank" rel="noopener">https://github.com/880831ian/20240529-devops-introduce&lt;/a>&lt;/li>
+&lt;li>裡面有幾個資料夾，先幫我進到 &lt;code>docker&lt;/code> 資料夾。&lt;/li>
+&lt;li>接著先執行 &lt;code>docker build -t 0529 .&lt;/code> 這個指令，這個指令是用來建立一個 Image，這個 Image 是用來執行 Nginx 的程式碼。&lt;/li>
+&lt;li>接著執行 &lt;code>docker run -d -p 8080:80 0529&lt;/code> 這個指令，這個指令是用來執行一個 Container，並且將 Container 的 80 port 對應到本機的 8080 port。&lt;/li>
+&lt;li>打開瀏覽器，輸入 &lt;code>http://localhost:8080&lt;/code>，就可以看到 Nginx 的首頁了。&lt;/li>
+&lt;li>我們先將關閉 Container，自行修改 docker/index.html 的內容，然後再重新執行 &lt;code>docker build -t 0529 .&lt;/code> 和 &lt;code>docker run -d -p 8080:80 0529&lt;/code>，就可以看到修改後的內容了。&lt;/li>
+&lt;li>我們下 &lt;code>docker tag 0529 880831ian/0529&lt;/code> 這個指令，將 Image 改成 Docker Hub 帳號跟 Image 名稱，例如：880831ian/0529。&lt;/li>
+&lt;li>最後我們下 &lt;code>docker push 880831ian/0529&lt;/code> 這個指令，這樣就可以將 Image 上傳到 Docker Hub 上，這樣其他人就可以下載你的 Image 了。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;h3>Docker 運作流程&lt;span class="absolute -mt-20" id="docker-運作流程">&lt;/span>
+&lt;a href="#docker-%e9%81%8b%e4%bd%9c%e6%b5%81%e7%a8%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>步驟一、撰寫 Dockerfile&lt;/p>
+&lt;p>步驟二、將 Dockerfile 建立為 Image&lt;/p>
+&lt;p>步驟三、將 Image 運行為容器。透過這三個簡單的步驟，就能創建自己的 Docker 容器囉！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/run.png"
+alt="Docekr 運作流程 圖片來源" width="900">&lt;figcaption>
+&lt;p>Docekr 運作流程 &lt;a href="https://medium.com/swlh/understand-dockerfile-dd11746ed183" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>Kubernetes 介紹&lt;span class="absolute -mt-20" id="kubernetes-介紹">&lt;/span>
+&lt;a href="#kubernetes-%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
 &lt;h2>什麼是 CICD&lt;span class="absolute -mt-20" id="什麼是-cicd">&lt;/span>
 &lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-cicd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
 &lt;h2>如何最快恢復網站&lt;span class="absolute -mt-20" id="如何最快恢復網站">&lt;/span>
@@ -249,4 +305,5 @@ alt="Docekr Logo 圖片來源" width="600">&lt;figcaption>
 &lt;p>雲端 VS 地端，數位轉型怎麼選？：&lt;a href="https://blog.hackmd.io/zh/blog/2022/02/22/cloud-vs-on-premises" target="_blank" rel="noopener">https://blog.hackmd.io/zh/blog/2022/02/22/cloud-vs-on-premises&lt;/a>&lt;/p>
 &lt;p>什麼是雲端？ | 雲端定義： &lt;a href="https://www.cloudflare.com/zh-tw/learning/cloud/what-is-the-cloud/" target="_blank" rel="noopener">https://www.cloudflare.com/zh-tw/learning/cloud/what-is-the-cloud/&lt;/a>&lt;/p>
 &lt;p>企業如何挑選合適的雲端服務？公有雲、私有雲差異比較總整理：&lt;a href="https://aws.amazon.com/tw/events/taiwan/techblogs/public-cloud-private-cloud/" target="_blank" rel="noopener">https://aws.amazon.com/tw/events/taiwan/techblogs/public-cloud-private-cloud/&lt;/a>&lt;/p>
-&lt;p>給資料科學家的 Docker 指南：3 種活用 Docker 的方式（上）：&lt;a href="https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html" target="_blank" rel="noopener">https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>給資料科學家的 Docker 指南：3 種活用 Docker 的方式（上）：&lt;a href="https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html" target="_blank" rel="noopener">https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html&lt;/a>&lt;/p>
+&lt;p>Docker 是什麼？Docker 基本觀念介紹與容器和虛擬機的比較：&lt;a href="https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/" target="_blank" rel="noopener">https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/&lt;/a>&lt;/p></description></item></channel></rss>
