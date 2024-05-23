@@ -170,17 +170,32 @@ Docker 是一種軟體平台，它可以快速建立、測試和部署應用程�
 
 - **更輕鬆的遷移和擴展**：Docker 容器幾乎可以在任意的平台上執行，包括實體機器、虛擬機、公有雲、私有雲、個人電腦、伺服器等。 這種兼容性可以讓使用者把一個服務從一個平台直接遷移到另外一個。
 
-- **更簡單的管理**：使用 Docker，只需要小小的修改，就可以替代以往大量的更新工作。所有的修改都以增量的方式被分發和更新，從而實作自動化並且有效率的管理
+- **更簡單的管理**：使用 Docker，只需要小小的修改，就可以替代以往大量的更新工作。所有的修改都以增量的方式被分發和更新，從而實作自動化並且有效率的管理。
 
 <br>
 
-### Docker 三大元素
+### Docker 四大元素
 
-Docker 是由這三個東西所組成，了解後就可以知道整個 Docker 的生命週期。
+Docker 是由這四個東西所組成，了解後就可以知道整個 Docker 的生命週期。
 
+- Dockerfile
 - 映像檔 (Image)
 - 容器 (Container)
 - 倉庫 (Repository)
+
+<br>
+
+#### Dockerfile
+
+開發人員在使用 Docker 時發現，大多現成的 Docker 映像檔無法滿足他們的需求，因此需要一種能夠生成映像檔的工具。Dockerfile 是一種簡易的文件檔，裡面包含了建立新映像檔所需的指令。
+
+Dockerfile 語法主要由 Command（命令）和 Argument （參數選擇）兩大元素組成。以下是一個簡易的 Dockerfile 示意圖：
+
+命令式語法＋選擇參數（Command + Argument）
+
+{{< figure src="/lecture/20240529-devops-introduce/dockerfile.png" width="300" caption="Dockerfile [圖片來源](https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/#Repository%EF%BC%88%E5%80%89%E5%BA%AB%EF%BC%89)" >}}
+
+<br>
 
 #### 映像檔 (Image)
 
@@ -192,6 +207,10 @@ Docker 映像檔是一個唯獨的模板。
 
 <br>
 
+{{< figure src="/lecture/20240529-devops-introduce/image.png" width="450" caption="Image [圖片來源](https://ragin.medium.com/docker-what-it-is-how-images-are-structured-docker-vs-vm-and-some-tips-part-1-d9686303590f)" >}}
+
+<br>
+
 #### 容器 (Container)
 
 Docker 是利用容器來執行應用程式。
@@ -200,9 +219,17 @@ Docker 是利用容器來執行應用程式。
 
 <br>
 
+{{< figure src="/lecture/20240529-devops-introduce/container.png" width="600" caption="Container [圖片來源](https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/#Repository%EF%BC%88%E5%80%89%E5%BA%AB%EF%BC%89)" >}}
+
+<br>
+
 #### 倉庫 (Repository)
 
 倉庫是集中放置映像檔的所在地，倉庫分為公開倉庫 (Public) 和 私有倉庫 (Private) 兩種形式。最大的倉庫註冊伺服器當然是 [Docker hub](https://hub.docker.com/)，存放數量龐大的映像檔供使用者下載，使用者也可以在本地網路內建立一個私有倉庫。可以將倉庫的概念理解成跟 Git 相似。
+
+<br>
+
+{{< figure src="/lecture/20240529-devops-introduce/repository.png" width="600" caption="Repository [圖片來源](https://logowik.com/docker-vector-logo-2767.html)" >}}
 
 <br>
 
@@ -226,7 +253,40 @@ Docker 是利用容器來執行應用程式。
 
 <br>
 
-其他 Docker 詳細介紹可以參考我之前寫的文章：[Docker 介紹 (如何使用 Docker-compose 建置 PHP+MySQl+Nginx 環境)](../../docker/docker)
+由於時間關係，其他 Docker 詳細介紹以及資料可以參考我之前寫的文章：[Docker 介紹 (如何使用 Docker-compose 建置 PHP+MySQl+Nginx 環境)](../../docker/docker)
+
+<br>
+
+### Docker 小試身手
+
+為了大家能夠更了解 Docker 的使用，我們來實際操作一下：
+
+1. 首先請大家先到 GitHub 下載範例程式碼：[https://github.com/880831ian/20240529-devops-introduce](https://github.com/880831ian/20240529-devops-introduce)
+2. 裡面有幾個資料夾，先幫我進到 `docker` 資料夾。
+3. 接著先執行 `docker build -t 0529 .` 這個指令，這個指令是用來建立一個 Image，這個 Image 是用來執行 Nginx 的程式碼。
+4. 接著執行 `docker run -d -p 8080:80 0529` 這個指令，這個指令是用來執行一個 Container，並且將 Container 的 80 port 對應到本機的 8080 port。
+5. 打開瀏覽器，輸入 `http://localhost:8080`，就可以看到 Nginx 的首頁了。
+6. 我們先將關閉 Container，自行修改 docker/index.html 的內容，然後再重新執行 `docker build -t 0529 .` 和 `docker run -d -p 8080:80 0529`，就可以看到修改後的內容了。
+7. 我們下 `docker tag 0529 880831ian/0529` 這個指令，將 Image 改成 Docker Hub 帳號跟 Image 名稱，例如：880831ian/0529。
+8. 最後我們下 `docker push 880831ian/0529` 這個指令，這樣就可以將 Image 上傳到 Docker Hub 上，這樣其他人就可以下載你的 Image 了。
+
+<br>
+
+### Docker 運作流程
+
+步驟一、撰寫 Dockerfile
+
+步驟二、將 Dockerfile 建立為 Image
+
+步驟三、將 Image 運行為容器。透過這三個簡單的步驟，就能創建自己的 Docker 容器囉！
+
+<br>
+
+{{< figure src="/lecture/20240529-devops-introduce/run.png" width="900" caption="Docekr 運作流程 [圖片來源](https://medium.com/swlh/understand-dockerfile-dd11746ed183)" >}}
+
+<br>
+
+### Kubernetes 介紹
 
 <br>
 
@@ -280,3 +340,5 @@ Git 可以說是現代軟體工程師必備的技能之一，可以幫助你管�
 企業如何挑選合適的雲端服務？公有雲、私有雲差異比較總整理：[https://aws.amazon.com/tw/events/taiwan/techblogs/public-cloud-private-cloud/](https://aws.amazon.com/tw/events/taiwan/techblogs/public-cloud-private-cloud/)
 
 給資料科學家的 Docker 指南：3 種活用 Docker 的方式（上）：[https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html](https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html)
+
+Docker 是什麼？Docker 基本觀念介紹與容器和虛擬機的比較：[https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/](https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/)
