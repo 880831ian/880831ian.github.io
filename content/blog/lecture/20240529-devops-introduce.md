@@ -1,7 +1,6 @@
 ---
 title: "朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座 (2024/05/29)"
-# type: docs
-# toc: false # 暫時不顯示目錄
+type: docs
 ---
 
 ## 講座資訊
@@ -289,16 +288,63 @@ Docker 是利用容器來執行應用程式。
 
 Kubernetes 也可以叫 K8s，這個名稱來源希臘語，意思是舵手或是飛行員，所以我們可以看到它的 logo 是一個船舵的標誌，之所以叫 K8s 是因為 Kubernetes 的 k 到 s 中間有 8 的英文字母，為了方便，大家常以這個名稱來稱呼它！
 
-Kubernetes 是一種開源可用來自動化部屬、擴展以及管理多個容器的系統，適用於當容器數量增加，需要穩定容器環境，以及管理資源或權限分配的狀況。
-另外 K8s 也是 Google 開發的，並且是 CNCF (Cloud Native Computing Foundation) 的一個專案，所以 K8s 也是一個非常受歡迎的容器管理系統。
-
 <br>
 
 {{< figure src="/lecture/20240529-devops-introduce/k8s-logo.png" width="200" caption="K8s Logo" >}}
 
 <br>
 
+Kubernetes 是一種開源可用來自動化部屬、擴展以及管理多個容器的系統，適用於當容器數量增加，需要穩定容器環境，以及管理資源或權限分配的狀況。
+另外 K8s 也是 Google 開發的，並且是 CNCF (Cloud Native Computing Foundation) 的一個專案，所以 K8s 也是一個非常受歡迎的容器管理系統。
+
+<br>
+
+我們之前在 [Docker 介紹](../../../blog/docker/docker/) 文章中，已經有介紹以往傳統虛擬機以及容器化的 Docker 差異以及優點，那當我們在管理容器時，其中一個容器出現故障，則需要啟動另一個容器，如果要用手動，會十分麻煩，所以這時就是 Kubernetes 的厲害的地方了，Kubernetes 提供：
+
+### Kubernetes 優點
+
+- 服務發現和負載平衡：K8s 可以使用 DNS 名稱或是自己的 IP 位址來公開容器。如果容器流量過高，Kubernetes 能夠使用負載平衡和分配網路流量，能使部署更穩定。
+- 編排儲存：Kubernetes 允許使用自動掛載來選擇儲存系統，例如使用本地儲存，或是公共雲等。
+  自動部署、刪除：可以使用 Kubernetes 來幫我們自動化部屬新的容器、刪除現有的容器並將其資源用於新容器。
+- 自動打包：當我們為 Kubernetes 提供一個節點叢集，它可以用來運行容器化的任務，告訴 Kubernetes 每個容器需要多少 CPU 和 RAM。Kubernetes 可以將容器安裝到節點上，充分利用資源。
+- 自動修復：Kubernetes 會重新啟動失敗的容器、替換容器、刪除不回應用戶的不健康容器，並且在容器準備好服務之前不會通知客戶端。
+- 機密和配置管理：Kubernetes 允許儲存和管理敏感訊息，例如密碼、OAuth token 和 SSH 金鑰。可以部署和更新機密的應用程序配置。
+
+<br>
+
+Kubernetes 是如何幫我們管理以及部署 Container ? 要了解 Kubernetes 如何運作，就要先了解它的元件以及架構：
+
 ### Kubernetes 元件介紹
+
+那我們由小的往大的來做介紹：依序是 Pod、Worker Node、Master Node、Cluster
+
+#### Pod
+
+Kubernetes 運作中最小的單位，一個 Pod 會對應到一個應用服務 (Application)，舉例來說一個 Pod 可能會對應到一個 Nginx Server。
+
+- 每個 Pod 都有一個定義文件，也就是屬於這個 Pod 的 yaml 檔。
+- 一個 Pod 裡面可以有一個或多個 Container，但一般情況一個 Pod 最好只有一個 Container。
+- 同一個 Pod 中的 Containers 共享相同的資源以及網路，彼此透過 local port number 溝通。
+
+<br>
+
+#### Worker Node
+
+Kubernetes 運作的最小硬體單位，一個 Worker Node (簡稱 Node) 對應到一台機器，可以是實體例如你的筆電、或是虛擬機，例如：GCP 上的一台 Computer Engine。
+
+<br>
+
+#### Master Node (Control Plane)
+
+負責各個 Worker Node 的管理，可稱作是 K8S 的發號施令的中樞。
+
+其他更詳細介紹，可以參考我之前寫的文章：[Kubernetes (K8s) 介紹 - 基本](../../..//blog/kubernetes/k8s/#安裝-kubernetes)
+
+<br>
+
+#### Cluster
+
+Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架設中我們不會只有一台機器而已，通常都是多個機器一起運行同一種內容，在沒有 Kubernetes 的時候就必須要土法煉鋼的一台一台機器去更新，但有了 Kubernetes 我們就可以透過 Cluster 進行控管，只要更新 Master 旗下的機器，也會一併將更新的內容放上去，十分方便。在 Kubernetes 中多個 Worker Node 與 Master Node 的集合。
 
 <br>
 
@@ -306,13 +352,28 @@ Kubernetes 是一種開源可用來自動化部屬、擴展以及管理多個容
 
 <br>
 
+### Kubernetes 小試身手
+
+為了大家能夠更了解 Kubernetes 的使用，我們來實際操作一下：
+(但由於 K8s 建立以及部署需要一些時間，所以這邊會直接拿我擁有的環境做測試，其他更詳細的操作可以參考我之前寫的文章：[Kubernetes (K8s) 介紹 - 基本](../../../blog/kubernetes/k8s/)、[Kubernetes (K8s) 介紹 - 進階 (Service、Ingress、StatefulSet、Deployment、ReplicaSet、ConfigMap)](../../../blog/kubernetes/k8s-advanced/))
+
+首先，我們接續上面的 [Docker 小試身手](#docker-小試身手) 的範例程式碼：
+
+1. 先執行 `docker buildx build --platform=linux/amd64 -t 880831ian/0529-arm64:latest .`，將 Image 建立起來 (這邊會多 buildx 跟 platform 是因為我的電腦是 Mac M 系列處理器，系統架構是 arm64，所以要放到 GKE 上面跑，需要多指令平台)。
+
+2. 接著執行 `docker push 880831ian/0529-arm64:latest`，將 Image 上傳到 Docker Hub 上。
+
+3. 進入 k8s 資料夾，裡面有幾個檔案，分別是：namespace.yaml、deployment.yaml、service.yaml、ingress.yaml。
+
+4. 先執行 `kubectl apply -f namespace.yaml`，這個指令是用來建立一個 namespace，這樣我們就可以將我們的服務放到這個 namespace 下。
+
+5. 接著執行 `kubectl apply -f .`，將其他服務也建立到 GKE 上。
+
+6. 最後我們打開瀏覽器，輸入 [https://myapp.pin-yi.me](https://myapp.pin-yi.me/)，就可以看到 Nginx 的首頁了。 (此為範例，講座結束後會關閉服務)
+
 <br>
 
-### Kubernetes 3 大好處
-
-1. 服務、系統部屬更方便：Kubernetes 可以自動化部屬、擴展以及管理多個容器的系統，讓開發者可以更專注在開發上，而不用擔心部屬的問題。
-
-<br>
+看完 Kubernetes 部署服務的方式，是不是覺得有點麻煩呢？還需要手動去部署，這時候就需要 CI/CD 來幫助我們自動化部署服務了！
 
 ## 什麼是 CICD
 

@@ -57,4 +57,5 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 {{< card link="blog/other/bookstack" title="Bookstack 開源知識庫筆記平台安裝 (K8s + docker)" image="/other/bookstack/cover.webp">}}
 {{< card link="blog/other/snyk" title="找出程式碼、開源套件、容器的安全漏洞工具 - Snyk" image="/other/snyk/cover.webp">}}
 
+{{< card link="blog/lecture/20240529-devops-introduce" title="朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座 (2024/05/29)" image="/lecture/20240529-devops-introduce/cover.webp">}}
 {{< /cards>}}
