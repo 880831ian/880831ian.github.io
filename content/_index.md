@@ -25,11 +25,8 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 {{< card link="blog/kubernetes/gcp-k8s-hpa-php-custom-metrics" title="Kubernetes (K8s) 自定義 PHP HorizontalPodAutoscaler (HPA) 指標" image="/kubernetes/gcp-k8s-hpa-php-custom-metrics/cover.webp">}}
 {{< card link="blog/kubernetes/k8s-plain" title="用大型社區來介紹 Kubernetes 元件" image="/kubernetes/k8s-plain/cover.webp">}}
 
-{{< card link="blog/nginx/nginx-upstream-set-host-header" title="想使用 Nginx Upstream Proxy 到外部服務，並帶入對應的 header 該怎麼做？" image="/nginx/nginx-upstream-set-host-header/cover.webp">}}
-{{< card link="blog/nginx/soketi-log-502-error" title="Soketi WebSocket Server LOG 不定時出現 502 error 以及 connect() failed (111: Connection refused)" image="/nginx/soketi-log-502-error/cover.webp">}}
-
-{{< card link="blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400" title="Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決" image="/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/cover.webp">}}
-{{< card link="blog/rd/kibana-create-index-forbidden" title="Kibana 新增 index 索引時一直轉圈圈以及顯示 HTTP 403 Forbidden" image="/rd/kibana-create-index-forbidden/cover.webp">}}
+{{< card link="blog/docker/prometheus-grafana-docker" title="使用 Prometheus 和 Grafana 打造監控預警系統 (Docker 篇)" image="/docker/prometheus-grafana-docker/cover.webp">}}
+{{< card link="blog/docker/docker" title="Docker 介紹 (如何使用 Docker-compose 建置 PHP+MySQl+Nginx 環境" image="/docker/docker/cover.webp">}}
 
 {{< card link="blog/terraform/terraform" title="什麼是 IaC ? Terraform 又是什麼？" image="/terraform/terraform/cover.webp">}}
 {{< card link="blog/terraform/terraform-gce" title="使用 Terraform 建立 Google Compute Engine" image="/terraform/terraform-gce/cover.webp">}}
@@ -40,6 +37,12 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 
 {{< card link="blog/opentelemetry/opentelemetry-observability" title="什麼是 Opentelemetry？可觀測性 (Observability) 又是什麼？" image="/opentelemetry/opentelemetry-observability/cover.webp">}}
 {{< card link="blog/opentelemetry/opentelemetry-ingress-nginx-controller" title="如何透過 OpenTelemetry 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上" image="/opentelemetry/opentelemetry-ingress-nginx-controller/cover.webp">}}
+
+{{< card link="blog/nginx/nginx-upstream-set-host-header" title="想使用 Nginx Upstream Proxy 到外部服務，並帶入對應的 header 該怎麼做？" image="/nginx/nginx-upstream-set-host-header/cover.webp">}}
+{{< card link="blog/nginx/soketi-log-502-error" title="Soketi WebSocket Server LOG 不定時出現 502 error 以及 connect() failed (111: Connection refused)" image="/nginx/soketi-log-502-error/cover.webp">}}
+
+{{< card link="blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400" title="Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決" image="/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/cover.webp">}}
+{{< card link="blog/rd/kibana-create-index-forbidden" title="Kibana 新增 index 索引時一直轉圈圈以及顯示 HTTP 403 Forbidden" image="/rd/kibana-create-index-forbidden/cover.webp">}}
 
 {{< card link="blog/git-or-cicd/gitlab-package-registry-to-gcs" title="如何啟用 GitLab 的 Package Registry 以及將儲存位置從伺服器改到 GCS 上" image="/git-or-cicd/gitlab-package-registry-to-gcs/cover.webp">}}
 {{< card link="blog/git-or-cicd/git-merge-multiple-commit" title="如何合併多個 commit，且推到遠端呢？" image="/git-or-cicd/git-merge-multiple-commit/cover.webp">}}
