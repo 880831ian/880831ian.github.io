@@ -1024,4 +1024,1802 @@ alt="大型社區示意圖 (圖片來源：蘋果地產)" width="550">&lt;figcap
 &lt;p>所以當我們有任何變更計畫時，都需要重新提交一份新的部署計畫給管委會重新審核和接受。&lt;/p>
 &lt;br>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://blog.pichuang.com.tw/20210111-Kubernetes-for-sales-and-marketing/#%E4%B8%AD%E7%BF%BB%E4%B8%AD%E7%9A%84-Kubernetes-%E7%B5%84%E4%BB%B6%E4%BB%8B%E7%B4%B9" target="_blank" rel="noopener">給行銷跟業務的 Kubernetes 101 中翻中介紹&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://blog.pichuang.com.tw/20210111-Kubernetes-for-sales-and-marketing/#%E4%B8%AD%E7%BF%BB%E4%B8%AD%E7%9A%84-Kubernetes-%E7%B5%84%E4%BB%B6%E4%BB%8B%E7%B4%B9" target="_blank" rel="noopener">給行銷跟業務的 Kubernetes 101 中翻中介紹&lt;/a>&lt;/p></description></item><item><title>Kubernetes (K8s) 介紹 - 進階 (Service、Ingress、StatefulSet、Deployment、ReplicaSet、ConfigMap)</title><link>https://pin-yi.me/blog/kubernetes/k8s-advanced/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-advanced/</guid><description>
+&lt;p>前面我們在&lt;a href="../k8s" >基本篇&lt;/a>中，為了使 Pod 能夠與本機連線，使用了 &lt;code>port-forward&lt;/code>，還有另一種方法就是今天要介紹的第一個主題：Service&lt;/p>
+&lt;p>那我們會先複習一下 &lt;code>port-forward&lt;/code>，再來介紹 &lt;code>Service&lt;/code>，當然後面也會有實際操作，請大家跟我繼續一起學下去吧 ！&lt;/p>
+&lt;br>
+&lt;h2>port-forward&lt;span class="absolute -mt-20" id="port-forward">&lt;/span>
+&lt;a href="#port-forward" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;code>port-forward&lt;/code> 簡單來說就是把本機的某一個 Port 與 Pod 所開放對外的 Port 做映射，就像是我們在 Docker 跑 container 時會使用 -p 來連結機器與 container 的 port 一樣～&lt;/p>
+&lt;p>使用的方法也很簡單且方便，使用 &lt;code>kubectl port-forward &amp;lt;pod&amp;gt; &amp;lt;external-port&amp;gt;:&amp;lt;pod-port&amp;gt;&lt;/code>，我們拿 &lt;a href="../k8s" >Kubernetes 基本篇&lt;/a>最後的範例，來做說明：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl port-forward kubernetes-demo-pod 3000:3000
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Forwarding from 127.0.0.1:3000 -&amp;gt; &lt;span style="color:#ae81ff">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Forwarding from &lt;span style="color:#f92672">[&lt;/span>::1&lt;span style="color:#f92672">]&lt;/span>:3000 -&amp;gt; &lt;span style="color:#ae81ff">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Handling connection &lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#ae81ff">3000&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>我們把 kubernetes-demo-pod 這個 pod，用 port-forward 設定本機 3000 port 與 pod 3000 port 做映射，當我們瀏覽 &lt;code>http://localhost:3000&lt;/code> 就可以看到 pod 裡面的內容了！&lt;/p>
+&lt;p>雖然很方便，可以馬上就開好要映射的 port，但缺點就是每次建立 pod 時都需要手動去打指令來設定 port，且時間久了，也會忘記本機上哪些 port 有被使用到，因此這邊推薦使用 &lt;code>Service&lt;/code> 來取代 &lt;code>port-forward&lt;/code>，那我們來看看 &lt;code>Service&lt;/code> 是什麼吧。&lt;/p>
+&lt;br>
+&lt;h2>什麼是 Service ?&lt;span class="absolute -mt-20" id="什麼是-service-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-service-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;code>service&lt;/code> 他其實就是建立的一個網路連線通道，可以讓應用程式正確的連結到正在運行的 pods，而 &lt;code>service&lt;/code> 又有 4 種的表現形式，我們接下來會一個一個簡單介紹：&lt;/p>
+&lt;h3>ClusterIP&lt;span class="absolute -mt-20" id="clusterip">&lt;/span>
+&lt;a href="#clusterip" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>它是 service 的預設值，所以沒有設定時，預設就是使用該方式做連線，它代表這個 service 只能在相同的 cluster 內使用，無法讓外部做使用。&lt;/p>
+&lt;br>
+&lt;h3>NodePort&lt;span class="absolute -mt-20" id="nodeport">&lt;/span>
+&lt;a href="#nodeport" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>簡單來說它可以從外部連線到內部使用。假設本機有其他服務，例如：nginx 之類的服務，還有架一個 K8s 的 cluster ，這時候只要設定好 NodePort，就可以讓本機使用 K8s cluster 來使用內部的服務。&lt;/p>
+&lt;br>
+&lt;h3>ExternalName&lt;span class="absolute -mt-20" id="externalname">&lt;/span>
+&lt;a href="#externalname" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>主要是為了讓不同 namespace ，以 ClusterIP 所生成的 service 可以利用 ExternalName 設定外部名稱，藉以連到指定的 namespace Service。&lt;/p>
+&lt;br>
+&lt;h3>LoadBalancer&lt;span class="absolute -mt-20" id="loadbalancer">&lt;/span>
+&lt;a href="#loadbalancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>這個屬性是強化版的 NodePort，除了 NodePort 可以讓外部連線的優點以外，同時也建立負載平衡的機制來分散流量，很可惜 LoadBalaner 只提供雲端服務，例如：GCP、AWS 等等都有支援，目前 minikube 要使用 LoadBalancer 需要先啟動 &lt;code>tunnel&lt;/code> 才能做使用。&lt;code>tunnel&lt;/code> 是什麼呢？我們後面會說明！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service.png"
+alt="k8s service 流程圖 Kubernetes 那些事 — Service 篇" width="300">&lt;figcaption>
+&lt;p>k8s service 流程圖 &lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-service-%E7%AF%87-d19d4c6e945f" target="_blank" rel="noopener">Kubernetes 那些事 — Service 篇&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>NodePort 實作&lt;span class="absolute -mt-20" id="nodeport-實作">&lt;/span>
+&lt;a href="#nodeport-%e5%af%a6%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>那我們來用 Service (NodePort) 改寫&lt;a href="../k8s" >基本篇&lt;/a>的連線問題 ：(&lt;a href="https://github.com/880831ian/kubernetes-tutorial/tree/master/Service-NodePort" target="_blank" rel="noopener">Github 程式碼連結&lt;/a>)&lt;/p>
+&lt;ul>
+&lt;li>service.yaml&lt;/li>
+&lt;/ul>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Service&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo-service&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">NodePort&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">protocol&lt;/span>: &lt;span style="color:#ae81ff">TCP&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">port&lt;/span>: &lt;span style="color:#ae81ff">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">targetPort&lt;/span>: &lt;span style="color:#ae81ff">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">nodePort&lt;/span>: &lt;span style="color:#ae81ff">30001&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>結構與 kubernetes-demo.yaml 相同，以下簡單說明不同之處：&lt;/p>
+&lt;p>kind&lt;/p>
+&lt;p>該元件的屬性，此設定檔的類型是：Service&lt;/p>
+&lt;p>spec&lt;/p>
+&lt;ul>
+&lt;li>type：指定此 Service 要使用的方法，這邊我們使用 NodePort。&lt;/li>
+&lt;li>ports.protocol：此為連線的網路協議，預設值為 &lt;code>TCP&lt;/code>，當然也可以使用 &lt;code>UDP&lt;/code>。&lt;/li>
+&lt;li>ports.port：此為建立好的 Service 要以哪個 Port 連接到 Pod 上。&lt;/li>
+&lt;li>ports.targetPort：此為目標 Pod 的 Port ，通常 port 跟 targetPort 一樣。&lt;/li>
+&lt;li>ports.nodePort：此為機器上的 Port 要對應到該 Service 上，這個設定要 nodePort 形式的 Service 才會有效果，假設今天沒有設定 nodePort ，Kubernetes 會自動開一個機器上的 Port 來對應該 Service ，範圍是在 30000 - 37267 之間。&lt;/li>
+&lt;li>selector.app：如果要使 Service 連接到正確的 Pod 就必須利用 &lt;code>selector&lt;/code>，只要原封不動的把 Pod 的 &lt;code>Labels&lt;/code> 複製上去即可。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>接下來使用 &lt;code>kubectl apply&lt;/code> 建立 service：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl apply -f service.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-4.png"
+alt="k8s 建立 service (NodePort)" width="1300">&lt;figcaption>
+&lt;p>k8s 建立 service (NodePort)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接下來取得 minikube Node IP，可以使用：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ minikube ip
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>192.168.64.11&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>打開瀏覽器搜尋 &lt;code>192.168.64.11:30001&lt;/code> 就可以看到我們可愛的柴犬囉 &amp;gt;&amp;lt;&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-1.png"
+alt="成功顯示柴犬" width="1000">&lt;figcaption>
+&lt;p>成功顯示柴犬&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>LoadBalancer 實作&lt;span class="absolute -mt-20" id="loadbalancer-實作">&lt;/span>
+&lt;a href="#loadbalancer-%e5%af%a6%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>那我們來用 Service (LoadBalancer) 改寫&lt;a href="../k8s" >基本篇&lt;/a>的連線問題 ：(&lt;a href="https://github.com/880831ian/kubernetes-tutorial/tree/master/Service-LoadBalancer" target="_blank" rel="noopener">Github 程式碼連結&lt;/a>)&lt;/p>
+&lt;ul>
+&lt;li>service.yaml&lt;/li>
+&lt;/ul>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Service&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo-service&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">LoadBalancer&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">protocol&lt;/span>: &lt;span style="color:#ae81ff">TCP&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">port&lt;/span>: &lt;span style="color:#ae81ff">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">targetPort&lt;/span>: &lt;span style="color:#ae81ff">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>結構與 kubernetes-demo.yaml 相同，以下簡單說明不同之處：&lt;/p>
+&lt;p>kind&lt;/p>
+&lt;p>該元件的屬性，此設定檔的類型是：Service&lt;/p>
+&lt;p>spec&lt;/p>
+&lt;ul>
+&lt;li>type：指定此 Service 要使用的方法，這邊我們使用 LoadBalancer。&lt;/li>
+&lt;li>ports.protocol：此為連線的網路協議，預設值為 &lt;code>TCP&lt;/code>，當然也可以使用 &lt;code>UDP&lt;/code>。&lt;/li>
+&lt;li>ports.port：此為建立好的 Service 要以哪個 Port 連接到 Pod 上。&lt;/li>
+&lt;li>ports.targetPort：此為目標 Pod 的 Port ，通常 port 跟 targetPort 一樣。&lt;/li>
+&lt;li>selector.app：如果要使 Service 連接到正確的 Pod 就必須利用 &lt;code>selector&lt;/code>，只要原封不動的把 Pod 的 &lt;code>Labels&lt;/code> 複製上去即可。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>接下來使用 &lt;code>kubectl apply&lt;/code> 建立 service：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl apply -f service.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-1.png"
+alt="k8s 建立 service (LoadBalancer)" width="1300">&lt;figcaption>
+&lt;p>k8s 建立 service (LoadBalancer)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>可以看到 dashboard 有我們剛剛啟動的 Service，但是啟動後前面的燈是黃色的，是因為 minikube LoadBalancer 需要透過 &lt;code>tunnel&lt;/code> 才可以使用，可以參考 minikube 官網說明：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-2.png"
+alt="minikube 官網 說明 LoadBalancer minikube tunnel" width="800">&lt;figcaption>
+&lt;p>&lt;a href="https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-tunnel" target="_blank" rel="noopener">minikube 官網&lt;/a> 說明 LoadBalancer minikube tunnel&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>所以我們需要使用 &lt;code>minikube tunnel&lt;/code> 來啟動 tunnel&lt;/p>
+&lt;br>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ minikube tunnel
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>✅ Tunnel successfully started
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>📌 NOTE: Please &lt;span style="color:#66d9ef">do&lt;/span> not close this terminal as this process must stay alive &lt;span style="color:#66d9ef">for&lt;/span> the tunnel to be accessible ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>🏃 Starting tunnel &lt;span style="color:#66d9ef">for&lt;/span> service kubernetes-demo-service.&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>就可以看到燈號已經變成綠燈，在外部 Endpoints 多一個連結，可以直接點開&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-3.png"
+alt="k8s service" width="1300">&lt;figcaption>
+&lt;p>k8s service&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>就可以看到我們可愛的柴犬囉 &amp;gt;&amp;lt;&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu.png"
+alt="成功顯示柴犬" width="1000">&lt;figcaption>
+&lt;p>成功顯示柴犬&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>什麼是 Ingress ?&lt;span class="absolute -mt-20" id="什麼是-ingress-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-ingress-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>還記得我們在 Service - NodePort 時，需要打 &lt;code>&amp;lt;ip&amp;gt;:&amp;lt;port&amp;gt;&lt;/code> ，但現在網站除了網域以外，基本上不會需要自己去打 IP 以及 Port 了吧！那為了解決這個問題，有了 Ingreess。&lt;/p>
+&lt;p>Ingress 可以幫助我們統一對外的 port number，並根據 hostname 或是 pathname 來決定請求要轉發到哪一個 Service 上，之後就可以利用該 Service 連接到 Pod 來處理服務。&lt;/p>
+&lt;p>我們先來看一下一般的 Service ：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/describe-service.png"
+alt="Service 圖片來源：[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller" width="800">&lt;figcaption>
+&lt;p>Service 圖片來源：&lt;a href="https://ithelp.ithome.com.tw/articles/10196261" target="_blank" rel="noopener">[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>可以看到當多個 Service 同時運行時，Node 都需要有對應的 port number 去對應每個 Server 的 port number。像是 GCP 這種雲端服務，每台機器都會配置屬於自己的防火牆。這也代表，不論新增、刪除 Service 物件，都必須要額外多調整防火牆的設定，Port 的管理也想對複雜。&lt;/p>
+&lt;br>
+&lt;p>若是使用 Ingress，我們只需要開放一個對外的 port numer，Ingree 可以在設定檔中設定不同的路徑，決定要將使用者的請求傳送到哪一個 Service 物件上：&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/describe-ingress.png"
+alt="Ingress 圖片來源：[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller" width="900">&lt;figcaption>
+&lt;p>Ingress 圖片來源：&lt;a href="https://ithelp.ithome.com.tw/articles/10196261" target="_blank" rel="noopener">[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>這樣的設計，除了讓維運人員不需要維護多個 port 或是頻繁的更改防火牆外，可以自訂條件的功能，也使得請求的導向可以更加彈性。&lt;/p>
+&lt;br>
+&lt;h3>Ingress 功能&lt;span class="absolute -mt-20" id="ingress-功能">&lt;/span>
+&lt;a href="#ingress-%e5%8a%9f%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>將不同&amp;quot;路徑&amp;quot;的請求對應到不同的 Service 物件&lt;/li>
+&lt;/ul>
+&lt;p>若沒有設定網域，則該機器上的所有網域只要透過此路徑都可以連接到指定的 Service 物件。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>將不同&amp;quot;網域&amp;quot;的請求對應到不同的 Service 物件&lt;/li>
+&lt;/ul>
+&lt;p>若沒有設定路徑，則會以 &lt;code>/&lt;/code> 路徑連接到指定的 Service 物件。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>支援 SSL Termination&lt;/li>
+&lt;/ul>
+&lt;p>SSL 全名是傳輸層安全性協定，而網站通常都會利用 https 進行加密以確保資料安全，但 Service 與 Pod 之間的溝通都是以無加密方式傳輸，所以 Ingress 就支援解密，讓 Service 與 Pod 可以正常溝通傳遞資料。&lt;/p>
+&lt;br>
+&lt;h3>minikube 啟動 Ingress&lt;span class="absolute -mt-20" id="minikube-啟動-ingress">&lt;/span>
+&lt;a href="#minikube-%e5%95%9f%e5%8b%95-ingress" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>由於 minikube 預設沒有啟動 Ingress 功能，因此需要額外使用 &lt;code>minikube addons enable ingress&lt;/code> 讓 minikube 啟動 Ingress (Ingress 也需要先安裝 Hyperfix)：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/ingress.png"
+alt="Ingress 圖片來源：[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller" width="900">&lt;figcaption>
+&lt;p>Ingress 圖片來源：&lt;a href="https://ithelp.ithome.com.tw/articles/10196261" target="_blank" rel="noopener">[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>設定 /etc/hosts&lt;span class="absolute -mt-20" id="設定-etchosts">&lt;/span>
+&lt;a href="#%e8%a8%ad%e5%ae%9a-etchosts" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>加入 Ingress 基本上就需要網域才可以使用，但我們在本機上做練習，所以只要修改本機的 host 檔案就可以了(加入 minikube ip 以及想要的網域名稱)。&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ vim /etc/hosts
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>192.168.64.11 test.tw
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>192.168.64.11 test-test.tw&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>因為有兩種方法，第一種 (設定網域以及路徑)跟第二種 (只設定路徑沒有設定網域)，所以底下也會分成兩種來說明！&lt;/p>
+&lt;h3>設定網域以及路徑&lt;span class="absolute -mt-20" id="設定網域以及路徑">&lt;/span>
+&lt;a href="#%e8%a8%ad%e5%ae%9a%e7%b6%b2%e5%9f%9f%e4%bb%a5%e5%8f%8a%e8%b7%af%e5%be%91" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>&lt;a href="https://github.com/880831ian/kubernetes-tutorial/tree/master/Ingress-Domain" target="_blank" rel="noopener">Github 程式碼連結&lt;/a>&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">networking.k8s.io/v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Ingress&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo-ingress&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">rules&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">host&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;test.tw&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">http&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">paths&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">path&lt;/span>: &lt;span style="color:#ae81ff">/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pathType&lt;/span>: &lt;span style="color:#ae81ff">Prefix&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">backend&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">service&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo-service&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">port&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">number&lt;/span>: &lt;span style="color:#ae81ff">3000&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>只設定路徑沒有設定網域&lt;span class="absolute -mt-20" id="只設定路徑沒有設定網域">&lt;/span>
+&lt;a href="#%e5%8f%aa%e8%a8%ad%e5%ae%9a%e8%b7%af%e5%be%91%e6%b2%92%e6%9c%89%e8%a8%ad%e5%ae%9a%e7%b6%b2%e5%9f%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>&lt;a href="https://github.com/880831ian/kubernetes-tutorial/tree/master/Ingress-Path" target="_blank" rel="noopener">Github 程式碼連結&lt;/a>&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">networking.k8s.io/v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Ingress&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo-ingress&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">rules&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">http&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">paths&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">path&lt;/span>: &lt;span style="color:#ae81ff">/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pathType&lt;/span>: &lt;span style="color:#ae81ff">Prefix&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">backend&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">service&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo-service&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">port&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">number&lt;/span>: &lt;span style="color:#ae81ff">3000&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>Ingress 整體寫法與 Service 差不多，只差在 &lt;code>spec&lt;/code> 的細部設定，我們就來說一下 spec 設定吧：&lt;/p>
+&lt;p>對了～ Ingress 的 apiVersion 不像是 Pod 跟 Service 一樣使用 &lt;code>v1&lt;/code> ，因為目前支援 Ingress 的 API 只有 networking.k8s.io/v1，詳細可以參考 &lt;a href="https://kubernetes.io/docs/concepts/services-networking/ingress/" target="_blank" rel="noopener">kubernetes Ingress 官網&lt;/a>&lt;/p>
+&lt;ul>
+&lt;li>rules&lt;/li>
+&lt;/ul>
+&lt;p>這代表這個 Ingress 的轉發規則，此 Ingress 所有的設定都必須寫載 &lt;code>rules&lt;/code> 內。&lt;/p>
+&lt;ul>
+&lt;li>host&lt;/li>
+&lt;/ul>
+&lt;p>設定可以連接到 Service 物件的網路名稱。&lt;/p>
+&lt;ul>
+&lt;li>path&lt;/li>
+&lt;/ul>
+&lt;p>設定可以連接到 Service 物件的路徑名稱。&lt;/p>
+&lt;ul>
+&lt;li>pathType&lt;/li>
+&lt;/ul>
+&lt;p>分為 &lt;code>Prefix&lt;/code> 和 &lt;code>Exact&lt;/code> 兩種，Prefix：前綴符合就符合規則 ; Exact：需要完全一致才行，包含大小寫。&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">type&lt;/th>
+&lt;th style="text-align:center">path&lt;/th>
+&lt;th style="text-align:center">request path&lt;/th>
+&lt;th style="text-align:center">macth&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">Prefix&lt;/td>
+&lt;td style="text-align:center">/&lt;/td>
+&lt;td style="text-align:center">全部路徑&lt;/td>
+&lt;td style="text-align:center">Yes&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">Exact&lt;/td>
+&lt;td style="text-align:center">/aa&lt;/td>
+&lt;td style="text-align:center">/aa&lt;/td>
+&lt;td style="text-align:center">Yes&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">Exact&lt;/td>
+&lt;td style="text-align:center">/bb&lt;/td>
+&lt;td style="text-align:center">/cc&lt;/td>
+&lt;td style="text-align:center">No&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">Prefix&lt;/td>
+&lt;td style="text-align:center">/aa&lt;/td>
+&lt;td style="text-align:center">/aa,/aa/&lt;/td>
+&lt;td style="text-align:center">Yes&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">Prefix&lt;/td>
+&lt;td style="text-align:center">/aa/cc&lt;/td>
+&lt;td style="text-align:center">/aa/ccc&lt;/td>
+&lt;td style="text-align:center">No&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;ul>
+&lt;li>service.name&lt;/li>
+&lt;/ul>
+&lt;p>設定連接到的 Service 名稱，這裡要填寫的就是 Service 中在 &lt;code>metadata&lt;/code> 內寫的 &lt;code>name&lt;/code>。&lt;/p>
+&lt;ul>
+&lt;li>service.port.number&lt;/li>
+&lt;/ul>
+&lt;p>設定要經由哪個 port 連接到 Service 物件，就像是 Service 的 Port 要連接到 Pod 的 targetPort。&lt;/p>
+&lt;br>
+&lt;h3>建立 Ingress&lt;span class="absolute -mt-20" id="建立-ingress">&lt;/span>
+&lt;a href="#%e5%bb%ba%e7%ab%8b-ingress" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>一樣我們分成兩個做說明&lt;/p>
+&lt;h4>設定網域以及路徑&lt;span class="absolute -mt-20" id="設定網域以及路徑-1">&lt;/span>
+&lt;a href="#%e8%a8%ad%e5%ae%9a%e7%b6%b2%e5%9f%9f%e4%bb%a5%e5%8f%8a%e8%b7%af%e5%be%91-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>一樣使用 &lt;code>apply&lt;/code> 來建立：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>$ kubectl apply -f ingress.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ingress.networking.k8s.io/kubernetes-demo-ingress created&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>使用 &lt;code>kubectl get ing&lt;/code> 來查詢 Ingress 狀況：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>$ kubectl get ing
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME CLASS HOSTS ADDRESS PORTS AGE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-demo-ingress nginx test.tw 192.168.64.11 &lt;span style="color:#ae81ff">80&lt;/span> 10m&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>接下來我們分別測試寫在 /etc/host 裡面的兩個網域，使用瀏覽器搜尋 &lt;code>test.tw&lt;/code> 跟 &lt;code>test-test.tw&lt;/code>：&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>&lt;code>test.tw&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-3.png"
+alt="成功顯示柴犬" width="1000">&lt;figcaption>
+&lt;p>成功顯示柴犬&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>&lt;code>test-test.tw &lt;/code>&lt;/li>
+&lt;/ul>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-4.png"
+alt="顯示 404" width="800">&lt;figcaption>
+&lt;p>顯示 404&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>從上面結果可以知道，因為我們有設定 domain，所以只有符合的才會連接到 Service 。&lt;/p>
+&lt;br>
+&lt;h4>只設定路徑沒有設定網域&lt;span class="absolute -mt-20" id="只設定路徑沒有設定網域-1">&lt;/span>
+&lt;a href="#%e5%8f%aa%e8%a8%ad%e5%ae%9a%e8%b7%af%e5%be%91%e6%b2%92%e6%9c%89%e8%a8%ad%e5%ae%9a%e7%b6%b2%e5%9f%9f-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>一樣使用 &lt;code>apply&lt;/code> 來建立：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>$ kubectl apply -f ingress.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ingress.networking.k8s.io/kubernetes-demo-ingress created&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>使用 &lt;code>kubectl get ing&lt;/code> 來查詢 Ingress 狀況：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>$ kubectl get ing
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME CLASS HOSTS ADDRESS PORTS AGE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-demo-ingress nginx * 192.168.64.11 &lt;span style="color:#ae81ff">80&lt;/span> 5m56s&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>接下來我們分別測試寫在 /etc/host 裡面的兩個網域，使用瀏覽器搜尋 &lt;code>test.tw&lt;/code> 跟 &lt;code>test-test.tw&lt;/code>：&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>&lt;code>test.tw&lt;/code>&lt;/li>
+&lt;/ul>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-3.png"
+alt="成功顯示柴犬" width="1000">&lt;figcaption>
+&lt;p>成功顯示柴犬&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>&lt;code>test-test.tw &lt;/code>&lt;/li>
+&lt;/ul>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-5.png"
+alt="顯示 404" width="1000">&lt;figcaption>
+&lt;p>顯示 404&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>從上面結果可以知道，可以發現 hosts 的部分是 &lt;code>*&lt;/code> ，這代表所有背後指向 &lt;code>192.168.64.11&lt;/code> 這個 IP 的網域都可以直接連接到 Service 物件。&lt;/p>
+&lt;br>
+&lt;h2>什麼是 Replication Controller ?&lt;span class="absolute -mt-20" id="什麼是-replication-controller-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-replication-controller-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>大家看到 Controller 就知道 Replication Controller 也是一種 Controller 負責控制 Replication，而 Replication 翻成中文是複製的意思，在 Kubernetes 中 Replication 代表同一種 Pod 的複製品。&lt;/p>
+&lt;p>這邊要帶給大家認識一個重要的設定：&lt;code>replica&lt;/code>，&lt;code>replica&lt;/code> 就是複製品的意思，透過這個設定我們就可以快速產生一樣內容的 Pod，舉例來說：今天設定了 &lt;code>replica: 3&lt;/code> 就代表會產生兩個內容一樣的 Pod 出來。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/ReplicationController.png"
+alt="Kubernetes StatefulSet 架構" width="700">&lt;figcaption>
+&lt;p>Kubernetes StatefulSet 架構&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>Replication Controller 用途&lt;span class="absolute -mt-20" id="replication-controller-用途">&lt;/span>
+&lt;a href="#replication-controller-%e7%94%a8%e9%80%94" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>上面有提到 Replication Controller 可以利用設定 &lt;code>replica&lt;/code> 的方式快速建立 Pod 數量，除了建立之外 Replication Controller 也確保 Pod 數量與我們設定的 &lt;code>replica&lt;/code> 一致，假如今天不小心刪除其中一個 Pod，這時候 Replication Controller 會自動再產生一個新的 Pod 來補齊刪除的 Pod 空缺，所以我們可以善用 Replication Controller 來讓系統更佳穩定。&lt;/p>
+&lt;br>
+&lt;h3>Replication Controller 寫法&lt;span class="absolute -mt-20" id="replication-controller-寫法">&lt;/span>
+&lt;a href="#replication-controller-%e5%af%ab%e6%b3%95" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們來修改一下之前的 kubernetes-demo.yaml Pod 檔案：(&lt;a href="https://github.com/880831ian/kubernetes-tutorial/tree/master/ReplicationController" target="_blank" rel="noopener">Github 程式碼連結&lt;/a>)&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">ReplicationController&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">replicas&lt;/span>: &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">template&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">containers&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo-container&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">880831ian/kubernetes-demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">containerPort&lt;/span>: &lt;span style="color:#ae81ff">3000&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這個設定檔看似複雜但其實很簡單，可以發現 &lt;code>template&lt;/code> 區塊內的設定基本上就是 Pod 的設定，再加上一些屬於 Replication Controller 的設定。&lt;/p>
+&lt;p>由於我們要建立的是 Replication Controller，因此在一開始的 &lt;code>spec&lt;/code> 要填的是 Replication Controller 的設定，所以 &lt;code>replica&lt;/code> 會擺在第一個 &lt;code>spec&lt;/code> 內。&lt;/p>
+&lt;p>可以再看到 &lt;code>selector&lt;/code>，前面提到 Replication Controller 要控制的就是 Pod 的數量，所以這邊的 &lt;code>selector&lt;/code> 就是要選取 Pod，就跟我們在 Service 要選取 Pod 的一樣。&lt;/p>
+&lt;p>最後一個新的設定：&lt;code>template&lt;/code>，&lt;code>template&lt;/code> 就是用來定義 Pod 的資訊，所以 Pod 的內容像是 &lt;code>metadata&lt;/code>、&lt;code>spec&lt;/code> 等等都會寫在 &lt;code>template&lt;/code> 內，所以可以把 &lt;code>template&lt;/code> 想像成不需要寫 &lt;code>apiVersion&lt;/code> 跟 &lt;code>kind&lt;/code> 的 Pod 壓模檔，有了這個觀念再來看 &lt;code>template&lt;/code> 內的描述就很簡單，只是把 Pod 的內容複製過來而已，而 &lt;code>template&lt;/code> 內的 &lt;code>spec&lt;/code> 就是寫上 Pod 的 container 資訊。&lt;/p>
+&lt;br>
+&lt;h3>Replication Controller 建立&lt;span class="absolute -mt-20" id="replication-controller-建立">&lt;/span>
+&lt;a href="#replication-controller-%e5%bb%ba%e7%ab%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>老樣子，也是使用 &lt;code>apply&lt;/code> 來建立壓模檔：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>$ kubectl apply -f kubernetes-demo.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>replicationcontroller/kubernetes-demo created&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>來查看一下 Replication Controller 是否有成功建立起來，可以使用 &lt;code>kubectl get rc&lt;/code> 來查詢：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl get rc
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME DESIRED CURRENT READY AGE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-demo &lt;span style="color:#ae81ff">3&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span> 28s&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>接下來可以查看 Pod 是否有出現 3 個，所以使用 &lt;code>kubectl get po&lt;/code> 來查詢：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl get po
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME READY STATUS RESTARTS AGE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-demo-4zkxm 1/1 Running &lt;span style="color:#ae81ff">0&lt;/span> 37s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-demo-cp8jt 1/1 Running &lt;span style="color:#ae81ff">0&lt;/span> 37s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-demo-pt9px 1/1 Running &lt;span style="color:#ae81ff">0&lt;/span> 37s&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到為了不要讓名稱重複，所以 Replication Controller 會在每一個 Pod 名稱後面加入亂數。&lt;/p>
+&lt;br>
+&lt;p>接下來我們用 &lt;code>minikube dashboard&lt;/code> 來測試一下，是否刪除其中一個 Pod 後，Replication Controller 會自動建立新的：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rc-1.png"
+alt="刪除隨機一個 Pod" width="1200">&lt;figcaption>
+&lt;p>刪除隨機一個 Pod&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>當我們隨機刪除一個 Pod 時，被刪除的 Pod 會 Terminating 準備刪除，且啟動一個新的 Pod ContainerCreating：&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rc-2.png"
+alt="Pod 服務" width="1200">&lt;figcaption>
+&lt;p>Pod 服務&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>當新的 Pod 啟動成功後，舊的 Pod 才會被刪除，所以可以確保我們的服務穩定度。&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rc-3.png"
+alt="Pod 服務" width="1200">&lt;figcaption>
+&lt;p>Pod 服務&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>綜上所述，可以知道 Replication Controller 真的會控制 Pod 數量，那我們刪掉一個 Pod 他就重生一個，這樣不會永遠都刪不完嗎？其實我們可以把 Replication Controller 砍掉就好了，而 Replication Controller 刪除時，也會自動終止底下的 Pod ，最後 Pod 都會自動刪除。&lt;/p>
+&lt;p>但其實 Kubernetes 官方不建議使用 Replication Controller 的方式來控制 Pod，而是建議使用 Deployment 搭配 ReplicaSet 來控制，我們接下來要介紹的主題就是：&lt;code>Deployment&lt;/code> 跟 &lt;code>ReplicaSet&lt;/code> 。&lt;/p>
+&lt;br>
+&lt;h2>什麼是 ReplicaSet ?&lt;span class="absolute -mt-20" id="什麼是-replicaset-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-replicaset-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>看到 &lt;code>Replica&lt;/code> 大家應該就知道這個跟控制 Pod 的數量有關係了！其實 &lt;code>Replica&lt;/code> 跟 &lt;code>Replication Controller&lt;/code> 很像，&lt;code>ReplcaSet&lt;/code> 提供了更彈性的 selector，在 &lt;code>Replication Controller&lt;/code> 中我們必須要把完整的 &lt;code>key/value&lt;/code> Label 寫上去，在 &lt;code>ReplicaSet&lt;/code> 不用這個麻煩，但 &lt;code>ReplicaSet&lt;/code> 一樣也可以寫上完整的 Label ，這個就看開發者要怎麼去設計了！&lt;/p>
+&lt;br>
+&lt;h3>ReplcaSet 的特性&lt;span class="absolute -mt-20" id="replcaset-的特性">&lt;/span>
+&lt;a href="#replcaset-%e7%9a%84%e7%89%b9%e6%80%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>上面有提到 &lt;code>ReplcaSet&lt;/code> 非常彈性的 selector，這邊要說的是 &lt;code>ReplcaSet&lt;/code> 是如何讓 selector 變得更加彈性，這裡一共要介紹兩種 &lt;code>ReplcaSet&lt;/code> 的 selector 寫法：&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>matchLabels&lt;/li>
+&lt;/ul>
+&lt;p>&lt;code>matchLabels&lt;/code> 其實跟一般的 selector 做的事情一模一樣，也要寫出完整的 Label 出來，整體大概會長像這樣：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">matchLabels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ul>
+&lt;li>matchExpressions&lt;/li>
+&lt;/ul>
+&lt;p>&lt;code>matchExpressions&lt;/code> 則是提供更彈性的選取條件，每一筆條件主要由 key、operator、value 組成，並且使用一個 &lt;code>{ }&lt;/code> 包起來，看起來很像 JS 的 物件型態，整體大概會長像這樣：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">matchExpression&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - { &lt;span style="color:#f92672">key: app, operator: In, values&lt;/span>: [&lt;span style="color:#ae81ff">demo, test] }&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>看起來似乎很複雜但其實很容易理解，上面的示範中 Expression 翻成中文就是只要 Label 的 key 是 &lt;code>app&lt;/code> 且值符合 &lt;code>[demo, test]&lt;/code> 陣列中的其中一個值的 Pod 就會被選取到。&lt;/p>
+&lt;br>
+&lt;p>我們在隨便取得例子：假設有一個 &lt;code>matchExpression&lt;/code> 長得像這樣：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">matchExpression&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - { &lt;span style="color:#f92672">key: env, operator: NotIn, values&lt;/span>: [&lt;span style="color:#ae81ff">hello, hi] }&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>我們可以得知要選取 Label 的 key 為 &lt;code>env&lt;/code> 且值不能是 &lt;code>[hello, hi]&lt;/code> 其中一個值的 Pod。&lt;/p>
+&lt;br>
+&lt;h2>什麼是 Deployment ?&lt;span class="absolute -mt-20" id="什麼是-deployment-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-deployment-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Deployment 是一種負責管理 &lt;code>ReplicaSet&lt;/code> 以及控制 Pod 更新的物件，在先前的文章都沒有提到 Pod 的更新，是因為 Pod 無法直接做更新，必須砍掉重建才會是新的內容，有了 Deployment 之後我們就可以很方便的進行 Pod 的更新了！&lt;/p>
+&lt;p>由於 &lt;code>ReplicaSet&lt;/code> 本身也會控制 Pod，所以整個看起來會像是 Deployment 控制 Pod，但其實真正控制 Pod 的是 &lt;code>ReplicaSet&lt;/code> ~&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/deployment.png"
+alt="Deployment 與 ReplicaSet 架構圖" width="500">&lt;figcaption>
+&lt;p>Deployment 與 ReplicaSet 架構圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>Deployment 的特性&lt;span class="absolute -mt-20" id="deployment-的特性">&lt;/span>
+&lt;a href="#deployment-%e7%9a%84%e7%89%b9%e6%80%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>部署一個應用服務&lt;/li>
+&lt;/ul>
+&lt;p>上面我們提到 Deployment 可以幫助 Pod 進行更新，通常在開發一個產品的時候一定會不斷的更新，透過 Deployment 我們可以快速的更新 Pod 內部的 container，所以通常在部署應用的時候都會使用 Deployment 來進行部署。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>在服務升級過程中可以達成無停機服務遷移 (Zero downtime deployment)&lt;/li>
+&lt;/ul>
+&lt;p>在 Deployment 幫 Pod 內部 container 進行更新的過程有一個專有名稱叫做 &lt;code>RollingUpdate&lt;/code> ，&lt;code>RollingUpdate&lt;/code> 翻成中文的意思是滾動更新，在更新的過程中 Deployment 會先產生一個新的 ReplicaSet 而這個 ReplicaSet 內部的 Pod 會運行新的內容，待新的 Pod 被 Kubernetes 確認可以正常運行後 Deployment 才會將舊的 ReplicaSet 進行取代的動作，這樣就完成了無停機服務遷移了。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>可以 Rollback 到先前版本&lt;/li>
+&lt;/ul>
+&lt;p>每一次的 Deployment 在進行 RollingUpdate 的時候都會把當前的 ReplicaSet 做一個版本控制的紀錄，就像是 git commit 一樣，所以我們也可以利用這些紀錄來快速恢復成以前的版本，這些 Pod 也就會變成先前的內容。&lt;/p>
+&lt;br>
+&lt;p>講完基本的介紹後，接下來要介紹的是要如何撰寫以及建立一個 Deployment：&lt;/p>
+&lt;h3>Deployment 搭配 ReplicaSet 寫法&lt;span class="absolute -mt-20" id="deployment-搭配-replicaset-寫法">&lt;/span>
+&lt;a href="#deployment-%e6%90%ad%e9%85%8d-replicaset-%e5%af%ab%e6%b3%95" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>&lt;a href="https://github.com/880831ian/kubernetes-tutorial/tree/master/Deployment-ReplicaSet" target="_blank" rel="noopener">Github 程式碼連結&lt;/a>&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">apps/v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Deployment&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-deployment&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">replicas&lt;/span>: &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">strategy&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">RollingUpdate&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">rollingUpdate&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">maxSurge&lt;/span>: &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">maxUnavailable&lt;/span>: &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">minReadySeconds&lt;/span>: &lt;span style="color:#ae81ff">60&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">revisionHistoryLimit&lt;/span>: &lt;span style="color:#ae81ff">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">template&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">containers&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo-container&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">880831ian/kubernetes-demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">containerPort&lt;/span>: &lt;span style="color:#ae81ff">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">matchLabels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>看到 Deployment 是不是覺得跟 Replication Controller 非常相似呢？其實 Deployment 就多了再 RollingUpdate 時的設定以及 ReplicaSet 的設定而已，下面來說明一下這些設定：&lt;/p>
+&lt;p>首先一開始的 apiVersion 的值已經不是 &lt;code>v1&lt;/code> 了，改成 &lt;code>apps/v1&lt;/code>，由於 Kubernetes 針對 Deployment、RollingUpdate、ReplicaSet 等等設定了新的 &lt;code>apiVersion&lt;/code> 值，通常都用 &lt;code>apps/v1&lt;/code> 都是用來設定跟應用程式有關的架設，所以 Deployment 這邊要記得改成 &lt;code>apps/v1&lt;/code> 歐！&lt;/p>
+&lt;br>
+&lt;p>在 &lt;code>spec&lt;/code> 的地方有看到 &lt;code>strategy&lt;/code> 新的設定值，這個主要用來設定 Deployment 更新的策略，這裡的 &lt;code>strategy.type&lt;/code> 有兩種設定：&lt;/p>
+&lt;ul>
+&lt;li>RollingUpdate&lt;/li>
+&lt;/ul>
+&lt;p>此為預設值，先建立新的 ReplicaSet 並控制新內容的 Pod，待新 Pod 也可以正常運作後，才會通知 ReplicaSet 將原有的 Pod 給移除，由於過程中會有新舊兩種 Pod 同時上線，因此會有一段時間是新舊內容會隨機出現的情形發生。&lt;/p>
+&lt;p>這邊可以看到除了 &lt;code>type&lt;/code> 以外還寫了 &lt;code>maxSurage&lt;/code> 以及 &lt;code>maxUnavailablle&lt;/code>，這兩個設定值為 RollingUpdate 過程的設定，接下來一樣說明一下兩個設定的功能：&lt;/p>
+&lt;p>&lt;code>macSurge&lt;/code>：代表 ReplicaSet 可以產生比 Deployment 設定中的 &lt;code>replica&lt;/code> 所設定的數量還多幾個出來，多新增 Pod 的好處是在 RollingUpdate 過程中可以減少舊內容顯示在頁面的機率。&lt;/p>
+&lt;p>&lt;code>macUnavailable&lt;/code>：代表在 RollingUpdate 過程中，可以允許多少的 Pod 無法使用，假設 &lt;code>macSurge&lt;/code> 設定非 0，&lt;code>maxUnavailable&lt;/code> 也要設定非 0。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>Recreate&lt;/li>
+&lt;/ul>
+&lt;p>先通知當前 ReplicaSet 把舊的 Pod 砍掉再產生新的 ReplicaSet 並控制新內容的 Pod，由於先砍掉 Pod 才建立新的 Pod ，所以中間有一段時間伺服器會無法連線。&lt;/p>
+&lt;p>也因為 Recreate 會砍掉重建，因此 Recreate 無法像 RollingUpdate 設定 &lt;code>maxSurge&lt;/code> 以及 &lt;code>macUnavailable&lt;/code>。&lt;/p>
+&lt;br>
+&lt;p>講完 Deployment 的更新流程設定後，接下來要講 Deployment 完成更新後的設定，這邊有兩種設定：&lt;/p>
+&lt;ul>
+&lt;li>minReadySeconds&lt;/li>
+&lt;/ul>
+&lt;p>&lt;code>minReadySeconds&lt;/code> 代表當新的 Pod 建立好並且運行的 container 沒有 crash 的情況下，最少需要多少時間可以開始接受 Request，預設為 0 秒，代表當 Pod 一被建立起來，就可以馬上開始接受 Request，假設今天 container 在剛運行的時後需要花時間做初始化，這時候就可以利用 &lt;code>minReadySeconds&lt;/code> 讓此 Pod 不會馬上接受到 Request ，這個是選填的設定。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>revisionHistoryLimit&lt;/li>
+&lt;/ul>
+&lt;p>每次 Deployment 在進行更新的時候，都會產生一個新的 ReplicaSet 用來進行版本控制，在 Deployment 中這個專有名稱為 &lt;code>revision&lt;/code>，所以這個設定就是要設定最多只會有多少個 &lt;code>revision&lt;/code>，這個也是選填的設定。&lt;/p>
+&lt;br>
+&lt;h3>Deployment 建立&lt;span class="absolute -mt-20" id="deployment-建立">&lt;/span>
+&lt;a href="#deployment-%e5%bb%ba%e7%ab%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>老樣子，使用 &lt;code>apply&lt;/code> 來建立 Deployment，我們可使用 &lt;code>kubectl get deploy&lt;/code> 來查看是否建立成功：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl get deploy
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME READY UP-TO-DATE AVAILABLE AGE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-deployment 3/3 &lt;span style="color:#ae81ff">3&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span> 8m31s&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>由於 Deployment 直接管理 ReplcaSet，因此我們可以查看 ReplcaSet 是否也有被建立起來：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl get rs
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME DESIRED CURRENT READY AGE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-deployment-dc5c59fdb &lt;span style="color:#ae81ff">3&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span> 10m&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到 ReplcaSet 後面會自動加上一小段亂數，這邊是 Deployment 在建立 ReplicaSet 的時候加進去的，這樣之後可以更方便的利用 ReplcaSet 進行 rollback 的動作。&lt;/p>
+&lt;br>
+&lt;p>由於 ReplicaSet 會直接管理 Pod，因此我們也可以查看 Pod 是否有被建立起來：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl get po
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME READY STATUS RESTARTS AGE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-deployment-dc5c59fdb-cjbz6 1/1 Running &lt;span style="color:#ae81ff">0&lt;/span> 12m
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-deployment-dc5c59fdb-mjvd7 1/1 Running &lt;span style="color:#ae81ff">0&lt;/span> 12m
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-deployment-dc5c59fdb-r92zt 1/1 Running &lt;span style="color:#ae81ff">0&lt;/span> 11m&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>那我們用 &lt;code>minikube dashboard&lt;/code> 來查看一下：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/DeploymentReplicaSet.png"
+alt="minikube dashboard 查看 Deployment 與 ReplicaSet" width="1200">&lt;figcaption>
+&lt;p>minikube dashboard 查看 Deployment 與 ReplicaSet&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>Deployment 的最後要來說的是要如何更新底下的 Pod 呢，大家就接著往下看囉！&lt;/p>
+&lt;h3>如何更新 Deployment 內部的 Pod&lt;span class="absolute -mt-20" id="如何更新-deployment-內部的-pod">&lt;/span>
+&lt;a href="#%e5%a6%82%e4%bd%95%e6%9b%b4%e6%96%b0-deployment-%e5%85%a7%e9%83%a8%e7%9a%84-pod" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>大家都知道 Pod 是 Kubernetes 最小的運行單位，所以更新 Pod 的意思就是把內部運行的 container 進行更新，也就是說我們只要更新 Pod 的 image 就可以順利的讓 Pod 運行最新的內容，Deployment 就是運用這個原理才進行 Pod 的內容更新，方法也很簡單只要利用 &lt;code>Set&lt;/code> 這個參數就可以了，可以使用 &lt;code>kubectl set -h&lt;/code> 可以看 &lt;code>set&lt;/code> 這個參數真正的用法。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set.png"
+alt="kubectl set" width="800">&lt;figcaption>
+&lt;p>kubectl set&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到 &lt;code>set&lt;/code> 後面還要接 &lt;code>SUBCOMMAND&lt;/code>，而 &lt;code>SUBCOMMAND&lt;/code> 就是 &lt;code>Available Commands&lt;/code> 的內容，由於我們要更新的是 image 所以這邊的 &lt;code>SUBCOMMAND&lt;/code> 會是 &lt;code>image&lt;/code>，完整指令是：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl set image deployment/kubernetes-deployment kubernetes-demo-container&lt;span style="color:#f92672">=&lt;/span>880831ian/kubernetes-demo:v1 --record
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>deployment.apps/kubernetes-deployment image updated&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>使用 set 來更新 Pod，格式是 &lt;code>kubectl set image deployment/&amp;lt;deployment name&amp;gt; &amp;lt;pod name&amp;gt;=&amp;lt;要更新的 image&amp;gt;&lt;/code>，後面加上 &lt;code>--record&lt;/code> 參數，這樣會紀錄每次更新的時候到底更新哪些內容，這樣日後要進行 rollback 也會比較容易知道要 rollback 回哪個 revision，由於要顯示差異，所以在 &lt;a href="https://hub.docker.com/repository/docker/880831ian/kubernetes-demo" target="_blank" rel="noopener">dockerhub&lt;/a> 上又多推一個版本 &lt;code>v1&lt;/code>，將原本柴犬的圖片改成 kubernetes logo，等於我們更新是從 &lt;code>kubernetes-demo:latest&lt;/code> 更新至 &lt;code>kubernetes-demo:v1&lt;/code>，我們來看看它的變化吧！&lt;/p>
+&lt;br>
+&lt;p>這是還沒更新 Pod 前的 Deployment 與 ReplicaSet：&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/DeploymentReplicaSet.png"
+alt="Deployment 與 ReplicaSet" width="1200">&lt;figcaption>
+&lt;p>Deployment 與 ReplicaSet&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們用 set 下完更新指令後，可以查看 ReplicaSet 以及 Pod 在更新過程中的變化：&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-1.png"
+alt="ReplicaSet 以及 Pod 在更新過程中的變化" width="1200">&lt;figcaption>
+&lt;p>ReplicaSet 以及 Pod 在更新過程中的變化&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以發現 strategy 為 RollingUpdate 的時候並不會把舊有的 Pod 移除反而會讓新舊 Pod 同時上線，以達到無停機服務的作用，但這樣在網頁中就有可能會同時出現新舊內容。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-2.png"
+alt="因為 strategy 為 RollingUpdate，所以會同時出現新舊內容" width="1200">&lt;figcaption>
+&lt;p>因為 strategy 為 RollingUpdate，所以會同時出現新舊內容&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>最後等到新的 Pod 已經建立完成，且正常運作，ReplicaSet 就會把舊的 Pod 給移掉：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-3.png"
+alt="新的 Pod 建立成功，並刪除舊 Pod" width="1200">&lt;figcaption>
+&lt;p>新的 Pod 建立成功，並刪除舊 Pod&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>再次瀏覽就可以發現已經變成新的內容了！代表我們完成更新動作～&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-4.png"
+alt="更新至 kubernetes-demo:v1" width="600">&lt;figcaption>
+&lt;p>更新至 kubernetes-demo:v1&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>Deployment 回朔版本&lt;span class="absolute -mt-20" id="deployment-回朔版本">&lt;/span>
+&lt;a href="#deployment-%e5%9b%9e%e6%9c%94%e7%89%88%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們講完更新後，接著要講如何 rollback 回以前的版本，首先我們必須使用 &lt;code>rollout&lt;/code> 這個參數，一樣使用 &lt;code>kubectl rollout -h&lt;/code> 可以查看 rollout 的用法，跟 &lt;code>set&lt;/code> 十分相似。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rollout.png"
+alt="更新至 kubernetes-demo:v1" width="800">&lt;figcaption>
+&lt;p>更新至 kubernetes-demo:v1&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>由於我們這邊要 rollback ，所以 &lt;code>SUBCOMMAND&lt;/code> 會使用 &lt;code>undo&lt;/code>，我們上面有用 &lt;code>--record&lt;/code> 可以查看要 rollback 的版本，所以我們這邊寫法會長像這樣：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl rollout undo deployment/kubernetes-deployment --to-revision&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>deployment.apps/kubernetes-deployment rolled back&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>格式是 &lt;code>kubectl rollout undo deployment/&amp;lt;deployment name&amp;gt; --to-revision=&amp;lt;--record 版本&amp;gt;&lt;/code>&lt;/p>
+&lt;br>
+&lt;p>就可以看到又回復成以前的柴犬囉 &amp;gt;&amp;lt;&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-3.png"
+alt="成功還原柴犬" width="1000">&lt;figcaption>
+&lt;p>成功還原柴犬&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>為甚麼不用 Replication Controller&lt;span class="absolute -mt-20" id="為甚麼不用-replication-controller">&lt;/span>
+&lt;a href="#%e7%82%ba%e7%94%9a%e9%ba%bc%e4%b8%8d%e7%94%a8-replication-controller" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>最後要討論的是為什麼要不用 Replication Controller 而是改用 ReplicaSet + Deployment？&lt;/p>
+&lt;p>由於實際再使用 Kubernetes 時架構會比現在練習的還要複雜，所以用 ReplicaSet 讓 selector 用更彈性的方式選取 Pod 會是比較好的做法。&lt;/p>
+&lt;br>
+&lt;h2>什麼是 Stateless 和 Stateful&lt;span class="absolute -mt-20" id="什麼是-stateless-和-stateful">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-stateless-%e5%92%8c-stateful" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>Stateless&lt;span class="absolute -mt-20" id="stateless">&lt;/span>
+&lt;a href="#stateless" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Stateless 顧名思義就是無狀態，我們可以想成我們每次與伺服器要資料的過程中都不會被伺服器記錄狀態，&lt;strong>每一次的 Request 都是獨立的&lt;/strong>，彼此是沒有關聯性的，也就是我們當下獲得的資料只能當下使用沒有辦法保存，靜態網頁通常都是一種 Stateless 的應用。&lt;/p>
+&lt;p>舉個例子來說：今天我想要查詢火車時刻表，我可以藉由 Google 搜尋火車時刻表，並點選連結，或是直接在瀏覽器輸入 &lt;code>https://tip.railway.gov.tw/&lt;/code> ，這兩種結果最後都會一致，並不會因為我的操作不同而產生不同結果，這就是一種 Stateless 的表現。&lt;/p>
+&lt;br>
+&lt;h3>Stateful&lt;span class="absolute -mt-20" id="stateful">&lt;/span>
+&lt;a href="#stateful" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Stateful 就是 Stateless 的相反，也就是每次的 Request 都會被記錄下來，日後都可以進行存取，Stateful 最常見的例子是資料庫，所以我們可以理解成 Stateful 背後一定會有一個負責更新內容的儲存空間。&lt;/p>
+&lt;p>幾個例子來說：今天我們想要查看 Google 雲端硬碟的內容，我們必須先登入自己的帳號才可以查看內容，這種有操作先後順序才會有結果的就是一種 Stateful 的表現。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/stateless_ful.png"
+alt="Stateless vs Stateful" width="700">&lt;figcaption>
+&lt;p>Stateless vs Stateful&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>那為什麼要提到 Stateless 跟 Stateful 呢？&lt;/p>
+&lt;p>因為跟 Pod 有很大的關係，在 Kubernetes 中 Pod 就屬於 Stateless 的，我們前面有提到 Stateless 的特性就是每次的 Request 都是獨立的，這樣有一個好處是可以快速的擴充。&lt;/p>
+&lt;p>在 &lt;a href="../k8s/#pod" >Kubernetes - 基本篇中的 Pod&lt;/a> 有提到：Pod 是 Kubernetes 中最小的單位，由於 Pod 是屬於 Stateless 的，即便今天同一種內容的 Pod 有很多個也沒有關係，因為每次的 Request 都是獨立的，多個 Pod 就多個連線的端點而已。&lt;/p>
+&lt;br>
+&lt;h3>Kubernetes 的 Stateful&lt;span class="absolute -mt-20" id="kubernetes-的-stateful">&lt;/span>
+&lt;a href="#kubernetes-%e7%9a%84-stateful" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>上面有說到 Kubernetes 的 Pod 是 Stateless 的，那難道 Kubernetes 沒有辦法做 Stateful 應用嗎？其實是可以的，Kubernetes 為了 Stateful 有特別開啟一個類別叫：&lt;code>StatefulSet&lt;/code>&lt;/p>
+&lt;br>
+&lt;p>這邊會簡單說明一下 &lt;code>StatefulSet&lt;/code> 的架構：&lt;/p>
+&lt;h3>StatefulSet&lt;span class="absolute -mt-20" id="statefulset">&lt;/span>
+&lt;a href="#statefulset" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>StatefulSet 一共有兩個重要的部分：&lt;/p>
+&lt;ul>
+&lt;li>Persistent Volume Claim&lt;/li>
+&lt;/ul>
+&lt;p>前面有說到 Stateful 背後有一個更新內容的儲存空間，在 Kubernetes 中負責管理儲存的空間是 &lt;code>Volume&lt;/code>，作用與 Docker 的 Volume 幾乎一模一樣，但 Kuberntes 的 Volume 只是在 Pod 中暫時存放的儲存空間，當 Pod 移除之後這個儲存空間就會消失，為了要在 Kubernetes 中建立一個像是資料庫可以永久儲存的空間，這個 Volume 不能被包含在 Pod 中，而這個就是 &lt;code>Persistent Volume (PV)&lt;/code>。&lt;/p>
+&lt;p>Persistent Volume Claim (PVC) 就是負責連接 Persistent Volume (PV) 的物件，所以可以想像一下今天有多少的 Persistent Volume 就會有多少的 Persistent Volume Claim。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>Headless Service&lt;/li>
+&lt;/ul>
+&lt;p>還記得在 &lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-service-" >Service&lt;/a> 有提到 ClusterIP 嗎？其實每個 Service 都會有自己一組的 ClusterIP (ExternalName 形式的除外)，所以 Headless 的意思其實就是不要有 ClusterIP，方法也很簡單，直接在設定檔中加入 &lt;code>ClusterIP: None&lt;/code> 就可以了！&lt;/p>
+&lt;p>這麼做有什麼好處？由於 Headless Service 並沒有直接跟 Pod 有對應關係，因此 Service 本身沒有 ClusterIP，所以 Kubernetes 內部在溝通時就沒有辦法把我們設定好的 Service 名稱進行 IP 轉換，不過 Headless Service 會將內部的 Pod 的都建立屬於自己的 domain，所以我們可以自由的選擇要連接到哪一個 Pod。&lt;/p>
+&lt;p>這時候你會說可以用手動來連接呀？但因為 Service 一般是跟著 Pod 的 Label ，所以一個 Service 都會連接許多個 Pod，這樣我們就沒有辦法針對某個 Pod 來做事情，所以 Headless Service 在 Stateful 中也會被建立。&lt;/p>
+&lt;br>
+&lt;p>我們一直強調說 Kubernetes 最小的單位是 Pod，即便是 StatefulSet 也會有 Pod，只是這個 Pod 會歸 StatefulSet 管理，綜合上面所述可以知道一個 StatefulSet 裡面除了執行的 Pod 外還會有負責跟 Persistent Volume 連接的 Persistent Volume Claim，整體的 StatefulSet 架構會長得像這樣：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/StatefulSet.png"
+alt="Kubernetes StatefulSet 架構" width="300">&lt;figcaption>
+&lt;p>Kubernetes StatefulSet 架構&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>基本上 StatefulSet 中在 Pod 的管理上都是與 Deployment 相同，基於相同的 container spec 來進行; 而其中的差別在於 &lt;strong>StatefulSet controller 會為每一個 Pod 產生一個固定識別資訊，不會因為 Pod 改變後而有所變動&lt;/strong>。&lt;/p>
+&lt;br>
+&lt;h3>什麼時候需要使用 StatefulSet ?&lt;span class="absolute -mt-20" id="什麼時候需要使用-statefulset-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%99%82%e5%80%99%e9%9c%80%e8%a6%81%e4%bd%bf%e7%94%a8-statefulset-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>如何研判哪些 Application 需要使用 StatefulSet 來部署？只要符合以下條件，就需要使用 StatefulSet 來進行部署&lt;/p>
+&lt;ul>
+&lt;li>需要穩定 &amp;amp; 唯一的網路識別 (pod 改變後的 pod name &amp;amp; hostname 都不會變動)&lt;/li>
+&lt;li>需要穩定的 Persistent storage (pod 改變後還是能存取相同的資料，基本上用 PVC 就可以解決)&lt;/li>
+&lt;li>部署 &amp;amp; 擴展的時候，每個 Pod 的產生都是有其順序且逐一慢慢完成的&lt;/li>
+&lt;li>進行更新操作時，也是與上面的需求相同&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>StatefulSet 有什麼限制？&lt;span class="absolute -mt-20" id="statefulset-有什麼限制">&lt;/span>
+&lt;a href="#statefulset-%e6%9c%89%e4%bb%80%e9%ba%bc%e9%99%90%e5%88%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>v1.5 以前版本不支援，v1.5 ~ v1.9 之間是 beta，v1.9 後正式支援&lt;/li>
+&lt;li>storage 的部分一定要綁定 PVC，並綁定到特定的 StorageClass or 預先配置好的 Persistent Volume，確保 Pod 被刪除後資料依然存在。&lt;/li>
+&lt;li>需要額外定義一個 Headless Service 與 StatefulSet 搭配，確保 Pod 有固定的 network identity。&lt;/li>
+&lt;/ul>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+&lt;p>network identity：&lt;/p>
+&lt;p>代表可以直接透過 domain name 直接取的 Pod IP; 實現的方法則是部署一個 ClusterIP=None 的 Service，讓 Cluster 內部存取 Service 時，可以直接連到 Pod 而不是 Service IP。&lt;/p>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>StatefulSet 寫法&lt;span class="absolute -mt-20" id="statefulset-寫法">&lt;/span>
+&lt;a href="#statefulset-%e5%af%ab%e6%b3%95" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>要寫一個 StatefulSet ，有幾個重要的部分必須涵蓋：&lt;/p>
+&lt;ol>
+&lt;li>Application &amp;amp; Persistent Volume Claim&lt;/li>
+&lt;li>Headless Service&lt;/li>
+&lt;li>&lt;code>.spec.selector&lt;/code> 所定義的內容 (matchLabels) 必須與 &lt;code>.spec.template.metadata.labels&lt;/code> 相同。&lt;/li>
+&lt;/ol>
+&lt;p>其他部分都與 &lt;code>Deployment&lt;/code> 幾乎相同 ~&lt;/p>
+&lt;br>
+&lt;p>我們先來看看要怎麼定義 Application &amp;amp; Persistent Volume Claim (把 Service 跟 StatefulSet 寫在一起) (&lt;a href="https://github.com/880831ian/kubernetes-tutorial/tree/master/StatefulSet" target="_blank" rel="noopener">Github 程式碼連結&lt;/a>)&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Service&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">port&lt;/span>: &lt;span style="color:#ae81ff">80&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">web&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">clusterIP&lt;/span>: &lt;span style="color:#ae81ff">None&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">apps/v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">StatefulSet&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">web&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">serviceName&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;nginx&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">replicas&lt;/span>: &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">matchLabels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">template&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">containers&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">k8s.gcr.io/nginx-slim:0.8&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">containerPort&lt;/span>: &lt;span style="color:#ae81ff">80&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">web&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumeMounts&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">www&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/usr/share/nginx/html&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumeClaimTemplates&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">www&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">accessModes&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;ReadWriteOnce&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">resources&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">requests&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">storage&lt;/span>: &lt;span style="color:#ae81ff">1Gi&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>我們先打開一個 Terminal 來觀察 StatefulSet 創建 Pod 的過程：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl get pods -w -l app&lt;span style="color:#f92672">=&lt;/span>nginx&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>我們一樣使用 &lt;code>kubectl apply&lt;/code> 來創建定義在 &lt;code>web.yaml&lt;/code> 中的 Headless Service 和 StatefulSet。&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl apply -f web.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>我們看一下剛剛的 StatefulSet 創建 Pod 的過程，可以發現我們擁有 N 的副本的 StatefulSet ， Pod 部署時會按照 {0 &amp;hellip;. N-1} 的序號依序創建。&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>NAME READY STATUS RESTARTS AGE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-0 0/1 Pending &lt;span style="color:#ae81ff">0&lt;/span> 0s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-0 0/1 Pending &lt;span style="color:#ae81ff">0&lt;/span> 0s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-0 0/1 ContainerCreating &lt;span style="color:#ae81ff">0&lt;/span> 0s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-0 1/1 Running &lt;span style="color:#ae81ff">0&lt;/span> 2s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-1 0/1 Pending &lt;span style="color:#ae81ff">0&lt;/span> 0s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-1 0/1 Pending &lt;span style="color:#ae81ff">0&lt;/span> 0s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-1 0/1 ContainerCreating &lt;span style="color:#ae81ff">0&lt;/span> 0s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-1 1/1 Running &lt;span style="color:#ae81ff">0&lt;/span> 3s&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以發現 web-1 Pod 是在 web-0 Pod 處在 Running 狀態才會被啟動。此外，可以發現就跟我們上面講的一樣，StatefulSet 中的 Pod 擁有一個獨一無二的身份標記，基於 StatefulSet 控制器分配給每個 Pod 的唯一順序索引。&lt;/p>
+&lt;p>Pod 名稱的格式是 &amp;lt; statefulset name &amp;gt;-&amp;lt; ordinal index &amp;gt;，像我們 &lt;code>web&lt;/code> 這個 StatefulSet 有兩個副本，所以它創建了兩個 Pod：&lt;code>web-0&lt;/code>、&lt;code>web-1&lt;/code>。&lt;/p>
+&lt;br>
+&lt;h3>StatefulSet 測試&lt;span class="absolute -mt-20" id="statefulset-測試">&lt;/span>
+&lt;a href="#statefulset-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們知道 StatefulSet 它有使用穩定的網路身份以及 PV 的永久儲存，那我們就分別來測試看看：&lt;/p>
+&lt;h4>StatefulSet 穩定的網路身份&lt;span class="absolute -mt-20" id="statefulset-穩定的網路身份">&lt;/span>
+&lt;a href="#statefulset-%e7%a9%a9%e5%ae%9a%e7%9a%84%e7%b6%b2%e8%b7%af%e8%ba%ab%e4%bb%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們先使用 &lt;code>kubectl exec&lt;/code> 在每個 Pod 中執行 &lt;code>hostname&lt;/code>&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>$ &lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#ae81ff">0&lt;/span> 1; &lt;span style="color:#66d9ef">do&lt;/span> kubectl exec &lt;span style="color:#e6db74">&amp;#34;web-&lt;/span>$i&lt;span style="color:#e6db74">&amp;#34;&lt;/span> -- sh -c &lt;span style="color:#e6db74">&amp;#39;hostname&amp;#39;&lt;/span>; &lt;span style="color:#66d9ef">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-1&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>再使用 &lt;code>kubectl run&lt;/code> 來運行一個提供 &lt;code>nslookup&lt;/code> 命令的容器，通過對 Pod 的主機名執行 &lt;code>nslookup&lt;/code>，我們可以檢查他在集群內部的 DNS 位置。&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl run -i --tty --image busybox:1.28 dns-test --restart&lt;span style="color:#f92672">=&lt;/span>Never --rm /bin/sh&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>啟動一個新的 shell ，並運行 &lt;code>nslookup web-0.nginx &lt;/code> 跟 &lt;code>nslookup web-1.nginx&lt;/code>：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>/ &lt;span style="color:#75715e"># nslookup web-0.nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Server: 10.96.0.10
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Name: web-0.nginx
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Address 1: 172.17.0.5 web-0.nginx.default.svc.cluster.local
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>/ &lt;span style="color:#75715e"># nslookup web-1.nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Server: 10.96.0.10
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Name: web-1.nginx
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Address 1: 172.17.0.6 web-1.nginx.default.svc.cluster.local&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到 Headless Service 的 CHANCE 指向 SRV 記錄 (記錄每個 Running 的 Pod)。SRV 紀錄指向一個包含 Pod IP 位址的記錄表。&lt;/p>
+&lt;br>
+&lt;p>我們使用 &lt;code>kubectl delete pod -l app=nginx&lt;/code> 刪除 Pod 後，會發現 Pod 的序號、主機名、SRV 條目和記錄名稱都沒有改變！&lt;/p>
+&lt;br>
+&lt;h4>StatefulSet 永久儲存&lt;span class="absolute -mt-20" id="statefulset-永久儲存">&lt;/span>
+&lt;a href="#statefulset-%e6%b0%b8%e4%b9%85%e5%84%b2%e5%ad%98" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們先查看 &lt;code>web-0&lt;/code> 跟 &lt;code>web-1&lt;/code> 的 PersistentVolumeClaims：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl get pvc -l app&lt;span style="color:#f92672">=&lt;/span>nginx
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>NAME STATUS VOLUME CAPACITY ACCESS MODES STORAGECLASS AGE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>www-web-0 Bound pvc-e9a23104-d018-4d73-8cd9-89e5ea67f96c 1Gi RWO standard 39m
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>www-web-1 Bound pvc-00dd6c87-6d95-4d04-9c1b-49b43441f4a1 1Gi RWO standard 38m&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>StatefulSet 控制器創建兩個 PersistentVolumeClaims，綁定兩個 PersistentVolumes，因為我們配置是動態提供 PersistentVolume，所有的 PersistentVolume 都是自動創建和綁定的。&lt;/p>
+&lt;p>Nginx web 服務器默認會加載位於 &lt;code>/usr/share/nginx/html/index.html&lt;/code> 的 index 文件。因此我們在 &lt;code>spec&lt;/code> 中的 &lt;code>volumeMounts&lt;/code> 將 &lt;code>/usr/share/nginx/html&lt;/code> 資料夾由一個 PersistentVolume 支持。&lt;/p>
+&lt;br>
+&lt;p>那我們將 Pod 主機名稱寫入 &lt;code>index.html&lt;/code> ，再刪掉 Pod 看看寫入內容是否還會存在：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ &lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#ae81ff">0&lt;/span> 1; &lt;span style="color:#66d9ef">do&lt;/span> kubectl exec &lt;span style="color:#e6db74">&amp;#34;web-&lt;/span>$i&lt;span style="color:#e6db74">&amp;#34;&lt;/span> -- sh -c &lt;span style="color:#e6db74">&amp;#39;echo &amp;#34;$(hostname)&amp;#34; &amp;gt; /usr/share/nginx/html/index.html&amp;#39;&lt;/span>; &lt;span style="color:#66d9ef">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ &lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#ae81ff">0&lt;/span> 1; &lt;span style="color:#66d9ef">do&lt;/span> kubectl exec -i -t &lt;span style="color:#e6db74">&amp;#34;web-&lt;/span>$i&lt;span style="color:#e6db74">&amp;#34;&lt;/span> -- curl http://localhost/; &lt;span style="color:#66d9ef">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-1&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>當我們刪除 Pod 後，如果沒有使用 PersistentVolumeClaims 去綁定 PersistentVolumes 的話，資料就會消失，那我們來看看有綁定的結果：&lt;/p>
+&lt;p>使用 &lt;code>kubectl delete pod -l app=nginx&lt;/code> 刪除 Pod：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>pod &lt;span style="color:#e6db74">&amp;#34;web-0&amp;#34;&lt;/span> deleted
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>pod &lt;span style="color:#e6db74">&amp;#34;web-1&amp;#34;&lt;/span> deleted&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>再次使用 &lt;code>kubectl get pod -w -l app=nginx&lt;/code> 來檢查 Pod 的狀態：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>web-0 0/1 ContainerCreating &lt;span style="color:#ae81ff">0&lt;/span> 0s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-0 1/1 Running &lt;span style="color:#ae81ff">0&lt;/span> 2s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-1 0/1 Pending &lt;span style="color:#ae81ff">0&lt;/span> 0s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-1 0/1 Pending &lt;span style="color:#ae81ff">0&lt;/span> 0s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-1 0/1 ContainerCreating &lt;span style="color:#ae81ff">0&lt;/span> 0s
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-1 1/1 Running &lt;span style="color:#ae81ff">0&lt;/span> 1s&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>一樣使用 &lt;code>for i in 0 1; do kubectl exec -i -t &amp;quot;web-$i&amp;quot; -- curl http://localhost/; done&lt;/code> 來查看：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>web-0
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>web-1&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以發現 &lt;code>web-0&lt;/code>、&lt;code>web-1&lt;/code> 雖然重新啟動，但依舊會監聽它們主機名，因為和它們的 PersistentVolumeClaim 相關聯的 PersistentVolume 被重新掛載到了各自的 &lt;code>volumeMount&lt;/code> 上。&lt;/p>
+&lt;br>
+&lt;h2>什麼是 ConfigMap ?&lt;span class="absolute -mt-20" id="什麼是-configmap-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-configmap-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>看到 Config 應該會聯想到與設定檔有關，沒錯 ConfigMap 通常都是用來存放設定檔用的，換句話來說這個物件會直接連結一個或多個檔案，而 ConfigMap 通常都是用來存放偏向部署面的設定檔，像是資料庫的初始化設定、nginx 設定檔等等，這種不用被包進去 image 內，但需要讓 container 可以使用的檔案。&lt;/p>
+&lt;br>
+&lt;h3>ConfigMap 特性&lt;span class="absolute -mt-20" id="configmap-特性">&lt;/span>
+&lt;a href="#configmap-%e7%89%b9%e6%80%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>一個 ConfigMap 物件可以放一個或多個設定檔：我們上面有提到它是用來存放設定檔用的，會直接連接該設定檔。&lt;/li>
+&lt;li>無需修改程式碼，可以替換不同環境的設定檔：由於設定檔都交由 ConfigMap 管理，並不是包在 image 內，因此可以藉由修改 ConfigMap 的方式來達到不用更新 Pod 內容就可以更換設定檔的作用。&lt;/li>
+&lt;li>統一存放所有的設定檔：一個 ConfigMap 可以連結一個以上的設定檔，因此也可以將該專案會用到的所有設定檔通通存放在同一個 ConfigMap 物件中進行管理。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>如何建立 ConfigMap？&lt;span class="absolute -mt-20" id="如何建立-configmap">&lt;/span>
+&lt;a href="#%e5%a6%82%e4%bd%95%e5%bb%ba%e7%ab%8b-configmap" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>由於 ConfigMap 可以直接存入設定檔，所以我們以現有設定檔為基準，接下來要用 &lt;code>create&lt;/code> 這個參數來建立 ConfipMap 物件出來，這時可能會想，之前都是使用 &lt;code>apply&lt;/code> 怎麼這次要改用 &lt;code>create&lt;/code>呢！？ 雖然兩者都有建立的意思，但背後實作的技術完全不同：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>create&lt;/code> 使用的是 &lt;a href="https://kubernetes.io/docs/tasks/manage-kubernetes-objects/imperative-config/" target="_blank" rel="noopener">Imperative Management&lt;/a>，Imperative Management 會告訴 Kubernetes 我目前的動作要做什麼，例如：&lt;code>create&lt;/code>、&lt;code>delete&lt;/code>、&lt;code>replace&lt;/code> 某個物件。&lt;/li>
+&lt;li>&lt;code>apply&lt;/code> 是使用 &lt;a href="https://kubernetes.io/docs/tasks/manage-kubernetes-objects/declarative-config/" target="_blank" rel="noopener">Declarative Management&lt;/a>，Declarative Management 是用宣告的方式來建立物件，更白話一點就是我希望這個物件要長怎麼樣，所以 &lt;code>apply&lt;/code> 通常都會搭配 yaml 檔，而這份 yaml 檔就會在 &lt;code>kind&lt;/code> 這個設定值告訴 Kubernetes 這個物件要長成什麼樣子。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>因為我們這次要直接使用現有的設定檔來建立 ConfigMap，所以這時候不能使用 &lt;code>apply&lt;/code> 的方式，只能使用 &lt;code>create&lt;/code> 來建立，指令也很簡單：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ kubectl create configmap &amp;lt;configmapName&amp;gt; --from-file&lt;span style="color:#f92672">=&lt;/span>&amp;lt;filePath&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/configmap.png"
+alt="建立 ConfigMap" width="1000">&lt;figcaption>
+&lt;p>建立 ConfigMap&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>建立完成使用 &lt;code>get&lt;/code> 來查詢是否正確建立 ConfigMap：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/configmap_1.png"
+alt="使用 get 查詢是否正確 ConfigMap" width="700">&lt;figcaption>
+&lt;p>使用 get 查詢是否正確 ConfigMap&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>最後可以下 &lt;code>describe&lt;/code> 這個參數來查看 ConfigMap 的內容，會發現裡面就是我們設定檔的完整內容：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/configmap_2.png"
+alt="使用 describe 查看 ConfigMap 的內容" width="800">&lt;figcaption>
+&lt;p>使用 describe 查看 ConfigMap 的內容&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>什麼是 Secrets ?&lt;span class="absolute -mt-20" id="什麼是-secrets-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-secrets-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>看到 Secrets 這個名字就知道這是非常機密的物件，相較於 ConfigMap 是用來存放部署面的檔案，Secrets 通常都是用來存機密的資料，像是使用者帳號、SSL 憑證等。&lt;/p>
+&lt;h3>Secrets 特性&lt;span class="absolute -mt-20" id="secrets-特性">&lt;/span>
+&lt;a href="#secrets-%e7%89%b9%e6%80%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>上面 ConfigMap 提到的特性 Secrets 一樣，比較特別的是 Secrets 會將內部的資料進行 base64 編碼。因為重新編碼所以可以確保資料相較於 ConfigMap 下安全一些，所以建議如果是機密性的資料就存在 Secrets 裡面吧！&lt;/p>
+&lt;br>
+&lt;h3>如何建立 Secrets？&lt;span class="absolute -mt-20" id="如何建立-secrets">&lt;/span>
+&lt;a href="#%e5%a6%82%e4%bd%95%e5%bb%ba%e7%ab%8b-secrets" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們一樣用現有的檔案來做基準作為示範，由於上面 ConfigMap 只存入一個檔案而已，所以這邊 Secrets 我們改成存入多個檔案：&lt;/p>
+&lt;p>一樣用 &lt;code>create&lt;/code> 的參數進行 Secrets 建立，但這邊要多加一個 &lt;code>SUBCOMMAND&lt;/code> 叫 &lt;code>generic&lt;/code>，generic 代表意思是從本機檔案、目錄建立 Secrets，接下來只要下：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>kubectl create secret generic &amp;lt;secretName&amp;gt; --from-file&lt;span style="color:#f92672">=&lt;/span>&amp;lt;filePath&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/secret.png"
+alt="建立 Secrets" width="800">&lt;figcaption>
+&lt;p>建立 Secrets&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>建立完成使用 &lt;code>get&lt;/code> 來查詢是否正確建立 Secrets：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/secret_1.png"
+alt="使用 get 查詢是否正確 Secrets" width="700">&lt;figcaption>
+&lt;p>使用 get 查詢是否正確 Secrets&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>最後一樣可以下 &lt;code>describe&lt;/code> 這個參數來查看 Secrets 的內容，但因為加密所以不會顯示原本內容，只會看到的確有兩個檔案：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/secret_2.png"
+alt="使用 describe 查看 Secrets 的內容" width="700">&lt;figcaption>
+&lt;p>使用 describe 查看 Secrets 的內容&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Kubernetes 那些事 — Service 篇：&lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-service-%E7%AF%87-d19d4c6e945f" target="_blank" rel="noopener">https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-service-%E7%AF%87-d19d4c6e945f&lt;/a>&lt;/p>
+&lt;p>Kubernetes 那些事 — Ingress 篇（一）：&lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-ingress-%E7%AF%87-%E4%B8%80-92944d4bf97d" target="_blank" rel="noopener">https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-ingress-%E7%AF%87-%E4%B8%80-92944d4bf97d&lt;/a>&lt;/p>
+&lt;p>Kubernetes 那些事 — Ingress 篇（二）：&lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-ingress-%E7%AF%87-%E4%BA%8C-559c7a41404b" target="_blank" rel="noopener">https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-ingress-%E7%AF%87-%E4%BA%8C-559c7a41404b&lt;/a>&lt;/p>
+&lt;p>Kubernetes 那些事 — Stateless 與 Stateful：&lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-stateless-%E8%88%87stateful-2c68cebdd635" target="_blank" rel="noopener">https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-stateless-%E8%88%87stateful-2c68cebdd635&lt;/a>&lt;/p>
+&lt;p>kubernetes ReplicationController：&lt;a href="https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/workloads/controllers/replicationcontroller/&lt;/a>&lt;/p>
+&lt;p>Kubernetes 那些事 — Replication Controller：&lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-replication-controller-5c8592d37083" target="_blank" rel="noopener">https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-replication-controller-5c8592d37083&lt;/a>&lt;/p>
+&lt;p>Kubernetes 那些事 — Deployment 與 ReplicaSet（一）：&lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-deployment-%E8%88%87-replicaset-%E4%B8%80-406234a63d43" target="_blank" rel="noopener">https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-deployment-%E8%88%87-replicaset-%E4%B8%80-406234a63d43&lt;/a>&lt;/p>
+&lt;p>Kubernetes 那些事 — Deployment 與 ReplicaSet（二）：&lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-deployment-%E8%88%87-replicaset-%E4%BA%8C-f60146c878e4" target="_blank" rel="noopener">https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-deployment-%E8%88%87-replicaset-%E4%BA%8C-f60146c878e4&lt;/a>&lt;/p>
+&lt;p>Kubernetes 那些事 — Deployment 與 ReplicaSet（三）：&lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-deployment-%E8%88%87-replicaset-%E4%B8%89-142b2863eb94" target="_blank" rel="noopener">https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-deployment-%E8%88%87-replicaset-%E4%B8%89-142b2863eb94&lt;/a>&lt;/p>
+&lt;p>kubernetes Deployments：&lt;a href="https://kubernetes.io/docs/concepts/workloads/controllers/deployment/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/workloads/controllers/deployment/&lt;/a>&lt;/p>
+&lt;p>[Kubernetes] StatefulSet Overview：&lt;a href="https://godleon.github.io/blog/Kubernetes/k8s-StatefulSets-Overview/" target="_blank" rel="noopener">https://godleon.github.io/blog/Kubernetes/k8s-StatefulSets-Overview/&lt;/a>&lt;/p></description></item><item><title>Kubernetes (K8s) 介紹 - 基本</title><link>https://pin-yi.me/blog/kubernetes/k8s/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s/</guid><description>
+&lt;h2>什麼是 Kubernetes (K8s)?&lt;span class="absolute -mt-20" id="什麼是-kubernetes-k8s">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-kubernetes-k8s" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Kubernetes 也可以叫 K8s，這個名稱來源希臘語，意思是舵手或是飛行員，所以我們可以看到它的 logo 是一個船舵的標誌，之所以叫 K8s 是因為 Kubernetes 的 k 到 s 中間有 8 的英文字母，為了方便，大家常以這個名稱來稱呼他！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/logo.jpg"
+alt="kubernetes logo" width="200">&lt;figcaption>
+&lt;p>kubernetes logo&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>Kubernetes 是一種開源可用來自動化部屬、擴展以及管理多個容器的系統，適用於當容器數量增加，需要穩定容器環境，以及管理資源或權限分配的狀況。&lt;/p>
+&lt;p>我們之前在 &lt;a href="../../docker/docker" >Docker 介紹&lt;/a> 文章中，已經有介紹以往傳統虛擬機以及容器化的 Docker 差異以及優點，那當我們在管理容器時，其中一個容器出現故障，則需要啟動另一個容器，如果要用手動，會十分麻煩，所以這時就是 Kubernetes 的厲害的地方了，Kubernetes 提供：&lt;/p>
+&lt;ul>
+&lt;li>服務發現和負載平衡：K8s 可以使用 DNS 名稱或是自己的 IP 位址來公開容器。如果容器流量過高，Kubernetes 能夠使用負載平衡和分配網路流量，能使部署更穩定。&lt;/li>
+&lt;li>編排儲存：Kubernetes 允許使用自動掛載來選擇儲存系統，例如使用本地儲存，或是公共雲等。&lt;/li>
+&lt;li>自動部署、刪除：可以使用 Kubernetes 來幫我們自動化部屬新的容器、刪除現有的容器並將其資源用於新容器。&lt;/li>
+&lt;li>自動打包：當我們為 Kubernetes 提供一個節點叢集，它可以用來運行容器化的任務，告訴 Kubernetes 每個容器需要多少 CPU 和 RAM。Kubernetes 可以將容器安裝到節點上，充分利用資源。&lt;/li>
+&lt;li>自動修復：Kubernetes 會重新啟動失敗的容器、替換容器、刪除不回應用戶的不健康容器，並且在容器準備好服務之前不會通知客戶端。&lt;/li>
+&lt;li>機密和配置管理：Kubernetes 允許儲存和管理敏感訊息，例如密碼、OAuth token 和 SSH 金鑰。可以部署和更新機密的應用程序配置。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/flower.jpg"
+alt="kubernetes 官網" width="600">&lt;figcaption>
+&lt;p>&lt;a href="https://kubernetes.io/" target="_blank" rel="noopener">kubernetes 官網&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>Kubernetes 很常被拿來與 Docker Swarm 做比較，兩者不同的是，Docker Swarm 必須建構在 Docker 的架構下，功能侷限、無法跳脫。&lt;/p>
+&lt;p>Kubernetes 則因為功能較為廣泛，而逐漸取代 Docker Swarm 在市場上的地位。下方有簡易的比較表格：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">比較&lt;/th>
+&lt;th style="text-align:center">Kubernetes&lt;/th>
+&lt;th style="text-align:center">Docker Swarm&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">說明&lt;/td>
+&lt;td style="text-align:center">Kubernetes 是一個開源容器的編排平台，Kubernetes 的叢集結構比 Docker Swarm 更為複雜。&lt;br> Kubernetes 通常有建構器和工作節點，還可進一步分為 Pod、命名空間、配置映射等。&lt;/td>
+&lt;td style="text-align:center">Docker Swarm 是一個由 Docker 構建和維護的開源容器編排平台。&lt;br>一個 Docker Swarm 叢集通常包含三個項目：Nodes、Services and tasks、Load balancers。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">優點&lt;/td>
+&lt;td style="text-align:center">它有龐大的開源社群，由 Google 支持。&lt;br>它可以維持和管理大型架構和複雜的工作負載。&lt;br>它是自動化，並支持自動化擴展的自我修護能力。&lt;br>它有內建監控和廣泛的可用集成。&lt;/td>
+&lt;td style="text-align:center">Docker Swarm 安裝簡單，它輕量化且容易學習使用。&lt;br>Docker Swarm 與 Docker CLI 一起運作，因此不需要多運行或是安裝新的 CLI&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">缺點&lt;/td>
+&lt;td style="text-align:center">它複雜的安裝過程以及較難學習&lt;br>它需要安裝單獨的 CLI 工具並且學習每一項功能&lt;/td>
+&lt;td style="text-align:center">它是輕量級且與 Docker API 相關聯，與 Kubernetes 相比，Docker Swarm 被限制很多功能，且自動化也沒有 Kubernetes 強大。&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;h2>Kubernetes 元件介紹與說明&lt;span class="absolute -mt-20" id="kubernetes-元件介紹與說明">&lt;/span>
+&lt;a href="#kubernetes-%e5%85%83%e4%bb%b6%e4%bb%8b%e7%b4%b9%e8%88%87%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Kubernetes 是如何幫我們管理以及部署 Container ? 要了解 Kubernetes 如何運作，就要先了解它的元件以及架構：&lt;/p>
+&lt;p>那我們由小的往大的來做介紹：依序是 Pod、Worker Node、Master Node、Cluster&lt;/p>
+&lt;h3>Pod&lt;span class="absolute -mt-20" id="pod">&lt;/span>
+&lt;a href="#pod" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Kubernetes 運作中最小的單位，一個 Pod 會對應到一個應用服務 (Application)，舉例來說一個 Pod 可能會對應到一個 NginxServer。&lt;/p>
+&lt;ul>
+&lt;li>每個 Pod 都有一個定義文件，也就是屬於這個 Pod 的 &lt;code>yaml&lt;/code> 檔。&lt;/li>
+&lt;li>一個 Pod 裡面可以有一個或多個 Container，但一般情況一個 Pod 最好只有一個 Container。&lt;/li>
+&lt;li>同一個 Pod 中的 Containers 共享相同的資源以及網路，彼此透過 local port number 溝通。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>Worker Node&lt;span class="absolute -mt-20" id="worker-node">&lt;/span>
+&lt;a href="#worker-node" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Kubernetes 運作的最小硬體單位，一個 Worker Node (簡稱 Node) 對應到一台機器，可以是實體例如你的筆電、或是虛擬機例如 GCP 上的一台 Computer Engine。&lt;/p>
+&lt;p>每一個 Node 都有三個組件所組成：kubelet、kube-proxy、Container Runtime&lt;/p>
+&lt;h4>kubelet&lt;span class="absolute -mt-20" id="kubelet">&lt;/span>
+&lt;a href="#kubelet" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>該 Node 的管理員，負責管理該 Node 上的所有 Pods 的狀態並負責與 Master Node 溝通。&lt;/p>
+&lt;br>
+&lt;h4>kube-proxy&lt;span class="absolute -mt-20" id="kube-proxy">&lt;/span>
+&lt;a href="#kube-proxy" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>該 Node 的傳訊員，負責更新 Node 的 iptables，讓 Kubernetes 中不在該 Node 的其他物件可以得知該 Node 上的所有 Pods 的最新狀態。&lt;/p>
+&lt;br>
+&lt;h4>Container Runtime&lt;span class="absolute -mt-20" id="container-runtime">&lt;/span>
+&lt;a href="#container-runtime" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>該 Node 真正負責容器執行的程式，K8s 預設是 &lt;code>Docker&lt;/code>，但也支援其他 Runtime Engine，例如 Mirantis Container Runtime、CRI-O、containerd&lt;/p>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+&lt;p>常見誤解：&lt;/p>
+&lt;p>很多人認為 Kubernetes 是 &lt;code>docker container&lt;/code> 的管理工具，包含我一開始也是這樣認為，但其實 Kubernetes 是用來管理容器化 (&lt;code>containerized applications&lt;/code>) &lt;strong>並不是專屬於 &lt;code>docker&lt;/code>&lt;/strong> 獨享，作為一個 &lt;code>container orchestrator&lt;/code> 的角色，Kubernetes 希望&lt;strong>能夠管理所有容器化&lt;/strong>的應用程式&lt;/p>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>Master Node&lt;span class="absolute -mt-20" id="master-node">&lt;/span>
+&lt;a href="#master-node" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Kubernetes 運作的指揮中心，可以簡化看成一個特殊化的 Node 來負責管理所有其他的 Node。&lt;/p>
+&lt;p>一個 Master Node (簡稱 Master) 中有四個組件組成：kube-apiserver、etcd、kube-scheduler、kube-controller-manager&lt;/p>
+&lt;h4>kube-apiserver&lt;span class="absolute -mt-20" id="kube-apiserver">&lt;/span>
+&lt;a href="#kube-apiserver" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;ul>
+&lt;li>管理整個 Kubernetes 所需 API 的接口 (Endpoint)，例如從 Command Line 下 kubectl 指令就會把指令送到這裡。&lt;/li>
+&lt;li>負責 Node 之間的構通橋樑，每個 Node 彼此不能直接溝通，必須要透過 apiserver 轉介。&lt;/li>
+&lt;li>負責 Kubernetes 中的請求的身份認證與授權。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h4>etcd&lt;span class="absolute -mt-20" id="etcd">&lt;/span>
+&lt;a href="#etcd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;ul>
+&lt;li>etcd 是兼具一制性和高可用性的分散式鍵值數據庫，可以保存 Kubernetes 所有 Cluster 的後台數據庫。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h4>kube-scheduler&lt;span class="absolute -mt-20" id="kube-scheduler">&lt;/span>
+&lt;a href="#kube-scheduler" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;ul>
+&lt;li>整個 Kubernetes 的 Pods 調度員，scheduler 會監視新建立但還沒有被指定要跑在哪個 Node 上的 Pod ，並根據每個 Node 上面資源規定，硬體限制等條件去協調出一個最適合放置 Node 來讓該 Pod 運行。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h4>kube-controller-manager&lt;span class="absolute -mt-20" id="kube-controller-manager">&lt;/span>
+&lt;a href="#kube-controller-manager" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;ul>
+&lt;li>負責管理並運行 Kubernetes controller 的組件，簡單來說 controller 就是 Kubernetes 裡一個負責監視 Cluster 狀態的 Process，例如：Node Controller、Replication Controller。&lt;/li>
+&lt;li>這些 Process 會在 Cluster 與預期狀態 (desire state) 不符時嘗試更新現有狀態 (current state)。例如：現在要多開一台機器以應付突然增加的流量，那我的預期狀態就會更新成 N+1，現有狀態是 N，這時相對應的 controller 就會想辦法多開一台機器。&lt;/li>
+&lt;li>controller-manager 的監視與嘗試更新也都需要透過訪問 kube-apiserver 達成。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>Cluster&lt;span class="absolute -mt-20" id="cluster">&lt;/span>
+&lt;a href="#cluster" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架設中我們不會只有一台機器而已，通常都是多個機器一起運行同一種內容，在沒有 Kubernetes 的時候就必須要土法煉鋼的一台一台機器去更新，但有了 Kubernetes 我們就可以透過 Cluster 進行控管，只要更新 Master 旗下的機器，也會一併將更新的內容放上去，十分方便。在 Kubernetes 中多個 Worker Node 與 Master Node 的集合。&lt;/p>
+&lt;br>
+&lt;h2>基本運作&lt;span class="absolute -mt-20" id="基本運作">&lt;/span>
+&lt;a href="#%e5%9f%ba%e6%9c%ac%e9%81%8b%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/k8s.jpg"
+alt="kubernetes 組件 Kubernetes 基礎教學（一）原理介紹" width="600">&lt;figcaption>
+&lt;p>kubernetes 組件 &lt;a href="https://cwhu.medium.com/kubernetes-basic-concept-tutorial-e033e3504ec0" target="_blank" rel="noopener">Kubernetes 基礎教學（一）原理介紹&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>接下來我們用 「Kuberntes 是如何建立一個 Pod ？」來複習一下整個 Kubernetes 的架構。&lt;/p>
+&lt;p>(上圖是一個簡易的 Kubernetes Cluster ，通常 Cluster 為了高穩定性都會有多個 Master 作為備援，但為了簡化我們只顯示一個。)&lt;/p>
+&lt;ol>
+&lt;li>當使用者要部署一個新的 Pod 到 Kubernetes Cluster 時，使用者要先透過 User Command (kubectl) 輸入建立 Pod 對應的指令 (後面會說明要如何實際的動手建立一個 Pod)。此時指令會經過一層確認使用者身份後，傳遞到 Master Node 中的 API Server，API Server 會把指令備份到 etcd。&lt;/li>
+&lt;li>controller-manager 會從 API Server 收到需要創建一個新的 Pod 的訊息，並檢查如果資源許可，就會建立一個新的 Pod。最後 Scheduler 在定期訪問 API Server 時，會詢問 controller-manager 是否有建置新的 Pod，如果發現新建立的 Pod 時，Scheduler 就會負責把 Pod 配送到最適合的 Node 上面。&lt;/li>
+&lt;/ol>
+&lt;p>雖然上面基本的運作看起來十分複雜，但其實我們在實際操作時，只是需入一行指令後，剩下的都是 Kubernetes 會自動幫我們完成後續的動作。&lt;/p>
+&lt;h2>安裝 Kubernetes&lt;span class="absolute -mt-20" id="安裝-kubernetes">&lt;/span>
+&lt;a href="#%e5%ae%89%e8%a3%9d-kubernetes" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>在我們開始操作 Kubernetes 之前，需要先下載 Minikube、Hyperkit、Kubectl 套件：&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://minikube.sigs.k8s.io/docs/start/" target="_blank" rel="noopener">Minikube&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>一個 Google 發佈的輕量級工具，讓開發者可以輕鬆體驗一個 Kubernetes Cluster。&lt;font color='red'>(僅限開發測試環境)&lt;/font>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/minikube.png"
+alt="安裝 minikube" width="900">&lt;figcaption>
+&lt;p>安裝 minikube&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>(Mac 專用) &lt;a href="https://minikube.sigs.k8s.io/docs/drivers/hyperkit/" target="_blank" rel="noopener">Hyperkit&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>Hyperkit 是 MacOS 系統細部設定的驅動程式。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/hyperkit.png"
+alt="安裝 hyperkit" width="900">&lt;figcaption>
+&lt;p>安裝 hyperkit&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>&lt;a href="https://kubernetes.io/docs/tasks/tools/" target="_blank" rel="noopener">Kubectl&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;p>Kubectl 是 Kubernetes 的 Command Line 工具，我們之後會透過 Kubectl 去操作我們的 Kubernetes Cluster。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/kubectl.png"
+alt="安裝 kubectl" width="800">&lt;figcaption>
+&lt;p>安裝 kubectl&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>如何建立一個 Pod&lt;span class="absolute -mt-20" id="如何建立一個-pod">&lt;/span>
+&lt;a href="#%e5%a6%82%e4%bd%95%e5%bb%ba%e7%ab%8b%e4%b8%80%e5%80%8b-pod" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>版本資訊&lt;/p>
+&lt;ul>
+&lt;li>Minikube：v1.25.2&lt;/li>
+&lt;li>hyperkit：0.20200908&lt;/li>
+&lt;li>Kubectl：Client Version：v1.22.5、Server Version：v1.23.3&lt;/li>
+&lt;/ul>
+&lt;p>下載完 Minikube 後，我們可以先透過 &lt;code>Minikube&lt;/code> 來查詢全部的指令，由於我們前面有安裝 Hyperkit 這個驅動程式，啟動 Minikube 預設是使用 Docker，我們這邊要利用 Hyperkit 來啟動，所以使用 &lt;code>Minikube start --vm-driver=hyperkit&lt;/code> 來啟動 Minikube。&lt;/p>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+&lt;p>Minikube 其他指令介紹：&lt;/p>
+&lt;p>顯示 minikube 狀態 &lt;code>minikube status&lt;/code>&lt;/p>
+&lt;p>停止 minikube 運行 &lt;code>minikube stop&lt;/code>&lt;/p>
+&lt;p>ssh 進入 minikube 中 &lt;code>minikube ssh&lt;/code>&lt;/p>
+&lt;p>查詢 minikube 對外的 ip &lt;code>minikube ip&lt;/code>&lt;/p>
+&lt;p>使用 minikube 所提供的瀏覽器 GUI &lt;code>minikube dashboard &lt;/code> (可以加 - - url 看網址歐)&lt;/p>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;p>我們啟動 minikube 後，我們要打做一個可以在 Pod 運行的小程式。這個小程式是一個 Node.js 的 Web 程式，他會建立一個 Server 來監聽 3000 Port，收到 request 進來後會渲染 &lt;code>index.html&lt;/code> 這個檔案，這個檔案裡面會有一隻可愛的小柴犬。&lt;/p>
+&lt;p>因為本文章是在介紹 kubernetes 所以在程式部分就不多做說明，我把程式碼放在 &lt;a href="https://github.com/880831ian/kubernetes-demo" target="_blank" rel="noopener">Github&lt;/a>，以及附上 &lt;a href="https://hub.docker.com/repository/docker/880831ian/kubernetes-demo" target="_blank" rel="noopener">Dockerhub 的 Repository&lt;/a> 可以直接使用包好的 image 來做測試！&lt;/p>
+&lt;br>
+&lt;h3>Pod yaml 檔案說明&lt;span class="absolute -mt-20" id="pod-yaml-檔案說明">&lt;/span>
+&lt;a href="#pod-yaml-%e6%aa%94%e6%a1%88%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來我們要先撰寫一個 Pod 的定義文件 (.yaml) 檔，這個 &lt;code>.yaml&lt;/code> 檔就可以建立出 Pod 了！&lt;/p>
+&lt;ul>
+&lt;li>kubernetes-demo.yaml (程式縮排要正確，不然會無法執行歐！)&lt;/li>
+&lt;/ul>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Pod&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo-pod&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">containers&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo-container&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">880831ian/kubernetes-demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">containerPort&lt;/span>: &lt;span style="color:#ae81ff">3000&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>apiVersion&lt;/p>
+&lt;p>該元件的版本號，必須依照 Server 上 K8s 版本來做設定 (想要知道 k8s 版本，可以使用 &lt;code>kubectl version&lt;/code> 指令來查詢，會顯示 client 跟 server 的版本訊息，client 代表 kubectl 版本訊息，server 代表的是 master node 的 k8s 版本訊息)，目前 k8s 都使用 1.23 版本以上，所以 &lt;code>apiVersion&lt;/code> 直接寫 &lt;code>v1&lt;/code> 即可。&lt;/p>
+&lt;br>
+&lt;p>kind&lt;/p>
+&lt;p>該元件的屬性，用來決定此設定檔的類型，常見的有 &lt;code>Pod&lt;/code>、&lt;code>Node&lt;/code>、&lt;code>Service&lt;/code>、&lt;code>Namespace&lt;/code>、&lt;code>ReplicationController&lt;/code> 等等&lt;/p>
+&lt;br>
+&lt;p>metadata&lt;/p>
+&lt;p>用來擺放描述性資料的地方，像是 Pod 名稱或是標籤等等都會放在此處。&lt;/p>
+&lt;ul>
+&lt;li>name：指定該 Pod 的名稱&lt;/li>
+&lt;li>labels：指定該 Pod 的標籤&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>spec&lt;/p>
+&lt;p>用來描述物件生成的細節，像是 Pod 內其實是跑 Dokcer container，所以在 Pod 的 spec 內就會描述 container 的細節。&lt;/p>
+&lt;ul>
+&lt;li>container.name：指定運行的 Container 的名稱&lt;/li>
+&lt;li>container.image：指定 Container 要使用哪個 Image，這裡會從 DockerHub 上搜尋&lt;/li>
+&lt;li>container.ports：指定該 Container 有哪些 Port number 是允許外部存取的&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>使用 kubectl 建立 Pod&lt;span class="absolute -mt-20" id="使用-kubectl-建立-pod">&lt;/span>
+&lt;a href="#%e4%bd%bf%e7%94%a8-kubectl-%e5%bb%ba%e7%ab%8b-pod" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當我們有了定義文件後，我們就可以使用 kubectl 的指令來建立 Pod&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>kubectl create -f kubernetes-demo.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl apply -f kubernetes-demo.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>可以使用 &lt;code>create&lt;/code> or &lt;code>apply&lt;/code> 來建立 Pod ，那這兩個的差異是什麼呢？&lt;/p>
+&lt;ul>
+&lt;li>kubectl create&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;code>kubectl create&lt;/code> 是所謂的 &amp;ldquo;命令式管理&amp;rdquo; (&lt;code>Imperative Management&lt;/code>)。通過這種方式，可以告訴 Kubernets API 你要建立、更新、刪除的內容。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>kubectl create&lt;/code> 命令是先刪除所有現有的東西，重新根據 YAML 文件生成新的 Pod。所以要求 YAML 文件中的配置必須完整。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>kubectl create&lt;/code> 命令，使用同一個 YAML 文件重複建立會失敗。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;ul>
+&lt;li>kubectl apply&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;code>kubectl apply&lt;/code> 是 &amp;ldquo;聲明式管理&amp;rdquo; (&lt;code>Declarative Management&lt;/code>)方法的一部分。在該方法中，即使對目標用了其他更新，也可以保持你對目標應用的更新。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;code>kubectl apply&lt;/code> 命令，根據配置文件裡面出來的內容，生成就有的。所以 YAML 文件的內容可以只寫需要升級的欄位。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>如果看到 &lt;code>pod/kubernetes-demo-pod created&lt;/code> 就代表我們成功建立第一個 Pod 了，接下來我們可以使用：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>kubectl get pods&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以查看我們運行中的 Pod：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>NAME READY STATUS RESTARTS AGE
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubernetes-demo-pod 1/1 Running &lt;span style="color:#ae81ff">0&lt;/span> 3m5s&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
+&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
+&lt;div class="w-full min-w-0 leading-7">
+&lt;div class="mt-6 leading-7 first:mt-0">
+&lt;p>Pod 指令介紹：&lt;/p>
+&lt;p>查詢現有 Pod 狀態 &lt;code>kubectl get po/pod/pods&lt;/code>&lt;/p>
+&lt;p>查看該 Pod 詳細資訊 &lt;code>kubectl describe pods &amp;lt;pod-name&amp;gt;&lt;/code>&lt;/p>
+&lt;p>刪除 Pod &lt;code>kubectl delete pods&lt;/code>&lt;/p>
+&lt;p>查看 Pod log &lt;code>kubectl logs &amp;lt;pod-name&amp;gt;&lt;/code>&lt;/p>
+&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>也可以使用 minikube 圖形化頁面來看一下是否成功！&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>minikube dashboard --url
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>🤔 Verifying dashboard health ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>🚀 Launching proxy ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>🤔 Verifying proxy health ...
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>http://127.0.0.1:55991/api/v1/namespaces/kubernetes-dashboard/services/http:kubernetes-dashboard:/proxy/&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/minikube-k8s.png"
+alt="minikube dashboard" width="1000">&lt;figcaption>
+&lt;p>minikube dashboard&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>連線到 Pod 的服務&lt;span class="absolute -mt-20" id="連線到-pod-的服務">&lt;/span>
+&lt;a href="#%e9%80%a3%e7%b7%9a%e5%88%b0-pod-%e7%9a%84%e6%9c%8d%e5%8b%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當我們建立好 Pod 之後，打開瀏覽器 &lt;code>localhost:3000&lt;/code> 會發現，什麼都沒有，是因為我們剛剛在 &lt;code>.yaml&lt;/code> 裡面設定的是 Pod 的 Port ，它與本機的 Port 是不相通的，因此我們需要使用 &lt;code>kubectl port-forward &amp;lt;pod&amp;gt; &amp;lt;external-port&amp;gt;:&amp;lt;pod-port&amp;gt;&lt;/code> ，來將 Pod 與本機端做 mapping。&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>kubectl port-forward kubernetes-demo-pod 3000:3000
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Forwarding from 127.0.0.1:3000 -&amp;gt; &lt;span style="color:#ae81ff">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Forwarding from &lt;span style="color:#f92672">[&lt;/span>::1&lt;span style="color:#f92672">]&lt;/span>:3000 -&amp;gt; &lt;span style="color:#ae81ff">3000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Handling connection &lt;span style="color:#66d9ef">for&lt;/span> &lt;span style="color:#ae81ff">3000&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>我們在此瀏覽 &lt;code>localhost:3000&lt;/code>，就會看到可愛的柴犬囉！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/Shiba-Inu.png"
+alt="成功顯示柴犬" width="900">&lt;figcaption>
+&lt;p>成功顯示柴犬&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>前面我們已經創建屬於我們第一個 Pod 了，但當我們 Pod 越建越多時，要怎麼快速的得知每個 Pod 在做什麼事情？除了用 Pod 的 metadata name 來命名外，還有另一種方式：&lt;/p>
+&lt;h2>什麼是 Label ?&lt;span class="absolute -mt-20" id="什麼是-label-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-label-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Label 顧名思義就是標籤，可以為每一個 Pod 貼上標籤，讓 Kubernetes 更方便的管控這些 Pod。&lt;/p>
+&lt;p>Label 的寫法很簡單，可以自己自訂一對具有辨識度的 key/value，舉我們上面的例子來說：我們可以在 labels 內加入 &lt;code>app: demo&lt;/code>，那 Label 有什麼好處呢?&lt;/p>
+&lt;p>這邊要稍微提一下 &lt;code>Selector&lt;/code>，它的功用是選取對應的物件。為了要方便選取到我們設定好的 Pod，這時候 Label 就派上用場了！&lt;/p>
+&lt;p>&lt;code>Selector&lt;/code> 的寫法也很簡單，只要把我們在 Label 定義的 key/value 直接完整的貼過來就可以了～&lt;/p>
+&lt;br>
+&lt;p>就像這樣：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">selectors&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>那選取後有什麼功用呢！請看 &lt;a href="../../kubernetes/k8s-advanced/#%E4%BB%80%E9%BA%BC%E6%98%AF-service-" >Kubernetes - 進階 - Service&lt;/a>&lt;/p>
+&lt;br>
+&lt;p>講完 Label 後，順邊提一下跟 Label 有相似的：&lt;/p>
+&lt;h2>什麼是 Annotation ?&lt;span class="absolute -mt-20" id="什麼是-annotation-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-annotation-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>前面提到的 Label 功用其目的是要讓 Kubernetes 知道可以去更方便管理的，那我們如果想要貼標籤但不想讓 Kubernetes 知道，要怎麼做呢？&lt;/p>
+&lt;p>這時我們就可以用 &lt;code>Annotation&lt;/code>，透過 &lt;code>Annotation&lt;/code> 可以將標籤單純給開發人員查看，那聽起來 &lt;code>Annotation&lt;/code> 好像沒有什麼實質上的用途，因為 Kubernetes 不會採用這些標籤，但其實 &lt;code>Annotation&lt;/code> 還是有用的歐！後續文章會再提到 &amp;gt;&amp;lt;&lt;/p>
+&lt;br>
+&lt;p>那既然 Label 跟 Annotation 有相似，所以寫法想必也是差不多吧：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">annotations&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">author&lt;/span>: &lt;span style="color:#ae81ff">Pin-YI&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">contact&lt;/span>: &lt;span style="color:#ae81ff">880831ian@gmail.com&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>一樣也是定義一組具有辨識度的 key/value ，我們這邊就先放 author、contact&lt;/p>
+&lt;br>
+&lt;p>那 Label 與 Annotation 要放在 Pod 的哪一處呢？&lt;/p>
+&lt;p>還記得我們上面說 &lt;code>metadata&lt;/code> 是用來擺描述性資料的地方嗎，所以不管是 Label 或是 Annotation 都是放在 &lt;code>metadata&lt;/code> 中歐！&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">kubernetes-demo-pod&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">annotations&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">author&lt;/span>: &lt;span style="color:#ae81ff">Pin-YI&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">contact&lt;/span>: &lt;span style="color:#ae81ff">880831ian@gmail.com&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>kubernetes 官網：&lt;a href="https://kubernetes.io/" target="_blank" rel="noopener">https://kubernetes.io/&lt;/a>&lt;/p>
+&lt;p>Kubernetes（K8s）是什麼？基礎介紹+3 大優點解析：&lt;a href="https://www.sysage.com.tw/news/technology/293" target="_blank" rel="noopener">https://www.sysage.com.tw/news/technology/293&lt;/a>&lt;/p>
+&lt;p>Docker Swarm vs Kubernetes: how to choose a container orchestration tool：&lt;a href="https://circleci.com/blog/docker-swarm-vs-kubernetes/" target="_blank" rel="noopener">https://circleci.com/blog/docker-swarm-vs-kubernetes/&lt;/a>&lt;/p>
+&lt;p>Kubernetes 基礎教學（一）原理介紹：&lt;a href="https://cwhu.medium.com/kubernetes-basic-concept-tutorial-e033e3504ec0" target="_blank" rel="noopener">https://cwhu.medium.com/kubernetes-basic-concept-tutorial-e033e3504ec0&lt;/a>&lt;/p>
+&lt;p>Kubernetes 那些事 — 基礎觀念與操作：&lt;a href="https://medium.com/andy-blog/kubernetes%E9%82%A3%E4%BA%9B%E4%BA%8B-%E5%9F%BA%E7%A4%8E%E8%A7%80%E5%BF%B5%E8%88%87%E6%93%8D%E4%BD%9C-97cc203a2660" target="_blank" rel="noopener">https://medium.com/andy-blog/kubernetes%E9%82%A3%E4%BA%9B%E4%BA%8B-%E5%9F%BA%E7%A4%8E%E8%A7%80%E5%BF%B5%E8%88%87%E6%93%8D%E4%BD%9C-97cc203a2660&lt;/a>&lt;/p>
+&lt;p>Kubernetes 那些事 — Pod 篇：&lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-pod-%E7%AF%87-57475cec22f3" target="_blank" rel="noopener">https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-pod-%E7%AF%87-57475cec22f3&lt;/a>&lt;/p>
+&lt;p>Kubernetes 那些事 — Label 篇：&lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-label-%E7%AF%87-4186af2af556" target="_blank" rel="noopener">https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-label-%E7%AF%87-4186af2af556&lt;/a>&lt;/p></description></item></channel></rss>
