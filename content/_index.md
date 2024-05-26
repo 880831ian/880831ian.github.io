@@ -24,6 +24,8 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 {{< card link="blog/kubernetes/k8s-hpa" title="Kubernetes (K8s) HorizontalPodAutoscaler (HPA) 原理與實作" image="/kubernetes/k8s-hpa/cover.webp">}}
 {{< card link="blog/kubernetes/gcp-k8s-hpa-php-custom-metrics" title="Kubernetes (K8s) 自定義 PHP HorizontalPodAutoscaler (HPA) 指標" image="/kubernetes/gcp-k8s-hpa-php-custom-metrics/cover.webp">}}
 {{< card link="blog/kubernetes/k8s-plain" title="用大型社區來介紹 Kubernetes 元件" image="/kubernetes/k8s-plain/cover.webp">}}
+{{< card link="blog/kubernetes/k8s-advanced" title="Kubernetes (K8s) 介紹 - 進階 (Service、Ingress、StatefulSet、Deployment、ReplicaSet、ConfigMap)" image="/kubernetes/k8s-advanced/cover.webp">}}
+{{< card link="blog/kubernetes/k8s" title="Kubernetes (K8s) 介紹 - 基本" image="/kubernetes/k8s/cover.webp">}}
 
 {{< card link="blog/docker/prometheus-grafana-docker" title="使用 Prometheus 和 Grafana 打造監控預警系統 (Docker 篇)" image="/docker/prometheus-grafana-docker/cover.webp">}}
 {{< card link="blog/docker/docker" title="Docker 介紹 (如何使用 Docker-compose 建置 PHP+MySQl+Nginx 環境" image="/docker/docker/cover.webp">}}
