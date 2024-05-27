@@ -292,12 +292,12 @@ alt="K8s Logo" width="200">&lt;figcaption>
 &lt;p>我們之前在 &lt;a href="../../../blog/docker/docker/" >Docker 介紹&lt;/a> 文章中，已經有介紹以往傳統虛擬機以及容器化的 Docker 差異以及優點，那當我們在管理容器時，其中一個容器出現故障，則需要啟動另一個容器，如果要用手動，會十分麻煩，所以這時就是 Kubernetes 的厲害的地方了，Kubernetes 提供：&lt;/p>
 &lt;h3>Kubernetes 優點&lt;span class="absolute -mt-20" id="kubernetes-優點">&lt;/span>
 &lt;a href="#kubernetes-%e5%84%aa%e9%bb%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
-&lt;li>服務發現和負載平衡：K8s 可以使用 DNS 名稱或是自己的 IP 位址來公開容器。如果容器流量過高，Kubernetes 能夠使用負載平衡和分配網路流量，能使部署更穩定。&lt;/li>
-&lt;li>編排儲存：Kubernetes 允許使用自動掛載來選擇儲存系統，例如使用本地儲存，或是公共雲等。
+&lt;li>&lt;strong>服務發現和負載平衡&lt;/strong>：K8s 可以使用 DNS 名稱或是自己的 IP 位址來公開容器。如果容器流量過高，Kubernetes 能夠使用負載平衡和分配網路流量，能使部署更穩定。&lt;/li>
+&lt;li>&lt;strong>編排儲存&lt;/strong>：Kubernetes 允許使用自動掛載來選擇儲存系統，例如使用本地儲存，或是公共雲等。
 自動部署、刪除：可以使用 Kubernetes 來幫我們自動化部屬新的容器、刪除現有的容器並將其資源用於新容器。&lt;/li>
-&lt;li>自動打包：當我們為 Kubernetes 提供一個節點叢集，它可以用來運行容器化的任務，告訴 Kubernetes 每個容器需要多少 CPU 和 RAM。Kubernetes 可以將容器安裝到節點上，充分利用資源。&lt;/li>
-&lt;li>自動修復：Kubernetes 會重新啟動失敗的容器、替換容器、刪除不回應用戶的不健康容器，並且在容器準備好服務之前不會通知客戶端。&lt;/li>
-&lt;li>機密和配置管理：Kubernetes 允許儲存和管理敏感訊息，例如密碼、OAuth token 和 SSH 金鑰。可以部署和更新機密的應用程序配置。&lt;/li>
+&lt;li>&lt;strong>自動打包&lt;/strong>：當我們為 Kubernetes 提供一個節點叢集，它可以用來運行容器化的任務，告訴 Kubernetes 每個容器需要多少 CPU 和 RAM。Kubernetes 可以將容器安裝到節點上，充分利用資源。&lt;/li>
+&lt;li>&lt;strong>自動修復&lt;/strong>：Kubernetes 會重新啟動失敗的容器、替換容器、刪除不回應用戶的不健康容器，並且在容器準備好服務之前不會通知客戶端。&lt;/li>
+&lt;li>&lt;strong>機密和配置管理&lt;/strong>：Kubernetes 允許儲存和管理敏感訊息，例如密碼、OAuth token 和 SSH 金鑰。可以部署和更新機密的應用程序配置。&lt;/li>
 &lt;/ul>
 &lt;br>
 &lt;p>Kubernetes 是如何幫我們管理以及部署 Container ? 要了解 Kubernetes 如何運作，就要先了解它的元件以及架構：&lt;/p>
@@ -348,13 +348,138 @@ alt="K8s 元件 圖片來源" width="550">&lt;figcaption>
 &lt;p>接著執行 &lt;code>kubectl apply -f .&lt;/code>，將其他服務也建立到 GKE 上。&lt;/p>
 &lt;/li>
 &lt;li>
-&lt;p>最後我們打開瀏覽器，輸入 &lt;a href="https://myapp.pin-yi.me/" target="_blank" rel="noopener">https://myapp.pin-yi.me&lt;/a>，就可以看到 Nginx 的首頁了。 (此為範例，講座結束後會關閉服務)&lt;/p>
+&lt;p>最後我們打開瀏覽器，輸入 &lt;a href="https://myapp.pin-yi.me/" target="_blank" rel="noopener">https://myapp.pin-yi.me&lt;/a>，就可以看到我們寫的首頁了。 (此為範例，講座結束後會關閉服務)&lt;/p>
 &lt;/li>
 &lt;/ol>
 &lt;br>
 &lt;p>看完 Kubernetes 部署服務的方式，是不是覺得有點麻煩呢？還需要手動去部署，這時候就需要 CI/CD 來幫助我們自動化部署服務了！&lt;/p>
-&lt;h2>什麼是 CICD&lt;span class="absolute -mt-20" id="什麼是-cicd">&lt;/span>
-&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-cicd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
+&lt;h2>什麼是 CI/CD&lt;span class="absolute -mt-20" id="什麼是-cicd">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-cicd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>一樣先來了解一下為什麼要 CI/CD？&lt;/p>
+&lt;p>目前大多數的企業公司都是採用敏捷開發的方式，所以在追求快速開發、快速部署，以及大量的測試時會消耗很多開發人員的時間和精力，所以這時候就需要 CI/CD 來幫助我們自動化部署服務。&lt;/p>
+&lt;br>
+&lt;p>接著再介紹 CI/CD 之前還有一個名詞要跟大家介紹，那就是 DevOps。&lt;/p>
+&lt;h3>什麼是 DevOps&lt;span class="absolute -mt-20" id="什麼是-devops">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-devops" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>DevOps 是一種結合軟體開發人員 (Development) 和 IT 運維技術人員 (Operations) 的文化，目的是縮短開發和運營之間的距離，並且提高開發和運營的效率。而 CI/CD 工具就是為了此概念產生的自動化工具，透過持續整合 (CI) 和持續部署 (CD) 的方式，在開發階段能自動協助開發人員偵測程式碼問題，並部署到 Server 上。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/cicd_cycle.png"
+alt="CI/CD cycle" width="700">&lt;figcaption>
+&lt;p>CI/CD cycle&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>CI (Continuous Integration) 持續整合&lt;span class="absolute -mt-20" id="ci-continuous-integration-持續整合">&lt;/span>
+&lt;a href="#ci-continuous-integration-%e6%8c%81%e7%ba%8c%e6%95%b4%e5%90%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>持續整合，顧名思義，就是當開發人員完成一個階段性的程式碼後就經由自動化工具測試、驗證，協助偵測程式碼問題，並建置出即將部署的版本（Build）。&lt;/p>
+&lt;br>
+&lt;h3>CD (Continuous Deployment) 持續部署&lt;span class="absolute -mt-20" id="cd-continuous-deployment-持續部署">&lt;/span>
+&lt;a href="#cd-continuous-deployment-%e6%8c%81%e7%ba%8c%e9%83%a8%e7%bd%b2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>持續部署可以說是 CI 的下一階段，經過 CI 測試後所構建的程式碼可以透過 CD 工具部署至伺服器，減少人工部署的時間。&lt;/p>
+&lt;br>
+&lt;h3>CI/CD 常用的工具&lt;span class="absolute -mt-20" id="cicd-常用的工具">&lt;/span>
+&lt;a href="#cicd-%e5%b8%b8%e7%94%a8%e7%9a%84%e5%b7%a5%e5%85%b7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>GitHab&lt;span class="absolute -mt-20" id="githab">&lt;/span>
+&lt;a href="#githab" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>GitHub 算是目前最受歡迎的程式碼管理平台，其 CI/CD 服務稱為 GitHub Action，提供了多項控制 API，能夠幫助開發者編排、掌握工作流程，在提交程式碼後自動編譯、測試並部署至伺服器，也提供了很多現成的 Action 可以使用。&lt;/p>
+&lt;h4>GitLab&lt;span class="absolute -mt-20" id="gitlab">&lt;/span>
+&lt;a href="#gitlab" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>GitLab 算是公司企業內部比較主流的程式碼管理平台，其 CI/CD 服務稱為 GitLab CI/CD，其 CI/CD Pipeline 功能簡單又實用，使用者只需要設定於專案根目錄下的「.gitlab-ci.yml」檔，便可以開始驅動各種 Pipeline 協助您完成自動化測試及部署&lt;/p>
+&lt;br>
+&lt;h4>CI/CD 小試身手&lt;span class="absolute -mt-20" id="cicd-小試身手">&lt;/span>
+&lt;a href="#cicd-%e5%b0%8f%e8%a9%a6%e8%ba%ab%e6%89%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這邊也跟上面 &lt;a href="#kubernetes-%e5%b0%8f%e8%a9%a6%e8%ba%ab%e6%89%8b" >Kubernetes 小試身手&lt;/a> 一樣，由於 K8s 建立以及部署需要一些時間，所以這邊會直接拿我擁有的環境做測試。&lt;/p>
+&lt;p>首先，我們接續上面的 &lt;a href="#docker-%e5%b0%8f%e8%a9%a6%e8%ba%ab%e6%89%8b" >Docker 小試身手&lt;/a> 的範例程式碼：&lt;/p>
+&lt;ol>
+&lt;li>打開 &lt;a href="https://github.com/880831ian/20240529-devops-introduce/blob/main/.github/workflows/google.yml" target="_blank" rel="noopener">.github/workflows/google.yml&lt;/a> 這個檔案，裡面是我已經寫好的 GitHub Action 的流程。&lt;/li>
+&lt;/ol>
+&lt;p>這邊說明一下這個檔案的內容 (下面拆開說明)：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Build and Deploy to GKE&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">on&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">push&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">branches&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;main&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">env&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">PROJECT_ID&lt;/span>: &lt;span style="color:#ae81ff">pin-yi-project&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">GAR_LOCATION&lt;/span>: &lt;span style="color:#ae81ff">asia-east1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">GKE_CLUSTER&lt;/span>: &lt;span style="color:#ae81ff">cluster&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">GKE_ZONE&lt;/span>: &lt;span style="color:#ae81ff">asia-east1-b&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">DEPLOYMENT_NAME&lt;/span>: &lt;span style="color:#ae81ff">myapp&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">REPOSITORY&lt;/span>: &lt;span style="color:#ae81ff">pin-yi-image&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">IMAGE&lt;/span>: &lt;span style="color:#ae81ff">myapp&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">NAMESPACE&lt;/span>: &lt;span style="color:#ae81ff">myapp&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">jobs&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">setup-build-publish-deploy&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Setup, Build, Publish, and Deploy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">runs-on&lt;/span>: &lt;span style="color:#ae81ff">ubuntu-latest&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>: &lt;span style="color:#ae81ff">production&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這邊主要是說明這個 Action 的名稱，以及當 push 到 main branch 時，就會觸發這個 Action，還有對應的 env，env 包含了 GCP 專案 ID、Image 儲存的地點、GKE 的 Cluster 名稱、GKE 的 Zone、部署的名稱、Image 的名稱、Namespace 的名稱。&lt;/p>
+&lt;p>接著是 job 的設定，設定名稱、要用什麼 image 當做基底，以及環境等等。job 可以把它理解成每個要做的小事情，例如 Build Image、Push Image、Deploy Image 等等。&lt;/p>
+&lt;br>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">steps&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Checkout&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">uses&lt;/span>: &lt;span style="color:#ae81ff">actions/checkout@v3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">id&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;auth&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">uses&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;google-github-actions/auth@v2&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">with&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">credentials_json&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;${{ secrets.GCP_CREDENTIALS }}&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Docker configuration&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">run&lt;/span>: |-&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> echo &amp;#39;${{ secrets.GCP_CREDENTIALS }}&amp;#39; | docker login -u _json_key --password-stdin https://$GAR_LOCATION-docker.pkg.dev&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Set up GKE credentials&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">uses&lt;/span>: &lt;span style="color:#ae81ff">google-github-actions/get-gke-credentials@v2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">with&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cluster_name&lt;/span>: &lt;span style="color:#ae81ff">${{ env.GKE_CLUSTER }}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">location&lt;/span>: &lt;span style="color:#ae81ff">${{ env.GKE_ZONE }}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Build&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">run&lt;/span>: |-&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> docker build \
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> --tag &amp;#34;$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$(echo $GITHUB_SHA | head -c7)&amp;#34; \
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> --build-arg GITHUB_SHA=&amp;#34;$GITHUB_SHA&amp;#34; \
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> --build-arg GITHUB_REF=&amp;#34;$GITHUB_REF&amp;#34; .&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Add Image Tag&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">run&lt;/span>: &lt;span style="color:#ae81ff">docker tag $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$(echo $GITHUB_SHA | head -c7) $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:latest&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Publish&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">run&lt;/span>: |-&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> docker push &amp;#34;$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$(echo $GITHUB_SHA | head -c7)&amp;#34; &amp;amp;&amp;amp; \
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> docker push &amp;#34;$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:latest&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Set Image&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">run&lt;/span>: |-&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> kubectl set image deployment/$DEPLOYMENT_NAME \
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> myapp=&amp;#34;$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$(echo $GITHUB_SHA | head -c7)&amp;#34; -n $NAMESPACE&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Deploy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">run&lt;/span>: |-&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> kubectl rollout status deployment/$DEPLOYMENT_NAME -n $NAMESPACE
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> kubectl get services -o wide&lt;/span> &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>接著就是各種的 job，有先 checkout 程式碼、登入 GCP、登入 Docker、設定 GKE 的 credentials、Build Image、Push Image、Deploy Image 等等。&lt;/p>
+&lt;ol start="2">
+&lt;li>
+&lt;p>接著我們嘗試調整 index.html 的內容，然後 push 到 GitHub 上，就可以看到 GitHub Action 會自動幫我們 Build Image、Push Image、Deploy Image 到 GKE 上。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>最後我們打開瀏覽器，輸入 &lt;a href="https://myapp.pin-yi.me/" target="_blank" rel="noopener">https://myapp.pin-yi.me&lt;/a>，就可以看到我們調整的首頁了。(此為範例，講座結束後會關閉服務)&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;br>
 &lt;h2>如何最快恢復網站&lt;span class="absolute -mt-20" id="如何最快恢復網站">&lt;/span>
 &lt;a href="#%e5%a6%82%e4%bd%95%e6%9c%80%e5%bf%ab%e6%81%a2%e5%be%a9%e7%b6%b2%e7%ab%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>如何最快恢復網站，這是一個非常重要的議題，因為網站的停擺會造成業務的損失，也會讓使用者對網站的信任度下降，所以我們需要有一個很好的應急計畫，來應對這種狀況。&lt;/p>
 &lt;br>
@@ -370,9 +495,6 @@ alt="K8s 元件 圖片來源" width="550">&lt;figcaption>
 &lt;br>
 &lt;h4>網站程式碼錯誤&lt;span class="absolute -mt-20" id="網站程式碼錯誤">&lt;/span>
 &lt;a href="#%e7%b6%b2%e7%ab%99%e7%a8%8b%e5%bc%8f%e7%a2%bc%e9%8c%af%e8%aa%a4" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這邊的程式碼，大家可以把他理解成網站的程式碼，例如：PHP、Python、JavaScript 等等，有可能程式碼寫了一個無窮迴圈，或是什麼特殊的 Bug，導致資源衝高，也會導致網站停擺。&lt;/p>
-&lt;br>
-&lt;h4>網站資料庫故障&lt;span class="absolute -mt-20" id="網站資料庫故障">&lt;/span>
-&lt;a href="#%e7%b6%b2%e7%ab%99%e8%b3%87%e6%96%99%e5%ba%ab%e6%95%85%e9%9a%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>資料庫&lt;/p>
 &lt;br>
 &lt;h4>網站被駭客攻擊&lt;span class="absolute -mt-20" id="網站被駭客攻擊">&lt;/span>
 &lt;a href="#%e7%b6%b2%e7%ab%99%e8%a2%ab%e9%a7%ad%e5%ae%a2%e6%94%bb%e6%93%8a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>當然網站會依照使用需求，開放給不同的使用者，如果是一般開在公網上的網站，就有可能會被駭客攻擊，例如：DDos 攻擊、SQL Injection 等等，這些攻擊都有可能導致網站停擺，還有可能導致資料外洩。&lt;/p>
@@ -390,27 +512,28 @@ alt="網站解析被擋 圖片來源" width="450">&lt;figcaption>
 &lt;a href="#%e7%b6%b2%e7%ab%99%e6%81%a2%e5%be%a9%e7%9a%84%e6%96%b9%e6%b3%95" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>伺服器供應商故障&lt;/li>
 &lt;/ol>
-&lt;p>我們已雲端的 GCP 來舉例，如果 GCP 的服務有問題，可以到 &lt;a href="https://status.cloud.google.com/index.html" target="_blank" rel="noopener">Google Cloud Status Dashboard&lt;/a> 來查看目前服務的狀況。&lt;/p>
-&lt;p>當然，雲端供應商故障對於上面幾個原因來說，應該是最少的，因為雲端供應商有很多的備援機制，但如果真的發生了，我們可以透過以下幾個方法來恢復網站：&lt;/p>
-&lt;p>&lt;a href="https://status.cloud.google.com/incidents/xVSEV3kVaJBmS7SZbnre" target="_blank" rel="noopener">https://status.cloud.google.com/incidents/xVSEV3kVaJBmS7SZbnre&lt;/a>&lt;/p>
+&lt;p>我們以雲端的 GCP 來舉例，如果 GCP 的服務有問題，可以到 &lt;a href="https://status.cloud.google.com/index.html" target="_blank" rel="noopener">Google Cloud Status Dashboard&lt;/a> 來查看目前服務的狀況。&lt;/p>
+&lt;p>當然，雲端供應商故障在這上面幾個原因來說，算是最少的，因為雲端供應商有很多的備援機制，當然為了避免意外，在有能力之餘，也可以考慮多個雲端供應商來當作異地備援(DR)，這樣就可以避免單一供應商故障。&lt;/p>
+&lt;p>分享一下最近發生的案例：&lt;a href="https://status.cloud.google.com/incidents/xVSEV3kVaJBmS7SZbnre" target="_blank" rel="noopener">https://status.cloud.google.com/incidents/xVSEV3kVaJBmS7SZbnre&lt;/a>&lt;/p>
+&lt;p>當然 GCP 也有提供 SLA，當服務有問題時，可以向 GCP 提出申請，來獲得賠償。
+&lt;a href="https://cloud.google.com/terms/sla" target="_blank" rel="noopener">Google Cloud Platform Service Level Agreements&lt;/a>&lt;/p>
 &lt;br>
 &lt;ol start="2">
 &lt;li>網站伺服器故障&lt;/li>
 &lt;/ol>
+&lt;p>這邊會出現錯誤的原因有很多，例如：硬體故障、軟體錯誤、網路問題等等，這邊我們可以透過監控系統來提早發現問題，並且提早解決。也建議多做備份，當網站出現問題時，可以快速的恢復。平常也要做災難復原計畫 (DR)。&lt;/p>
 &lt;br>
 &lt;ol start="3">
 &lt;li>網站程式碼錯誤&lt;/li>
 &lt;/ol>
+&lt;p>程式碼的錯誤，建議要再上線前多做測試，例如：單元測試、整合測試、壓力測試等等，也要先做好程式碼的規範，例如：程式碼的風格、程式碼的註解等等，避免出現問題。&lt;/p>
 &lt;br>
 &lt;ol start="4">
-&lt;li>網站資料庫故障&lt;/li>
-&lt;/ol>
-&lt;br>
-&lt;ol start="5">
 &lt;li>網站被駭客攻擊&lt;/li>
 &lt;/ol>
+&lt;p>網路安全是很重要的，所以從入口的防火牆設計、黑白名單，再者到程式碼的安全性，例如：SQL Injection、XSS、CSRF 等等，都要做好防護，並且要定期的更新程式碼套件，才可以避免被駭客攻擊。&lt;/p>
 &lt;br>
-&lt;ol start="6">
+&lt;ol start="5">
 &lt;li>非法網站內容&lt;/li>
 &lt;/ol>
 &lt;p>那這邊的非法網站內容，當然是希望大家不要去架設相關的網站 (◕ܫ◕)，我們這邊討論的是，也不一定真的是架設非法的網站，才會被封鎖，我們來看一下這個新聞：&lt;a href="https://www.chinatimes.com/realtimenews/20220830003849-260405?chdtv" target="_blank" rel="noopener">Google 被刑事局認定「涉及詐騙」網傻眼！台灣大曝真相
@@ -421,7 +544,34 @@ alt="網站解析被擋 圖片來源" width="450">&lt;figcaption>
 &lt;p>目前的解決辦法就是寫信去跟&lt;a href="https://www.cib.npa.gov.tw/ch/index" target="_blank" rel="noopener">刑事局&lt;/a>反應，或是先調整更換網址來讓服務能夠正常運作。&lt;/p>
 &lt;br>
 &lt;h2>網站維運日常&lt;span class="absolute -mt-20" id="網站維運日常">&lt;/span>
-&lt;a href="#%e7%b6%b2%e7%ab%99%e7%b6%ad%e9%81%8b%e6%97%a5%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
+&lt;a href="#%e7%b6%b2%e7%ab%99%e7%b6%ad%e9%81%8b%e6%97%a5%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>這邊我就以目前我在公司的經驗來跟大家分享一下，網站維運日常都會做哪些事情：
+(當然這也會取決公司的規模、以及公司的需求)&lt;/p>
+&lt;p>主要分為以下幾件事情：&lt;/p>
+&lt;h3>監控&lt;span class="absolute -mt-20" id="監控">&lt;/span>
+&lt;a href="#%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們需要做各種的監控，例如：網站的流量、CPU 使用率、記憶體使用率等等，這些都是我們需要監控的項目。除此以外也需要監控 RD 使用的程式語言有對應的指標，例如：PHP 的 FPM 有對應的指標等等。&lt;/p>
+&lt;p>監控的目的是，讓被我們在網頁出現問題前，就可以透過告警提早知道可能潛在的問題，並且提早解決。避免被使用者發現問題，進而影響使用者的體驗。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/monitoring.png"
+alt="做各種的監控" width="1000">&lt;figcaption>
+&lt;p>做各種的監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>查 Log&lt;span class="absolute -mt-20" id="查-log">&lt;/span>
+&lt;a href="#%e6%9f%a5-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們每個服務都需要去紀錄 Log，不管是使用者的操作、還是程式的錯誤，都需要去紀錄下來，這樣當網站出現問題時，我們可以透過 Log 來查找問題，並且解決問題。&lt;/p>
+&lt;p>當然 Log 也不是一個簡單的議題，Log 數量很多，在不影響效能以及費用的情況下，要怎麼只存精簡且重要的 Log，也是一個需要思考的問題。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/log.png"
+alt="查 Log" width="1000">&lt;figcaption>
+&lt;p>查 Log&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;br>
+&lt;h3>協助 RD 調整設定以及排查問題&lt;span class="absolute -mt-20" id="協助-rd-調整設定以及排查問題">&lt;/span>
+&lt;a href="#%e5%8d%94%e5%8a%a9-rd-%e8%aa%bf%e6%95%b4%e8%a8%ad%e5%ae%9a%e4%bb%a5%e5%8f%8a%e6%8e%92%e6%9f%a5%e5%95%8f%e9%a1%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
+&lt;h3>開發能夠在維運上更方便的工具&lt;span class="absolute -mt-20" id="開發能夠在維運上更方便的工具">&lt;/span>
+&lt;a href="#%e9%96%8b%e7%99%bc%e8%83%bd%e5%a4%a0%e5%9c%a8%e7%b6%ad%e9%81%8b%e4%b8%8a%e6%9b%b4%e6%96%b9%e4%be%bf%e7%9a%84%e5%b7%a5%e5%85%b7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
 &lt;h2>要走軟體工程師需要具備哪些技能？&lt;span class="absolute -mt-20" id="要走軟體工程師需要具備哪些技能">&lt;/span>
 &lt;a href="#%e8%a6%81%e8%b5%b0%e8%bb%9f%e9%ab%94%e5%b7%a5%e7%a8%8b%e5%b8%ab%e9%9c%80%e8%a6%81%e5%85%b7%e5%82%99%e5%93%aa%e4%ba%9b%e6%8a%80%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>下面是我準備的小 bonus，是出自我自己的經驗，以及我偷偷觀察我合作的 RD 夥伴們，得出的小小心得，當然這只是我自己的看法，不一定是對的，希望能夠幫助大家。&lt;/p>
 &lt;p>當然，想成為一個軟體工程師，你一定要會程式語言，例如 PHP、Python、JavaScript 等等，假如你對於未來的發展方向還不確定，或是不知道哪個程式語言是未來的趨勢，可以看看 stackoverflow 每年的調查報告，來了解目前最流行的程式語言是哪些：
@@ -446,4 +596,6 @@ alt="網站解析被擋 圖片來源" width="450">&lt;figcaption>
 &lt;p>什麼是雲端？ | 雲端定義： &lt;a href="https://www.cloudflare.com/zh-tw/learning/cloud/what-is-the-cloud/" target="_blank" rel="noopener">https://www.cloudflare.com/zh-tw/learning/cloud/what-is-the-cloud/&lt;/a>&lt;/p>
 &lt;p>企業如何挑選合適的雲端服務？公有雲、私有雲差異比較總整理：&lt;a href="https://aws.amazon.com/tw/events/taiwan/techblogs/public-cloud-private-cloud/" target="_blank" rel="noopener">https://aws.amazon.com/tw/events/taiwan/techblogs/public-cloud-private-cloud/&lt;/a>&lt;/p>
 &lt;p>給資料科學家的 Docker 指南：3 種活用 Docker 的方式（上）：&lt;a href="https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html" target="_blank" rel="noopener">https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html&lt;/a>&lt;/p>
-&lt;p>Docker 是什麼？Docker 基本觀念介紹與容器和虛擬機的比較：&lt;a href="https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/" target="_blank" rel="noopener">https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>Docker 是什麼？Docker 基本觀念介紹與容器和虛擬機的比較：&lt;a href="https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/" target="_blank" rel="noopener">https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/&lt;/a>&lt;/p>
+&lt;p>CI/CD 是什麼？一篇認識 CI/CD 工具及優勢，將日常瑣事自動化：&lt;a href="https://www.wingwill.com.tw/zh-tw/%E9%83%A8%E8%90%BD%E6%A0%BC/%E9%9B%B2%E5%9C%B0%E6%B7%B7%E5%90%88%E6%87%89%E7%94%A8/cicd%E5%B7%A5%E5%85%B7/" target="_blank" rel="noopener">https://www.wingwill.com.tw/zh-tw/%E9%83%A8%E8%90%BD%E6%A0%BC/%E9%9B%B2%E5%9C%B0%E6%B7%B7%E5%90%88%E6%87%89%E7%94%A8/cicd%E5%B7%A5%E5%85%B7/&lt;/a>&lt;/p>
+&lt;p>[DevOps] CI/CD 介紹 - 基礎概念與導入準備：&lt;a href="https://enzochang.com/cicd-introduction/" target="_blank" rel="noopener">https://enzochang.com/cicd-introduction/&lt;/a>&lt;/p></description></item></channel></rss>
