@@ -303,12 +303,12 @@ Kubernetes 是一種開源可用來自動化部屬、擴展以及管理多個容
 
 ### Kubernetes 優點
 
-- 服務發現和負載平衡：K8s 可以使用 DNS 名稱或是自己的 IP 位址來公開容器。如果容器流量過高，Kubernetes 能夠使用負載平衡和分配網路流量，能使部署更穩定。
-- 編排儲存：Kubernetes 允許使用自動掛載來選擇儲存系統，例如使用本地儲存，或是公共雲等。
+- **服務發現和負載平衡**：K8s 可以使用 DNS 名稱或是自己的 IP 位址來公開容器。如果容器流量過高，Kubernetes 能夠使用負載平衡和分配網路流量，能使部署更穩定。
+- **編排儲存**：Kubernetes 允許使用自動掛載來選擇儲存系統，例如使用本地儲存，或是公共雲等。
   自動部署、刪除：可以使用 Kubernetes 來幫我們自動化部屬新的容器、刪除現有的容器並將其資源用於新容器。
-- 自動打包：當我們為 Kubernetes 提供一個節點叢集，它可以用來運行容器化的任務，告訴 Kubernetes 每個容器需要多少 CPU 和 RAM。Kubernetes 可以將容器安裝到節點上，充分利用資源。
-- 自動修復：Kubernetes 會重新啟動失敗的容器、替換容器、刪除不回應用戶的不健康容器，並且在容器準備好服務之前不會通知客戶端。
-- 機密和配置管理：Kubernetes 允許儲存和管理敏感訊息，例如密碼、OAuth token 和 SSH 金鑰。可以部署和更新機密的應用程序配置。
+- **自動打包**：當我們為 Kubernetes 提供一個節點叢集，它可以用來運行容器化的任務，告訴 Kubernetes 每個容器需要多少 CPU 和 RAM。Kubernetes 可以將容器安裝到節點上，充分利用資源。
+- **自動修復**：Kubernetes 會重新啟動失敗的容器、替換容器、刪除不回應用戶的不健康容器，並且在容器準備好服務之前不會通知客戶端。
+- **機密和配置管理**：Kubernetes 允許儲存和管理敏感訊息，例如密碼、OAuth token 和 SSH 金鑰。可以部署和更新機密的應用程序配置。
 
 <br>
 
@@ -369,13 +369,146 @@ Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架
 
 5. 接著執行 `kubectl apply -f .`，將其他服務也建立到 GKE 上。
 
-6. 最後我們打開瀏覽器，輸入 [https://myapp.pin-yi.me](https://myapp.pin-yi.me/)，就可以看到 Nginx 的首頁了。 (此為範例，講座結束後會關閉服務)
+6. 最後我們打開瀏覽器，輸入 [https://myapp.pin-yi.me](https://myapp.pin-yi.me/)，就可以看到我們寫的首頁了。 (此為範例，講座結束後會關閉服務)
 
 <br>
 
 看完 Kubernetes 部署服務的方式，是不是覺得有點麻煩呢？還需要手動去部署，這時候就需要 CI/CD 來幫助我們自動化部署服務了！
 
-## 什麼是 CICD
+## 什麼是 CI/CD
+
+一樣先來了解一下為什麼要 CI/CD？
+
+目前大多數的企業公司都是採用敏捷開發的方式，所以在追求快速開發、快速部署，以及大量的測試時會消耗很多開發人員的時間和精力，所以這時候就需要 CI/CD 來幫助我們自動化部署服務。
+
+<br>
+
+接著再介紹 CI/CD 之前還有一個名詞要跟大家介紹，那就是 DevOps。
+
+### 什麼是 DevOps
+
+DevOps 是一種結合軟體開發人員 (Development) 和 IT 運維技術人員 (Operations) 的文化，目的是縮短開發和運營之間的距離，並且提高開發和運營的效率。而 CI/CD 工具就是為了此概念產生的自動化工具，透過持續整合 (CI) 和持續部署 (CD) 的方式，在開發階段能自動協助開發人員偵測程式碼問題，並部署到 Server 上。
+
+<br>
+
+{{< figure src="/lecture/20240529-devops-introduce/cicd_cycle.png" width="700" caption="CI/CD cycle" >}}
+
+<br>
+
+### CI (Continuous Integration) 持續整合
+
+持續整合，顧名思義，就是當開發人員完成一個階段性的程式碼後就經由自動化工具測試、驗證，協助偵測程式碼問題，並建置出即將部署的版本（Build）。
+
+<br>
+
+### CD (Continuous Deployment) 持續部署
+
+持續部署可以說是 CI 的下一階段，經過 CI 測試後所構建的程式碼可以透過 CD 工具部署至伺服器，減少人工部署的時間。
+
+<br>
+
+### CI/CD 常用的工具
+
+#### GitHab
+
+GitHub 算是目前最受歡迎的程式碼管理平台，其 CI/CD 服務稱為 GitHub Action，提供了多項控制 API，能夠幫助開發者編排、掌握工作流程，在提交程式碼後自動編譯、測試並部署至伺服器，也提供了很多現成的 Action 可以使用。
+
+#### GitLab
+
+GitLab 算是公司企業內部比較主流的程式碼管理平台，其 CI/CD 服務稱為 GitLab CI/CD，其 CI/CD Pipeline 功能簡單又實用，使用者只需要設定於專案根目錄下的「.gitlab-ci.yml」檔，便可以開始驅動各種 Pipeline 協助您完成自動化測試及部署
+
+<br>
+
+#### CI/CD 小試身手
+
+這邊也跟上面 [Kubernetes 小試身手](#kubernetes-小試身手) 一樣，由於 K8s 建立以及部署需要一些時間，所以這邊會直接拿我擁有的環境做測試。
+
+首先，我們接續上面的 [Docker 小試身手](#docker-小試身手) 的範例程式碼：
+
+1. 打開 [.github/workflows/google.yml](https://github.com/880831ian/20240529-devops-introduce/blob/main/.github/workflows/google.yml) 這個檔案，裡面是我已經寫好的 GitHub Action 的流程。
+
+這邊說明一下這個檔案的內容 (下面拆開說明)：
+
+```yaml
+name: Build and Deploy to GKE
+
+on:
+  push:
+    branches: ["main"]
+
+env:
+  PROJECT_ID: pin-yi-project
+  GAR_LOCATION: asia-east1
+  GKE_CLUSTER: cluster
+  GKE_ZONE: asia-east1-b
+  DEPLOYMENT_NAME: myapp
+  REPOSITORY: pin-yi-image
+  IMAGE: myapp
+  NAMESPACE: myapp
+
+jobs:
+  setup-build-publish-deploy:
+    name: Setup, Build, Publish, and Deploy
+    runs-on: ubuntu-latest
+    environment: production
+```
+
+這邊主要是說明這個 Action 的名稱，以及當 push 到 main branch 時，就會觸發這個 Action，還有對應的 env，env 包含了 GCP 專案 ID、Image 儲存的地點、GKE 的 Cluster 名稱、GKE 的 Zone、部署的名稱、Image 的名稱、Namespace 的名稱。
+
+接著是 job 的設定，設定名稱、要用什麼 image 當做基底，以及環境等等。job 可以把它理解成每個要做的小事情，例如 Build Image、Push Image、Deploy Image 等等。
+
+<br>
+
+```yaml
+steps:
+  - name: Checkout
+    uses: actions/checkout@v3
+
+  - id: "auth"
+    uses: "google-github-actions/auth@v2"
+    with:
+      credentials_json: "${{ secrets.GCP_CREDENTIALS }}"
+
+  - name: Docker configuration
+    run: |-
+      echo '${{ secrets.GCP_CREDENTIALS }}' | docker login -u _json_key --password-stdin https://$GAR_LOCATION-docker.pkg.dev
+
+  - name: Set up GKE credentials
+    uses: google-github-actions/get-gke-credentials@v2
+    with:
+      cluster_name: ${{ env.GKE_CLUSTER }}
+      location: ${{ env.GKE_ZONE }}
+
+  - name: Build
+    run: |-
+      docker build \
+        --tag "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$(echo $GITHUB_SHA | head -c7)" \
+        --build-arg GITHUB_SHA="$GITHUB_SHA" \
+        --build-arg GITHUB_REF="$GITHUB_REF" .
+
+  - name: Add Image Tag
+    run: docker tag $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$(echo $GITHUB_SHA | head -c7) $GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:latest
+
+  - name: Publish
+    run: |-
+      docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$(echo $GITHUB_SHA | head -c7)" && \
+      docker push "$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:latest"
+
+  - name: Set Image
+    run: |-
+      kubectl set image deployment/$DEPLOYMENT_NAME \
+      myapp="$GAR_LOCATION-docker.pkg.dev/$PROJECT_ID/$REPOSITORY/$IMAGE:$(echo $GITHUB_SHA | head -c7)"  -n $NAMESPACE
+  - name: Deploy
+    run: |-
+      kubectl rollout status deployment/$DEPLOYMENT_NAME -n $NAMESPACE
+      kubectl get services -o wide
+```
+
+接著就是各種的 job，有先 checkout 程式碼、登入 GCP、登入 Docker、設定 GKE 的 credentials、Build Image、Push Image、Deploy Image 等等。
+
+2. 接著我們嘗試調整 index.html 的內容，然後 push 到 GitHub 上，就可以看到 GitHub Action 會自動幫我們 Build Image、Push Image、Deploy Image 到 GKE 上。
+
+3. 最後我們打開瀏覽器，輸入 [https://myapp.pin-yi.me](https://myapp.pin-yi.me/)，就可以看到我們調整的首頁了。(此為範例，講座結束後會關閉服務)
 
 <br>
 
@@ -410,12 +543,6 @@ Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架
 
 <br>
 
-#### 網站資料庫故障
-
-資料庫
-
-<br>
-
 #### 網站被駭客攻擊
 
 當然網站會依照使用需求，開放給不同的使用者，如果是一般開在公網上的網站，就有可能會被駭客攻擊，例如：DDos 攻擊、SQL Injection 等等，這些攻擊都有可能導致網站停擺，還有可能導致資料外洩。
@@ -436,31 +563,36 @@ Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架
 
 1. 伺服器供應商故障
 
-我們已雲端的 GCP 來舉例，如果 GCP 的服務有問題，可以到 [Google Cloud Status Dashboard](https://status.cloud.google.com/index.html) 來查看目前服務的狀況。
+我們以雲端的 GCP 來舉例，如果 GCP 的服務有問題，可以到 [Google Cloud Status Dashboard](https://status.cloud.google.com/index.html) 來查看目前服務的狀況。
 
-當然，雲端供應商故障對於上面幾個原因來說，應該是最少的，因為雲端供應商有很多的備援機制，但如果真的發生了，我們可以透過以下幾個方法來恢復網站：
+當然，雲端供應商故障在這上面幾個原因來說，算是最少的，因為雲端供應商有很多的備援機制，當然為了避免意外，在有能力之餘，也可以考慮多個雲端供應商來當作異地備援(DR)，這樣就可以避免單一供應商故障。
 
-https://status.cloud.google.com/incidents/xVSEV3kVaJBmS7SZbnre
+分享一下最近發生的案例：[https://status.cloud.google.com/incidents/xVSEV3kVaJBmS7SZbnre](https://status.cloud.google.com/incidents/xVSEV3kVaJBmS7SZbnre)
+
+當然 GCP 也有提供 SLA，當服務有問題時，可以向 GCP 提出申請，來獲得賠償。
+[Google Cloud Platform Service Level Agreements](https://cloud.google.com/terms/sla)
 
 <br>
 
 2. 網站伺服器故障
 
+這邊會出現錯誤的原因有很多，例如：硬體故障、軟體錯誤、網路問題等等，這邊我們可以透過監控系統來提早發現問題，並且提早解決。也建議多做備份，當網站出現問題時，可以快速的恢復。平常也要做災難復原計畫 (DR)。
+
 <br>
 
 3. 網站程式碼錯誤
 
-<br>
-
-4. 網站資料庫故障
+程式碼的錯誤，建議要再上線前多做測試，例如：單元測試、整合測試、壓力測試等等，也要先做好程式碼的規範，例如：程式碼的風格、程式碼的註解等等，避免出現問題。
 
 <br>
 
-5. 網站被駭客攻擊
+4. 網站被駭客攻擊
+
+網路安全是很重要的，所以從入口的防火牆設計、黑白名單，再者到程式碼的安全性，例如：SQL Injection、XSS、CSRF 等等，都要做好防護，並且要定期的更新程式碼套件，才可以避免被駭客攻擊。
 
 <br>
 
-6. 非法網站內容
+5. 非法網站內容
 
 那這邊的非法網站內容，當然是希望大家不要去架設相關的網站 (◕ܫ◕)，我們這邊討論的是，也不一定真的是架設非法的網站，才會被封鎖，我們來看一下這個新聞：[Google 被刑事局認定「涉及詐騙」網傻眼！台灣大曝真相
 ](https://www.chinatimes.com/realtimenews/20220830003849-260405?chdtv)
@@ -476,6 +608,43 @@ https://status.cloud.google.com/incidents/xVSEV3kVaJBmS7SZbnre
 <br>
 
 ## 網站維運日常
+
+這邊我就以目前我在公司的經驗來跟大家分享一下，網站維運日常都會做哪些事情：
+(當然這也會取決公司的規模、以及公司的需求)
+
+主要分為以下幾件事情：
+
+### 監控
+
+我們需要做各種的監控，例如：網站的流量、CPU 使用率、記憶體使用率等等，這些都是我們需要監控的項目。除此以外也需要監控 RD 使用的程式語言有對應的指標，例如：PHP 的 FPM 有對應的指標等等。
+
+監控的目的是，讓被我們在網頁出現問題前，就可以透過告警提早知道可能潛在的問題，並且提早解決。避免被使用者發現問題，進而影響使用者的體驗。
+
+<br>
+
+{{< figure src="/lecture/20240529-devops-introduce/monitoring.png" width="1000" caption="做各種的監控" >}}
+
+<br>
+
+### 查 Log
+
+我們每個服務都需要去紀錄 Log，不管是使用者的操作、還是程式的錯誤，都需要去紀錄下來，這樣當網站出現問題時，我們可以透過 Log 來查找問題，並且解決問題。
+
+當然 Log 也不是一個簡單的議題，Log 數量很多，在不影響效能以及費用的情況下，要怎麼只存精簡且重要的 Log，也是一個需要思考的問題。
+
+<br>
+
+{{< figure src="/lecture/20240529-devops-introduce/log.png" width="1000" caption="查 Log" >}}
+
+<br>
+
+<br>
+
+### 協助 RD 調整設定以及排查問題
+
+<br>
+
+### 開發能夠在維運上更方便的工具
 
 <br>
 
@@ -527,3 +696,7 @@ Git 可以說是現代軟體工程師必備的技能之一，可以幫助你管�
 給資料科學家的 Docker 指南：3 種活用 Docker 的方式（上）：[https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html](https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html)
 
 Docker 是什麼？Docker 基本觀念介紹與容器和虛擬機的比較：[https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/](https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/)
+
+CI/CD 是什麼？一篇認識 CI/CD 工具及優勢，將日常瑣事自動化：[https://www.wingwill.com.tw/zh-tw/%E9%83%A8%E8%90%BD%E6%A0%BC/%E9%9B%B2%E5%9C%B0%E6%B7%B7%E5%90%88%E6%87%89%E7%94%A8/cicd%E5%B7%A5%E5%85%B7/](https://www.wingwill.com.tw/zh-tw/%E9%83%A8%E8%90%BD%E6%A0%BC/%E9%9B%B2%E5%9C%B0%E6%B7%B7%E5%90%88%E6%87%89%E7%94%A8/cicd%E5%B7%A5%E5%85%B7/)
+
+[DevOps] CI/CD 介紹 - 基礎概念與導入準備：[https://enzochang.com/cicd-introduction/](https://enzochang.com/cicd-introduction/)
