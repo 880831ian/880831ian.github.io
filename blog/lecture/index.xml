@@ -9,6 +9,7 @@
 &lt;li>時間：2024/05/29 19:00 - 21:00&lt;/li>
 &lt;li>地點：朝陽科技大學 &amp;amp; Google Meet &lt;a href="https://meet.google.com/aiq-qcoy-wid" target="_blank" rel="noopener">線上連結&lt;/a>&lt;/li>
 &lt;li>Google Developer Student Clubs 相關連結：&lt;a href="https://gdsc.community.dev/events/details/developer-student-clubs-chaoyang-university-of-technology-taichung-taiwan-presents-wang-zhan-fang-hu-yu-devopsji-shu-jiang-zuo-ft-zhuang-pin-yi-gong-cheng-shi/" target="_blank" rel="noopener">https://gdsc.community.dev/events/details/developer-student-clubs-chaoyang-university-of-technology-taichung-taiwan-presents-wang-zhan-fang-hu-yu-devopsji-shu-jiang-zuo-ft-zhuang-pin-yi-gong-cheng-shi/&lt;/a>&lt;/li>
+&lt;li>簡報：&lt;a href="https://docs.google.com/presentation/d/10yH_zQikWeYz5pyv4st6ICMs6F2F9F_Vks1ngDaNROY/edit?usp=sharing" target="_blank" rel="noopener">https://docs.google.com/presentation/d/10yH_zQikWeYz5pyv4st6ICMs6F2F9F_Vks1ngDaNROY/edit?usp=sharing&lt;/a>&lt;/li>
 &lt;/ul>
 &lt;/div>
 &lt;/div>
@@ -46,7 +47,7 @@ alt="如何使用雲端 圖片來源" width="700">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;p>雲端得以實現，是因為一種稱為虛擬化的技術。虛擬化允許在一台實體的電腦上建立許多模擬「虛擬」電腦，其行為如同具有自己硬體的實體電腦，這類電腦的術語稱為&lt;a href="https://www.cloudflare.com/zh-tw/learning/cloud/what-is-a-virtual-machine/" target="_blank" rel="noopener">虛擬機器&lt;/a>。虛擬主機簡單介紹到這邊，後面的 &lt;a href="#docker-%e4%bb%8b%e7%b4%b9" >Docker 介紹&lt;/a> 會在提到。&lt;/p>
-&lt;p>一個資料中心有多台的伺服器，一個伺服器可以執行許多虛擬「伺服器」，能夠為許多組織或是客戶提供不同的服務，即使個別伺服器故障，雲端供應商會在多個機器及多個區域備份服務。&lt;a href="https://www.youtube.com/watch?v=zDAYZU4A3w0&amp;amp;ab_channel=GoogleCloudTech" target="_blank" rel="noopener">Google Data Center 影片連結&lt;/a>&lt;/p>
+&lt;p>雲端會有很多資料中心，一個資料中心又有很多台的伺服器，一個伺服器可以執行許多虛擬「伺服器」，能夠為許多組織或是客戶提供不同的服務，即使個別伺服器故障，雲端供應商會在多個機器及多個區域備份服務。&lt;a href="https://www.youtube.com/watch?v=zDAYZU4A3w0&amp;amp;ab_channel=GoogleCloudTech" target="_blank" rel="noopener">Google Data Center 影片連結&lt;/a>&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/google-data-center.webp"
 alt="Google Data Center 圖片來源" width="700">&lt;figcaption>
@@ -60,9 +61,9 @@ alt="Google Data Center 圖片來源" width="700">&lt;figcaption>
 &lt;ul>
 &lt;li>&lt;strong>彈性和可擴展性&lt;/strong>：用戶可以根據需求動態調整資源的規模。&lt;/li>
 &lt;li>&lt;strong>成本效益&lt;/strong>：按需付費模式，企業可以根據實際使用情況支付費用。&lt;a href="https://cloud.google.com/products/calculator?hl=zh_tw" target="_blank" rel="noopener">Google Cloud Pricing Calculator&lt;/a>&lt;/li>
-&lt;li>&lt;strong>全球覆蓋&lt;/strong>：可選擇部署的地區範圍廣泛。&lt;a href="https://status.cloud.google.com/index.html" target="_blank" rel="noopener">Goolge Cloud Service Health&lt;/a>&lt;/li>
+&lt;li>&lt;strong>全球覆蓋&lt;/strong>：可選擇部署的地區範圍廣泛。&lt;a href="https://cloud.google.com/about/locations?hl=zh-tw#lightbox-regions-map" target="_blank" rel="noopener">Google Cloud 據點&lt;/a>&lt;/li>
 &lt;/ul>
-&lt;p>除了彈性和成本效益，最重要的還有全球部署和服務商管理安全和維護及 SLA 的優勢。&lt;a href="https://cloud.google.com/terms/sla" target="_blank" rel="noopener">Google Cloud Platform Service Level Agreements&lt;/a>&lt;/p>
+&lt;p>除了彈性和成本效益，最重要的還有服務商安全管理和維護及 SLA 的優勢。&lt;a href="https://cloud.google.com/terms/sla" target="_blank" rel="noopener">Google Cloud Platform Service Level Agreements&lt;/a>&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/Top-10-Cloud-Service-Providers-Globally-in-2022.jpg.webp"
 alt="Top 10 Cloud Service Providers Globally in 2024 圖片來源" width="600">&lt;figcaption>
@@ -73,7 +74,7 @@ alt="Top 10 Cloud Service Providers Globally in 2024 圖片來源" width="600">&
 &lt;h4>私有雲（Private Cloud）&lt;span class="absolute -mt-20" id="私有雲private-cloud">&lt;/span>
 &lt;a href="#%e7%a7%81%e6%9c%89%e9%9b%b2private-cloud" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>私有雲是由企業自建或由第三方供應商為特定企業提供的雲端基礎設施，僅供企業內部使用。其特點包括：&lt;/p>
 &lt;ul>
-&lt;li>&lt;strong>專屬使用&lt;/strong>：企業獨享全部資源，不與其他用戶共享。&lt;a href="https://cloud.google.com/spot-vms?hl=zh-tw" target="_blank" rel="noopener">Spot VM&lt;/a>&lt;/li>
+&lt;li>&lt;strong>專屬使用&lt;/strong>：企業獨享全部資源，不與其他用戶共享。&lt;/li>
 &lt;li>&lt;strong>高可控和安全性&lt;/strong>：企業可以自行管理和控制數據，確保數據安全性和合規性。&lt;/li>
 &lt;li>&lt;strong>高成本&lt;/strong>：需要自行購買和維護硬體和基礎設施，初期投資和運營成本較高。&lt;/li>
 &lt;/ul>
@@ -87,6 +88,7 @@ alt="What Is Private Cloud? 圖片來源" width="600">&lt;figcaption>
 &lt;p>聽完公有雲和私有雲的介紹，有沒有可以結合兩種雲端的優點，來達到更好的效果呢？&lt;/p>
 &lt;h4>混合雲（Hybrid Cloud）&lt;span class="absolute -mt-20" id="混合雲hybrid-cloud">&lt;/span>
 &lt;a href="#%e6%b7%b7%e5%90%88%e9%9b%b2hybrid-cloud" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>混合雲是一種結合了公有雲和私有雲優勢的雲端架構，允許企業在公有雲和私有雲之間靈活地配置和管理資源。這意味著企業可以將一些工作負載和應用程式部署在公有雲上，以利用其彈性和成本效益，同時將敏感資料和關鍵業務應用部署在私有雲或內部資料中心，以確保安全性和控制。&lt;/p>
+&lt;p>所以以下幾個就是混合雲的優點：&lt;/p>
 &lt;ul>
 &lt;li>
 &lt;p>&lt;strong>彈性和可擴展性&lt;/strong>：企業可以根據需求動態調整公有雲和私有雲的使用比例。例如，當工作負載增加時，可以暫時使用公有雲資源來擴展運算能力，而不必立即擴展內部基礎設施。&lt;/p>
@@ -98,7 +100,7 @@ alt="What Is Private Cloud? 圖片來源" width="600">&lt;figcaption>
 &lt;p>&lt;strong>安全性和合規性&lt;/strong>：敏感數據和應用可以保存在私有雲或內部資料中心，以滿足企業的安全和合規要求。同時，非敏感的工作負載可以部署在公有雲上，以利用其便利性和成本優勢。&lt;/p>
 &lt;/li>
 &lt;li>
-&lt;p>&lt;strong>高可用性和災難恢復&lt;/strong>：混合雲架構允許企業在公有雲和私有雲之間設置冗餘和備份方案，增強系統的高可用性和災難恢復能力。&lt;/p>
+&lt;p>&lt;strong>高可用性和災難恢復&lt;/strong>：混合雲架構允許企業在公有雲和私有雲之間設置備份方案，增強系統的高可用性和災難恢復能力。&lt;/p>
 &lt;/li>
 &lt;/ul>
 &lt;p>所以混合雲也是目前最多企業採用的雲端架構，可以兼顧公有雲和私有雲的優勢，並根據實際需求靈活調整資源的使用。&lt;/p>
@@ -182,7 +184,7 @@ alt="Container 與 VM 的差異 圖片來源" width="700">&lt;figcaption>
 &lt;p>&lt;strong>更輕鬆的遷移和擴展&lt;/strong>：Docker 容器幾乎可以在任意的平台上執行，包括實體機器、虛擬機、公有雲、私有雲、個人電腦、伺服器等。 這種兼容性可以讓使用者把一個服務從一個平台直接遷移到另外一個。&lt;/p>
 &lt;/li>
 &lt;li>
-&lt;p>&lt;strong>更簡單的管理&lt;/strong>：使用 Docker，只需要小小的修改，就可以替代以往大量的更新工作。所有的修改都以增量的方式被分發和更新，從而實作自動化並且有效率的管理。&lt;/p>
+&lt;p>&lt;strong>更簡單的管理&lt;/strong>：使用 Docker，只需要小小的修改，就可以替代以往大量的更新工作。所有的修改都以增量的方式去更新，從而實作自動化並且有效率的管理。&lt;/p>
 &lt;/li>
 &lt;/ul>
 &lt;br>
@@ -286,18 +288,16 @@ alt="K8s Logo" width="200">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;p>Kubernetes 是一種開源可用來自動化部屬、擴展以及管理多個容器的系統，適用於當容器數量增加，需要穩定容器環境，以及管理資源或權限分配的狀況。
-另外 K8s 也是 Google 開發的，並且是 CNCF (Cloud Native Computing Foundation) 的一個專案，所以 K8s 也是一個非常受歡迎的容器管理系統。&lt;/p>
+&lt;p>K8s 是一種開源的容器資源調度平台，能夠將部署流程自動化、擴展並管理不同容器間的工作負載。它的構想理念是「Automated container deployment, scaling, and management」，意即透過自動化功能提升應用程式的可靠性和減輕維運負擔，讓開發人員專注於軟體開發任務。&lt;/p>
+&lt;p>另外 K8s 也是 Google 開發的，並且是 CNCF (Cloud Native Computing Foundation) 的一個專案，所以 K8s 也是一個非常受歡迎的容器管理系統。&lt;/p>
 &lt;br>
 &lt;p>我們之前在 &lt;a href="../../../blog/docker/docker/" >Docker 介紹&lt;/a> 文章中，已經有介紹以往傳統虛擬機以及容器化的 Docker 差異以及優點，那當我們在管理容器時，其中一個容器出現故障，則需要啟動另一個容器，如果要用手動，會十分麻煩，所以這時就是 Kubernetes 的厲害的地方了，Kubernetes 提供：&lt;/p>
 &lt;h3>Kubernetes 優點&lt;span class="absolute -mt-20" id="kubernetes-優點">&lt;/span>
 &lt;a href="#kubernetes-%e5%84%aa%e9%bb%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
-&lt;li>&lt;strong>服務發現和負載平衡&lt;/strong>：K8s 可以使用 DNS 名稱或是自己的 IP 位址來公開容器。如果容器流量過高，Kubernetes 能夠使用負載平衡和分配網路流量，能使部署更穩定。&lt;/li>
-&lt;li>&lt;strong>編排儲存&lt;/strong>：Kubernetes 允許使用自動掛載來選擇儲存系統，例如使用本地儲存，或是公共雲等。
-自動部署、刪除：可以使用 Kubernetes 來幫我們自動化部屬新的容器、刪除現有的容器並將其資源用於新容器。&lt;/li>
-&lt;li>&lt;strong>自動打包&lt;/strong>：當我們為 Kubernetes 提供一個節點叢集，它可以用來運行容器化的任務，告訴 Kubernetes 每個容器需要多少 CPU 和 RAM。Kubernetes 可以將容器安裝到節點上，充分利用資源。&lt;/li>
-&lt;li>&lt;strong>自動修復&lt;/strong>：Kubernetes 會重新啟動失敗的容器、替換容器、刪除不回應用戶的不健康容器，並且在容器準備好服務之前不會通知客戶端。&lt;/li>
-&lt;li>&lt;strong>機密和配置管理&lt;/strong>：Kubernetes 允許儲存和管理敏感訊息，例如密碼、OAuth token 和 SSH 金鑰。可以部署和更新機密的應用程序配置。&lt;/li>
+&lt;li>&lt;strong>輕量級&lt;/strong>：K8s 的輕量化特性讓應用程式能被輕易地部署至不同環境，例如：地端資料中心、公有雲或其他雲端混合環境。K8s 容器化的本質讓封裝在內的應用程式與其相依的資源能夠緊密結合，從而解決不同平台的兼容問題，並降低在不同基礎架構上部署的難度。&lt;/li>
+&lt;li>&lt;strong>服務、系統部屬更方便&lt;/strong>：由於容器可在任何容器平台運行，因此無論是同時將多個 Container 部屬到一台機器，或是多個 Container 部屬至多台機器都不是問題。&lt;/li>
+&lt;li>&lt;strong>自動化管理，重啟、擴張皆可行&lt;/strong>：且 K8s 可自動偵測、管理各 Container 的狀態，若有需要，可對 Container 執行自動擴展。而若偵測到有 Container 發生故障，也可自動重啟以確保服務正確且持續地運行。&lt;/li>
+&lt;li>&lt;strong>彈性化運用&lt;/strong>：K8s 中每個服務、系統皆可獨立部屬，因此不會因為其中一個系統出現錯誤而影響整個運作，甚至各 Container 也可依各自需求來修改，運用上擁有高度彈性化。&lt;/li>
 &lt;/ul>
 &lt;br>
 &lt;p>Kubernetes 是如何幫我們管理以及部署 Container ? 要了解 Kubernetes 如何運作，就要先了解它的元件以及架構：&lt;/p>
@@ -319,7 +319,7 @@ alt="K8s Logo" width="200">&lt;figcaption>
 &lt;p>其他更詳細介紹，可以參考我之前寫的文章：&lt;a href="../../..//blog/kubernetes/k8s/#%e5%ae%89%e8%a3%9d-kubernetes" >Kubernetes (K8s) 介紹 - 基本&lt;/a>&lt;/p>
 &lt;br>
 &lt;h4>Cluster&lt;span class="absolute -mt-20" id="cluster">&lt;/span>
-&lt;a href="#cluster" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架設中我們不會只有一台機器而已，通常都是多個機器一起運行同一種內容，在沒有 Kubernetes 的時候就必須要土法煉鋼的一台一台機器去更新，但有了 Kubernetes 我們就可以透過 Cluster 進行控管，只要更新 Master 旗下的機器，也會一併將更新的內容放上去，十分方便。在 Kubernetes 中多個 Worker Node 與 Master Node 的集合。&lt;/p>
+&lt;a href="#cluster" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架設中我們不會只有一台機器而已，通常都是多個機器一起運行，在沒有 Kubernetes 的時候就必須要土法煉鋼的一台一台機器去更新，但有了 Kubernetes 我們就可以透過 Cluster 進行控管，只要更新 Master 旗下的機器，也會一併將更新的內容放上去，十分方便。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/k8s.jpg"
 alt="K8s 元件 圖片來源" width="550">&lt;figcaption>
@@ -374,13 +374,14 @@ alt="CI/CD cycle" width="700">&lt;figcaption>
 &lt;a href="#cd-continuous-deployment-%e6%8c%81%e7%ba%8c%e9%83%a8%e7%bd%b2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>持續部署可以說是 CI 的下一階段，經過 CI 測試後所構建的程式碼可以透過 CD 工具部署至伺服器，減少人工部署的時間。&lt;/p>
 &lt;br>
 &lt;h3>CI/CD 常用的工具&lt;span class="absolute -mt-20" id="cicd-常用的工具">&lt;/span>
-&lt;a href="#cicd-%e5%b8%b8%e7%94%a8%e7%9a%84%e5%b7%a5%e5%85%b7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>GitHab&lt;span class="absolute -mt-20" id="githab">&lt;/span>
-&lt;a href="#githab" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>GitHub 算是目前最受歡迎的程式碼管理平台，其 CI/CD 服務稱為 GitHub Action，提供了多項控制 API，能夠幫助開發者編排、掌握工作流程，在提交程式碼後自動編譯、測試並部署至伺服器，也提供了很多現成的 Action 可以使用。&lt;/p>
+&lt;a href="#cicd-%e5%b8%b8%e7%94%a8%e7%9a%84%e5%b7%a5%e5%85%b7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>GitHub&lt;span class="absolute -mt-20" id="github">&lt;/span>
+&lt;a href="#github" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>GitHub 算是目前最受歡迎的程式碼管理平台，其 CI/CD 服務稱為 GitHub Action，提供了多項控制 API，能夠幫助開發者編排、掌握工作流程，在提交程式碼後自動編譯、測試並部署至伺服器，也提供了很多現成的 Action 可以使用。&lt;/p>
 &lt;h4>GitLab&lt;span class="absolute -mt-20" id="gitlab">&lt;/span>
 &lt;a href="#gitlab" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>GitLab 算是公司企業內部比較主流的程式碼管理平台，其 CI/CD 服務稱為 GitLab CI/CD，其 CI/CD Pipeline 功能簡單又實用，使用者只需要設定於專案根目錄下的「.gitlab-ci.yml」檔，便可以開始驅動各種 Pipeline 協助您完成自動化測試及部署&lt;/p>
 &lt;br>
 &lt;h4>CI/CD 小試身手&lt;span class="absolute -mt-20" id="cicd-小試身手">&lt;/span>
-&lt;a href="#cicd-%e5%b0%8f%e8%a9%a6%e8%ba%ab%e6%89%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這邊也跟上面 &lt;a href="#kubernetes-%e5%b0%8f%e8%a9%a6%e8%ba%ab%e6%89%8b" >Kubernetes 小試身手&lt;/a> 一樣，由於 K8s 建立以及部署需要一些時間，所以這邊會直接拿我擁有的環境做測試。&lt;/p>
+&lt;a href="#cicd-%e5%b0%8f%e8%a9%a6%e8%ba%ab%e6%89%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們今天會使用 GitGub Action 來進行 CI/CD 範例&lt;/p>
+&lt;p>這邊也跟上面 &lt;a href="#kubernetes-%e5%b0%8f%e8%a9%a6%e8%ba%ab%e6%89%8b" >Kubernetes 小試身手&lt;/a> 一樣，由於 K8s 建立以及部署需要一些時間，所以這邊會直接拿我擁有的環境做測試。&lt;/p>
 &lt;p>首先，我們接續上面的 &lt;a href="#docker-%e5%b0%8f%e8%a9%a6%e8%ba%ab%e6%89%8b" >Docker 小試身手&lt;/a> 的範例程式碼：&lt;/p>
 &lt;ol>
 &lt;li>打開 &lt;a href="https://github.com/880831ian/20240529-devops-introduce/blob/main/.github/workflows/google.yml" target="_blank" rel="noopener">.github/workflows/google.yml&lt;/a> 這個檔案，裡面是我已經寫好的 GitHub Action 的流程。&lt;/li>
@@ -485,8 +486,10 @@ title="Copy code"
 &lt;br>
 &lt;h3>網站停擺的原因&lt;span class="absolute -mt-20" id="網站停擺的原因">&lt;/span>
 &lt;a href="#%e7%b6%b2%e7%ab%99%e5%81%9c%e6%93%ba%e7%9a%84%e5%8e%9f%e5%9b%a0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>那在討論如何恢復前，我們要先了解會導致網站停擺的原因有哪些？&lt;/p>
+&lt;br>
 &lt;h4>伺服器供應商故障&lt;span class="absolute -mt-20" id="伺服器供應商故障">&lt;/span>
-&lt;a href="#%e4%bc%ba%e6%9c%8d%e5%99%a8%e4%be%9b%e6%87%89%e5%95%86%e6%95%85%e9%9a%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這邊的伺服器供應商，我們以雲端的供應商為主，也就是 GCP、AWS、Azure 等等，這些供應商可能會因為硬體故障、軟體錯誤、網路問題等原因而停擺 (當然地端的機器也可能會因為主機的供應商導致網站中斷，例如：&lt;del>Windows 自動更新&lt;/del>)。&lt;/p>
+&lt;a href="#%e4%bc%ba%e6%9c%8d%e5%99%a8%e4%be%9b%e6%87%89%e5%95%86%e6%95%85%e9%9a%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這邊的伺服器供應商，如果以雲端的供應商來說，也就是 GCP、AWS、Azure 等等，這些供應商可能會因為硬體故障、軟體錯誤、網路問題等原因而停擺。
+當然地端的機器也可能會因為主機的供應商導致網站中斷，例如：Windows 自動更新 xD。&lt;/p>
 &lt;br>
 &lt;h4>網站伺服器故障&lt;span class="absolute -mt-20" id="網站伺服器故障">&lt;/span>
 &lt;a href="#%e7%b6%b2%e7%ab%99%e4%bc%ba%e6%9c%8d%e5%99%a8%e6%95%85%e9%9a%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>網站的伺服器當然也可能會因為硬體故障、軟體錯誤、網路問題等原因而停擺。這也是最常見的原因之一。
@@ -494,13 +497,13 @@ title="Copy code"
 &lt;p>我們以雲端的 K8s 來舉例，如果 K8s 配置錯誤，會是資源不足，或是 Pod 的數量不夠，都會導致網站停擺。&lt;/p>
 &lt;br>
 &lt;h4>網站程式碼錯誤&lt;span class="absolute -mt-20" id="網站程式碼錯誤">&lt;/span>
-&lt;a href="#%e7%b6%b2%e7%ab%99%e7%a8%8b%e5%bc%8f%e7%a2%bc%e9%8c%af%e8%aa%a4" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這邊的程式碼，大家可以把他理解成網站的程式碼，例如：PHP、Python、JavaScript 等等，有可能程式碼寫了一個無窮迴圈，或是什麼特殊的 Bug，導致資源衝高，也會導致網站停擺。&lt;/p>
+&lt;a href="#%e7%b6%b2%e7%ab%99%e7%a8%8b%e5%bc%8f%e7%a2%bc%e9%8c%af%e8%aa%a4" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這邊的程式碼，大家可以把他理解成網站運行的 Code，例如：PHP、Python、JavaScript 等等，有可能程式碼寫了一個無窮迴圈，或是什麼特殊的 Bug，導致資源衝高，也會導致網站停擺。&lt;/p>
 &lt;br>
 &lt;h4>網站被駭客攻擊&lt;span class="absolute -mt-20" id="網站被駭客攻擊">&lt;/span>
 &lt;a href="#%e7%b6%b2%e7%ab%99%e8%a2%ab%e9%a7%ad%e5%ae%a2%e6%94%bb%e6%93%8a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>當然網站會依照使用需求，開放給不同的使用者，如果是一般開在公網上的網站，就有可能會被駭客攻擊，例如：DDos 攻擊、SQL Injection 等等，這些攻擊都有可能導致網站停擺，還有可能導致資料外洩。&lt;/p>
 &lt;br>
-&lt;h4>非法網站內容(?&lt;span class="absolute -mt-20" id="非法網站內容">&lt;/span>
-&lt;a href="#%e9%9d%9e%e6%b3%95%e7%b6%b2%e7%ab%99%e5%85%a7%e5%ae%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這邊的非法網站內容，是指網站內容違反了法律規定，例如：色情、賭博、毒品等等，這些內容都有可能導致網站被封鎖，或是被檢舉，進而導致網站停擺。&lt;/p>
+&lt;h4>網站被判定成非法網站&lt;span class="absolute -mt-20" id="網站被判定成非法網站">&lt;/span>
+&lt;a href="#%e7%b6%b2%e7%ab%99%e8%a2%ab%e5%88%a4%e5%ae%9a%e6%88%90%e9%9d%9e%e6%b3%95%e7%b6%b2%e7%ab%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這邊的非法網站，是指網站內容違反了法律規定，例如：色情、賭博、毒品等等，這些內容都有可能導致網站被封鎖，或是被檢舉，進而導致網站停擺。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/20220830003861.jpg"
 alt="網站解析被擋 圖片來源" width="450">&lt;figcaption>
@@ -508,48 +511,45 @@ alt="網站解析被擋 圖片來源" width="450">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>網站恢復的方法&lt;span class="absolute -mt-20" id="網站恢復的方法">&lt;/span>
-&lt;a href="#%e7%b6%b2%e7%ab%99%e6%81%a2%e5%be%a9%e7%9a%84%e6%96%b9%e6%b3%95" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;h3>網站恢復(避免)的方法&lt;span class="absolute -mt-20" id="網站恢復避免的方法">&lt;/span>
+&lt;a href="#%e7%b6%b2%e7%ab%99%e6%81%a2%e5%be%a9%e9%81%bf%e5%85%8d%e7%9a%84%e6%96%b9%e6%b3%95" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>伺服器供應商故障&lt;/li>
 &lt;/ol>
+&lt;p>雲端供應商故障的發生機率在這幾個裡面來說，算是最少的，因為雲端供應商有很多的備援機制，當然為了避免意外，在有能力之餘，也可以考慮多個雲端供應商來當作備援，這樣就可以避免單一供應商故障。&lt;/p>
 &lt;p>我們以雲端的 GCP 來舉例，如果 GCP 的服務有問題，可以到 &lt;a href="https://status.cloud.google.com/index.html" target="_blank" rel="noopener">Google Cloud Status Dashboard&lt;/a> 來查看目前服務的狀況。&lt;/p>
-&lt;p>當然，雲端供應商故障在這上面幾個原因來說，算是最少的，因為雲端供應商有很多的備援機制，當然為了避免意外，在有能力之餘，也可以考慮多個雲端供應商來當作異地備援(DR)，這樣就可以避免單一供應商故障。&lt;/p>
 &lt;p>分享一下最近發生的案例：&lt;a href="https://status.cloud.google.com/incidents/xVSEV3kVaJBmS7SZbnre" target="_blank" rel="noopener">https://status.cloud.google.com/incidents/xVSEV3kVaJBmS7SZbnre&lt;/a>&lt;/p>
-&lt;p>當然 GCP 也有提供 SLA，當服務有問題時，可以向 GCP 提出申請，來獲得賠償。
-&lt;a href="https://cloud.google.com/terms/sla" target="_blank" rel="noopener">Google Cloud Platform Service Level Agreements&lt;/a>&lt;/p>
+&lt;p>另外，GCP 也有提供 SLA，當服務有問題並超出一開始 Goolge 所承諾的服務水準時，可以向 GCP 提出申請，來獲得賠償。&lt;/p>
+&lt;p>&lt;a href="https://cloud.google.com/terms/sla" target="_blank" rel="noopener">Google Cloud Platform Service Level Agreements&lt;/a>&lt;/p>
 &lt;br>
 &lt;ol start="2">
 &lt;li>網站伺服器故障&lt;/li>
 &lt;/ol>
-&lt;p>這邊會出現錯誤的原因有很多，例如：硬體故障、軟體錯誤、網路問題等等，這邊我們可以透過監控系統來提早發現問題，並且提早解決。也建議多做備份，當網站出現問題時，可以快速的恢復。平常也要做災難復原計畫 (DR)。&lt;/p>
+&lt;p>會出現錯誤的原因有很多，例如：硬體故障、軟體錯誤、網路問題等等，這邊我們可以透過對服務系統進行不同的監控來提早發現問題，並且提早解決。當然也建議多做備份，當網站出現問題時，可以快速的恢復。平常也要演練災難復原計畫。&lt;/p>
 &lt;br>
 &lt;ol start="3">
 &lt;li>網站程式碼錯誤&lt;/li>
 &lt;/ol>
-&lt;p>程式碼的錯誤，建議要再上線前多做測試，例如：單元測試、整合測試、壓力測試等等，也要先做好程式碼的規範，例如：程式碼的風格、程式碼的註解等等，避免出現問題。&lt;/p>
+&lt;p>程式碼的錯誤，要再上線前多做測試，例如：單元測試、整合測試、壓力測試等等，也要先做好程式碼的規範，例如：程式碼的風格、程式碼的註解等等，避免出現一些不必要的問題。&lt;/p>
 &lt;br>
 &lt;ol start="4">
 &lt;li>網站被駭客攻擊&lt;/li>
 &lt;/ol>
-&lt;p>網路安全是很重要的，所以從入口的防火牆設計、黑白名單，再者到程式碼的安全性，例如：SQL Injection、XSS、CSRF 等等，都要做好防護，並且要定期的更新程式碼套件，才可以避免被駭客攻擊。&lt;/p>
+&lt;p>網路安全是很重要的，所以從入口的防火牆設計、黑白名單，再者到程式碼的安全性，例如：SQL Injection、XSS、CSRF 等等，都要做好防護，並且要定期的去更新程式碼裡面使用的套件，才可以避免被駭客攻擊。&lt;/p>
+&lt;p>另外在雲端的使用上有一點要特別注意，就是權限的設定劃分要明確，確保最小權限原則，避免帳號金鑰外流導致駭客取得權限。&lt;/p>
 &lt;br>
 &lt;ol start="5">
-&lt;li>非法網站內容&lt;/li>
+&lt;li>網站被判定成非法網站&lt;/li>
 &lt;/ol>
-&lt;p>那這邊的非法網站內容，當然是希望大家不要去架設相關的網站 (◕ܫ◕)，我們這邊討論的是，也不一定真的是架設非法的網站，才會被封鎖，我們來看一下這個新聞：&lt;a href="https://www.chinatimes.com/realtimenews/20220830003849-260405?chdtv" target="_blank" rel="noopener">Google 被刑事局認定「涉及詐騙」網傻眼！台灣大曝真相
+&lt;p>這邊當然不是討論去架設相關的網站，導致封鎖要怎麼辦 (◕ܫ◕)，我們這邊討論的是，不一定真的是架設非法的網站，才會被封鎖，我們來看一下這個新聞：&lt;a href="https://www.chinatimes.com/realtimenews/20220830003849-260405?chdtv" target="_blank" rel="noopener">Google 被刑事局認定「涉及詐騙」網傻眼！台灣大曝真相
 &lt;/a>&lt;/p>
-&lt;p>當時是使用台灣大哥大網路服務去瀏覽 Google 相關服務就會被封鎖，後來調查發現是因為當時台灣大哥大公司進行資安、防詐騙相關測試時連線出現問題。&lt;/p>
-&lt;p>這邊跟大家說一下為甚麼會有這個問題，是因為政府(刑事局)會去跟每一間 ISP 合作，當政府發現有網站是非法的，或是有詐騙的網站，政府會要求 ISP 封鎖這個網站，這樣就會導致使用者無法連線到這個網站。&lt;/p>
-&lt;p>這邊的封鎖是只你使用的 ISP 去瀏覽到被認為是非法的網站時，會被強制把這個網址的解析改到刑事局的頁面。&lt;/p>
-&lt;p>目前的解決辦法就是寫信去跟&lt;a href="https://www.cib.npa.gov.tw/ch/index" target="_blank" rel="noopener">刑事局&lt;/a>反應，或是先調整更換網址來讓服務能夠正常運作。&lt;/p>
+&lt;p>這邊建議使用的網址要是可辨識，不要使用一些奇怪的網址，才可以避免被誤判，以及如果使用雲端供應商提供的 IP 以前，也先可以先去掃描一下 IP 是否有被組織或是單位確認是非法 IP。如果真的被封鎖，可以向相關單位申訴，來恢復網站。&lt;/p>
 &lt;br>
 &lt;h2>網站維運日常&lt;span class="absolute -mt-20" id="網站維運日常">&lt;/span>
-&lt;a href="#%e7%b6%b2%e7%ab%99%e7%b6%ad%e9%81%8b%e6%97%a5%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>這邊我就以目前我在公司的經驗來跟大家分享一下，網站維運日常都會做哪些事情：
-(當然這也會取決公司的規模、以及公司的需求)&lt;/p>
+&lt;a href="#%e7%b6%b2%e7%ab%99%e7%b6%ad%e9%81%8b%e6%97%a5%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>這邊我就以目前我在公司的經驗來跟大家分享一下，網站維運日常都會做哪些事情：&lt;/p>
 &lt;p>主要分為以下幾件事情：&lt;/p>
 &lt;h3>監控&lt;span class="absolute -mt-20" id="監控">&lt;/span>
-&lt;a href="#%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們需要做各種的監控，例如：網站的流量、CPU 使用率、記憶體使用率等等，這些都是我們需要監控的項目。除此以外也需要監控 RD 使用的程式語言有對應的指標，例如：PHP 的 FPM 有對應的指標等等。&lt;/p>
-&lt;p>監控的目的是，讓被我們在網頁出現問題前，就可以透過告警提早知道可能潛在的問題，並且提早解決。避免被使用者發現問題，進而影響使用者的體驗。&lt;/p>
+&lt;a href="#%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們需要做各種的監控，例如：網站的流量、CPU 使用率、記憶體使用率等等，這些都是我們需要監控的項目。除此以外也需要監控 RD 使用的程式語言有對應的指標，例如：PHP 的 FPM 的進程等等指標。&lt;/p>
+&lt;p>監控的目的是，讓我們服務在出現問題前，就可以提早透過告警知道有可能潛在的問題，並且提早解決。避免被使用者發現問題，進而影響使用者的體驗。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/monitoring.png"
 alt="做各種的監控" width="1000">&lt;figcaption>
@@ -558,7 +558,7 @@ alt="做各種的監控" width="1000">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;h3>查 Log&lt;span class="absolute -mt-20" id="查-log">&lt;/span>
-&lt;a href="#%e6%9f%a5-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們每個服務都需要去紀錄 Log，不管是使用者的操作、還是程式的錯誤，都需要去紀錄下來，這樣當網站出現問題時，我們可以透過 Log 來查找問題，並且解決問題。&lt;/p>
+&lt;a href="#%e6%9f%a5-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們每個服務都需要去紀錄 Log，不管是使用者的操作、系統、還是程式的錯誤，都需要去紀錄下來，這樣當網站出現問題時，我們可以透過 Log 來查找問題，並且解決問題。&lt;/p>
 &lt;p>當然 Log 也不是一個簡單的議題，Log 數量很多，在不影響效能以及費用的情況下，要怎麼只存精簡且重要的 Log，也是一個需要思考的問題。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/log.png"
@@ -567,11 +567,26 @@ alt="查 Log" width="1000">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;br>
 &lt;h3>協助 RD 調整設定以及排查問題&lt;span class="absolute -mt-20" id="協助-rd-調整設定以及排查問題">&lt;/span>
-&lt;a href="#%e5%8d%94%e5%8a%a9-rd-%e8%aa%bf%e6%95%b4%e8%a8%ad%e5%ae%9a%e4%bb%a5%e5%8f%8a%e6%8e%92%e6%9f%a5%e5%95%8f%e9%a1%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
+&lt;a href="#%e5%8d%94%e5%8a%a9-rd-%e8%aa%bf%e6%95%b4%e8%a8%ad%e5%ae%9a%e4%bb%a5%e5%8f%8a%e6%8e%92%e6%9f%a5%e5%95%8f%e9%a1%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>由於雲端使用 K8s 微服務的架構，所以會有很多 K8s 上的設定，例如：服務入口的 Nginx 倒轉、timeout 設定的問題、IP 是來源哪一個服務等等，有些時候我們還需要配合 RD 來進行排查程式碼，才能真正解決問題。&lt;/p>
+&lt;p>所以要成為一個優秀的 SRE 也是需要具備一定的程式能力，才能夠更好的協助 RD 來解決問題。&lt;/p>
+&lt;p>不要變成 Site Restart Engineer 工程師 (雖然有時候真的 restart 就好了 ( ͡° ͜ʖ ͡°))&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/sre.jpg"
+alt="Site Restart Engineer XDDD" width="200">&lt;figcaption>
+&lt;p>Site Restart Engineer XDDD&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
 &lt;h3>開發能夠在維運上更方便的工具&lt;span class="absolute -mt-20" id="開發能夠在維運上更方便的工具">&lt;/span>
-&lt;a href="#%e9%96%8b%e7%99%bc%e8%83%bd%e5%a4%a0%e5%9c%a8%e7%b6%ad%e9%81%8b%e4%b8%8a%e6%9b%b4%e6%96%b9%e4%be%bf%e7%9a%84%e5%b7%a5%e5%85%b7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
+&lt;a href="#%e9%96%8b%e7%99%bc%e8%83%bd%e5%a4%a0%e5%9c%a8%e7%b6%ad%e9%81%8b%e4%b8%8a%e6%9b%b4%e6%96%b9%e4%be%bf%e7%9a%84%e5%b7%a5%e5%85%b7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>除了上面說的已經可以讓我們身心俱疲的幾件日常，我們也會開發一些讓我們維護上可以更方便的一些工具，盡量都變成自動化的方式，去減少我們的工作量。&lt;/p>
+&lt;p>例如：&lt;/p>
+&lt;ul>
+&lt;li>簡單的壓測網站 HTTP 狀態碼工具：&lt;a href="https://github.com/880831ian/check_url_http_code" target="_blank" rel="noopener">chece_url_http_code&lt;/a>&lt;/li>
+&lt;li>自動修復 elasticsearch 錯誤工具：&lt;a href="https://github.com/880831ian/auto_repair_es" target="_blank" rel="noopener">auto_repair_es&lt;/a>&lt;/li>
+&lt;li>計算哪時候可以下班的工具：&lt;a href="https://github.com/880831ian/can_get_off_work" target="_blank" rel="noopener">can_get_off_work&lt;/a> XD&lt;/li>
+&lt;/ul>
+&lt;br>
 &lt;h2>要走軟體工程師需要具備哪些技能？&lt;span class="absolute -mt-20" id="要走軟體工程師需要具備哪些技能">&lt;/span>
 &lt;a href="#%e8%a6%81%e8%b5%b0%e8%bb%9f%e9%ab%94%e5%b7%a5%e7%a8%8b%e5%b8%ab%e9%9c%80%e8%a6%81%e5%85%b7%e5%82%99%e5%93%aa%e4%ba%9b%e6%8a%80%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>下面是我準備的小 bonus，是出自我自己的經驗，以及我偷偷觀察我合作的 RD 夥伴們，得出的小小心得，當然這只是我自己的看法，不一定是對的，希望能夠幫助大家。&lt;/p>
 &lt;p>當然，想成為一個軟體工程師，你一定要會程式語言，例如 PHP、Python、JavaScript 等等，假如你對於未來的發展方向還不確定，或是不知道哪個程式語言是未來的趨勢，可以看看 stackoverflow 每年的調查報告，來了解目前最流行的程式語言是哪些：
@@ -598,4 +613,6 @@ alt="查 Log" width="1000">&lt;figcaption>
 &lt;p>給資料科學家的 Docker 指南：3 種活用 Docker 的方式（上）：&lt;a href="https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html" target="_blank" rel="noopener">https://leemeng.tw/3-ways-you-can-leverage-the-power-of-docker-in-data-science-part-1-learn-the-basic.html&lt;/a>&lt;/p>
 &lt;p>Docker 是什麼？Docker 基本觀念介紹與容器和虛擬機的比較：&lt;a href="https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/" target="_blank" rel="noopener">https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/&lt;/a>&lt;/p>
 &lt;p>CI/CD 是什麼？一篇認識 CI/CD 工具及優勢，將日常瑣事自動化：&lt;a href="https://www.wingwill.com.tw/zh-tw/%E9%83%A8%E8%90%BD%E6%A0%BC/%E9%9B%B2%E5%9C%B0%E6%B7%B7%E5%90%88%E6%87%89%E7%94%A8/cicd%E5%B7%A5%E5%85%B7/" target="_blank" rel="noopener">https://www.wingwill.com.tw/zh-tw/%E9%83%A8%E8%90%BD%E6%A0%BC/%E9%9B%B2%E5%9C%B0%E6%B7%B7%E5%90%88%E6%87%89%E7%94%A8/cicd%E5%B7%A5%E5%85%B7/&lt;/a>&lt;/p>
-&lt;p>[DevOps] CI/CD 介紹 - 基礎概念與導入準備：&lt;a href="https://enzochang.com/cicd-introduction/" target="_blank" rel="noopener">https://enzochang.com/cicd-introduction/&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>[DevOps] CI/CD 介紹 - 基礎概念與導入準備：&lt;a href="https://enzochang.com/cicd-introduction/" target="_blank" rel="noopener">https://enzochang.com/cicd-introduction/&lt;/a>&lt;/p>
+&lt;p>Kubernetes（K8s）是什麼？基礎介紹+3 大優點解析：&lt;a href="https://www.metaage.com.tw/news/technology/293" target="_blank" rel="noopener">https://www.metaage.com.tw/news/technology/293&lt;/a>&lt;/p>
+&lt;p>我之前寫過的所有文章：&lt;a href="https://pin-yi.me/blog" target="_blank" rel="noopener">https://pin-yi.me/blog&lt;/a>&lt;/p></description></item></channel></rss>
