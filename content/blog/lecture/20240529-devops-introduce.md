@@ -11,6 +11,7 @@ type: docs
 - 地點：朝陽科技大學 & Google Meet [線上連結](https://meet.google.com/aiq-qcoy-wid)
 - Google Developer Student Clubs 相關連結：[https://gdsc.community.dev/events/details/developer-student-clubs-chaoyang-university-of-technology-taichung-taiwan-presents-wang-zhan-fang-hu-yu-devopsji-shu-jiang-zuo-ft-zhuang-pin-yi-gong-cheng-shi/](https://gdsc.community.dev/events/details/developer-student-clubs-chaoyang-university-of-technology-taichung-taiwan-presents-wang-zhan-fang-hu-yu-devopsji-shu-jiang-zuo-ft-zhuang-pin-yi-gong-cheng-shi/)
 - 簡報：[https://docs.google.com/presentation/d/10yH_zQikWeYz5pyv4st6ICMs6F2F9F_Vks1ngDaNROY/edit?usp=sharing](https://docs.google.com/presentation/d/10yH_zQikWeYz5pyv4st6ICMs6F2F9F_Vks1ngDaNROY/edit?usp=sharing)
+- 講座錄影：[https://drive.google.com/file/d/1-TRJ3mAYehmPSr8Sg4p09dA7t4mor4CY/view?usp=drive_link](https://drive.google.com/file/d/1-TRJ3mAYehmPSr8Sg4p09dA7t4mor4CY/view?usp=drive_link)
 
 {{< /callout >}}
 
