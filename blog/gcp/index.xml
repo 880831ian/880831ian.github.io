@@ -1,4 +1,347 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Google Cloud Platform</title><link>https://pin-yi.me/blog/gcp/</link><description>Recent content in Google Cloud Platform on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/gcp/index.xml" rel="self" type="application/rss+xml"/><item><title>如何過濾 GCP LOG，減少 Cloud Logging API 的花費</title><link>https://pin-yi.me/blog/gcp/gcp-log-reduce-cloud-logging-api/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-log-reduce-cloud-logging-api/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Google Cloud Platform</title><link>https://pin-yi.me/blog/gcp/</link><description>Recent content in Google Cloud Platform on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/gcp/index.xml" rel="self" type="application/rss+xml"/><item><title>GCP Memorystore HA 高可用性 failover 測試</title><link>https://pin-yi.me/blog/gcp/gcp-memorystore-failover/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-memorystore-failover/</guid><description>
+&lt;p>此文章主要針對 GCP Memorystore failover 來做測試，測試 Memorystore 高可用性 (HA) 在標準 Standard Tier failover 故障轉移需要多久，以及不同 replica 條件下轉移是否會有差異等等。&lt;/p>
+&lt;br>
+&lt;h2>文件說明&lt;span class="absolute -mt-20" id="文件說明">&lt;/span>
+&lt;a href="#%e6%96%87%e4%bb%b6%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們可以先閱讀 &lt;a href="https://cloud.google.com/memorystore/docs/redis/faq" target="_blank" rel="noopener">Google Memorystore for Redis FAQ&lt;/a> 文章，可以得知 Standard Tier 在 failover 轉移，大約會花 30 秒左右。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/1.png"
+alt="Google Memorystore for Redis FAQ" width="400">&lt;figcaption>
+&lt;p>Google Memorystore for Redis FAQ&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們也可以從 &lt;a href="https://cloud.google.com/memorystore/docs/redis/high-availability-for-memorystore-for-redis#when_a_failover_is_triggered" target="_blank" rel="noopener">High availability for Memorystore for Redis&lt;/a> 文章中知道，當 Primary 資料庫發生故障時，就會發生故障轉移。在轉移期間，Primary Endpoint 和 Read Endpoint 會自動重新導向新的 Primary 資料庫 和 Replica。&lt;b>這時候 Primary Endpoint 和 Read Endpoint 連線都會被刪除&lt;/b>。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/2.png"
+alt="when a failover is triggered" width="700">&lt;figcaption>
+&lt;p>when a failover is triggered&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>因次會導致有幾秒鐘連不到 Redis。重新連接時，將使用原本的 IP 位址即可自動重新定向到新的服務上。故障轉移後，不需要調整連線設定。&lt;/p>
+&lt;br>
+&lt;p>接下來我們來實際測試看看，我們分成兩個測試組，分別為：1m1s、1m2s 的方式，來看看故障轉移時，需要花多久，還有不同 Replica 條件下會不會有差異。&lt;/p>
+&lt;h2>實作測試 (1m1s)&lt;span class="absolute -mt-20" id="實作測試-1m1s">&lt;/span>
+&lt;a href="#%e5%af%a6%e4%bd%9c%e6%b8%ac%e8%a9%a6-1m1s" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以只用之前 &lt;a href="../../terraform/" >IaC&lt;/a> 文章來建立，或是用 UI 來建立 Memorystore，這邊用 IaC 來示範：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-terragrunt.hcl" data-lang="terragrunt.hcl">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">terraform&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> source &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;${get_path_to_repo_root()}/modules/memorystore&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">include&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> path &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">find_in_parent_folders&lt;/span>()
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>inputs &lt;span style="color:#f92672">=&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;ian-1m1s&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> memory_size_gb &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">5&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> region &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;asia-east1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> network &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;bbin-XXX&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> replica_count &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> redis_version &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;REDIS_6_X&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> redis_configs &lt;span style="color:#f92672">=&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;#34;maxmemory-policy&amp;#34; &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;allkeys-lru&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這邊 memorystore module 預設是 Standard Tier，另外小提醒，如果要使用 Replica memory_size_gb 最小必須是 5G。&lt;/p>
+&lt;br>
+&lt;h3>設定監控&lt;span class="absolute -mt-20" id="設定監控">&lt;/span>
+&lt;a href="#%e8%a8%ad%e5%ae%9a%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>建立完成後，我們也先把監控給拉出來，設定可以參考 &lt;a href="https://cloud.google.com/memorystore/docs/redis/about-manual-failover#stackdriver_verification" target="_blank" rel="noopener">About manual failover&lt;/a>，主要是選擇 &lt;b>Cloud Memorystore Redis &amp;gt; replication &amp;gt; Node role&lt;/b>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/3.png"
+alt="監控圖表" width="850">&lt;figcaption>
+&lt;p>監控圖表&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到 node-0 跟 node-1，數字 1 代表 Primary (node-0)、數字 0 代表 Replica (node-1)&lt;/p>
+&lt;br>
+&lt;h3>查看 describe&lt;span class="absolute -mt-20" id="查看-describe">&lt;/span>
+&lt;a href="#%e6%9f%a5%e7%9c%8b-describe" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們也可以下指令查看：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>gcloud redis instances describe ian-1m1s --region&lt;span style="color:#f92672">=&lt;/span>asia-east1 --project&lt;span style="color:#f92672">={&lt;/span>project_id&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/4.png"
+alt="describe 畫面" width="650">&lt;figcaption>
+&lt;p>describe 畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到 &lt;b>currentLocationId&lt;/b> 代表現在 Primary (node-0) asia-east1-a，&lt;b>locationId&lt;/b> 代表最初配置 Primary 區域，&lt;b>alternativeLocationId&lt;/b> 則是最初配置 Replica 的區域，因此我們也可以在故障轉移後，來查看區域是否變化。詳細可以參考：&lt;a href="https://cloud.google.com/memorystore/docs/redis/about-manual-failover#gcloud_verification" target="_blank" rel="noopener">gcloud verification&lt;/a>&lt;/p>
+&lt;br>
+&lt;p>接著我們可以參考 &lt;a href="https://cloud.google.com/memorystore/docs/redis/initiate-manual-failover" target="_blank" rel="noopener">Initiate a manual failover&lt;/a> 文章，手動來觸發 failover，這邊提醒一下 手動 failover 有分兩種資料保護模式：limited-data-loss、force-data-loss，詳細請看 &lt;a href="https://cloud.google.com/memorystore/docs/redis/initiate-manual-failover#optional_data_protection_mode" target="_blank" rel="noopener">Optional data protection mode&lt;/a>，這邊測試就不討論兩種保護模式，都使用預設的 limited-data-loss 來測試。&lt;/p>
+&lt;br>
+&lt;h3>寫 shell 測試 redis 連線&lt;span class="absolute -mt-20" id="寫-shell-測試-redis-連線">&lt;/span>
+&lt;a href="#%e5%af%ab-shell-%e6%b8%ac%e8%a9%a6-redis-%e9%80%a3%e7%b7%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>另外，我們在寫一個 shell 到 GKE 裡面 (用同 VPC 打) 打 Memorystore Redis 的 Primary Endpoint 以及 Read Endpoint，看看當 failover 是不是會有連不上的問題 ～&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Pod&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">redis-test&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">namespace&lt;/span>: &lt;span style="color:#ae81ff">default&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">initContainers&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">copy-scripts&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">busybox&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;sh&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;-c&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;cp /config/redis.sh /scripts/ &amp;amp;&amp;amp; chmod +x /scripts/redis.sh&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumeMounts&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">config-volume&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/config&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">scripts&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/scripts&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">containers&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">redis-cli&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis:alpine&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;sh&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;-c&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;while true; do /scripts/redis.sh; sleep 1; done&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">env&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">READ_PRIMARY_HOST&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">value&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;172.18.0.69&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">READ_REPLICA_HOST&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">value&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;172.18.0.68&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">REDIS_PASSWORD&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">value&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;XXXX&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumeMounts&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">scripts&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/scripts&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">workingDir&lt;/span>: &lt;span style="color:#ae81ff">/scripts&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">config-volume&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">configMap&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">redis-scripts&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">scripts&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">emptyDir&lt;/span>: {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">ConfigMap&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">redis-scripts&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">namespace&lt;/span>: &lt;span style="color:#ae81ff">default&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">data&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">redis.sh&lt;/span>: |&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> #!/bin/sh
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> ## 顏色設定
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> GREEN=&amp;#34;\033[1;32m&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> RED=&amp;#34;\033[1;31m&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> NC=&amp;#34;\033[0m&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> READ_PRIMARY_HOST=${READ_PRIMARY_HOST}
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> READ_REPLICA_HOST=${READ_REPLICA_HOST}
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> READ_REPLICA_PORT=6379
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> REDIS_PASSWORD=${REDIS_PASSWORD}
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> while true; do
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> TIMESTAMP=$(TZ=&amp;#34;Asia/Taipei&amp;#34; date +&amp;#34;%Y-%m-%d %H:%M:%S&amp;#34;)
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> PRIMARY_OUTPUT=$(timeout 1 redis-cli -h $READ_PRIMARY_HOST -p $READ_REPLICA_PORT -a $REDIS_PASSWORD --no-auth-warning PING) 1&amp;gt;/dev/null
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> if [ $? -eq 0 ]; then
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> echo -e &amp;#34;[$TIMESTAMP] PRIMARY PING ${GREEN}SUCCESS${NC}：&amp;#34; &amp;#34;$PRIMARY_OUTPUT&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> else
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> echo -e &amp;#34;[$TIMESTAMP] PRIMARY PING ${RED}FAILED${NC}&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> fi
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> REPLICA_OUTPUT=$(timeout 1 redis-cli -h $READ_REPLICA_HOST -p $READ_REPLICA_PORT -a $REDIS_PASSWORD --no-auth-warning PING) 1&amp;gt;/dev/null
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> if [ $? -eq 0 ]; then
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> echo -e &amp;#34;[$TIMESTAMP] REPLICA PING ${GREEN}SUCCESS${NC}：&amp;#34; &amp;#34;$REPLICA_OUTPUT&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> else
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> echo -e &amp;#34;[$TIMESTAMP] REPLICA PING ${RED}FAILED${NC}&amp;#34;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> fi
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> sleep 1
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> done&lt;/span> &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>開始手動觸發 failover&lt;span class="absolute -mt-20" id="開始手動觸發-failover">&lt;/span>
+&lt;a href="#%e9%96%8b%e5%a7%8b%e6%89%8b%e5%8b%95%e8%a7%b8%e7%99%bc-failover" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們準備好監控以及也先看好 describe 後，就可以下指令來手動觸發 failover：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>gcloud redis instances failover ian-1m1s --data-protection-mode&lt;span style="color:#f92672">=&lt;/span>limited-data-loss --region&lt;span style="color:#f92672">=&lt;/span>asia-east1 --project&lt;span style="color:#f92672">={&lt;/span>project_id&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到目前 ian-1m1s 就開始 Failing over 了～&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/5.png"
+alt="memorystore UI 畫面" width="350">&lt;figcaption>
+&lt;p>memorystore UI 畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>後續觀察&lt;span class="absolute -mt-20" id="後續觀察">&lt;/span>
+&lt;a href="#%e5%be%8c%e7%ba%8c%e8%a7%80%e5%af%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>查看監控&lt;span class="absolute -mt-20" id="查看監控">&lt;/span>
+&lt;a href="#%e6%9f%a5%e7%9c%8b%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>首先我們先看監控部分，可以看到原本的 node-1 是 Primary 後來掉下來的同時，由 node-2 變成 Primary 最後完成故障轉移。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/6.png"
+alt="監控畫面" width="500">&lt;figcaption>
+&lt;p>監控畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>再來看 describe 的部分，可以發現原本的 &lt;b>currentLocationId&lt;/b> 從 Primary (node-0) asia-east1-a 變成(node-1) asia-east1-b，完成故障轉移，因此更換區域。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/7.png"
+alt="describe 畫面" width="650">&lt;figcaption>
+&lt;p>describe 畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>查看腳本&lt;span class="absolute -mt-20" id="查看腳本">&lt;/span>
+&lt;a href="#%e6%9f%a5%e7%9c%8b%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>最後，查看一下腳本的執行紀錄可以發現：在 18:12:58， 出現第一筆 Primary PING 不到的錯誤，到 18:13:18 才恢復，代表故障轉移時間約 20 左右 (最後面會測試 5 次來取平均)，其流程是 Primary 會先連不到，接著變成 Primary 跟 Replica 都連不到，最後剩下 Replica，到都正常。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/8.png"
+alt="shell 畫面" width="500">&lt;figcaption>
+&lt;p>shell 畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>實作測試 (1m2s)&lt;span class="absolute -mt-20" id="實作測試-1m2s">&lt;/span>
+&lt;a href="#%e5%af%a6%e4%bd%9c%e6%b8%ac%e8%a9%a6-1m2s" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>由於設定都差不多，所以上述 1m1s 設定這邊就不重複說明，記得把 IaC 的 replica_count 改成 2，以及 shell 的 IP 跟 Password 要記得換！&lt;/p>
+&lt;p>直接看監控部分：可以看到現在 node-2 是 1，代表 node-2 是 Primary，其他 node-1、node-0 都是 Replica。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/9.png"
+alt="監控畫面" width="650">&lt;figcaption>
+&lt;p>監控畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接著看 describe：&lt;b>currentLocationId&lt;/b> 是 asia-east1-c，也就是 node-2 (Primary)。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/10.png"
+alt="describe 畫面" width="650">&lt;figcaption>
+&lt;p>describe 畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>一樣下指令來跑 shell，並觀察監控、describe 來有 shell：
+變成 node-0 變成 Primary，node-2 變成 Replica，node-1 一樣是 Replica。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/11.png"
+alt="監控畫面" width="600">&lt;figcaption>
+&lt;p>監控畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>&lt;b>currentLocationId&lt;/b> 變成是 asia-east1-a，Primary 從 node-2 變成 node-0。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/12.png"
+alt="describe 畫面" width="650">&lt;figcaption>
+&lt;p>describe 畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>觀察 shell 發現，有出現 FAILED 都是 Primary，Replica 都正常。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/13.png"
+alt="shell 畫面" width="500">&lt;figcaption>
+&lt;p>shell 畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>整理故障轉移時間&lt;span class="absolute -mt-20" id="整理故障轉移時間">&lt;/span>
+&lt;a href="#%e6%95%b4%e7%90%86%e6%95%85%e9%9a%9c%e8%bd%89%e7%a7%bb%e6%99%82%e9%96%93" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">測測次數&lt;/th>
+&lt;th style="text-align:center">1m1s (秒)&lt;/th>
+&lt;th style="text-align:center">1m2s (秒)&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">#1&lt;/td>
+&lt;td style="text-align:center">16&lt;/td>
+&lt;td style="text-align:center">13&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">#2&lt;/td>
+&lt;td style="text-align:center">19&lt;/td>
+&lt;td style="text-align:center">10&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">#3&lt;/td>
+&lt;td style="text-align:center">22&lt;/td>
+&lt;td style="text-align:center">6&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">#4&lt;/td>
+&lt;td style="text-align:center">20&lt;/td>
+&lt;td style="text-align:center">10&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">#5&lt;/td>
+&lt;td style="text-align:center">18&lt;/td>
+&lt;td style="text-align:center">9&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;p>可以發現，多一個 Replica，在故障轉移的時間可以更快速。&lt;/p>
+&lt;br>
+&lt;h2>最佳實踐&lt;span class="absolute -mt-20" id="最佳實踐">&lt;/span>
+&lt;a href="#%e6%9c%80%e4%bd%b3%e5%af%a6%e8%b8%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>所以我們知道，每當發生 Failover 時，一定會出現斷線的問題，官方在 Memorystore for Redis 的 &lt;a href="https://cloud.google.com/memorystore/docs/redis/general-best-practices" target="_blank" rel="noopener">General best practices&lt;/a> 中有提到&lt;a href="https://cloud.google.com/memorystore/docs/redis/general-best-practices#operations_and_scenarios_that_require_a_connection_retry" target="_blank" rel="noopener">需要重新連線的操作和場景&lt;/a>，以下都會導致與 Redis instance 網路連線中斷：&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>&lt;a href="https://cloud.google.com/memorystore/docs/redis/version-upgrade-behavior" target="_blank" rel="noopener">Version upgrade&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://cloud.google.com/memorystore/docs/redis/scaling-instances" target="_blank" rel="noopener">Scaling up/down&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://cloud.google.com/memorystore/docs/redis/import-export-overview" target="_blank" rel="noopener">Importing&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://cloud.google.com/memorystore/docs/redis/maintenance-policy" target="_blank" rel="noopener">Manual failover&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://cloud.google.com/memorystore/docs/redis/maintenance-policy" target="_blank" rel="noopener">System maintenance&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="https://cloud.google.com/memorystore/docs/redis/in-transit-encryption#certificate_authority_rotation" target="_blank" rel="noopener">Certificate Authority rotation&lt;/a> for Redis instances that have &lt;a href="https://cloud.google.com/memorystore/docs/redis/in-transit-encryption" target="_blank" rel="noopener">in-transit encryption&lt;/a> enabled&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Emergency failover&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;p>所以我們需要再設計應用程式時，考量到這一點，可以參考 &lt;a href="https://cloud.google.com/memorystore/docs/redis/exponential-backoff" target="_blank" rel="noopener">Exponential backoff&lt;/a> ，要加上重試邏輯，讓應用程式自動重新連線並持續正常運作。&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Memorystore for Redis FAQ：&lt;a href="https://cloud.google.com/memorystore/docs/redis/faq" target="_blank" rel="noopener">https://cloud.google.com/memorystore/docs/redis/faq&lt;/a>&lt;/p>
+&lt;p>High availability for Memorystore for Redis：&lt;a href="https://cloud.google.com/memorystore/docs/redis/high-availability-for-memorystore-for-redis#when_a_failover_is_triggered" target="_blank" rel="noopener">https://cloud.google.com/memorystore/docs/redis/high-availability-for-memorystore-for-redis#when_a_failover_is_triggered&lt;/a>&lt;/p>
+&lt;p>About manual failover：&lt;a href="https://cloud.google.com/memorystore/docs/redis/about-manual-failover#stackdriver_verification" target="_blank" rel="noopener">https://cloud.google.com/memorystore/docs/redis/about-manual-failover#stackdriver_verification&lt;/a>&lt;/p>
+&lt;p>Initiate a manual failover：&lt;a href="https://cloud.google.com/memorystore/docs/redis/initiate-manual-failover" target="_blank" rel="noopener">https://cloud.google.com/memorystore/docs/redis/initiate-manual-failover&lt;/a>&lt;/p>
+&lt;p>General best practices：&lt;a href="https://cloud.google.com/memorystore/docs/redis/general-best-practices" target="_blank" rel="noopener">https://cloud.google.com/memorystore/docs/redis/general-best-practices&lt;/a>&lt;/p>
+&lt;p>Exponential backoff：&lt;a href="https://cloud.google.com/memorystore/docs/redis/exponential-backoff" target="_blank" rel="noopener">https://cloud.google.com/memorystore/docs/redis/exponential-backoff&lt;/a>&lt;/p></description></item><item><title>如何過濾 GCP LOG，減少 Cloud Logging API 的花費</title><link>https://pin-yi.me/blog/gcp/gcp-log-reduce-cloud-logging-api/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-log-reduce-cloud-logging-api/</guid><description>
 &lt;p>當我們使用 GCP 的 Cloud Logging 服務來查看 Log 時，有時候會有一些我們不需要顯示出來的，或是從來都不會去查詢的 Log，再者是 GCP 本身的錯誤導致大量噴錯的 Log ，這些 Log 都會導致 Cloud Logging 的費用增加。&lt;/p>
 &lt;h2>介紹 Cloud Logging&lt;span class="absolute -mt-20" id="介紹-cloud-logging">&lt;/span>
 &lt;a href="#%e4%bb%8b%e7%b4%b9-cloud-logging" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先來簡單說一下 Cloud Logging 這項服務的基本架構，請看圖：&lt;/p>
