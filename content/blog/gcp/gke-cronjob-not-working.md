@@ -1,7 +1,7 @@
 ---
 title: "Google Kubernetes Engine CronJob 會有短暫時間沒有執行 Job"
 type: docs
-weight: 4
+weight: 55
 ---
 
 前陣子公司建立在 Google Kubernetes Engine 叢集上的 CronJob 服務會有短暫時間沒有執行 Job。先前情提要一下，此 CronJob 的設定是每分鐘都會執行 (圖一)，所以理當來說 Log 應該要可以看到每分鐘都有此 CronJob 的紀錄，但有時候會發生 CronJob 短暫時間都沒有執行的狀況，找了一陣子都沒有找到原因，最後開支援單請 Google 那邊協助查看，終於找到原因拉 😍。那就跟我一起看一下發生的過程，以及 Google 幫我們找到的原因，以及要如何解決等等～

@@ -11,6 +11,7 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 
 {{< cards >}}
 
+{{< card link="blog/gcp/gcp-memorystore-failover" title="GCP Memorystore HA 高可用性 failover 測試" image="/gcp/gcp-memorystore-failover/cover.webp">}}
 {{< card link="blog/gcp/gcp-log-reduce-cloud-logging-api" title="如何過濾 GCP LOG，減少 Cloud Logging API 的花費" image="/gcp/gcp-log-reduce-cloud-logging-api/cover.webp">}}
 {{< card link="blog/gcp/gke-cronjob-not-working" title="Google Kubernetes Engine CronJob 會有短暫時間沒有執行 Job" image="/gcp/gke-cronjob-not-working/cover.webp">}}
 {{< card link="blog/gcp/iam" title="Google Cloud Platform (GCP) - IAM 與管理" image="/gcp/iam/cover.webp" >}}
