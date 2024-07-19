@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes (K8s) 自定義 PHP HorizontalPodAutoscaler (HPA) 指標"
 type: docs
-weight: 4
+weight: 79
 ---
 
 此篇要介紹 HorizontalPodAutoscaler 的自定義指標，K8s 內建的指標 (metrics) 只支援 CPU 以及 Memory，如果我們今天想要使用其他的指標來讓 HPA 擴縮呢！？

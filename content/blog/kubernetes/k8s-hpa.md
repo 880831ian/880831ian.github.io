@@ -1,7 +1,7 @@
 ---
 title: "Kubernetes (K8s) HorizontalPodAutoscaler (HPA) 原理與實作"
 type: docs
-weight: 3
+weight: 80
 ---
 
 此篇是要介紹 HorizontalPodAutoscaler (HPA) 的原理以及實作內容，那我們先來說明一下 HorizontalPodAutoscaler 是什麼吧！
@@ -31,7 +31,7 @@ Kubernetes 將水平 Pod 自動擴縮定義為一個間歇運行的控制迴路�
 <br>
 
 <br>
-	
+
 有關於其他 Kubernetes 觀念部分，可以先查看：
 
 - Kubernetes : [Kubernetes (K8s) 介紹 - 基本](https://pin-yi.me/k8s/)
