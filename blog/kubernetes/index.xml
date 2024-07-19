@@ -1,4 +1,146 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Kubernetes</title><link>https://pin-yi.me/blog/kubernetes/</link><description>Recent content in Kubernetes on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/kubernetes/index.xml" rel="self" type="application/rss+xml"/><item><title>正式環境上踩到 StatefulSet 的雷，拿到 P1 的教訓</title><link>https://pin-yi.me/blog/kubernetes/k8s-statefulset-podmanagementpolicy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-statefulset-podmanagementpolicy/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Kubernetes</title><link>https://pin-yi.me/blog/kubernetes/</link><description>Recent content in Kubernetes on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/kubernetes/index.xml" rel="self" type="application/rss+xml"/><item><title>Pod 出現 cURL error 6: Could not resolve host</title><link>https://pin-yi.me/blog/kubernetes/pod-curl-error-6-could-not-resolve-host/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/pod-curl-error-6-could-not-resolve-host/</guid><description>
+&lt;p>此篇主要是來記錄一下在正式環境服務出現 &lt;code>cURL error 6: Could not resolve host&lt;/code> 的問題，以及如何解決。&lt;/p>
+&lt;br>
+&lt;h2>問題發生&lt;span class="absolute -mt-20" id="問題發生">&lt;/span>
+&lt;a href="#%e5%95%8f%e9%a1%8c%e7%99%bc%e7%94%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當天 RD 在公窗反應說，API 程式去打其他單位或是 Google BigQuery 的 API 時，會出現 &lt;code>cURL error 6: Could not resolve host&lt;/code> 的錯誤，但這個錯誤是偶發性錯誤，且出現錯誤的 Pod 也不是固定，也會出現在不同的 node 上。&lt;/p>
+&lt;p>當下檢查服務是正常的，也沒有任何異常，因此我們馬上開了 Google Support Ticket 來詢問。&lt;/p>
+&lt;br>
+&lt;h2>解決辦法 &amp;amp; 後續規劃&lt;span class="absolute -mt-20" id="解決辦法--後續規劃">&lt;/span>
+&lt;a href="#%e8%a7%a3%e6%b1%ba%e8%be%a6%e6%b3%95--%e5%be%8c%e7%ba%8c%e8%a6%8f%e5%8a%83" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>自行測試&lt;span class="absolute -mt-20" id="自行測試">&lt;/span>
+&lt;a href="#%e8%87%aa%e8%a1%8c%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在等待 Google Support 回覆同時，也先在網路上搜尋出現 &lt;code>cURL error 6: Could not resolve host&lt;/code> 的相關錯誤，主要都是因為 DNS 導致，因此我們也先檢查了一下目前 DNS 的設定。&lt;/p>
+&lt;p>參考了 Google 的 kube-dns 文件後 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache#scaling_up_kube-dns" target="_blank" rel="noopener">Setting up NodeLocal DNSCache/Scaling up kube-dns&lt;/a>，我們嘗試調整 kube-dns-autoscaler configmap 的設定：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/pod-curl-error-6-could-not-resolve-host/1.png"
+alt="kube-dns-autoscaler configmap" width="800">&lt;figcaption>
+&lt;p>kube-dns-autoscaler configmap&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>並觀察一陣子後發現，出現 &lt;code>cURL error 6: Could not resolve host&lt;/code> 的錯誤 Log 已經沒有再出現，因此我們認為是 DNS 的問題，並回報給 Google Support。&lt;/p>
+&lt;br>
+&lt;p>Kube-dns 的 Pod 是由 kube-dns-autoscaler 的 configmap 來控制 Pod 數量，如圖：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/pod-curl-error-6-could-not-resolve-host/2.png"
+alt="kube-dns-autoscaler configmap" width="700">&lt;figcaption>
+&lt;p>kube-dns-autoscaler configmap&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>kube-dns-autoscaler configmap 設定&lt;span class="absolute -mt-20" id="kube-dns-autoscaler-configmap-設定">&lt;/span>
+&lt;a href="#kube-dns-autoscaler-configmap-%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們來說明一下這個設定內容是什麼 (下面會先以 GCP 的 kube-dns 官網文件來補充說明，而不是上面圖片)：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div class="filename">configmap kube-dns-autoscaler&lt;/div>&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>linear: &lt;span style="color:#e6db74">&amp;#39;{
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &amp;#34;coresPerReplica&amp;#34;: 256,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &amp;#34;includeUnschedulableNodes&amp;#34;: true,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &amp;#34;nodesPerReplica&amp;#34;: 16,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &amp;#34;min&amp;#34;: 1,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &amp;#34;max&amp;#34;: 5,
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> &amp;#34;preventSinglePointFailure&amp;#34;: true
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">}&amp;#39;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-8">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>coresPerReplica：多少個 cores 啟動一個 kube-dns pod (預設 256，也就是每 256 core 才會啟動一個 kube-dns pod)&lt;/li>
+&lt;li>nodesPerReplica：多少個 node 啟動一個 kube-dns pod (預設 16，也就是每 16 node 才會啟動一個 kube-dns pod)&lt;/li>
+&lt;li>min：最小 kube-dns pod 數量&lt;/li>
+&lt;li>max：最大 kube-dns pod 數量&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>GCP kube-dns 官網文件建議：&lt;/p>
+&lt;ol>
+&lt;li>要對 &lt;code>nodesPerReplica&lt;/code> 設定比較低的值，確保在叢集節點擴充時，kube-dns pod 數量也會跟著增加。&lt;/li>
+&lt;li>也強烈建議設定一個明確的 max 值，以確保 GKE control plane 不會因大量的 kube-dns pod 去使用 Kubernetes API 而過載。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;h4>kube-dns 計算方式&lt;span class="absolute -mt-20" id="kube-dns-計算方式">&lt;/span>
+&lt;a href="#kube-dns-%e8%a8%88%e7%ae%97%e6%96%b9%e5%bc%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>kube-dns 的 pod 數量計算方式如下：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>replicas &lt;span style="color:#f92672">=&lt;/span> max&lt;span style="color:#f92672">(&lt;/span> ceil&lt;span style="color:#f92672">(&lt;/span> cores × 1/coresPerReplica &lt;span style="color:#f92672">)&lt;/span> , ceil&lt;span style="color:#f92672">(&lt;/span> nodes × 1/nodesPerReplica &lt;span style="color:#f92672">)&lt;/span>, maxValue &lt;span style="color:#f92672">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>情境一：假設我現在有 16 個 node，core 數量會是 50，那麼 kube-dns pod 數量就會是：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>replicas &lt;span style="color:#f92672">=&lt;/span> max&lt;span style="color:#f92672">(&lt;/span> ceil&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">50&lt;/span> × 1/256&lt;span style="color:#f92672">)&lt;/span> , ceil&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">16&lt;/span> × 1/16&lt;span style="color:#f92672">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;gt; replicas &lt;span style="color:#f92672">=&lt;/span> max&lt;span style="color:#f92672">(&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span> , 1&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;gt; replicas &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>情境二：假設我現在有 32 個 node，core 數量會是 100，那麼 kube-dns pod 數量就會是：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>replicas &lt;span style="color:#f92672">=&lt;/span> max&lt;span style="color:#f92672">(&lt;/span> ceil&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">100&lt;/span> × 1/256&lt;span style="color:#f92672">)&lt;/span> , ceil&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">32&lt;/span> × 1/16&lt;span style="color:#f92672">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;gt; replicas &lt;span style="color:#f92672">=&lt;/span> max&lt;span style="color:#f92672">(&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span> , 2&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;gt; replicas &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>情境三：假設我現在有 96 個 node，core 數量會是 300，有多設定 max 是 5，那麼 kube-dns pod 數量就會是：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>replicas &lt;span style="color:#f92672">=&lt;/span> max&lt;span style="color:#f92672">(&lt;/span> ceil&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">300&lt;/span> × 1/256&lt;span style="color:#f92672">)&lt;/span> , ceil&lt;span style="color:#f92672">(&lt;/span>&lt;span style="color:#ae81ff">96&lt;/span> × 1/16&lt;span style="color:#f92672">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;gt; replicas &lt;span style="color:#f92672">=&lt;/span> max&lt;span style="color:#f92672">(&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span> , 6&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;gt; replicas &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">6&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>但是我們有設定 max 是 5，所以最後 kube-dns pod 數量就會是 5，不會超過 5。&lt;/p>
+&lt;br>
+&lt;p>為了確保叢集 DNS 可用性的水平，也建議幫 kube-dns 設定 mix 值。&lt;/p>
+&lt;p>從上面計算方法也可以知道，當叢集具有多個核心的節點時，coresPerReplica 會佔主導地位。當叢集使用核心數較少的節點數，nodesPerReplica 佔主導地位。通常應該會以 nodesPerReplica 來設定。&lt;/p>
+&lt;p>調整完 kube-dns-autoscaler 的 configmap 設定，不需要重啟服務，kube-dns 就會自動 scale up or scale down pod 數&lt;/p>
+&lt;br>
+&lt;p>最後等待 Google Support 回覆，並告知已經調整 kube-dns-autoscaler configmap 的設定，並觀察一陣子後，問題已經解決。&lt;/p>
+&lt;h3>Google Support 回覆&lt;span class="absolute -mt-20" id="google-support-回覆">&lt;/span>
+&lt;a href="#google-support-%e5%9b%9e%e8%a6%86" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Google Support 回覆：&lt;/p>
+&lt;p>簡單解釋一下為什麼 scale up kube-dns pods 數量會有幫助：&lt;/p>
+&lt;p>當 Pod 做 DNS 查詢時，因為你們有啟用 NodeLocal DNSCache，所以他會先找 cache，如果沒有 cache 就會回 kube-dns 查詢。&lt;/p>
+&lt;p>我們在表象上先觀察到 NodeLocal DNSCache latency 很高，而這有兩個可能，一個當然可能是自身問題，但更大的可能性是當 cache 要回源跟 kube-dns 查找時，kube-dns 已經沒辦法再承接更多 request，所以 NodeLocal DNSCache 會一直嘗試 retry，我們在指標上也看到 latency 拉高並持平在一個水位顯示出某個瓶頸。&lt;/p>
+&lt;p>在經過 kube-dns 增加 pod 操作之後，看起來後續 DNS 查詢可以順利被處理跟 cache，所以問題就大幅緩解。&lt;/p>
+&lt;br>
+&lt;h3>Google Support 建議&lt;span class="absolute -mt-20" id="google-support-建議">&lt;/span>
+&lt;a href="#google-support-%e5%bb%ba%e8%ad%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>架構優化：未來可以評估用 CloudDNS 取代 kube-dns，CloudDNS 為託管服務，可以自動 scale up 來處理效能問題。&lt;a href="https://medium.com/google-cloud/dns-on-gke-everything-you-need-to-know-b961303f9153" target="_blank" rel="noopener">參考文件&lt;/a>&lt;/li>
+&lt;li>監控：如果短期暫時無法替換 CloudDNS，建議可在 kube-dns 安裝 agent 做監控，當接近效能瓶頸時，可以提前 scale up kube-dns pod。&lt;a href="https://medium.com/@prageeshag/monitoring-kube-dns-pods-in-gke-83b76a0ef3d9" target="_blank" rel="noopener">非官方參考文件&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>後續規劃&lt;span class="absolute -mt-20" id="後續規劃">&lt;/span>
+&lt;a href="#%e5%be%8c%e7%ba%8c%e8%a6%8f%e5%8a%83" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>但由於我們公司最近也在考慮 multi-cloud 的方案，所以暫時不考慮用 GCP 雲供應商的 CloudDNS 取代 kube-dns，我們想研究看看另一套 coreDNS 是否能夠解決這個問題。&lt;/p>
+&lt;p>有興趣可以參考下一篇文章：&lt;a href="../kube-dns-vs-core-dns" >Kube DNS vs Core DNS&lt;/a>。&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>k8s dns 故障 Pod 无法解析主机名 Couldn‘t resolve host：&lt;a href="https://blog.csdn.net/hknaruto/article/details/109361342" target="_blank" rel="noopener">https://blog.csdn.net/hknaruto/article/details/109361342&lt;/a>&lt;/p>
+&lt;p>Setting up NodeLocal DNSCache/Scaling up kube-dns：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache#scaling_up_kube-dns" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache#scaling_up_kube-dns&lt;/a>&lt;/p>
+&lt;p>DNS on GKE: Everything you need to know：&lt;a href="https://medium.com/google-cloud/dns-on-gke-everything-you-need-to-know-b961303f9153" target="_blank" rel="noopener">https://medium.com/google-cloud/dns-on-gke-everything-you-need-to-know-b961303f9153&lt;/a>&lt;/p>
+&lt;p>Monitoring kube-dns pods in GKE：&lt;a href="https://medium.com/@prageeshag/monitoring-kube-dns-pods-in-gke-83b76a0ef3d9" target="_blank" rel="noopener">https://medium.com/@prageeshag/monitoring-kube-dns-pods-in-gke-83b76a0ef3d9&lt;/a>&lt;/p></description></item><item><title>正式環境上踩到 StatefulSet 的雷，拿到 P1 的教訓</title><link>https://pin-yi.me/blog/kubernetes/k8s-statefulset-podmanagementpolicy/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-statefulset-podmanagementpolicy/</guid><description>
 &lt;p>此文章要來記錄一下前陣子在公司的正式環境踩到 StatefulSet 的雷，事情是這樣的，我們有些服務，是使用 StatefulSet 來建置，至於為什麼不用 Deployment，這個說來話長 (也不是因為需要特定的 Pod 名稱、或是網路標記等等)，我們這邊先不討論，這個 StatefulSet 服務是 Nginx + PHP-FPM，為了避免流量進入到 processes 已經被用光的 Pod 中，我們在 StatefulSet 的 PHP Container 上有設定 readiness，readiness 的設定長得像以下：&lt;/p>
 &lt;br>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">readinessProbe&lt;/span>:
@@ -289,7 +431,307 @@ alt="Google Support 回覆" width="800">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Node 節點禁止調度（平滑維護）方式- cordon，drain，delete：&lt;a href="https://www.cnblogs.com/kevingrace/p/14412254.html" target="_blank" rel="noopener">https://www.cnblogs.com/kevingrace/p/14412254.html&lt;/a>&lt;/p></description></item><item><title>Kubernetes (K8s) HorizontalPodAutoscaler (HPA) 原理與實作</title><link>https://pin-yi.me/blog/kubernetes/k8s-hpa/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-hpa/</guid><description>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Node 節點禁止調度（平滑維護）方式- cordon，drain，delete：&lt;a href="https://www.cnblogs.com/kevingrace/p/14412254.html" target="_blank" rel="noopener">https://www.cnblogs.com/kevingrace/p/14412254.html&lt;/a>&lt;/p></description></item><item><title>Kubernetes (K8s) 自定義 PHP HorizontalPodAutoscaler (HPA) 指標</title><link>https://pin-yi.me/blog/kubernetes/gcp-k8s-hpa-php-custom-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/gcp-k8s-hpa-php-custom-metrics/</guid><description>
+&lt;p>此篇要介紹 HorizontalPodAutoscaler 的自定義指標，K8s 內建的指標 (metrics) 只支援 CPU 以及 Memory，如果我們今天想要使用其他的指標來讓 HPA 擴縮呢！？
+不知道什麼是 HorizontalPodAutoscaler 嗎？可以先查看：&lt;/p>
+&lt;ul>
+&lt;li>&lt;a href="https://blog.pin-yi.me/k8s-hpa/" target="_blank" rel="noopener">Kubernetes (K8s) HorizontalPodAutoscaler (HPA) 原理與實作&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>這時候我們就必須使用自定義指標，我們一樣來說說他的工作原理吧：HorizontalPodAutoscaler 是怎麼取得自定義指標，以及是跟誰拿到指標的呢？我們從下圖得知：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/1.png"
+alt="Kubernetes HPA : ExternalMetrics&amp;#43;Prometheus" width="400">&lt;figcaption>
+&lt;p>&lt;a href="https://blog.kloia.com/kubernetes-hpa-externalmetrics-prometheus-acb1d8a4ed50" target="_blank" rel="noopener">Kubernetes HPA : ExternalMetrics+Prometheus&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>HorizontalPodAutoscaler 會先訪問 K8s 的 API，並向 API 取得指標資料。這邊的 API 就是 &lt;code>custom.k8s.io/v1beta1&lt;/code>。&lt;/p>
+&lt;br>
+&lt;p>大致了解後，我們就來進入今天的重點，也就是透過自定義化 PHP 的指標來讓 HorizontalPodAutoscaler 進行擴縮，這次使用的平台是 Google Cloud Platform，前面介紹 GCP 服務的大家可以參考 &lt;a href="https://blog.pin-yi.me/gcp-introduce/" target="_blank" rel="noopener">Google Cloud Platform (GCP) 百科全書 - 介紹與開頭 [ EP.0 ]&lt;/a>，我們這邊就直接跳到程式碼與操作部分。&lt;/p>
+&lt;br>
+&lt;p>此文章程式碼也會同步到 Github ，需要的也可以去 clone 使用歐！ &lt;a href="https://github.com/880831ian/gcp-k8s-hpa-php-custom-metrics" target="_blank" rel="noopener">Github 程式碼連結&lt;/a> 😆&lt;/p>
+&lt;br>
+&lt;h2>實作&lt;span class="absolute -mt-20" id="實作">&lt;/span>
+&lt;a href="#%e5%af%a6%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>安裝自定義的 Adapter&lt;span class="absolute -mt-20" id="安裝自定義的-adapter">&lt;/span>
+&lt;a href="#%e5%ae%89%e8%a3%9d%e8%87%aa%e5%ae%9a%e7%be%a9%e7%9a%84-adapter" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們要先 Apply 自定義的 Adapter，這邊我們使用 Google 提供的 Stackdriver Adapter 來使用 (也可以直接使用 Github 程式碼中的 adapter_new_resource_model.yaml 檔案歐)：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>Deployment&lt;span class="absolute -mt-20" id="deployment">&lt;/span>
+&lt;a href="#deployment" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">apps/v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Deployment&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">replicas&lt;/span>: &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">matchLabels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">template&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">containers&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">php-fpm&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">php:fpm&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">workingDir&lt;/span>: &lt;span style="color:#ae81ff">/var/www/service&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">containerPort&lt;/span>: &lt;span style="color:#ae81ff">9000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">resources&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">requests&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">100m&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">memory&lt;/span>: &lt;span style="color:#ae81ff">1G&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">limits&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">100m&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">memory&lt;/span>: &lt;span style="color:#ae81ff">1G&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumeMounts&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">application&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/var/www/service/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">php-fpm-config&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/usr/local/etc/php-fpm.d/www.conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">subPath&lt;/span>: &lt;span style="color:#ae81ff">www.conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">nginx:alpine&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">workingDir&lt;/span>: &lt;span style="color:#ae81ff">/var/www/service&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">containerPort&lt;/span>: &lt;span style="color:#ae81ff">80&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumeMounts&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">application&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/var/www/service/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-config&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/etc/nginx/conf.d/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">phpfpm-exporter&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">hipages/php-fpm_exporter:latest&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">env&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">PHP_FPM_SCRAPE_URI&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">value&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;tcp://localhost:9000/status&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">PHP_FPM_FIX_PROCESS_COUNT&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">value&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;true&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">resources&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">requests&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">10m&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">limits&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">10m&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">prometheus-to-sd&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">gcr.io/google-containers/prometheus-to-sd:v0.9.0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">containerPort&lt;/span>: &lt;span style="color:#ae81ff">6060&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">protocol&lt;/span>: &lt;span style="color:#ae81ff">TCP&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">/monitor&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --&lt;span style="color:#ae81ff">stackdriver-prefix=custom.googleapis.com&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --&lt;span style="color:#ae81ff">monitored-resource-type-prefix=k8s_&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --&lt;span style="color:#ae81ff">source=:http://localhost:9253&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --&lt;span style="color:#ae81ff">pod-id=$(POD_NAME)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --&lt;span style="color:#ae81ff">namespace-id=$(POD_NAMESPACE)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">resources&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">requests&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">10m&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">limits&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">10m&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">env&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">POD_NAME&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">valueFrom&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fieldRef&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fieldPath&lt;/span>: &lt;span style="color:#ae81ff">metadata.name&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">POD_NAMESPACE&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">valueFrom&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fieldRef&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fieldPath&lt;/span>: &lt;span style="color:#ae81ff">metadata.namespace&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">application&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">emptyDir&lt;/span>: {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">php-fpm-config&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">configMap&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">php-fpm-conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-config&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">configMap&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-conf&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>我來簡單說明一下，這是一個 Deployment，我們在每一個 Pod 裡面都放 4 個 Container，分別是 &lt;code>php-fpm&lt;/code>、&lt;code>nginx&lt;/code>、&lt;code>phpfpm-exporter&lt;/code>、&lt;code>prometheus-to-sd&lt;/code>&lt;/p>
+&lt;p>php-fpm 就是我們要使用的 php，nginx 會提供 9000 Port 讓 phpfpm-exporter 去抓到目前的 Process 數值，最後丟給 prometheus-to-sd，讓他去通知我們剛剛所安裝的 Adapter，就可以透過 API 讓 HPA 知道！聽不太懂嗎？沒關係，幫大家畫了一張圖，請參考下方圖片：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/2.png"
+alt="架構圖" width="1200">&lt;figcaption>
+&lt;p>架構圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到 Deployment 裡面，我們使用 ConfigMap 來掛載 php 的 www.conf 以及 nginx 的設定檔，那我們接下來就寫一份 ConfigMap 吧！&lt;/p>
+&lt;br>
+&lt;h3>ConfigMap&lt;span class="absolute -mt-20" id="configmap">&lt;/span>
+&lt;a href="#configmap" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">ConfigMap&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">php-fpm-conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">data&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">www.conf&lt;/span>: |&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> [www]
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> user = 900
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> group = 900
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen = 9000
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen.owner = 900
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen.group = 900
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen.mode = 0660
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm = dynamic
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.max_children = 150
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.max_requests = 300
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.start_servers = 24
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.min_spare_servers = 24
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.max_spare_servers = 126
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.status_path = /status
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> ping.path = /ping
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> ping.response = OK
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> catch_workers_output = yes
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> request_terminate_timeout = 300
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> clear_env = no&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">ConfigMap&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">namespace&lt;/span>: &lt;span style="color:#ae81ff">ian&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">data&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">nginx.conf&lt;/span>: |&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> server {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen 80;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen [::]:80;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> server_name _;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> root /var/www/service/;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> index index.php;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> location / {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> try_files $uri $uri/ /index.php$is_args$args;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> location ~ ^/(status|ping)$ {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> fastcgi_pass 127.0.0.1:9000;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> fastcgi_index index.php;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> include fastcgi_params;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> }&lt;/span> &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這份 ConfigMap.yaml 檔案裡面分成 php-fpm-conf 來放 www.conf，以及 nginx-conf 來放 nginx.conf 檔案，這邊要注意的是 www.conf 記得要加上 &lt;code>pm.status_path = /status&lt;/code>，phpfpm-exporter 是透過這個頁面來獲得 Process 數量。&lt;/p>
+&lt;br>
+&lt;h3>HorizontalPodAutoscaler&lt;span class="absolute -mt-20" id="horizontalpodautoscaler">&lt;/span>
+&lt;a href="#horizontalpodautoscaler" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">autoscaling/v2beta2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">HorizontalPodAutoscaler&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">demo-hpa&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">scaleTargetRef&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">apps/v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Deployment&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">minReplicas&lt;/span>: &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">maxReplicas&lt;/span>: &lt;span style="color:#ae81ff">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metrics&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">Pods&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pods&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metric&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">phpfpm_active_processes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">target&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">averageValue&lt;/span>: &lt;span style="color:#ae81ff">50&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">AverageValue&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">Pods&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pods&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metric&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">phpfpm_idle_processes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">target&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">averageValue&lt;/span>: &lt;span style="color:#ae81ff">50&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">AverageValue&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">Pods&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pods&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metric&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">phpfpm_total_processes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">target&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">averageValue&lt;/span>: &lt;span style="color:#ae81ff">50&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">AverageValue&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">Pods&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pods&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metric&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">phpfpm_accepted_connections&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">target&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">averageValue&lt;/span>: &lt;span style="color:#ae81ff">50&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">AverageValue&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這份 HorizontalPodAutoscaler 我們使用的版本是 &lt;code>autoscaling/v2beta2&lt;/code>， v2beta1 跟 v2beta2 的設定檔語法有些不同！&lt;/p>
+&lt;p>可以看到我們 &lt;code>metrics.pods.metric.name&lt;/code> 分別是 &lt;code>phpfpm_active_processes (活動的進程個數)&lt;/code>、&lt;code>phpfpm_idle_processes (空閒的進程個數)&lt;/code>、&lt;code>phpfpm_total_processes (總共的進程個數)&lt;/code>、&lt;code>phpfpm_accepted_connections (當前的連接數量)&lt;/code>，如果超過我們所設定的 target 值，HPA 就會作動。&lt;/p>
+&lt;br>
+&lt;p>我們依序把 Deployment &amp;gt; ConfigMap &amp;gt; HorizontalPodAutoscaler 的 yaml 檔案給 Apply，可以觀察一下 Pod 是否都有正常啟動：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/3.png"
+alt="Pod 是否正常啟動" width="1200">&lt;figcaption>
+&lt;p>Pod 是否正常啟動&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們到 HorizontalPodAutoscaler 查看我們所設定的 metrics 是否都有抓到目前的值：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/4.png"
+alt="metrics 是否都有抓到目前的值" width="550">&lt;figcaption>
+&lt;p>metrics 是否都有抓到目前的值&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們也可以用 Google Cloud Platform 的監控來查看：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/5.png"
+alt="Google Cloud Platform 的監控" width="1200">&lt;figcaption>
+&lt;p>Google Cloud Platform 的監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>以上就完成 自定義 HorizontalPodAutoscaler 指標囉～ 😍&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Autoscaling Deployments with Cloud Monitoring metric：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/autoscaling-metrics#custom-prometheus_1" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/tutorials/autoscaling-metrics#custom-prometheus_1&lt;/a>&lt;/p>
+&lt;p>GoogleCloudPlatform/k8s-stackdriver：&lt;a href="https://github.com/GoogleCloudPlatform/k8s-stackdriver/tree/master/custom-metrics-stackdriver-adapter" target="_blank" rel="noopener">https://github.com/GoogleCloudPlatform/k8s-stackdriver/tree/master/custom-metrics-stackdriver-adapter&lt;/a>&lt;/p>
+&lt;p>hipages/php-fpm_exporter：&lt;a href="https://github.com/hipages/php-fpm_exporter" target="_blank" rel="noopener">https://github.com/hipages/php-fpm_exporter&lt;/a>&lt;/p>
+&lt;p>Scaling PHP-FPM with custom metrics on GKE/kubernetes：&lt;a href="https://www.ashsmith.io/scaling-phpfpm-with-custom-metrics-gke" target="_blank" rel="noopener">https://www.ashsmith.io/scaling-phpfpm-with-custom-metrics-gke&lt;/a>&lt;/p></description></item><item><title>Kubernetes (K8s) HorizontalPodAutoscaler (HPA) 原理與實作</title><link>https://pin-yi.me/blog/kubernetes/k8s-hpa/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-hpa/</guid><description>
 &lt;p>此篇是要介紹 HorizontalPodAutoscaler (HPA) 的原理以及實作內容，那我們先來說明一下 HorizontalPodAutoscaler 是什麼吧！&lt;/p>
 &lt;br>
 &lt;h2>HorizontalPodAutoscaler 原理&lt;span class="absolute -mt-20" id="horizontalpodautoscaler-原理">&lt;/span>
@@ -643,307 +1085,7 @@ alt="Pod 自動減少" width="1100">&lt;figcaption>
 &lt;br>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Horizontal Pod Autoscaling：&lt;a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/&lt;/a>&lt;/p>
-&lt;p>HorizontalPodAutoscaler Walkthrough：&lt;a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/&lt;/a>&lt;/p></description></item><item><title>Kubernetes (K8s) 自定義 PHP HorizontalPodAutoscaler (HPA) 指標</title><link>https://pin-yi.me/blog/kubernetes/gcp-k8s-hpa-php-custom-metrics/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/gcp-k8s-hpa-php-custom-metrics/</guid><description>
-&lt;p>此篇要介紹 HorizontalPodAutoscaler 的自定義指標，K8s 內建的指標 (metrics) 只支援 CPU 以及 Memory，如果我們今天想要使用其他的指標來讓 HPA 擴縮呢！？
-不知道什麼是 HorizontalPodAutoscaler 嗎？可以先查看：&lt;/p>
-&lt;ul>
-&lt;li>&lt;a href="https://blog.pin-yi.me/k8s-hpa/" target="_blank" rel="noopener">Kubernetes (K8s) HorizontalPodAutoscaler (HPA) 原理與實作&lt;/a>&lt;/li>
-&lt;/ul>
-&lt;br>
-&lt;p>這時候我們就必須使用自定義指標，我們一樣來說說他的工作原理吧：HorizontalPodAutoscaler 是怎麼取得自定義指標，以及是跟誰拿到指標的呢？我們從下圖得知：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/1.png"
-alt="Kubernetes HPA : ExternalMetrics&amp;#43;Prometheus" width="400">&lt;figcaption>
-&lt;p>&lt;a href="https://blog.kloia.com/kubernetes-hpa-externalmetrics-prometheus-acb1d8a4ed50" target="_blank" rel="noopener">Kubernetes HPA : ExternalMetrics+Prometheus&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>HorizontalPodAutoscaler 會先訪問 K8s 的 API，並向 API 取得指標資料。這邊的 API 就是 &lt;code>custom.k8s.io/v1beta1&lt;/code>。&lt;/p>
-&lt;br>
-&lt;p>大致了解後，我們就來進入今天的重點，也就是透過自定義化 PHP 的指標來讓 HorizontalPodAutoscaler 進行擴縮，這次使用的平台是 Google Cloud Platform，前面介紹 GCP 服務的大家可以參考 &lt;a href="https://blog.pin-yi.me/gcp-introduce/" target="_blank" rel="noopener">Google Cloud Platform (GCP) 百科全書 - 介紹與開頭 [ EP.0 ]&lt;/a>，我們這邊就直接跳到程式碼與操作部分。&lt;/p>
-&lt;br>
-&lt;p>此文章程式碼也會同步到 Github ，需要的也可以去 clone 使用歐！ &lt;a href="https://github.com/880831ian/gcp-k8s-hpa-php-custom-metrics" target="_blank" rel="noopener">Github 程式碼連結&lt;/a> 😆&lt;/p>
-&lt;br>
-&lt;h2>實作&lt;span class="absolute -mt-20" id="實作">&lt;/span>
-&lt;a href="#%e5%af%a6%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>安裝自定義的 Adapter&lt;span class="absolute -mt-20" id="安裝自定義的-adapter">&lt;/span>
-&lt;a href="#%e5%ae%89%e8%a3%9d%e8%87%aa%e5%ae%9a%e7%be%a9%e7%9a%84-adapter" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們要先 Apply 自定義的 Adapter，這邊我們使用 Google 提供的 Stackdriver Adapter 來使用 (也可以直接使用 Github 程式碼中的 adapter_new_resource_model.yaml 檔案歐)：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl apply -f https://raw.githubusercontent.com/GoogleCloudPlatform/k8s-stackdriver/master/custom-metrics-stackdriver-adapter/deploy/production/adapter_new_resource_model.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
-&lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-title="Copy code"
->
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;h3>Deployment&lt;span class="absolute -mt-20" id="deployment">&lt;/span>
-&lt;a href="#deployment" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">apps/v1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Deployment&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">replicas&lt;/span>: &lt;span style="color:#ae81ff">1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">selector&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">matchLabels&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">template&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metadata&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">spec&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">containers&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">php-fpm&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">php:fpm&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">workingDir&lt;/span>: &lt;span style="color:#ae81ff">/var/www/service&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">containerPort&lt;/span>: &lt;span style="color:#ae81ff">9000&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">resources&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">requests&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">100m&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">memory&lt;/span>: &lt;span style="color:#ae81ff">1G&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">limits&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">100m&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">memory&lt;/span>: &lt;span style="color:#ae81ff">1G&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumeMounts&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">application&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/var/www/service/&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">php-fpm-config&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/usr/local/etc/php-fpm.d/www.conf&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">subPath&lt;/span>: &lt;span style="color:#ae81ff">www.conf&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">nginx:alpine&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">workingDir&lt;/span>: &lt;span style="color:#ae81ff">/var/www/service&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">containerPort&lt;/span>: &lt;span style="color:#ae81ff">80&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumeMounts&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">application&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/var/www/service/&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-config&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/etc/nginx/conf.d/&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">phpfpm-exporter&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">hipages/php-fpm_exporter:latest&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">env&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">PHP_FPM_SCRAPE_URI&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">value&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;tcp://localhost:9000/status&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">PHP_FPM_FIX_PROCESS_COUNT&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">value&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;true&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">resources&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">requests&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">10m&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">limits&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">10m&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">prometheus-to-sd&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">gcr.io/google-containers/prometheus-to-sd:v0.9.0&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">containerPort&lt;/span>: &lt;span style="color:#ae81ff">6060&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">protocol&lt;/span>: &lt;span style="color:#ae81ff">TCP&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">/monitor&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --&lt;span style="color:#ae81ff">stackdriver-prefix=custom.googleapis.com&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --&lt;span style="color:#ae81ff">monitored-resource-type-prefix=k8s_&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --&lt;span style="color:#ae81ff">source=:http://localhost:9253&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --&lt;span style="color:#ae81ff">pod-id=$(POD_NAME)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - --&lt;span style="color:#ae81ff">namespace-id=$(POD_NAMESPACE)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">resources&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">requests&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">10m&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">limits&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cpu&lt;/span>: &lt;span style="color:#ae81ff">10m&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">env&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">POD_NAME&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">valueFrom&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fieldRef&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fieldPath&lt;/span>: &lt;span style="color:#ae81ff">metadata.name&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">POD_NAMESPACE&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">valueFrom&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fieldRef&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fieldPath&lt;/span>: &lt;span style="color:#ae81ff">metadata.namespace&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">application&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">emptyDir&lt;/span>: {}
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">php-fpm-config&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">configMap&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">php-fpm-conf&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-config&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">configMap&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-conf&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
-&lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-title="Copy code"
->
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;p>我來簡單說明一下，這是一個 Deployment，我們在每一個 Pod 裡面都放 4 個 Container，分別是 &lt;code>php-fpm&lt;/code>、&lt;code>nginx&lt;/code>、&lt;code>phpfpm-exporter&lt;/code>、&lt;code>prometheus-to-sd&lt;/code>&lt;/p>
-&lt;p>php-fpm 就是我們要使用的 php，nginx 會提供 9000 Port 讓 phpfpm-exporter 去抓到目前的 Process 數值，最後丟給 prometheus-to-sd，讓他去通知我們剛剛所安裝的 Adapter，就可以透過 API 讓 HPA 知道！聽不太懂嗎？沒關係，幫大家畫了一張圖，請參考下方圖片：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/2.png"
-alt="架構圖" width="1200">&lt;figcaption>
-&lt;p>架構圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>可以看到 Deployment 裡面，我們使用 ConfigMap 來掛載 php 的 www.conf 以及 nginx 的設定檔，那我們接下來就寫一份 ConfigMap 吧！&lt;/p>
-&lt;br>
-&lt;h3>ConfigMap&lt;span class="absolute -mt-20" id="configmap">&lt;/span>
-&lt;a href="#configmap" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">ConfigMap&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">php-fpm-conf&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">data&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">www.conf&lt;/span>: |&lt;span style="color:#e6db74">
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> [www]
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> user = 900
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> group = 900
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen = 9000
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen.owner = 900
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen.group = 900
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen.mode = 0660
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm = dynamic
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.max_children = 150
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.max_requests = 300
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.start_servers = 24
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.min_spare_servers = 24
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.max_spare_servers = 126
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> pm.status_path = /status
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> ping.path = /ping
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> ping.response = OK
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> catch_workers_output = yes
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> request_terminate_timeout = 300
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> clear_env = no&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>---
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">ConfigMap&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-conf&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">namespace&lt;/span>: &lt;span style="color:#ae81ff">ian&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">data&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">nginx.conf&lt;/span>: |&lt;span style="color:#e6db74">
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> server {
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen 80;
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen [::]:80;
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> server_name _;
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> root /var/www/service/;
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> index index.php;
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> location / {
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> try_files $uri $uri/ /index.php$is_args$args;
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> }
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> location ~ ^/(status|ping)$ {
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> fastcgi_pass 127.0.0.1:9000;
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> fastcgi_index index.php;
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> include fastcgi_params;
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> }
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> }&lt;/span> &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
-&lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-title="Copy code"
->
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>這份 ConfigMap.yaml 檔案裡面分成 php-fpm-conf 來放 www.conf，以及 nginx-conf 來放 nginx.conf 檔案，這邊要注意的是 www.conf 記得要加上 &lt;code>pm.status_path = /status&lt;/code>，phpfpm-exporter 是透過這個頁面來獲得 Process 數量。&lt;/p>
-&lt;br>
-&lt;h3>HorizontalPodAutoscaler&lt;span class="absolute -mt-20" id="horizontalpodautoscaler">&lt;/span>
-&lt;a href="#horizontalpodautoscaler" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">autoscaling/v2beta2&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">HorizontalPodAutoscaler&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">demo-hpa&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">scaleTargetRef&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">apps/v1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Deployment&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">demo&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">minReplicas&lt;/span>: &lt;span style="color:#ae81ff">1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">maxReplicas&lt;/span>: &lt;span style="color:#ae81ff">10&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metrics&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">Pods&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pods&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metric&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">phpfpm_active_processes&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">target&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">averageValue&lt;/span>: &lt;span style="color:#ae81ff">50&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">AverageValue&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">Pods&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pods&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metric&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">phpfpm_idle_processes&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">target&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">averageValue&lt;/span>: &lt;span style="color:#ae81ff">50&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">AverageValue&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">Pods&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pods&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metric&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">phpfpm_total_processes&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">target&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">averageValue&lt;/span>: &lt;span style="color:#ae81ff">50&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">AverageValue&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">Pods&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pods&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metric&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">phpfpm_accepted_connections&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">target&lt;/span>:
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">averageValue&lt;/span>: &lt;span style="color:#ae81ff">50&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">type&lt;/span>: &lt;span style="color:#ae81ff">AverageValue&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
-&lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-title="Copy code"
->
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>這份 HorizontalPodAutoscaler 我們使用的版本是 &lt;code>autoscaling/v2beta2&lt;/code>， v2beta1 跟 v2beta2 的設定檔語法有些不同！&lt;/p>
-&lt;p>可以看到我們 &lt;code>metrics.pods.metric.name&lt;/code> 分別是 &lt;code>phpfpm_active_processes (活動的進程個數)&lt;/code>、&lt;code>phpfpm_idle_processes (空閒的進程個數)&lt;/code>、&lt;code>phpfpm_total_processes (總共的進程個數)&lt;/code>、&lt;code>phpfpm_accepted_connections (當前的連接數量)&lt;/code>，如果超過我們所設定的 target 值，HPA 就會作動。&lt;/p>
-&lt;br>
-&lt;p>我們依序把 Deployment &amp;gt; ConfigMap &amp;gt; HorizontalPodAutoscaler 的 yaml 檔案給 Apply，可以觀察一下 Pod 是否都有正常啟動：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/3.png"
-alt="Pod 是否正常啟動" width="1200">&lt;figcaption>
-&lt;p>Pod 是否正常啟動&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>我們到 HorizontalPodAutoscaler 查看我們所設定的 metrics 是否都有抓到目前的值：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/4.png"
-alt="metrics 是否都有抓到目前的值" width="550">&lt;figcaption>
-&lt;p>metrics 是否都有抓到目前的值&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>我們也可以用 Google Cloud Platform 的監控來查看：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/5.png"
-alt="Google Cloud Platform 的監控" width="1200">&lt;figcaption>
-&lt;p>Google Cloud Platform 的監控&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>以上就完成 自定義 HorizontalPodAutoscaler 指標囉～ 😍&lt;/p>
-&lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Autoscaling Deployments with Cloud Monitoring metric：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/tutorials/autoscaling-metrics#custom-prometheus_1" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/tutorials/autoscaling-metrics#custom-prometheus_1&lt;/a>&lt;/p>
-&lt;p>GoogleCloudPlatform/k8s-stackdriver：&lt;a href="https://github.com/GoogleCloudPlatform/k8s-stackdriver/tree/master/custom-metrics-stackdriver-adapter" target="_blank" rel="noopener">https://github.com/GoogleCloudPlatform/k8s-stackdriver/tree/master/custom-metrics-stackdriver-adapter&lt;/a>&lt;/p>
-&lt;p>hipages/php-fpm_exporter：&lt;a href="https://github.com/hipages/php-fpm_exporter" target="_blank" rel="noopener">https://github.com/hipages/php-fpm_exporter&lt;/a>&lt;/p>
-&lt;p>Scaling PHP-FPM with custom metrics on GKE/kubernetes：&lt;a href="https://www.ashsmith.io/scaling-phpfpm-with-custom-metrics-gke" target="_blank" rel="noopener">https://www.ashsmith.io/scaling-phpfpm-with-custom-metrics-gke&lt;/a>&lt;/p></description></item><item><title>用大型社區來介紹 Kubernetes 元件</title><link>https://pin-yi.me/blog/kubernetes/k8s-plain/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-plain/</guid><description>
+&lt;p>HorizontalPodAutoscaler Walkthrough：&lt;a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/&lt;/a>&lt;/p></description></item><item><title>用大型社區來介紹 Kubernetes 元件</title><link>https://pin-yi.me/blog/kubernetes/k8s-plain/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-plain/</guid><description>
 &lt;p>前陣子對於 Kubernetes 部分內容還不是很清楚，在網路上閒逛的時候發現一篇很有趣的文章，標題是 『 &lt;a href="https://blog.pichuang.com.tw/20210111-Kubernetes-for-sales-and-marketing/#%E4%B8%AD%E7%BF%BB%E4%B8%AD%E7%9A%84-Kubernetes-%E7%B5%84%E4%BB%B6%E4%BB%8B%E7%B4%B9" target="_blank" rel="noopener">給行銷跟業務的 Kubernetes 101 中翻中介紹&lt;/a> 』，點進去後才發現，作者 &lt;a href="https://blog.pichuang.com.tw/about/" target="_blank" rel="noopener">Phil Huang&lt;/a> 將 Kubernetes 元件的內容用大型住戶社區來介紹，讓我更清楚每一個元件的意思，以下我會用我理解的以及作者的思考邏輯來去寫這篇筆記，再次感謝作者文章 😍&lt;/p>
 &lt;br>
 &lt;h2>Kubernetes 元件白話文&lt;span class="absolute -mt-20" id="kubernetes-元件白話文">&lt;/span>
