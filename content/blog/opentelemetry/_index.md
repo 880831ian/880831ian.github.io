@@ -1,7 +1,7 @@
 ---
 title: Opentelemetry
 type: docs
-weight: 10
+weight: 11
 sidebar:
   open: true
 ---

@@ -1,7 +1,7 @@
 ---
 title: Kubernetes
 type: docs
-weight: 2
+weight: 5
 sidebar:
   open: true
 ---
