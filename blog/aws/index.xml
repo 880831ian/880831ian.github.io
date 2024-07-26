@@ -1,0 +1,223 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Amazon Web Services</title><link>https://pin-yi.me/blog/aws/</link><description>Recent content in Amazon Web Services on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/aws/index.xml" rel="self" type="application/rss+xml"/><item><title>Elastic Kubernetes Service (EKS) 介紹</title><link>https://pin-yi.me/blog/aws/eks-introduce/</link><pubDate>Fri, 26 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/eks-introduce/</guid><description>
+&lt;p>由於公司政策調整，除了原先的 Google Cloud Platform (GCP) 之外，我們也開始使用 AWS 服務，其中包括了 EKS (Elastic Kubernetes Service)。這篇文章將會介紹 EKS 的基本概念以及一些使用上的注意事項。&lt;/p>
+&lt;p>後面也會有幾篇 AWS 文章，歡迎大家持續關注。&lt;/p>
+&lt;br>
+&lt;h2>什麼是 EKS？&lt;span class="absolute -mt-20" id="什麼是-eks">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-eks" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那熟悉 Kubernetes 的朋友應該對 EKS 並不陌生，EKS 是 AWS 提供的 Kubernetes 服務，讓使用者可以在 AWS 上快速建立、擴展和管理 Kubernetes 集群。就跟 GCP 的 GKE 一樣。&lt;/p>
+&lt;br>
+&lt;p>流程也跟 GKE 差不多，如圖：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>建立 Cluster：可以透過 eksctl、AWS Console、AWS CLI、Terraform 等等來建立。&lt;/p>
+&lt;ul>
+&lt;li>eksctl：是一個官方專門給 EKS 的 CLI 工具，可以快速建立、更新和刪除 EKS 集群，詳細可以看：&lt;a href="https://eksctl.io/" target="_blank" rel="noopener">eksctl&lt;/a>、&lt;a href="https://docs.aws.amazon.com/zh_tw/eks/latest/userguide/getting-started-eksctl.html" target="_blank" rel="noopener">Amazon EKS 入門&lt;/a>。&lt;/li>
+&lt;/ul>
+&lt;p>Mac 安裝指令：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>brew tap weaveworks/tap
+brew install weaveworks/tap/eksctl&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>AWS CLI：是官方的 CLI 工具，除了建立 EKS 集群，還可以管理其他 AWS 服務，詳細可以看：我的另一篇筆記 &lt;a href="../aws-cli" >設定 AWS CLI 以及 AWS CLI 指令說明&lt;/a>。&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>選擇運算資源的方式：可以分成 &lt;a href="https://aws.amazon.com/tw/fargate/" target="_blank" rel="noopener">Fargate&lt;/a>、&lt;a href="https://karpenter.sh/" target="_blank" rel="noopener">Karpenter&lt;/a>、託管節點群組和自管理節點。那我們使用主要是使用自我管理節點。其他的方式會在後面的文章介紹。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>設定：設定必要的控制器、驅動程式或是服務等等。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>部署工作負載：自訂 Kubernetes 物件，例如 Pod、Service、Deployment 等等。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>管理：監督工作負載，整合 AWS 服務以簡化維運並提高工作負載效能。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/eks-introduce/1.png"
+alt="在雲端中執行 Amazon EKS 的基本流程" width="750">&lt;figcaption>
+&lt;p>在雲端中執行 Amazon EKS 的基本流程&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>其他比較詳細的架構以及部署選項可以參考：&lt;a href="https://docs.aws.amazon.com/eks/latest/userguide/eks-architecture.html" target="_blank" rel="noopener">Amazon EKS 架構&lt;/a>、&lt;a href="https://docs.aws.amazon.com/eks/latest/userguide/eks-deployment-options.html" target="_blank" rel="noopener">部署選項&lt;/a>，這邊就不再贅述。&lt;/p>
+&lt;br>
+&lt;h2>EKS 定價&lt;span class="absolute -mt-20" id="eks-定價">&lt;/span>
+&lt;a href="#eks-%e5%ae%9a%e5%83%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>What is Amazon EKS?：&lt;a href="https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html&lt;/a>&lt;/p></description></item><item><title>設定 AWS CLI 以及 AWS CLI 指令說明</title><link>https://pin-yi.me/blog/aws/aws-cli/</link><pubDate>Fri, 26 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-cli/</guid><description>
+&lt;h2>介紹&lt;span class="absolute -mt-20" id="介紹">&lt;/span>
+&lt;a href="#%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>AWS CLI 是用於使用 AWS 服務的命令列工具。它也用於對 IAM 使用者或角色進行身份驗證，以便從本機電腦存取 Amazon EKS 叢集和其他 AWS 資源。若要從命令列在 AWS 中設定資源，您需要取得要在命令列中使用的 AWS 存取金鑰 ID 和金鑰。&lt;/p>
+&lt;br>
+&lt;h2>如何安裝 AWS CLI&lt;span class="absolute -mt-20" id="如何安裝-aws-cli">&lt;/span>
+&lt;a href="#%e5%a6%82%e4%bd%95%e5%ae%89%e8%a3%9d-aws-cli" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Mac 安裝指令：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>brew install awscli&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>自動補齊指令：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>complete -C &lt;span style="color:#e6db74">&amp;#39;/usr/local/bin/aws_completer&amp;#39;&lt;/span> aws&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>如何設定 AWS CLI&lt;span class="absolute -mt-20" id="如何設定-aws-cli">&lt;/span>
+&lt;a href="#%e5%a6%82%e4%bd%95%e8%a8%ad%e5%ae%9a-aws-cli" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>AWS 跟 GCP 比較不一樣的是 CLI 在 Google (gcloud) 可以使用 Web 登入的方式來驗證 &lt;code>gcloud auto login&lt;/code>，但是在 AWS 需要使用 Access Key ID 和 Secret Access Key 來驗證。&lt;/p>
+&lt;p>因此我們在開始使用前，需要先透過 UI 產生自己帳號的 Access Key ID 和 Secret Access Key，才能夠有權限下指令。&lt;/p>
+&lt;br>
+&lt;h3>建立存取密鑰&lt;span class="absolute -mt-20" id="建立存取密鑰">&lt;/span>
+&lt;a href="#%e5%bb%ba%e7%ab%8b%e5%ad%98%e5%8f%96%e5%af%86%e9%91%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>需要先確認是否有以下的 IAM 權限：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: [
+&amp;#34;iam:CreateAccessKey&amp;#34;,
+&amp;#34;iam:DeleteAccessKey&amp;#34;,
+&amp;#34;iam:GetAccessKeyLastUsed&amp;#34;,
+&amp;#34;iam:ListAccessKeys&amp;#34;,
+&amp;#34;iam:UpdateAccessKey&amp;#34;,
+&amp;#34;iam:TagUser&amp;#34;
+]&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>TagUser：是用來幫金鑰加上標籤值，方便管理。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/1.png"
+alt="沒有權限會噴錯" width="850">&lt;figcaption>
+&lt;p>沒有權限會噴錯&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol>
+&lt;li>先登入 AWS 的管理控制台。&lt;/li>
+&lt;li>點擊右上角的 AWS 使用者名稱，並點選「安全憑證」。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/2.png"
+alt="在 AWS 的管理控制台，選擇安全憑證" width="750">&lt;figcaption>
+&lt;p>在 AWS 的管理控制台，選擇安全憑證&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>找到存取金鑰，並點選「建立存取金鑰」，如果有建立過，也會顯示在這邊。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/3.png"
+alt="建立存取金鑰" width="1100">&lt;figcaption>
+&lt;p>建立存取金鑰&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="4">
+&lt;li>點選「命令列介面 (CLI)」，下方要勾選一個確認建議的選項，最後按下一步。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/4.png"
+alt="選擇命令列介面 (CLI)案例" width="900">&lt;figcaption>
+&lt;p>選擇命令列介面 (CLI)案例&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="5">
+&lt;li>可以選擇是否要建立標籤，如果要建立，需要前面提到的 &lt;code>iam:TagUser&lt;/code> IAM 權限。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/5.png"
+alt="設定描述標籤" width="950">&lt;figcaption>
+&lt;p>設定描述標籤&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="6">
+&lt;li>就可以拿到存取金鑰 (Access Key ID) 以及私密存取金鑰 (Secret Access Key)，&lt;b>要記住私密存取金鑰，只有這個畫面可以拿到，如果沒有儲存，就需要重新建立一個新的金鑰&lt;/b>。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/6.png"
+alt="產生完金鑰" width="1100">&lt;figcaption>
+&lt;p>產生完金鑰&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;br>
+&lt;h3>配置 AWS CLI&lt;span class="absolute -mt-20" id="配置-aws-cli">&lt;/span>
+&lt;a href="#%e9%85%8d%e7%bd%ae-aws-cli" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>接下來我們要在本機把剛剛產生的 Access Key ID 和 Secret Access Key 設定到 AWS CLI，我們可以下這個指令。&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws configure&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ol start="2">
+&lt;li>下完後，就會顯示以下設定畫面，分別輸入 Access Key ID、Secret Access Key、預設區域以及輸出格式。&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>AWS Access Key ID &lt;span style="color:#f92672">[&lt;/span>None&lt;span style="color:#f92672">]&lt;/span>: AAKIA2HCM5WKG7R647HTV
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>AWS Secret Access Key &lt;span style="color:#f92672">[&lt;/span>None&lt;span style="color:#f92672">]&lt;/span>: ******************************
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Default region name &lt;span style="color:#f92672">[&lt;/span>None&lt;span style="color:#f92672">]&lt;/span>: region-code &lt;span style="color:#f92672">(&lt;/span>例如：亞太地區東京 ap-northeast-1&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Default output format &lt;span style="color:#f92672">[&lt;/span>None&lt;span style="color:#f92672">]&lt;/span>: json&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>就成功設定完成囉～&lt;/p>
+&lt;br>
+&lt;h2>AWS CLI 指令說明&lt;span class="absolute -mt-20" id="aws-cli-指令說明">&lt;/span>
+&lt;a href="#aws-cli-%e6%8c%87%e4%bb%a4%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>指令&lt;/th>
+&lt;th>描述&lt;/th>
+&lt;th>輸出&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>&lt;code>aws sts get-caller-identity&lt;/code>&lt;/td>
+&lt;td>驗證使用者身份&lt;/td>
+&lt;td>&lt;pre>{&lt;br> &amp;quot;UserId&amp;quot;: &amp;quot;AKIAIOSFODNN7EXAMPLE&amp;quot;,&lt;br> &amp;quot;Account&amp;quot;: &amp;quot;01234567890&amp;quot;,&lt;br> &amp;quot;Arn&amp;quot;: &amp;quot;arn:aws:iam::01234567890:user/ClusterAdmin&amp;quot;&lt;br>}&lt;/pre>&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;p>(之後補上&amp;hellip;)&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>探索 AWS：從菜鳥到熟練的完全指南(四)IAM 登入方式：&lt;a href="https://hackmd.io/@gdw7l5sPTOyNv76kZ_twjA/SkTPl-xP3" target="_blank" rel="noopener">https://hackmd.io/@gdw7l5sPTOyNv76kZ_twjA/SkTPl-xP3&lt;/a>&lt;/p>
+&lt;p>設定 AWS CLI：&lt;a href="https://docs.aws.amazon.com/eks/latest/userguide/install-awscli.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/eks/latest/userguide/install-awscli.html&lt;/a>&lt;/p>
+&lt;p>AWS CLI 指令參考：&lt;a href="https://docs.aws.amazon.com/cli/latest/reference/#available-services" target="_blank" rel="noopener">https://docs.aws.amazon.com/cli/latest/reference/#available-services&lt;/a>&lt;/p></description></item></channel></rss>
