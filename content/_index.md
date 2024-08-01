@@ -22,6 +22,8 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 {{< card link="blog/gcp/cloud-build" title="Google Cloud Platform (GCP) - Cloud Build" image="/gcp/cloud-build/cover.webp" >}}
 
 {{< card link="blog/aws/eks-introduce" title="Elastic Kubernetes Service (EKS) 介紹" image="/aws/eks-introduce/cover.webp" >}}
+{{< card link="blog/aws/cli-mfa" title="如何使用 MFA Token 驗證 AWS CLI" image="/aws/cli-mfa/cover.webp" >}}
+{{< card link="blog/aws/iam-introduce" title="Identity and Access Management (IAM) 介紹" image="/aws/iam-introduce/cover.webp" >}}
 {{< card link="blog/aws/aws-cli" title="設定 AWS CLI 以及 AWS CLI 指令說明" image="/aws/aws-cli/cover.webp" >}}
 
 {{< card link="blog/kubernetes/kube-dns-vs-core-dns" title="kube-dns vs CoreDNS 比較，DNS 的最佳實踐" image="/kubernetes/kube-dns-vs-core-dns/cover.webp">}}
