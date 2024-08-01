@@ -196,28 +196,64 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>就成功設定完成囉～&lt;/p>
+&lt;p>就代表成功設定完成囉 ლ(́◕◞౪◟◕‵ლ)&lt;/p>
 &lt;br>
-&lt;h2>AWS CLI 指令說明&lt;span class="absolute -mt-20" id="aws-cli-指令說明">&lt;/span>
-&lt;a href="#aws-cli-%e6%8c%87%e4%bb%a4%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
+&lt;p>另外，設定的內容會寫到 &lt;code>~/.aws/credentials&lt;/code> 和 &lt;code>~/.aws/config&lt;/code> 這兩個檔案中，如果想要修改設定，也可以直接修改這兩個檔案。&lt;/p>
+&lt;br>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div class="filename">~/.aws/credentials&lt;/div>&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">[&lt;/span>default&lt;span style="color:#f92672">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>aws_access_key_id &lt;span style="color:#f92672">=&lt;/span> AAKIA2HCM5WKG7R647HTV
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>aws_secret_access_key &lt;span style="color:#f92672">=&lt;/span> t5CMmR4Y7cuFC/RgxJS1XXXXXXXXXXXXXXXXXXXX&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-8">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div class="filename">~/.aws/config&lt;/div>&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">[&lt;/span>default&lt;span style="color:#f92672">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>region &lt;span style="color:#f92672">=&lt;/span> ap-northeast-1&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-8">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>常用 的 AWS CLI 指令說明&lt;span class="absolute -mt-20" id="常用-的-aws-cli-指令說明">&lt;/span>
+&lt;a href="#%e5%b8%b8%e7%94%a8-%e7%9a%84-aws-cli-%e6%8c%87%e4%bb%a4%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
 &lt;thead>
 &lt;tr>
 &lt;th>指令&lt;/th>
 &lt;th>描述&lt;/th>
-&lt;th>輸出&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
 &lt;td>&lt;code>aws sts get-caller-identity&lt;/code>&lt;/td>
 &lt;td>驗證使用者身份&lt;/td>
-&lt;td>&lt;pre>{&lt;br> &amp;quot;UserId&amp;quot;: &amp;quot;AKIAIOSFODNN7EXAMPLE&amp;quot;,&lt;br> &amp;quot;Account&amp;quot;: &amp;quot;01234567890&amp;quot;,&lt;br> &amp;quot;Arn&amp;quot;: &amp;quot;arn:aws:iam::01234567890:user/ClusterAdmin&amp;quot;&lt;br>}&lt;/pre>&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws eks list-clusters --region {REGION}&lt;/code>&lt;/td>
+&lt;td>列出區域的 EKS&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws iam list-mfa-devices --user-name {USER_NAME}&lt;/code>&lt;/td>
+&lt;td>列出使用者的 MFA 裝置&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>&lt;code>aws sts get-session-token --duration-seconds 129600 --serial-number ${MFA_DEVICES_NUMBER} --token-code ${MFA_CODE}&lt;/code>&lt;/td>
+&lt;td>取得 MFA Token&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;p>(之後補上&amp;hellip;)&lt;/p>
 &lt;br>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>探索 AWS：從菜鳥到熟練的完全指南(四)IAM 登入方式：&lt;a href="https://hackmd.io/@gdw7l5sPTOyNv76kZ_twjA/SkTPl-xP3" target="_blank" rel="noopener">https://hackmd.io/@gdw7l5sPTOyNv76kZ_twjA/SkTPl-xP3&lt;/a>&lt;/p>
 &lt;p>設定 AWS CLI：&lt;a href="https://docs.aws.amazon.com/eks/latest/userguide/install-awscli.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/eks/latest/userguide/install-awscli.html&lt;/a>&lt;/p>
-&lt;p>AWS CLI 指令參考：&lt;a href="https://docs.aws.amazon.com/cli/latest/reference/#available-services" target="_blank" rel="noopener">https://docs.aws.amazon.com/cli/latest/reference/#available-services&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>AWS CLI 指令參考：&lt;a href="https://docs.aws.amazon.com/zh_tw/cli/latest/userguide/cli_code_examples_categorized.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/zh_tw/cli/latest/userguide/cli_code_examples_categorized.html&lt;/a>&lt;/p></description></item></channel></rss>
