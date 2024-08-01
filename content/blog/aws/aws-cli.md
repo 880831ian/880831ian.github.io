@@ -121,17 +121,37 @@ Default region name [None]: region-code (例如：亞太地區東京 ap-northeas
 Default output format [None]: json
 ```
 
-就成功設定完成囉～
+就代表成功設定完成囉 ლ(́◕◞౪◟◕‵ლ)
 
 <br>
 
-## AWS CLI 指令說明
+另外，設定的內容會寫到 `~/.aws/credentials` 和 `~/.aws/config` 這兩個檔案中，如果想要修改設定，也可以直接修改這兩個檔案。
 
-| 指令                          | 描述           | 輸出                                                                                                                                                      |
-| ----------------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `aws sts get-caller-identity` | 驗證使用者身份 | <pre>{<br> \"UserId\": \"AKIAIOSFODNN7EXAMPLE\",<br> \"Account\": \"01234567890\",<br> \"Arn\": \"arn:aws:iam::01234567890:user/ClusterAdmin\"<br>}</pre> |
+<br>
 
-(之後補上...)
+```bash {filename="~/.aws/credentials"}
+[default]
+aws_access_key_id = AAKIA2HCM5WKG7R647HTV
+aws_secret_access_key = t5CMmR4Y7cuFC/RgxJS1XXXXXXXXXXXXXXXXXXXX
+```
+
+<br>
+
+```bash {filename="~/.aws/config"}
+[default]
+region = ap-northeast-1
+```
+
+<br>
+
+## 常用 的 AWS CLI 指令說明
+
+| 指令                                                                                                                 | 描述                  |
+| -------------------------------------------------------------------------------------------------------------------- | --------------------- |
+| `aws sts get-caller-identity`                                                                                        | 驗證使用者身份        |
+| `aws eks list-clusters --region {REGION}`                                                                            | 列出區域的 EKS        |
+| `aws iam list-mfa-devices --user-name {USER_NAME}`                                                                   | 列出使用者的 MFA 裝置 |
+| `aws sts get-session-token --duration-seconds 129600 --serial-number ${MFA_DEVICES_NUMBER} --token-code ${MFA_CODE}` | 取得 MFA Token        |
 
 <br>
 
@@ -141,4 +161,4 @@ Default output format [None]: json
 
 設定 AWS CLI：[https://docs.aws.amazon.com/eks/latest/userguide/install-awscli.html](https://docs.aws.amazon.com/eks/latest/userguide/install-awscli.html)
 
-AWS CLI 指令參考：[https://docs.aws.amazon.com/cli/latest/reference/#available-services](https://docs.aws.amazon.com/cli/latest/reference/#available-services)
+AWS CLI 指令參考：[https://docs.aws.amazon.com/zh_tw/cli/latest/userguide/cli_code_examples_categorized.html](https://docs.aws.amazon.com/zh_tw/cli/latest/userguide/cli_code_examples_categorized.html)
