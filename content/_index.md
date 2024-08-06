@@ -49,6 +49,7 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 {{< card link="blog/opentelemetry/opentelemetry-observability" title="什麼是 Opentelemetry？可觀測性 (Observability) 又是什麼？" image="/opentelemetry/opentelemetry-observability/cover.webp">}}
 {{< card link="blog/opentelemetry/opentelemetry-ingress-nginx-controller" title="如何透過 OpenTelemetry 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上" image="/opentelemetry/opentelemetry-ingress-nginx-controller/cover.webp">}}
 
+{{< card link="blog/nginx/proxy-set-header" title="Nginx Proxy Set Header 注意事項" image="/nginx/proxy-set-header/cover.webp">}}
 {{< card link="blog/nginx/nginx-upstream-set-host-header" title="想使用 Nginx Upstream Proxy 到外部服務，並帶入對應的 header 該怎麼做？" image="/nginx/nginx-upstream-set-host-header/cover.webp">}}
 {{< card link="blog/nginx/soketi-log-502-error" title="Soketi WebSocket Server LOG 不定時出現 502 error 以及 connect() failed (111: Connection refused)" image="/nginx/soketi-log-502-error/cover.webp">}}
 

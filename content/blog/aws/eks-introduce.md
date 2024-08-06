@@ -35,7 +35,7 @@ authors:
 
    - AWS CLI：是官方的 CLI 工具，除了建立 EKS 集群，還可以管理其他 AWS 服務，詳細可以看：我的另一篇筆記 [設定 AWS CLI 以及 AWS CLI 指令說明](../aws-cli)。
 
-2. 選擇運算資源的方式：可以分成 [Fargate](https://aws.amazon.com/tw/fargate/)、[Karpenter](https://karpenter.sh/)、託管節點群組和自管理節點。那我們使用主要是使用自我管理節點。其他的方式會在後面的文章介紹。
+2. 選擇運算資源的方式：可以分成 [Fargate](https://aws.amazon.com/tw/fargate/)、[Karpenter](https://karpenter.sh/)、託管節點群組和自管理節點。那我們使用主要是使用託管節點群組。其他的方式會在後面的文章介紹。
 3. 設定：設定必要的控制器、驅動程式或是服務等等。
 4. 部署工作負載：自訂 Kubernetes 物件，例如 Pod、Service、Deployment 等等。
 5. 管理：監督工作負載，整合 AWS 服務以簡化維運並提高工作負載效能。
@@ -50,6 +50,37 @@ authors:
 
 <br>
 
+## 建立第一個 EKS：eksctl
+
+詳細請參考：[Amazon EKS 入門：eksctl](https://docs.aws.amazon.com/zh_tw/eks/latest/userguide/getting-started-eksctl.html)
+
+在建立 EKS 前，我們要先確認我們要建立的節點是要使用 Fargate 還是託管節點群組，我們這邊拿 GCP 來說明，託管節點群組就是我們一般建立的 Node_Pool，而 Fargate 就是 Serverless 的概念，不需要自己管理節點，只需要管理 Pod，詳細我後面也會寫一篇文章來介紹，[可以點我查看](../fargate-introduce/)。
+
+<br>
+
+那我們這邊就先以託管節點群組來建立 EKS，建立使用以下指令來建立：
+
+```bash
+eksctl create cluster --name {my-cluster} --region {region-code}
+eksctl create cluster --name ian-test --region us-east-1
+```
+
+將 `{my-cluster}` 替換成自己要的名稱，只能英文數字字元(區分大小寫)和連字號。必須字母數字字元開頭，且長度不可以超過 100 個字元，名稱在該區域中必須是唯一的。
+
+`{region-code}` 則是替換成自己要的區域，例如：us-east-1。可以從 [Amazon EKS endpoints and quotas](https://docs.aws.amazon.com/general/latest/gr/eks.html) 這邊查看 region-code。
+如果是 Fargate 的話，只需要在指令後面加上 `--fargate`
+
+<br>
+
+提醒：使用這個指令建置，會需要有 CloudFormation 的相關權限，如果缺少權限，會顯示以下錯誤：
+
+( CloudFormation 是將基礎設施視為程式碼的服務，可以對 AWS 和第三方資源進行建模、佈建和管理，詳細一樣請參考後續文章 [AWS CloudFormation 介紹](../cloudformation-introduce)。)
+<br>
+
+{{< figure src="/aws/eks-introduce/2.png" width="850" caption="使用 eksctl 建立 EKS 缺少 CloudFormation 權限" >}}
+
+<br>
+
 ## EKS 定價
 
 <br>
@@ -57,3 +88,5 @@ authors:
 ## 參考資料
 
 What is Amazon EKS?：[https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html](https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html)
+
+Amazon EKS 入門：eksctl：[https://docs.aws.amazon.com/zh_tw/eks/latest/userguide/getting-started-eksctl.html](https://docs.aws.amazon.com/zh_tw/eks/latest/userguide/getting-started-eksctl.html)

@@ -4,7 +4,7 @@ type: docs
 weight: 99
 description: 如何串接 Jira 工單自動化通知
 images:
-  - agile/jira-to-google-chat/cover.webp
+  - agile/jira-to-google-chat/og.webp
 date: 2024-08-06
 authors:
   - name: Ian_zhuang
