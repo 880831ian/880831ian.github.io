@@ -4,7 +4,7 @@ type: docs
 weight: 997
 description: Nginx Proxy Set Header 注意事項
 images:
-  - agile/proxy-set-header/og.webp
+  - nginx/proxy-set-header/og.webp
 date: 2024-08-06
 authors:
   - name: Ian_zhuang
