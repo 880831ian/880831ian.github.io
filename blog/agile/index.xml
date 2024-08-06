@@ -1,0 +1,21 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – 敏捷開發 (Agile)</title><link>https://pin-yi.me/blog/agile/</link><description>Recent content in 敏捷開發 (Agile) on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/agile/index.xml" rel="self" type="application/rss+xml"/><item><title>串接 Jira 工單自動化通知</title><link>https://pin-yi.me/blog/agile/jira-to-google-chat/</link><pubDate>Tue, 06 Aug 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/agile/jira-to-google-chat/</guid><description>
+&lt;h2>介紹&lt;span class="absolute -mt-20" id="介紹">&lt;/span>
+&lt;a href="#%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們使用 Jira 的 Ticket 來當作工單，其他單位如果需要請 SRE 協助，都需要填寫此工單，我們的流程是以下：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>待審核 -&amp;gt; SRE 已簽核 -&amp;gt; 進行中 -&amp;gt; (阻塞) -&amp;gt; 完成&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/1.png"
+alt="工單看板" width="750">&lt;figcaption>
+&lt;p>工單看板&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們會由資深工程師來審核，狀態會從 &lt;code>待審核&lt;/code> 變成 &lt;code>SRE 已簽核&lt;/code>，這時候我們希望能夠收到通知，才由當週值班的工程師來進行處理。&lt;/p></description></item></channel></rss>
