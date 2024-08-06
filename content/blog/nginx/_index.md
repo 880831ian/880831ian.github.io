@@ -1,7 +1,7 @@
 ---
 title: Nginx
 type: docs
-weight: 20
+weight: 19
 sidebar:
   open: true
 ---
