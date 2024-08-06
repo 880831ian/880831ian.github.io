@@ -18,4 +18,29 @@ alt="工單看板" width="750">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;p>我們會由資深工程師來審核，狀態會從 &lt;code>待審核&lt;/code> 變成 &lt;code>SRE 已簽核&lt;/code>，這時候我們希望能夠收到通知，才由當週值班的工程師來進行處理。&lt;/p></description></item></channel></rss>
+&lt;p>我們會由資深工程師來審核，狀態會從 &lt;code>待審核&lt;/code> 變成 &lt;code>SRE 已簽核&lt;/code>，這時候我們希望能夠收到通知，才由當週值班的工程師來進行處理。&lt;/p>
+&lt;br>
+&lt;h2>如何送通知到 Google Chat&lt;span class="absolute -mt-20" id="如何送通知到-google-chat">&lt;/span>
+&lt;a href="#%e5%a6%82%e4%bd%95%e9%80%81%e9%80%9a%e7%9f%a5%e5%88%b0-google-chat" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>由於公司目前使用 Google Chat 來當作通知工具，所以我們希望能夠將 Jira 工單的狀態變更時，能夠自動送通知到 Google Chat。&lt;/p>
+&lt;p>那 Google Chat 有提供幾種方式可以串接，我們這邊用 Webhook 來串接。&lt;/p>
+&lt;div class="steps ml-4 mb-12 border-l border-gray-200 pl-6 dark:border-neutral-800 [counter-reset:step]">
+&lt;h3>步驟ㄧ&lt;span class="absolute -mt-20" id="步驟ㄧ">&lt;/span>
+&lt;a href="#%e6%ad%a5%e9%a9%9f%e3%84%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們先建立一個聊天室&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/2.png"
+alt="建立聊天室" width="450">&lt;figcaption>
+&lt;p>建立聊天室&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>步驟二&lt;span class="absolute -mt-20" id="步驟二">&lt;/span>
+&lt;a href="#%e6%ad%a5%e9%a9%9f%e4%ba%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>進入聊天室，點選聊天室名稱 (jira 串接 google chat 測試)，選擇應用程式與整合&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/3.png"
+alt="點選應用程式與整合" width="400">&lt;figcaption>
+&lt;p>點選應用程式與整合&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;/div>
+&lt;p>首先，&lt;/p></description></item></channel></rss>
