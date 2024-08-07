@@ -1,4 +1,4 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – 敏捷開發 (Agile)</title><link>https://pin-yi.me/blog/agile/</link><description>Recent content in 敏捷開發 (Agile) on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/agile/index.xml" rel="self" type="application/rss+xml"/><item><title>串接 Jira 工單自動化通知</title><link>https://pin-yi.me/blog/agile/jira-to-google-chat/</link><pubDate>Tue, 06 Aug 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/agile/jira-to-google-chat/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – 敏捷開發 (Agile)</title><link>https://pin-yi.me/blog/agile/</link><description>Recent content in 敏捷開發 (Agile) on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/agile/index.xml" rel="self" type="application/rss+xml"/><item><title>串接 Jira 工單自動化通知到 Google Chat</title><link>https://pin-yi.me/blog/agile/jira-to-google-chat/</link><pubDate>Tue, 06 Aug 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/agile/jira-to-google-chat/</guid><description>
 &lt;h2>介紹&lt;span class="absolute -mt-20" id="介紹">&lt;/span>
 &lt;a href="#%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們使用 Jira 的 Ticket 來當作工單，其他單位如果需要請 SRE 協助，都需要填寫此工單，我們的流程是以下：&lt;/p>
 &lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>待審核 -&amp;gt; SRE 已簽核 -&amp;gt; 進行中 -&amp;gt; (阻塞) -&amp;gt; 完成&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
@@ -21,11 +21,11 @@ alt="工單看板" width="750">&lt;figcaption>
 &lt;p>我們會由資深工程師來審核，狀態會從 &lt;code>待審核&lt;/code> 變成 &lt;code>SRE 已簽核&lt;/code>，這時候我們希望能夠收到通知，才由當週值班的工程師來進行處理。&lt;/p>
 &lt;br>
 &lt;h2>如何送通知到 Google Chat&lt;span class="absolute -mt-20" id="如何送通知到-google-chat">&lt;/span>
-&lt;a href="#%e5%a6%82%e4%bd%95%e9%80%81%e9%80%9a%e7%9f%a5%e5%88%b0-google-chat" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>由於公司目前使用 Google Chat 來當作通知工具，所以我們希望能夠將 Jira 工單的狀態變更時，能夠自動送通知到 Google Chat。&lt;/p>
+&lt;a href="#%e5%a6%82%e4%bd%95%e9%80%81%e9%80%9a%e7%9f%a5%e5%88%b0-google-chat" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>由於公司目前使用 Google Chat 來當作通訊工具，所以我希望能夠在 Jira 工單的狀態變更時，能夠自動送通知到 Google Chat。&lt;/p>
 &lt;p>那 Google Chat 有提供幾種方式可以串接，我們這邊用 Webhook 來串接。&lt;/p>
 &lt;div class="steps ml-4 mb-12 border-l border-gray-200 pl-6 dark:border-neutral-800 [counter-reset:step]">
-&lt;h3>步驟ㄧ&lt;span class="absolute -mt-20" id="步驟ㄧ">&lt;/span>
-&lt;a href="#%e6%ad%a5%e9%a9%9f%e3%84%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們先建立一個聊天室&lt;/p>
+&lt;h3>建立聊天室&lt;span class="absolute -mt-20" id="建立聊天室">&lt;/span>
+&lt;a href="#%e5%bb%ba%e7%ab%8b%e8%81%8a%e5%a4%a9%e5%ae%a4" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們先建立一個聊天室，名稱跟詳細設定就請自行設定&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/2.png"
 alt="建立聊天室" width="450">&lt;figcaption>
@@ -33,8 +33,8 @@ alt="建立聊天室" width="450">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>步驟二&lt;span class="absolute -mt-20" id="步驟二">&lt;/span>
-&lt;a href="#%e6%ad%a5%e9%a9%9f%e4%ba%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>進入聊天室，點選聊天室名稱 (jira 串接 google chat 測試)，選擇應用程式與整合&lt;/p>
+&lt;h3>選擇應用程式與整合&lt;span class="absolute -mt-20" id="選擇應用程式與整合">&lt;/span>
+&lt;a href="#%e9%81%b8%e6%93%87%e6%87%89%e7%94%a8%e7%a8%8b%e5%bc%8f%e8%88%87%e6%95%b4%e5%90%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>進入聊天室，點選聊天室名稱 (例如：jira 串接 google chat 測試)，選擇應用程式與整合&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/3.png"
 alt="點選應用程式與整合" width="400">&lt;figcaption>
@@ -42,5 +42,129 @@ alt="點選應用程式與整合" width="400">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;h3>新增 Webhook&lt;span class="absolute -mt-20" id="新增-webhook">&lt;/span>
+&lt;a href="#%e6%96%b0%e5%a2%9e-webhook" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>選擇 Webhook，並且點擊新增 Webhook，輸入名稱以及自定義的圖片，再點擊儲存&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/4.png"
+alt="建立 Webhook" width="700">&lt;figcaption>
+&lt;p>建立 Webhook&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>複製 Webhook 網址&lt;span class="absolute -mt-20" id="複製-webhook-網址">&lt;/span>
+&lt;a href="#%e8%a4%87%e8%a3%bd-webhook-%e7%b6%b2%e5%9d%80" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>建立完成後，就會在底下出現剛剛建立的 Webhook，點選複製 Webhook 網址&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/5.png"
+alt="複製 Webhook 網址" width="700">&lt;figcaption>
+&lt;p>複製 Webhook 網址&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>測試 Webhook&lt;span class="absolute -mt-20" id="測試-webhook">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6-webhook" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們可以使用 curl 來測試一下 Webhook 是否正常，可以參考以下指令：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>curl -X POST &amp;#34;&amp;lt;&amp;lt;請帶入剛剛所複製的 Google Chat Webhook 連結&amp;gt;&amp;gt;&amp;#34; \
+-H &amp;#34;Content-Type: application/json; charset=UTF-8&amp;#34; \
+-d &amp;#39;{&amp;#34;text&amp;#34;: &amp;#34;Hello World&amp;#34;}&amp;#39;&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
 &lt;/div>
-&lt;p>首先，&lt;/p></description></item></channel></rss>
+&lt;/div>
+&lt;p>在剛剛建立的聊天室裡面，有出現 &lt;code>Hello World&lt;/code> 就代表成功了&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/6.png"
+alt="測試 Webhook 成功" width="700">&lt;figcaption>
+&lt;p>測試 Webhook 成功&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;/div>
+&lt;br>
+&lt;h2>設定 Jira&lt;span class="absolute -mt-20" id="設定-jira">&lt;/span>
+&lt;a href="#%e8%a8%ad%e5%ae%9a-jira" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>接下來我們要設定 Jira，當工單狀態變更時，就會送通知到 Google Chat，我們會使用到 Jira 的工單專案的自動化功能。&lt;/p>
+&lt;p>自動化可以自訂觸發條件，也可以寫判斷，針對不同的情境來做不同的動作。&lt;/p>
+&lt;p>下面是目前我們的設定，當工單狀態變更時，從 &lt;code>To Do&lt;/code> 變成 &lt;code>Approved by SRE&lt;/code>，就會觸發此自動化。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/7.png"
+alt="範例自動化設定" width="1200">&lt;figcaption>
+&lt;p>範例自動化設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>由於我們 SRE 內部有拆組別，所以需要判斷這個工單申請的 RD 單位，是哪個小組負責的，我們這邊會使用 &lt;code>if&lt;/code> 條件，來判斷摘要是否包含對應小組的關鍵字。&lt;/p>
+&lt;p>最後 &lt;code>Then&lt;/code> 如果符合條件，就會使用 『傳送網路要求』 這個動作來送通知到 Google Chat。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/8.png"
+alt="動作選項" width="500">&lt;figcaption>
+&lt;p>動作選項&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>打開傳送網路要求，在 Web 要求 URL，就是貼上剛剛在 Google Chat 建立的 Webhook 連結，HTTP 方法選擇 Post，下面就可以再自訂資料裡面設定想要傳送的內容。&lt;/p>
+&lt;p>如果要傳送的內容是變數，例如工單緊急程度、工單號碼等等，就需要使用 &lt;code>{{}}&lt;/code> 來包住變數，例如：&lt;code>{{issue.key}}&lt;/code>、&lt;code>{{issue.fields.summary}}&lt;/code>、&lt;code>{{issue.fields.status.name}}&lt;/code> 等等。&lt;/p>
+&lt;p>不知道有那些變數，可以點擊圖片箭頭的 &lt;code>{}&lt;/code> 圖示，裡面會告訴你哪些變數可以使用：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/9.png"
+alt="變數參考" width="800">&lt;figcaption>
+&lt;p>變數參考&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>如果是使用套件，例如：Template，變數就不會出現在 &lt;code>{}&lt;/code> 圖示裡面，可以直接帶入 &lt;code>{{issue.template}}&lt;/code>。&lt;/p>
+&lt;h2>使用 Google Chat Card&lt;span class="absolute -mt-20" id="使用-google-chat-card">&lt;/span>
+&lt;a href="#%e4%bd%bf%e7%94%a8-google-chat-card" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>上面的教學已經完成簡單的通知，但訊息顯示的方式不夠直覺，因此我們可以使用 Google Chat Card 來顯示更多資訊。&lt;/p>
+&lt;p>&lt;a href="https://developers.google.com/workspace/chat/api/reference/rest/v1/cards" target="_blank" rel="noopener">Google Chat Cards v2&lt;/a> 提供了更多的選項，例如：&lt;code>header&lt;/code>、&lt;code>sections&lt;/code>、&lt;code>widgets&lt;/code>、&lt;code>buttons&lt;/code> 等等，可以讓訊息更加豐富。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/10.png"
+alt="官方 Card 範例" width="500">&lt;figcaption>
+&lt;p>官方 Card 範例&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>目前 Card 只能使用 v2 版本，它實際上的格式就是一個 JSON，我們可以使用官方提供的 &lt;a href="https://addons.gsuite.google.com/uikit/builder?hl=zh-tw" target="_blank" rel="noopener">UI Kit Builder&lt;/a> 來幫助我們建立 Card。&lt;/p>
+&lt;p>可以從左側，選擇想要的元件來自訂 card，右側會預覽顯示結果，最後直接複製 JSON 內容，再貼到 Jira 的自訂資料裡面。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/11.png"
+alt="UI Kit Builder 工具" width="1200">&lt;figcaption>
+&lt;p>UI Kit Builder 工具&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>最後要注意的是，使用 &lt;a href="https://addons.gsuite.google.com/uikit/builder?hl=zh-tw" target="_blank" rel="noopener">UI Kit Builder&lt;/a> 所產生的 JSON 格式，不是 Google Chat Card 的最終格式，需要自行修改 (很神奇吧 ┐(´д`)┌)。&lt;/p>
+&lt;p>需要再多以下的架構，才會正常運作：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>{
+&amp;#34;cardsV2&amp;#34;: [
+{
+&amp;#34;cardId&amp;#34;: &amp;#34;unique-card-id&amp;#34;,
+&amp;#34;card&amp;#34;: {
+&amp;lt;&amp;lt;這邊才放入 UI Kit Builder 產生的 JSON 內容&amp;gt;&amp;gt;
+}
+}
+]
+}&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>最終成果如下：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/agile/jira-to-google-chat/12.png"
+alt="最終成果" width="450">&lt;figcaption>
+&lt;p>最終成果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>有太多內容要馬賽克 (´・ω・`)&lt;/p>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Google Chat Cards v2：&lt;a href="https://developers.google.com/workspace/chat/api/reference/rest/v1/cards" target="_blank" rel="noopener">https://developers.google.com/workspace/chat/api/reference/rest/v1/cards&lt;/a>&lt;/p>
+&lt;p>UI Kit Builder：&lt;a href="https://addons.gsuite.google.com/uikit/builder?hl=zh-tw" target="_blank" rel="noopener">https://addons.gsuite.google.com/uikit/builder?hl=zh-tw&lt;/a>&lt;/p>
+&lt;p>Google Icon：&lt;a href="https://fonts.google.com/icons" target="_blank" rel="noopener">https://fonts.google.com/icons&lt;/a>&lt;/p></description></item></channel></rss>
