@@ -53,7 +53,7 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 {{< card link="blog/nginx/nginx-upstream-set-host-header" title="想使用 Nginx Upstream Proxy 到外部服務，並帶入對應的 header 該怎麼做？" image="/nginx/nginx-upstream-set-host-header/cover.webp">}}
 {{< card link="blog/nginx/soketi-log-502-error" title="Soketi WebSocket Server LOG 不定時出現 502 error 以及 connect() failed (111: Connection refused)" image="/nginx/soketi-log-502-error/cover.webp">}}
 
-{{< card link="blog/agile/jira-to-google-chat" title="串接 Jira 工單自動化通知" image="/agile/jira-to-google-chat/cover.webp">}}
+{{< card link="blog/agile/jira-to-google-chat" title="串接 Jira 工單自動化通知到 Google Chat" image="/agile/jira-to-google-chat/cover.webp">}}
 
 {{< card link="blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400" title="Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決" image="/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/cover.webp">}}
 {{< card link="blog/rd/kibana-create-index-forbidden" title="Kibana 新增 index 索引時一直轉圈圈以及顯示 HTTP 403 Forbidden" image="/rd/kibana-create-index-forbidden/cover.webp">}}
