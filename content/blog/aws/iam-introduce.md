@@ -14,15 +14,15 @@ authors:
 
 ## 武功秘籍
 
-文章主要參考：[[AWS IAM] 學習重點節錄(2) - IAM Policy](https://godleon.github.io/blog/AWS/learn-AWS-IAM-2-policy/)，這篇文章寫得很詳細，我會加上一些自己的理解，如果有興趣的話，可以去看看原文。
+文章主要參考：[[AWS IAM] 學習重點節錄(2) - IAM Policy](https://godleon.github.io/blog/AWS/learn-AWS-IAM-2-policy/)，這篇文章寫得很詳細，我會加上一些自己的理解跟測試範例，如果有興趣的話，可以去看看原文。
 
-下方文章主要都圍繞官方的 [Actions, resources, and condition keys for AWS services](https://docs.aws.amazon.com/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html) 文件上，如果後面沒有附連結，就是在講這份，請大家可以打開網頁一起看。
+下方文章主要都圍繞官方的 [Actions, resources, and condition keys for AWS services](https://docs.aws.amazon.com/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html) 文件上，如果後面沒有附連結，基本上就在講這份，請大家可以打開網頁一起看。
 
 <br>
 
 ## 什麼是 IAM？
 
-IAM 的全名是 Identity and Access Management，從字面上來看就可以得知，它是用來管理 AWS 資源的身份和存取權限的服務。透過 IAM，您可以控制對 AWS 資源的存取權限，以及對這些資源的操作權限。也就是 `Who (身份) 可以 Do (操作) What (資源)` 的一個服務。
+IAM 的全名是 Identity and Access Management，從字面上來看就可以得知，它是用來管理 AWS 資源的身份和存取權限的服務。透過 IAM，您可以控制對 AWS 資源的存取權限，以及對這些資源的操作權限。也就是 `Who (身份) 可以 Do (操作) What (資源)` 的一個功能。
 
 <br>
 
@@ -51,15 +51,15 @@ Policy Type 有三種：
 
 ## Policy 結構
 
-IAM Policy 會是一個 JSON 格式的文件，可以定義了一個或多個 Action，這個 Policy 會告訴 AWS 這個身份可以對哪些資源 (Resource) 進行哪些操作 (Action)。而這個 policy 會被附加到一個身份上，這個身份可以是一個 IAM user、IAM group 或 IAM role。然後一個 User、Group 或 Role 可以有多個 Policy。
+IAM Policy 會是一個 JSON 格式的文件，可以定義了一個或多個 Action，這個 Policy 會告訴 AWS 這個身份可以對哪些資源 (Resource) 進行哪些操作 (Action)。而這個 Policy 會被附加到一個身份上，這個身份可以是一個 IAM User、IAM Group 或 IAM Role。然後一個 User、Group 或 Role 可以有多個 Policy。
 
 <br>
 
-{{< figure src="/aws/iam-introduce/1.png" width="650" caption="每個帳號預設的 Policy" >}}
+{{< figure src="/aws/iam-introduce/1.png" width="650" caption="我目前公司帳號的 Policy" >}}
 
 <br>
 
-上面的圖片就是 一個典型的 IAM 的 Policy 結構，這個 Policy 會有 Version、Statement、Effect、Action、Resource、Condition 等等主要元素。
+上面的圖片就是一個典型的 IAM 的 Policy 結構，可以看到這個 Policy 會有 Version、Statement、Effect、Action、Resource、Condition (上面沒有 xD) 等等主要元素。
 
 <br>
 
@@ -107,7 +107,7 @@ Effect：元素是必填的，指定陳述式是否允許或拒絕。
 Action：描述哪一個服務可以做哪些動作。
 
 - 每個 AWS 服務都有自己的一組動作，描述您可以使用該服務執行的哪些任務。
-- 使用服務命名做為動作開頭 (iam、ec2、sqs、sns、s3 等) 來指定值，後面則戴上對應的動作名稱。
+- 使用服務命名做為動作開頭 (iam、ec2、sqs、sns、s3 等) 來指定值，後面則加上對應的動作名稱。
 - Action 服務和動作名稱不區分大小寫。例如，`iam:ListAccessKeys` 與 `IAM:listaccesskeys` 相同
 
 下面舉例幾個 Action：
@@ -140,7 +140,7 @@ Action：描述哪一個服務可以做哪些動作。
 
 #### 如何方便的撰寫 Action？
 
-如果，我們需要新增服務很多的 Action，我們只能一個一個輸入嗎？像下面這張圖片，我們可以看到 Elastic Kubernetes Service (EKS) 的 Action 部分清單，假如我們要它這些的動作，需要把每個都寫出來嗎？
+如果，我們需要新增服務很多的 Action，我們只能一個一個輸入嗎？像下面這張圖片，我們可以看到 Elastic Kubernetes Service (EKS) 的 Action 部分清單，假如我們要這些全部的動作，需要把每個都寫出來嗎？
 
 <br>
 
@@ -188,6 +188,8 @@ Resource：描述哪一個服務的哪一個資源。
 
 但是，我們要如何去定義我們可以對哪些的 AWS Resource 做哪些的操作呢？這時候就可以使用 ARN (Amazon Resource Name) 來定義。
 
+<br>
+
 ARN 它的命名會將不同服務、不同 region、不同使用者帳號都考慮進去，產生一個唯一識別 AWS 資源的字串，下面是三種 ARN 格式：
 
 ```
@@ -195,6 +197,10 @@ arn:<partition>:<service>:<region>:<account-id>:<resource-id>
 arn:<partition>:<service>:<region>:<account-id>:<resource-type>/<resource-id>
 arn:<partition>:<service>:<region>:<account-id>:<resource-type>:<resource-id>
 ```
+
+詳細可以參考：[ARN 格式](https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/reference-arns.html)
+
+<br>
 
 那我們一樣，將 partition、service、region、account-id、resource-type、resource-id 都個別簡單介紹一下：
 
@@ -270,13 +276,288 @@ arn:aws:s3:::demo-bucket-b/downloads/*
 
 <b>另外，還會發現，因為 S3 服務它沒有 `<region>`、`<account-id>` 所以中間兩個就留空即可。</b>
 
-詳細可以參考：[ARN 格式](https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/reference-arns.html)
-
-詳細請參考：[IAM JSON 政策元素：Resource](https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/reference_policies_elements_resource.html)
+詳細可以參考：[IAM JSON 政策元素：Resource](https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/reference_policies_elements_resource.html)
 
 <br>
 
 ### Condition
+
+在上面介紹的 Effect 我們可以設定 Allow 或 Deny 來限制 User、Group、Role 對資源操作的權限，但是有時候我們可能會需要更多的條件來限制這個 Policy，這時候就可以使用 Condition 來設定。
+
+Condition：它可用於 Policy 生效時指定條件，Condition 元素是選填的。
+
+這個功能等於是加了一個 `if` 的判斷，以及 Statement 可以有很多個 Sub-Statement，每個 Sub-Statement 都可以設定 Condition，就可以設定很多種可能。
+
+它的格式是：
+
+```
+"Condition": {
+   "<condition-operator>": {
+      "<condition-key>": "<condition-value>"
+   }
+}
+```
+
+會有三個元素組成：分別是 condition-operator、condition-key、condition-value。(condition-value 就是一般要判斷的資料，所以這邊就不多做介紹)
+
+<br>
+
+#### condition-operator
+
+condition-operator：是一個比較運算子，例如：
+
+- 字串的有：
+
+| 運算子                    | 說明                                                               |
+| ------------------------- | ------------------------------------------------------------------ |
+| StringEquals              | 檢查 condition-key 跟 condition-value 字串是否相等                 |
+| StringNotEquals           | 檢查 condition-key 跟 condition-value 字串是否不相等               |
+| StringEqualsIgnoreCase    | 檢查 condition-key 跟 condition-value 字串是否相等，不區分大小寫   |
+| StringNotEqualsIgnoreCase | 檢查 condition-key 跟 condition-value 字串是否不相等，不區分大小寫 |
+
+由於有些 condition-key 沒有區分大小寫，所以運算子會有 `IgnoreCase` 的不區分大小寫的運算子，在設計的時候要注意。
+
+<br>
+
+- 數值的有：
+
+| 運算子                | 說明                                                 |
+| --------------------- | ---------------------------------------------------- |
+| NumericEquals         | 檢查 condition-key 跟 condition-value 數值是否相等   |
+| NumericNotEquals      | 檢查 condition-key 跟 condition-value 數值是否不相等 |
+| NumericLessThan       | 檢查 condition-key 是否小於 condition-value 數值     |
+| NumericLessThanEquals | 檢查 condition-key 是否小於等於 condition-value 數值 |
+| NumericGreaterThan    | 檢查 condition-key 是否大於 condition-value 數值     |
+
+<br>
+
+還有像是日期條件運算子、布林值條件運算子、二進位條件運算子、IP 地址條件運算子等等，由於運算子蠻多的，可以參考：[IAM JSON 原則元素:條件運算子](https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/reference_policies_elements_condition_operators.html)。
+
+<br>
+
+#### condition-key
+
+那 condition-key 是什麼呢？它是一個 key，用來指定要檢查的條件，例如：`aws:username`、`aws:MultiFactorAuthAge`、`s3:authType`、`eks:namespaces` 等等。
+
+在 condition-key 又分為兩種類型：分別是：
+
+1. Global Condition Key
+
+   這些是 AWS 提供的全域條件，可以在所有的服務或是 Action 中使用，例如：`aws:username`、`aws:userid` 等等。但是有些特定狀況下才可以使用，例如：`aws:MultiFactorAuthAge`，詳細可以參考：[AWS global condition context keys](https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_condition-keys.html)
+
+<br>
+
+2. Service Condition Key
+
+   這些是服務提供的條件，不同服務的 Service 也會有所不同，例如：`s3:authType`、`eks:namespaces` 等等。
+
+   想要知道哪些服務有什麼 Condition Key，可以再次開啟 [武功秘籍](#武功秘籍) 提到的 [Actions, resources, and condition keys for AWS services](https://docs.aws.amazon.com/zh_tw/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html)，我們假設選擇 Amazon Elastic Kubernetes Service (EKS) 服務：
+
+   <br>
+
+   因為每個 Action 都有對應的 Condition Key，不是任何一個 Action 都與任一個 Condition Key 有搭配，如下圖：
+
+<br>
+
+{{< figure src="/aws/iam-introduce/4.png" width="950" caption="[Actions defined by Amazon Elastic Kubernetes Service](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelastickubernetesservice.html#amazonelastickubernetesservice-actions-as-permissions)" >}}
+
+<br>
+
+所以需要查看文件裡面的清單，例如像是 AssociateAccessPolicy Action 就會有 `eks:policyArn`、`eks:namespaces`、`eks:accessScope` 的 Condition Key。
+
+<br>
+
+另外，想要知道 Condition Key 對應到哪個資料類型，也可以參考 Condition keys for Amazon Elastic Kubernetes Service，後面會告訴你哪個 Condition Key 的資料類型，方便找到對應的 Condition Operator。
+
+<br>
+
+{{< figure src="/aws/iam-introduce/5.png" width="950" caption="[Condition keys for Amazon Elastic Kubernetes Service](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelastickubernetesservice.html#amazonelastickubernetesservice-policy-keys)" >}}
+
+<br>
+
+#### Condition 規範
+
+<br>
+
+1. Condition 可以在 (condition-operator) 有多個條件 (condition-key)，每個條件都是 `and` 來相互關聯，例如：
+
+```json
+{
+   (省略其他元素)
+
+  "Condition": {
+    "StringEquals": {
+      "aws:PrincipalTag/department": "finance",
+      "aws:PrincipalTag/role": "audit"
+    }
+  }
+}
+```
+
+代表的是 `aws:PrincipalTag/department` 跟 `aws:PrincipalTag/role` 都要符合才會生效。
+
+<br>
+
+2. 如果同一個條件有多個值，每個值都是 `or` 來相互關聯，例如：
+
+```json
+{
+   (省略其他元素)
+
+  "Condition": {
+    "StringEquals": {
+      "aws:PrincipalTag/department": [
+        "finance",
+        "hr",
+        "legal"
+      ],
+      "aws:PrincipalTag/role": [
+        "audit",
+        "security"
+      ]
+    }
+  }
+}
+```
+
+<br>
+
+官方的圖片解釋的更清楚：
+
+{{< figure src="/aws/iam-introduce/6.png" width="400" caption="" >}}
+
+<br>
+
+3. Condition 的 condition-operator 不能重複，例如：
+
+```json
+{
+   (省略其他元素)
+
+  "Condition": {
+    "StringEquals": {
+      "aws:PrincipalTag/department": "finance"
+    },
+    "StringEquals": {
+      "aws:PrincipalTag/role": "audit"
+    }
+  }
+}
+```
+
+這樣是錯誤的寫法，因為 `StringEquals` 出現兩次，要將兩個條件合併成一個條件，例如：
+
+```json
+{
+   (省略其他元素)
+
+  "Condition": {
+    "StringEquals": {
+      "aws:PrincipalTag/department": "finance",
+      "aws:PrincipalTag/role": "audit"
+    }
+  }
+}
+```
+
+詳細可以參考：[IAMJSON 政策元素：Condition](https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/reference_policies_elements_condition.html)
+
+<br>
+
+## IAM Policy 範例
+
+那了解了 IAM Policy 的每個結構以及功能，我下面就舉例兩個 IAM Policy 來讓大家複習看看。
+
+<br>
+
+### 範例一
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "ec2:CreateVolume",
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": "ec2:CreateTags",
+      "Resource": "arn:aws:ec2:::volume/*",
+      "Condition": {
+        "StringLike": {
+          "aws:RequestTag/project": "*"
+        }
+      }
+    },
+    {
+      "Effect": "Deny",
+      "Action": "ec2:CreateTags",
+      "Resource": "arn:aws:ec2:::volume/*",
+      "Condition": {
+        "StringEquals": {
+          "aws:ResourceTag/environment": "production"
+        }
+      }
+    }
+  ]
+}
+```
+
+<br>
+
+這個 Policy 有 3 個 Sub-Statement，分別是：
+
+1. 允許對所有的 EC2 instance 創建 Volume。
+2. 允許有 `aws:RequestTag/project` 的 Tag 對所有的 EC2 Volume 創建 Tag。
+3. 拒絕有 `aws:ResourceTag/environment` 是 production 的 Tag 對所有的 EC2 Volume 創建 Tag。
+
+<br>
+
+### 範例二
+
+```
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ecs:RunTask",
+        "ecs:StartTask"
+      ],
+      "Resource": [
+        "*"
+      ],
+      "Condition": {
+        "StringEquals": {
+          "aws:RequestTag/environment": [
+            "production",
+            "prod-backup"
+          ]
+        },
+        "ArnEquals": {
+          "ecs:cluster": [
+            "arn:aws:ecs:us-east-1:111122223333:cluster/default1",
+            "arn:aws:ecs:us-east-1:111122223333:cluster/default2"
+          ]
+        }
+      }
+    }
+  ]
+}
+```
+
+<br>
+
+這個 Policy 有 1 個 Sub-Statement：
+
+允許在 `arn:aws:ecs:us-east-1:111122223333:cluster/default1` 和 `arn:aws:ecs:us-east-1:111122223333:cluster/default2` 這兩個 ECS 集群上，對 `aws:RequestTag/environment` 標籤為 `production` 或 `prod-backup` 的任務執行 RunTask 和 StartTask 操作。
+
+<br>
+
+範例參考：[單值內容索引鍵政策範例](https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/reference_policies_condition_examples-single-valued-context-keys.html)
 
 <br>
 
@@ -285,3 +566,5 @@ arn:aws:s3:::demo-bucket-b/downloads/*
 [AWS IAM] 學習重點節錄(2) - IAM Policy：[https://godleon.github.io/blog/AWS/learn-AWS-IAM-2-policy/](https://godleon.github.io/blog/AWS/learn-AWS-IAM-2-policy/)
 
 Actions, resources, and condition keys for AWS services：[https://docs.aws.amazon.com/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html](https://docs.aws.amazon.com/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html)
+
+其餘對應的參考資料都直接附在文章中。
