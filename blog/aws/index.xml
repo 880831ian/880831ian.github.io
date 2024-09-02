@@ -83,216 +83,11 @@ alt="使用 eksctl 建立 EKS 缺少 CloudFormation 權限" width="850">&lt;figc
 &lt;a href="#eks-%e5%ae%9a%e5%83%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>What is Amazon EKS?：&lt;a href="https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/eks/latest/userguide/what-is-eks.html&lt;/a>&lt;/p>
-&lt;p>Amazon EKS 入門：eksctl：&lt;a href="https://docs.aws.amazon.com/zh_tw/eks/latest/userguide/getting-started-eksctl.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/zh_tw/eks/latest/userguide/getting-started-eksctl.html&lt;/a>&lt;/p></description></item><item><title>如何使用 MFA Token 驗證 AWS CLI</title><link>https://pin-yi.me/blog/aws/cli-mfa/</link><pubDate>Thu, 01 Aug 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/cli-mfa/</guid><description>
-&lt;p>會有這一篇文章也是跟 &lt;a href="../iam-introduce" >Identity and Access Management (IAM) 介紹&lt;/a> 一樣，在測試 eksctl 建立 EKS 時，發現一直噴錯，說我沒有權限，但我去看我的 IAM Policy 也有加上對應 action 以及 resource，但還是不行，後來發現 &lt;code>cloudformation:*&lt;/code> 這個 action 所在的 Policy 有加上 Condition MFA 驗證的條件，所以就來寫一篇如何使用 MFA Token 驗證 AWS CLI 的文章。&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/1.png"
-alt="沒有權限噴錯QQ" width="850">&lt;figcaption>
-&lt;p>沒有權限噴錯QQ&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;h2>前情提要&lt;span class="absolute -mt-20" id="前情提要">&lt;/span>
-&lt;a href="#%e5%89%8d%e6%83%85%e6%8f%90%e8%a6%81" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我目前有 3 個 IAM Policy，分別是：&lt;/p>
-&lt;ol>
-&lt;li>default-policy：放一些個人基本的 IAM 權限&lt;/li>
-&lt;/ol>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/2.png"
-alt="default-policy" width="650">&lt;figcaption>
-&lt;p>default-policy&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;ol start="2">
-&lt;li>poc-general-policy：放一些我在測試的 PoC 的 IAM 權限，&lt;b>但是仔細看這邊有 Condition MFA 驗證的條件&lt;/b>。&lt;/li>
-&lt;/ol>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/3.png"
-alt="poc-general-policy" width="650">&lt;figcaption>
-&lt;p>poc-general-policy&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;ol start="3">
-&lt;li>ReadOnlyAccess：預設的 ReadOnlyAccess 權限。&lt;/li>
-&lt;/ol>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/4.png"
-alt="ReadOnlyAccess" width="650">&lt;figcaption>
-&lt;p>ReadOnlyAccess&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>當你設定好 &lt;code>aws configure&lt;/code> 後，你會拿到一個永久性的 IAM 憑證 (也就是 Access Key ID 和 Secret Access Key，設定可以看&lt;a href="../aws-cli/#%e9%85%8d%e7%bd%ae-aws-cli" >配置 AWS CLI&lt;/a>)，但是如果你的 Policy 有加上 MFA 驗證的條件，那你就需要使用 MFA Token 來驗證，那要怎麼做呢？&lt;/p>
-&lt;br>
-&lt;h2>查詢目前有沒有設定 MFA&lt;span class="absolute -mt-20" id="查詢目前有沒有設定-mfa">&lt;/span>
-&lt;a href="#%e6%9f%a5%e8%a9%a2%e7%9b%ae%e5%89%8d%e6%9c%89%e6%b2%92%e6%9c%89%e8%a8%ad%e5%ae%9a-mfa" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以先查詢目前有沒有設定 MFA，可以透過以下指令：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws iam list-mfa-devices --user-name &lt;span style="color:#f92672">{&lt;/span>USER_NAME&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
-&lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-title="Copy code"
->
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>將 &lt;code>{USER_NAME}&lt;/code> 換成自己的使用者名稱，如果有設定 MFA，就會顯示出來，如下：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/5.png"
-alt="顯示 mfa 裝置" width="650">&lt;figcaption>
-&lt;p>顯示 mfa 裝置&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;h2>產生 MFA Token&lt;span class="absolute -mt-20" id="產生-mfa-token">&lt;/span>
-&lt;a href="#%e7%94%a2%e7%94%9f-mfa-token" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們確定我們有 MFA 設定後，就可以透過已經設定好的 MFA 以及剛剛的 SerialNumber 來產生 MFA Token，指令如下：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws sts get-session-token --duration-seconds &lt;span style="color:#ae81ff">129600&lt;/span> &lt;span style="color:#ae81ff">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --serial-number &lt;span style="color:#f92672">{&lt;/span>MFA_DEVICES_NUMBER&lt;span style="color:#f92672">}&lt;/span> &lt;span style="color:#ae81ff">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --token-code &lt;span style="color:#f92672">{&lt;/span>MFA_CODE&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
-&lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-title="Copy code"
->
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>首先 &lt;code>--duration-seconds&lt;/code> 參數是 MFA Token 的有效時間，單位是秒，預設是 12 小時，我們可以調整 900 秒 (15 分鐘) 到 129600 秒 (36 小時)，root 使用者憑證，範圍為 900 秒 (15 分鐘）到 3600 秒 (1 小時)，大家可以自行調整。&lt;/p>
-&lt;p>&lt;code>{MFA_DEVICES_NUMBER}&lt;/code> 換成剛剛查詢到的 MFA 裝置的 SerialNumber，最後將 &lt;code>{MFA_CODE}&lt;/code> 換成你的 MFA 的 Code。&lt;/p>
-&lt;br>
-&lt;p>一起來看一下輸出結果：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Credentials&amp;#34;&lt;/span>: &lt;span style="color:#f92672">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;AccessKeyId&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;ASIA2HCXXXXXXXXXXXXX&amp;#34;&lt;/span>,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;SecretAccessKey&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;25CBN6CjRNLPukXXXXXXXXXXXXX&amp;#34;&lt;/span>,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;SessionToken&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;FwoGZXIvYXdzEXXXXXXXXXXXXX&amp;#34;&lt;/span>,
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Expiration&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;2024-08-02T19:42:36+00:00&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
-&lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-title="Copy code"
->
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>AccessKeyId、SecretAccessKey 就跟 &lt;code>aws configure&lt;/code> 拿到的 Access Key ID 和 Secret Access Key 是一樣的類型，只是還多一個 SessionToken，這個 SessionToken 是有經過 MFA 驗證過，所以可以用來執行需要 MFA 驗證條件的 Policy。&lt;/p>
-&lt;br>
-&lt;h2>寫入設定檔&lt;span class="absolute -mt-20" id="寫入設定檔">&lt;/span>
-&lt;a href="#%e5%af%ab%e5%85%a5%e8%a8%ad%e5%ae%9a%e6%aa%94" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當你拿到 Token 以外，你不可能每次下指令都帶 Token，所以我們要把它寫到 &lt;code>~/.aws/credentials&lt;/code> 檔案中，這樣就可以自動帶入 Token 了。&lt;/p>
-&lt;p>我們在 &lt;code>aws configure&lt;/code> 的時候，會有一個 &lt;code>profile&lt;/code> 的選項，這個選項就是用來設定不同的憑證，預設是 &lt;code>default&lt;/code>，我們可以自己設定一個新的憑證，如下：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">[&lt;/span>mfa&lt;span style="color:#f92672">]&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>aws_access_key_id &lt;span style="color:#f92672">=&lt;/span> ASIA2HCXXXXXXXXXXXXX
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>aws_secret_access_key &lt;span style="color:#f92672">=&lt;/span> 25CBN6CjRNLPukXXXXXXXXXXXXX
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>aws_session_token &lt;span style="color:#f92672">=&lt;/span> FwoGZXIvYXdzEXXXXXXXXXXXXX&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
-&lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-title="Copy code"
->
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;p>所以當你要使用 MFA Token 的時候，只要在指令後面加上 &lt;code>--profile mfa&lt;/code> 就可以了。&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/6.png"
-alt="就可以用 poc-general-policy 的 action 囉～" width="850">&lt;figcaption>
-&lt;p>就可以用 poc-general-policy 的 action 囉～&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>當然，如果每次都需要下指令去取得 Token 也是很麻煩的，所以我寫了一個 Shell Script 來幫我們取得 Token 並寫入 &lt;code>~/.aws/credentials&lt;/code> 檔案中，這樣就可以省去每次都要下指令的麻煩了。程式也會同步到 &lt;a href="https://github.com/880831ian/aws-cli-mfa" target="_blank" rel="noopener">Github&lt;/a>，大家可以自行下載使用。&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#! /bin/bash
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>USER_NAME&lt;span style="color:#f92672">=&lt;/span>$1
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>MFA_CODE&lt;span style="color:#f92672">=&lt;/span>$2
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># 顏色設定&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>RED&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;31m&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>GREEN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;32m&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>YELLOW&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;33m&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>BLUE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;34m&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>WHITE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[0m&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[&lt;/span> -z $USER_NAME &lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#f92672">||&lt;/span> &lt;span style="color:#f92672">[&lt;/span> -z $MFA_CODE &lt;span style="color:#f92672">]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>YELLOW&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">提醒說明：請輸入使用者名稱 與 MFA 驗證碼\n格式如下：./aws_mfa.sh ian_zhuang 235821 &amp;lt;&amp;lt; (請依照手機上的 MFA 號碼)。&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\n&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> exit &lt;span style="color:#ae81ff">1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> ! &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$MFA_CODE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">=&lt;/span>~ ^&lt;span style="color:#f92672">[&lt;/span>0-9&lt;span style="color:#f92672">]{&lt;/span>6&lt;span style="color:#f92672">}&lt;/span>$ &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>YELLOW&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">提醒說明：MFA 驗證碼只支援 6 碼數字。&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\n&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> exit &lt;span style="color:#ae81ff">1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>MFA_DEVICES_NUMBER&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>aws iam list-mfa-devices --user-name &lt;span style="color:#e6db74">${&lt;/span>USER_NAME&lt;span style="color:#e6db74">}&lt;/span> | jq -r &lt;span style="color:#e6db74">&amp;#39;.MFADevices[0].SerialNumber&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[&lt;/span> -z $MFA_DEVICES_NUMBER &lt;span style="color:#f92672">]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>RED&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">錯誤說明：MFA 裝置不存在，請確認使用者名稱是否輸入正確&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\n&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> exit &lt;span style="color:#ae81ff">1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>MFA_INFO&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>aws sts get-session-token --duration-seconds &lt;span style="color:#ae81ff">129600&lt;/span> --serial-number &lt;span style="color:#e6db74">${&lt;/span>MFA_DEVICES_NUMBER&lt;span style="color:#e6db74">}&lt;/span> --token-code &lt;span style="color:#e6db74">${&lt;/span>MFA_CODE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[&lt;/span> $? -eq &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#f92672">]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_ACCESS_KEY_ID&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo $MFA_INFO | jq -r &lt;span style="color:#e6db74">&amp;#39;.Credentials.AccessKeyId&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_SECRET_ACCESS_KEY&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo $MFA_INFO | jq -r &lt;span style="color:#e6db74">&amp;#39;.Credentials.SecretAccessKey&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_SESSION_TOKEN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo $MFA_INFO | jq -r &lt;span style="color:#e6db74">&amp;#39;.Credentials.SessionToken&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_EXPIRATION&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo $MFA_INFO | jq -r &lt;span style="color:#e6db74">&amp;#39;.Credentials.Expiration&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 計算 MFA 到期時間(轉換時區)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_0_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -j -f &lt;span style="color:#e6db74">&amp;#34;%Y-%m-%dT%H:%M:%S&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$MFA_EXPIRATION&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | sed &lt;span style="color:#e6db74">&amp;#39;s/+00:00//&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_8_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -j -v+8H -f &lt;span style="color:#e6db74">&amp;#34;%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$MFA_0_TIME&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_CREDENTIALS&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;[mfa]\naws_access_key_id = &lt;/span>$MFA_ACCESS_KEY_ID&lt;span style="color:#e6db74">\naws_secret_access_key = &lt;/span>$MFA_SECRET_ACCESS_KEY&lt;span style="color:#e6db74">\naws_session_token = &lt;/span>$MFA_SESSION_TOKEN&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 檢查是否已經有 [mfa] 區塊&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> grep -q &lt;span style="color:#e6db74">&amp;#34;\[mfa\]&amp;#34;&lt;/span> ~/.aws/credentials; &lt;span style="color:#66d9ef">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 更新 [mfa] 區塊&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> sed -i &lt;span style="color:#e6db74">&amp;#39;&amp;#39;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;/\[mfa\]/,/^$/d&amp;#39;&lt;/span> ~/.aws/credentials
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$MFA_CREDENTIALS&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &amp;gt;&amp;gt;~/.aws/credentials
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 新增 [mfa] 區塊&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n\n&lt;/span>$MFA_CREDENTIALS&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &amp;gt;&amp;gt;~/.aws/credentials
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">fi&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>GREEN&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">MFA 驗證成功，將 Key 跟 Token 加入or修改到 ~/.aws/credentials 檔案中&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>BLUE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">到期時間：&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>MFA_8_TIME&lt;span style="color:#e6db74">}${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\n&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">else&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>RED&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">MFA 驗證失敗，請確認 MFA 驗證碼是否正確&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\n&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> exit &lt;span style="color:#ae81ff">1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
-&lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
-title="Copy code"
->
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;p>只需要執行 &lt;code>./aws_mfa.sh {USER_NAME} {MFA_CODE}&lt;/code> 就可以了，程式會自動幫你取得 Token 並寫入 &lt;code>~/.aws/credentials&lt;/code> 檔案中。&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/7.png"
-alt="執行腳本" width="700">&lt;figcaption>
-&lt;p>執行腳本&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>How do I use an MFA token to authenticate access to my AWS resources through the AWS CLI?
-：&lt;a href="https://repost.aws/knowledge-center/authenticate-mfa-cli" target="_blank" rel="noopener">https://repost.aws/knowledge-center/authenticate-mfa-cli&lt;/a>&lt;/p></description></item><item><title>Identity and Access Management (IAM) 介紹</title><link>https://pin-yi.me/blog/aws/iam-introduce/</link><pubDate>Fri, 26 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/iam-introduce/</guid><description>
+&lt;p>Amazon EKS 入門：eksctl：&lt;a href="https://docs.aws.amazon.com/zh_tw/eks/latest/userguide/getting-started-eksctl.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/zh_tw/eks/latest/userguide/getting-started-eksctl.html&lt;/a>&lt;/p></description></item><item><title>Identity and Access Management (IAM) 介紹</title><link>https://pin-yi.me/blog/aws/iam-introduce/</link><pubDate>Fri, 26 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/iam-introduce/</guid><description>
 &lt;p>先來說一下為什麼會寫這篇文章，主要是在寫跟測試 &lt;a href="../eks-introduce" >Elastic Kubernetes Service (EKS) 介紹&lt;/a> 文章時，想要用 eksctl 來建立 EKS，它實際上是透過 CloudFormation 來建立的，詳細可以去看 EKS 文章，總之當時遇到權限的問題，找了很久，也看不懂 AWS 的 ARN 是什麼，所以就先來寫一篇 IAM 的文章 (´≖◞౪◟≖)。&lt;/p>
 &lt;br>
 &lt;h2>武功秘籍&lt;span class="absolute -mt-20" id="武功秘籍">&lt;/span>
-&lt;a href="#%e6%ad%a6%e5%8a%9f%e7%a7%98%e7%b1%8d" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>文章主要參考：&lt;a href="https://godleon.github.io/blog/AWS/learn-AWS-IAM-2-policy/" target="_blank" rel="noopener">[AWS IAM] 學習重點節錄(2) - IAM Policy&lt;/a>，這篇文章寫得很詳細，我會加上一些自己的理解跟測試範例，如果有興趣的話，可以去看看原文。&lt;/p>
+&lt;a href="#%e6%ad%a6%e5%8a%9f%e7%a7%98%e7%b1%8d" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>文章主要參考：&lt;a href="https://godleon.github.io/blog/AWS/learn-AWS-IAM-2-policy/" target="_blank" rel="noopener">[AWS IAM] 學習重點節錄(2) - IAM Policy&lt;/a>，這篇文章寫得很詳細，當然，我會加上一些自己的理解跟測試範例，如果有興趣的話，可以去看看原文。&lt;/p>
 &lt;p>下方文章主要都圍繞官方的 &lt;a href="https://docs.aws.amazon.com/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html" target="_blank" rel="noopener">Actions, resources, and condition keys for AWS services&lt;/a> 文件上，如果後面沒有附連結，基本上就在講這份，請大家可以打開網頁一起看。&lt;/p>
 &lt;br>
 &lt;h2>什麼是 IAM？&lt;span class="absolute -mt-20" id="什麼是-iam">&lt;/span>
@@ -891,7 +686,212 @@ title="Copy code"
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>[AWS IAM] 學習重點節錄(2) - IAM Policy：&lt;a href="https://godleon.github.io/blog/AWS/learn-AWS-IAM-2-policy/" target="_blank" rel="noopener">https://godleon.github.io/blog/AWS/learn-AWS-IAM-2-policy/&lt;/a>&lt;/p>
 &lt;p>Actions, resources, and condition keys for AWS services：&lt;a href="https://docs.aws.amazon.com/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html&lt;/a>&lt;/p>
-&lt;p>其餘對應的參考資料都直接附在文章中。&lt;/p></description></item><item><title>設定 AWS CLI 以及 AWS CLI 指令說明</title><link>https://pin-yi.me/blog/aws/aws-cli/</link><pubDate>Fri, 26 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-cli/</guid><description>
+&lt;p>其餘對應的參考資料都直接附在文章中。&lt;/p></description></item><item><title>如何使用 MFA Token 驗證 AWS CLI</title><link>https://pin-yi.me/blog/aws/cli-mfa/</link><pubDate>Thu, 01 Aug 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/cli-mfa/</guid><description>
+&lt;p>會有這一篇文章也是跟 &lt;a href="../iam-introduce" >Identity and Access Management (IAM) 介紹&lt;/a> 一樣，在測試 eksctl 建立 EKS 時，發現一直噴錯，說我沒有權限，但我去看我的 IAM Policy 也有加上對應 action 以及 resource，但還是不行，後來發現 &lt;code>cloudformation:*&lt;/code> 這個 action 所在的 Policy 有加上 Condition MFA 驗證的條件，所以就來寫一篇如何使用 MFA Token 驗證 AWS CLI 的文章。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/1.png"
+alt="沒有權限噴錯QQ" width="850">&lt;figcaption>
+&lt;p>沒有權限噴錯QQ&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>前情提要&lt;span class="absolute -mt-20" id="前情提要">&lt;/span>
+&lt;a href="#%e5%89%8d%e6%83%85%e6%8f%90%e8%a6%81" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我目前有 3 個 IAM Policy，分別是：&lt;/p>
+&lt;ol>
+&lt;li>default-policy：放一些個人基本的 IAM 權限&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/2.png"
+alt="default-policy" width="650">&lt;figcaption>
+&lt;p>default-policy&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>poc-general-policy：放一些我在測試的 PoC 的 IAM 權限，&lt;b>但是仔細看這邊有 Condition MFA 驗證的條件&lt;/b>。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/3.png"
+alt="poc-general-policy" width="650">&lt;figcaption>
+&lt;p>poc-general-policy&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>ReadOnlyAccess：預設的 ReadOnlyAccess 權限。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/4.png"
+alt="ReadOnlyAccess" width="650">&lt;figcaption>
+&lt;p>ReadOnlyAccess&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>當你設定好 &lt;code>aws configure&lt;/code> 後，你會拿到一個永久性的 IAM 憑證 (也就是 Access Key ID 和 Secret Access Key，設定可以看&lt;a href="../aws-cli/#%e9%85%8d%e7%bd%ae-aws-cli" >配置 AWS CLI&lt;/a>)，但是如果你的 Policy 有加上 MFA 驗證的條件，那你就需要使用 MFA Token 來驗證，那要怎麼做呢？&lt;/p>
+&lt;br>
+&lt;h2>查詢目前有沒有設定 MFA&lt;span class="absolute -mt-20" id="查詢目前有沒有設定-mfa">&lt;/span>
+&lt;a href="#%e6%9f%a5%e8%a9%a2%e7%9b%ae%e5%89%8d%e6%9c%89%e6%b2%92%e6%9c%89%e8%a8%ad%e5%ae%9a-mfa" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以先查詢目前有沒有設定 MFA，可以透過以下指令：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws iam list-mfa-devices --user-name &lt;span style="color:#f92672">{&lt;/span>USER_NAME&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>將 &lt;code>{USER_NAME}&lt;/code> 換成自己的使用者名稱，如果有設定 MFA，就會顯示出來，如下：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/5.png"
+alt="顯示 mfa 裝置" width="650">&lt;figcaption>
+&lt;p>顯示 mfa 裝置&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>產生 MFA Token&lt;span class="absolute -mt-20" id="產生-mfa-token">&lt;/span>
+&lt;a href="#%e7%94%a2%e7%94%9f-mfa-token" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們確定我們有 MFA 設定後，就可以透過已經設定好的 MFA 以及剛剛的 SerialNumber 來產生 MFA Token，指令如下：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws sts get-session-token --duration-seconds &lt;span style="color:#ae81ff">129600&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --serial-number &lt;span style="color:#f92672">{&lt;/span>MFA_DEVICES_NUMBER&lt;span style="color:#f92672">}&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --token-code &lt;span style="color:#f92672">{&lt;/span>MFA_CODE&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>首先 &lt;code>--duration-seconds&lt;/code> 參數是 MFA Token 的有效時間，單位是秒，預設是 12 小時，我們可以調整 900 秒 (15 分鐘) 到 129600 秒 (36 小時)，root 使用者憑證，範圍為 900 秒 (15 分鐘）到 3600 秒 (1 小時)，大家可以自行調整。&lt;/p>
+&lt;p>&lt;code>{MFA_DEVICES_NUMBER}&lt;/code> 換成剛剛查詢到的 MFA 裝置的 SerialNumber，最後將 &lt;code>{MFA_CODE}&lt;/code> 換成你的 MFA 的 Code。&lt;/p>
+&lt;br>
+&lt;p>一起來看一下輸出結果：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Credentials&amp;#34;&lt;/span>: &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;AccessKeyId&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;ASIA2HCXXXXXXXXXXXXX&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;SecretAccessKey&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;25CBN6CjRNLPukXXXXXXXXXXXXX&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;SessionToken&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;FwoGZXIvYXdzEXXXXXXXXXXXXX&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;Expiration&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;2024-08-02T19:42:36+00:00&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>AccessKeyId、SecretAccessKey 就跟 &lt;code>aws configure&lt;/code> 拿到的 Access Key ID 和 Secret Access Key 是一樣的類型，只是還多一個 SessionToken，這個 SessionToken 是有經過 MFA 驗證過，所以可以用來執行需要 MFA 驗證條件的 Policy。&lt;/p>
+&lt;br>
+&lt;h2>寫入設定檔&lt;span class="absolute -mt-20" id="寫入設定檔">&lt;/span>
+&lt;a href="#%e5%af%ab%e5%85%a5%e8%a8%ad%e5%ae%9a%e6%aa%94" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當你拿到 Token 以外，你不可能每次下指令都帶 Token，所以我們要把它寫到 &lt;code>~/.aws/credentials&lt;/code> 檔案中，這樣就可以自動帶入 Token 了。&lt;/p>
+&lt;p>我們在 &lt;code>aws configure&lt;/code> 的時候，會有一個 &lt;code>profile&lt;/code> 的選項，這個選項就是用來設定不同的憑證，預設是 &lt;code>default&lt;/code>，我們可以自己設定一個新的憑證，如下：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">[&lt;/span>mfa&lt;span style="color:#f92672">]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>aws_access_key_id &lt;span style="color:#f92672">=&lt;/span> ASIA2HCXXXXXXXXXXXXX
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>aws_secret_access_key &lt;span style="color:#f92672">=&lt;/span> 25CBN6CjRNLPukXXXXXXXXXXXXX
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>aws_session_token &lt;span style="color:#f92672">=&lt;/span> FwoGZXIvYXdzEXXXXXXXXXXXXX&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>所以當你要使用 MFA Token 的時候，只要在指令後面加上 &lt;code>--profile mfa&lt;/code> 就可以了。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/6.png"
+alt="就可以用 poc-general-policy 的 action 囉～" width="850">&lt;figcaption>
+&lt;p>就可以用 poc-general-policy 的 action 囉～&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>當然，如果每次都需要下指令去取得 Token 也是很麻煩的，所以我寫了一個 Shell Script 來幫我們取得 Token 並寫入 &lt;code>~/.aws/credentials&lt;/code> 檔案中，這樣就可以省去每次都要下指令的麻煩了。程式也會同步到 &lt;a href="https://github.com/880831ian/aws-cli-mfa" target="_blank" rel="noopener">Github&lt;/a>，大家可以自行下載使用。&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#! /bin/bash
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>USER_NAME&lt;span style="color:#f92672">=&lt;/span>$1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>MFA_CODE&lt;span style="color:#f92672">=&lt;/span>$2
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># 顏色設定&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>RED&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;31m&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>GREEN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;32m&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>YELLOW&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;33m&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>BLUE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;34m&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>WHITE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[0m&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[&lt;/span> -z $USER_NAME &lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#f92672">||&lt;/span> &lt;span style="color:#f92672">[&lt;/span> -z $MFA_CODE &lt;span style="color:#f92672">]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>YELLOW&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">提醒說明：請輸入使用者名稱 與 MFA 驗證碼\n格式如下：./aws_mfa.sh ian_zhuang 235821 &amp;lt;&amp;lt; (請依照手機上的 MFA 號碼)。&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\n&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> exit &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> ! &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$MFA_CODE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">=&lt;/span>~ ^&lt;span style="color:#f92672">[&lt;/span>0-9&lt;span style="color:#f92672">]{&lt;/span>6&lt;span style="color:#f92672">}&lt;/span>$ &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>YELLOW&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">提醒說明：MFA 驗證碼只支援 6 碼數字。&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\n&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> exit &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>MFA_DEVICES_NUMBER&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>aws iam list-mfa-devices --user-name &lt;span style="color:#e6db74">${&lt;/span>USER_NAME&lt;span style="color:#e6db74">}&lt;/span> | jq -r &lt;span style="color:#e6db74">&amp;#39;.MFADevices[0].SerialNumber&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[&lt;/span> -z $MFA_DEVICES_NUMBER &lt;span style="color:#f92672">]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>RED&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">錯誤說明：MFA 裝置不存在，請確認使用者名稱是否輸入正確&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\n&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> exit &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>MFA_INFO&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>aws sts get-session-token --duration-seconds &lt;span style="color:#ae81ff">129600&lt;/span> --serial-number &lt;span style="color:#e6db74">${&lt;/span>MFA_DEVICES_NUMBER&lt;span style="color:#e6db74">}&lt;/span> --token-code &lt;span style="color:#e6db74">${&lt;/span>MFA_CODE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[&lt;/span> $? -eq &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#f92672">]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_ACCESS_KEY_ID&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo $MFA_INFO | jq -r &lt;span style="color:#e6db74">&amp;#39;.Credentials.AccessKeyId&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_SECRET_ACCESS_KEY&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo $MFA_INFO | jq -r &lt;span style="color:#e6db74">&amp;#39;.Credentials.SecretAccessKey&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_SESSION_TOKEN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo $MFA_INFO | jq -r &lt;span style="color:#e6db74">&amp;#39;.Credentials.SessionToken&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_EXPIRATION&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo $MFA_INFO | jq -r &lt;span style="color:#e6db74">&amp;#39;.Credentials.Expiration&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 計算 MFA 到期時間(轉換時區)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_0_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -j -f &lt;span style="color:#e6db74">&amp;#34;%Y-%m-%dT%H:%M:%S&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$MFA_EXPIRATION&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | sed &lt;span style="color:#e6db74">&amp;#39;s/+00:00//&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_8_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -j -v+8H -f &lt;span style="color:#e6db74">&amp;#34;%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$MFA_0_TIME&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> MFA_CREDENTIALS&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;[mfa]\naws_access_key_id = &lt;/span>$MFA_ACCESS_KEY_ID&lt;span style="color:#e6db74">\naws_secret_access_key = &lt;/span>$MFA_SECRET_ACCESS_KEY&lt;span style="color:#e6db74">\naws_session_token = &lt;/span>$MFA_SESSION_TOKEN&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 檢查是否已經有 [mfa] 區塊&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> grep -q &lt;span style="color:#e6db74">&amp;#34;\[mfa\]&amp;#34;&lt;/span> ~/.aws/credentials; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 更新 [mfa] 區塊&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> sed -i &lt;span style="color:#e6db74">&amp;#39;&amp;#39;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;/\[mfa\]/,/^$/d&amp;#39;&lt;/span> ~/.aws/credentials
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$MFA_CREDENTIALS&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &amp;gt;&amp;gt;~/.aws/credentials
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 新增 [mfa] 區塊&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n\n&lt;/span>$MFA_CREDENTIALS&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &amp;gt;&amp;gt;~/.aws/credentials
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>GREEN&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">MFA 驗證成功，將 Key 跟 Token 加入or修改到 ~/.aws/credentials 檔案中&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>BLUE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">到期時間：&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>MFA_8_TIME&lt;span style="color:#e6db74">}${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\n&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo -e &lt;span style="color:#e6db74">&amp;#34;\n&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>RED&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">MFA 驗證失敗，請確認 MFA 驗證碼是否正確&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>WHITE&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\n&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> exit &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>只需要執行 &lt;code>./aws_mfa.sh {USER_NAME} {MFA_CODE}&lt;/code> 就可以了，程式會自動幫你取得 Token 並寫入 &lt;code>~/.aws/credentials&lt;/code> 檔案中。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/7.png"
+alt="執行腳本" width="700">&lt;figcaption>
+&lt;p>執行腳本&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>How do I use an MFA token to authenticate access to my AWS resources through the AWS CLI?
+：&lt;a href="https://repost.aws/knowledge-center/authenticate-mfa-cli" target="_blank" rel="noopener">https://repost.aws/knowledge-center/authenticate-mfa-cli&lt;/a>&lt;/p></description></item><item><title>設定 AWS CLI 以及 AWS CLI 指令說明</title><link>https://pin-yi.me/blog/aws/aws-cli/</link><pubDate>Fri, 26 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-cli/</guid><description>
 &lt;h2>介紹&lt;span class="absolute -mt-20" id="介紹">&lt;/span>
 &lt;a href="#%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>AWS CLI 是用於使用 AWS 服務的命令列工具。它也用於對 IAM 使用者或角色進行身份驗證，以便從本機電腦存取 Amazon EKS 叢集和其他 AWS 資源。若要從命令列在 AWS 中設定資源，您需要取得要在命令列中使用的 AWS 存取金鑰 ID 和金鑰。&lt;/p>
 &lt;br>
