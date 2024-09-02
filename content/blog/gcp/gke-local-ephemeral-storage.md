@@ -4,7 +4,7 @@ type: docs
 weight: 51
 description: Google Kubernetes Engine Local ephemeral storage 計算方式
 images:
-  - aws/gke-local-ephemeral-storage/og.webp
+  - gcp/gke-local-ephemeral-storage/og.webp
 date: 2024-09-02
 authors:
   - name: Ian_zhuang
