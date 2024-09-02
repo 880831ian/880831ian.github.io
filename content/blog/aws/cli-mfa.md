@@ -1,7 +1,7 @@
 ---
 title: "如何使用 MFA Token 驗證 AWS CLI"
 type: docs
-weight: 35
+weight: 98
 date: 2024-08-01
 authors:
   - name: Ian_zhuang

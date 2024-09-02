@@ -1,7 +1,7 @@
 ---
 title: "設定 AWS CLI 以及 AWS CLI 指令說明"
 type: docs
-weight: 40
+weight: 99
 date: 2024-07-26
 authors:
   - name: Ian_zhuang

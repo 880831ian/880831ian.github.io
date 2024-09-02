@@ -1,7 +1,7 @@
 ---
 title: "Identity and Access Management (IAM) 介紹"
 type: docs
-weight: 37
+weight: 97
 description: Identity and Access Management (IAM) 介紹
 images:
   - aws/iam-introduce/og.webp
@@ -17,7 +17,7 @@ authors:
 
 ## 武功秘籍
 
-文章主要參考：[[AWS IAM] 學習重點節錄(2) - IAM Policy](https://godleon.github.io/blog/AWS/learn-AWS-IAM-2-policy/)，這篇文章寫得很詳細，我會加上一些自己的理解跟測試範例，如果有興趣的話，可以去看看原文。
+文章主要參考：[[AWS IAM] 學習重點節錄(2) - IAM Policy](https://godleon.github.io/blog/AWS/learn-AWS-IAM-2-policy/)，這篇文章寫得很詳細，當然，我會加上一些自己的理解跟測試範例，如果有興趣的話，可以去看看原文。
 
 下方文章主要都圍繞官方的 [Actions, resources, and condition keys for AWS services](https://docs.aws.amazon.com/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html) 文件上，如果後面沒有附連結，基本上就在講這份，請大家可以打開網頁一起看。
 
