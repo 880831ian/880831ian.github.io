@@ -1,4 +1,40 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Amazon Web Services</title><link>https://pin-yi.me/blog/aws/</link><description>Recent content in Amazon Web Services on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/aws/index.xml" rel="self" type="application/rss+xml"/><item><title>Elastic Kubernetes Service (EKS) 介紹</title><link>https://pin-yi.me/blog/aws/eks-introduce/</link><pubDate>Fri, 26 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/eks-introduce/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Amazon Web Services</title><link>https://pin-yi.me/blog/aws/</link><description>Recent content in Amazon Web Services on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/aws/index.xml" rel="self" type="application/rss+xml"/><item><title>Amazon Virtual Private Cloud (VPC) 介紹</title><link>https://pin-yi.me/blog/aws/vpc-introduce/</link><pubDate>Mon, 02 Sep 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/vpc-introduce/</guid><description>
+&lt;p>此篇單純是我自己學習 AWS VPC 的筆記，主要是為了熟悉 AWS 的 VPC，了解 VPC 包含哪些元件，以及如何建立 VPC，並且如何設定 VPC 的相關設定。&lt;/p>
+&lt;br>
+&lt;h2>武功秘笈&lt;span class="absolute -mt-20" id="武功秘笈">&lt;/span>
+&lt;a href="#%e6%ad%a6%e5%8a%9f%e7%a7%98%e7%ac%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>文章主要參考：&lt;a href="https://godleon.github.io/blog/AWS/AWS-CSA-associate-VPC-part1/" target="_blank" rel="noopener">AWS CSA Associate 學習筆記 - VPC(Virtual Private Cloud) Part 1&lt;/a>，這篇文章寫得很詳細，當然，我會加上一些自己的理解跟測試範例，如果有興趣的話，可以去看看原文。&lt;/p>
+&lt;h2>什麼是 VPC？&lt;span class="absolute -mt-20" id="什麼是-vpc">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-vpc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>VPC 的全名是 Virtual Private Cloud，可以在 AWS 雲端內配置邏輯上隔離的虛擬網路。透過建立自己的 VPC，可以完全控制網路環境，包括定義 IP 位址範圍、子網路、路由表和連接選項的能力。&lt;/p>
+&lt;p>每個 AWS 帳號包含每個 AWS 區域的預設 VPC。預設 VPC 有先設置好一些設定，可以快速啟動資源的便捷選項。但是預設 VPC 沒辦法符合長期的網路需求，這時候就需要自己建立 VPC。&lt;/p>
+&lt;p>建立額外的 VPC 還有很多優勢，例如：可以按照部門或業務隔離工作負載，可以設定更多的安全性控制 (Security Group &amp;amp; Network ACLs)，可以設定更多的網路設定等等。&lt;/p>
+&lt;p>還可以幫 VPC 建立 VPN 連線，將地端網路與 AWS VPC 連接起來，變成一個 Hybrid Cloud 架構。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/vpc-introduce/1.png"
+alt="VPC 架構 什麼是 Amazon VPC" width="600">&lt;figcaption>
+&lt;p>VPC 架構 &lt;a href="https://docs.aws.amazon.com/zh_tw/vpc/latest/userguide/what-is-amazon-vpc.html" target="_blank" rel="noopener">什麼是 Amazon VPC&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>從圖片來看，可以知道：&lt;/p>
+&lt;ul>
+&lt;li>VPC 會在 Region 層級底下，每個 Region 可以有多個 VPC。&lt;/li>
+&lt;li>VPC 是跨 Availability Zone (AZ) 的，可以在不同的 AZ 建立 Subnet。&lt;/li>
+&lt;li>VPC 會透過 Internet Gateway (IGW) 連接到 Internet。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h2>VPC 元件&lt;span class="absolute -mt-20" id="vpc-元件">&lt;/span>
+&lt;a href="#vpc-%e5%85%83%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>所以從上面知道 VPC 架構，那我們來詳細看一下它是由哪些元件組成的，先看細圖：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/vpc-introduce/2.jpg"
+alt="VPC Data Flow Virtual Private Cloud" width="800">&lt;figcaption>
+&lt;p>VPC Data Flow &lt;a href="https://salmankhalid85.wordpress.com/aws/virtual-private-cloud/" target="_blank" rel="noopener">Virtual Private Cloud&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>什麼是 Amazon VPC：&lt;a href="https://docs.aws.amazon.com/zh_tw/vpc/latest/userguide/what-is-amazon-vpc.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/zh_tw/vpc/latest/userguide/what-is-amazon-vpc.html&lt;/a>&lt;/p>
+&lt;p>AWS CSA Associate 學習筆記 - VPC(Virtual Private Cloud) Part 1：&lt;a href="https://godleon.github.io/blog/AWS/AWS-CSA-associate-VPC-part1/" target="_blank" rel="noopener">https://godleon.github.io/blog/AWS/AWS-CSA-associate-VPC-part1/&lt;/a>&lt;/p>
+&lt;p>Virtual Private Cloud：&lt;a href="https://salmankhalid85.wordpress.com/aws/virtual-private-cloud/" target="_blank" rel="noopener">https://salmankhalid85.wordpress.com/aws/virtual-private-cloud/&lt;/a>&lt;/p></description></item><item><title>Elastic Kubernetes Service (EKS) 介紹</title><link>https://pin-yi.me/blog/aws/eks-introduce/</link><pubDate>Fri, 26 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/eks-introduce/</guid><description>
 &lt;p>由於公司政策調整，除了原先的 Google Cloud Platform (GCP) 之外，我們也開始使用 AWS 服務，其中包括了 EKS (Elastic Kubernetes Service)。這篇文章將會介紹 EKS 的基本概念以及一些使用上的注意事項。&lt;/p>
 &lt;p>後面也會有幾篇 AWS 文章，歡迎大家持續關注。&lt;/p>
 &lt;br>
