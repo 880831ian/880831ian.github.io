@@ -11,6 +11,7 @@ sidebar:
 <!--more-->
 
 {{< cards >}}
+{{< card link="gke-local-ephemeral-storage" title="Google Kubernetes Engine Local ephemeral storage 計算方式" image="/gcp/gke-local-ephemeral-storage/cover.webp" >}}
 {{< card link="gcp-memorystore-failover" title="GCP Memorystore HA 高可用性 failover 測試" image="/gcp/gcp-memorystore-failover/cover.webp" >}}
 {{< card link="gcp-prometheus-sample-ingested-calculate" title="GCP Prometheus Samples Ingested 計算方式及如何減少費用" image="/gcp/gcp-prometheus-sample-ingested-calculate/cover.webp" >}}
 {{< card link="gcp-log-reduce-cloud-logging-api" title="如何過濾 GCP LOG，減少 Cloud Logging API 的花費" image="/gcp/gcp-log-reduce-cloud-logging-api/cover.webp" >}}
