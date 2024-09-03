@@ -1,16 +1,17 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Amazon Web Services</title><link>https://pin-yi.me/blog/aws/</link><description>Recent content in Amazon Web Services on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/aws/index.xml" rel="self" type="application/rss+xml"/><item><title>Amazon Virtual Private Cloud (VPC) 介紹</title><link>https://pin-yi.me/blog/aws/vpc-introduce/</link><pubDate>Mon, 02 Sep 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/vpc-introduce/</guid><description>
-&lt;p>此篇單純是我自己學習 AWS VPC 的筆記，主要是為了熟悉 AWS 的 VPC，了解 VPC 包含哪些元件，以及如何建立 VPC，並且如何設定 VPC 的相關設定。&lt;/p>
+&lt;p>此篇單純是我自己學習 AWS VPC 的筆記，主要是為了熟悉 AWS 的 VPC，了解 VPC 包含哪些元件，以及如何建立 VPC、設定 VPC 等等。&lt;/p>
 &lt;br>
 &lt;h2>武功秘笈&lt;span class="absolute -mt-20" id="武功秘笈">&lt;/span>
 &lt;a href="#%e6%ad%a6%e5%8a%9f%e7%a7%98%e7%ac%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>文章主要參考：&lt;a href="https://godleon.github.io/blog/AWS/AWS-CSA-associate-VPC-part1/" target="_blank" rel="noopener">AWS CSA Associate 學習筆記 - VPC(Virtual Private Cloud) Part 1&lt;/a>，這篇文章寫得很詳細，當然，我會加上一些自己的理解跟測試範例，如果有興趣的話，可以去看看原文。&lt;/p>
+&lt;br>
 &lt;h2>什麼是 VPC？&lt;span class="absolute -mt-20" id="什麼是-vpc">&lt;/span>
 &lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-vpc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>VPC 的全名是 Virtual Private Cloud，可以在 AWS 雲端內配置邏輯上隔離的虛擬網路。透過建立自己的 VPC，可以完全控制網路環境，包括定義 IP 位址範圍、子網路、路由表和連接選項的能力。&lt;/p>
-&lt;p>每個 AWS 帳號包含每個 AWS 區域的預設 VPC。預設 VPC 有先設置好一些設定，可以快速啟動資源的便捷選項。但是預設 VPC 沒辦法符合長期的網路需求，這時候就需要自己建立 VPC。&lt;/p>
-&lt;p>建立額外的 VPC 還有很多優勢，例如：可以按照部門或業務隔離工作負載，可以設定更多的安全性控制 (Security Group &amp;amp; Network ACLs)，可以設定更多的網路設定等等。&lt;/p>
+&lt;p>每個 AWS 帳號包含每個 AWS 區域的預設 VPC。預設 VPC 有先設置好一些設定，方便我們可以快速啟動資源的便捷選項。但是預設 VPC 沒辦法符合長期的網路需求，這時候就需要自己建立 VPC。&lt;/p>
+&lt;p>建立額外的 VPC 還有很多優勢，例如：可以按照部門或業務隔離工作負載，可以設定更多的安全性控制 (Network ACL &amp;amp; Security Group)，可以設定更多詳細的網路設定。&lt;/p>
 &lt;p>還可以幫 VPC 建立 VPN 連線，將地端網路與 AWS VPC 連接起來，變成一個 Hybrid Cloud 架構。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/aws/vpc-introduce/1.png"
-alt="VPC 架構 什麼是 Amazon VPC" width="600">&lt;figcaption>
+alt="VPC 架構 什麼是 Amazon VPC" width="550">&lt;figcaption>
 &lt;p>VPC 架構 &lt;a href="https://docs.aws.amazon.com/zh_tw/vpc/latest/userguide/what-is-amazon-vpc.html" target="_blank" rel="noopener">什麼是 Amazon VPC&lt;/a>&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
@@ -23,7 +24,7 @@ alt="VPC 架構 什麼是 Amazon VPC" width="600">&lt;figcaption>
 &lt;/ul>
 &lt;br>
 &lt;h2>VPC 元件&lt;span class="absolute -mt-20" id="vpc-元件">&lt;/span>
-&lt;a href="#vpc-%e5%85%83%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>所以從上面知道 VPC 架構，那我們來詳細看一下它是由哪些元件組成的，先看細圖：&lt;/p>
+&lt;a href="#vpc-%e5%85%83%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>從上面可以簡單知道 VPC 架構，那我們來詳細看一下每個組成的元件是什麼，先看細圖：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/aws/vpc-introduce/2.jpg"
 alt="VPC Data Flow Virtual Private Cloud" width="800">&lt;figcaption>
@@ -31,10 +32,109 @@ alt="VPC Data Flow Virtual Private Cloud" width="800">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;p>我們從最大的元件開始看：&lt;/p>
+&lt;h3>Region &amp;amp; VPC&lt;span class="absolute -mt-20" id="region--vpc">&lt;/span>
+&lt;a href="#region--vpc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>上方淺藍色外框就代表 Region，每個 Region 可以有多個 VPC，範例的 Region 是 eu-west-2。&lt;/p>
+&lt;p>深藍色外框就代表 VPC，VPC 是在 Region 層級底下。&lt;/p>
+&lt;br>
+&lt;h3>Internet Gateway (IGW) &amp;amp; Virtual Private Gateway (VGW)&lt;span class="absolute -mt-20" id="internet-gateway-igw--virtual-private-gateway-vgw">&lt;/span>
+&lt;a href="#internet-gateway-igw--virtual-private-gateway-vgw" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>要存取 VPC 的方式有兩種，一種是透過 IGW 可以從 Internet 存取 VPC，另一種是透過 VGW 可以從地端網路存取 VPC。&lt;/p>
+&lt;p>不管從 IGW 或 VGW 存取 VPC，都會先到 Route，Route 會根據 traffic 的來源跟目的地，決定要套用哪個 Route Table Rule。&lt;/p>
+&lt;p>接著 Route Table 會根據 Rule 決定 traffic 要往哪個方向走，並導向到不同的 Network ACL 來進行流量的控制。&lt;/p>
+&lt;br>
+&lt;h3>Internet Gateway (IGW)&lt;span class="absolute -mt-20" id="internet-gateway-igw">&lt;/span>
+&lt;a href="#internet-gateway-igw" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>(比較會用到，另外拉出來說)&lt;/p>
+&lt;p>Internet Gateway (IGW) 有自動水平擴展，以及 HA (High Availability) 的特性，會由 AWS 負責管理，我們不需要特別設定。&lt;/p>
+&lt;p>沒有對外的頻寬限制。&lt;/p>
+&lt;p>每個 default VPC 都會有一個 Internet Gateway (IGW)。&lt;/p>
+&lt;br>
+&lt;h3>Route Table&lt;span class="absolute -mt-20" id="route-table">&lt;/span>
+&lt;a href="#route-table" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Route Table 是用來指引網路流量要怎麼走，以及去哪裡。Route Table 會有目的地 IP 以及下一站要去哪。&lt;/p>
+&lt;p>預設情況下，VPC 內部的 traffic 可以在不同的 subnet 之間自由流動，依靠的就是 &lt;code>local route&lt;/code>。&lt;/p>
+&lt;p>local route 是預設存在，且無法修改的。&lt;/p>
+&lt;p>VPC 中可以設定多組的 Route Table，但每個 Subnet 只能指定一組 Route Table，且已經與 Subnet 關聯的 Route Table 不能刪除。&lt;/p>
+&lt;br>
+&lt;h3>Network ACL (NACL)&lt;span class="absolute -mt-20" id="network-acl-nacl">&lt;/span>
+&lt;a href="#network-acl-nacl" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Network ACL 是網路進到 VPC 的第一道防禦，可以把它想成是一個子網級別的防火牆，用於控制進入和出去子網的流量。&lt;/p>
+&lt;p>Network ACL 是 stateless，這意味著進入和出去的流量都必須明確允許。如果允許進入流量 (inbound traffic)，出去的流量 (outbound traffic) 必須單獨設定規則允許。&lt;/p>
+&lt;br>
+&lt;h3>Security Group (SG)&lt;span class="absolute -mt-20" id="security-group-sg">&lt;/span>
+&lt;a href="#security-group-sg" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>是網路進入的第二道防禦，是虛擬防火牆，用於控制 EC2 實例的進入和出去流量。&lt;/p>
+&lt;p>但是比較不一樣的是 Security Group 是 stateful，這意味著如果允許進入流量 (inbound traffic)，相應的出去回應流量 (outbound response traffic) 也自動被允許，反之亦然。&lt;/p>
+&lt;p>&lt;b>就算移除 Allow Outbound Traffic 規則，一樣還是會通&lt;/b>&lt;/p>
+&lt;br>
+&lt;h3>Subnet (Public &amp;amp; Private)&lt;span class="absolute -mt-20" id="subnet-public--private">&lt;/span>
+&lt;a href="#subnet-public--private" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Subnet 是 VPC 的子網路，可以在不同的 Availability Zone (AZ) 建立 Subnet。&lt;/p>
+&lt;p>Subnet 又分成 Public Subnet 跟 Private Subnet，Public Subnet 可以連到 Internet，Private Subnet 則不能。&lt;/p>
+&lt;p>但如果 Private Subnet 需要連到 Internet (例如 EC2 更新套件版本等)，則需要透過 NAT Gateway 來達成 (只有單向，沒辦法讓外部網路連進來)。&lt;/p>
+&lt;p>Subnet 跟 Subnet 之間要溝通，則需要透過 Route Table 來指引路線。&lt;/p>
+&lt;br>
+&lt;h2>VPC IP 範圍&lt;span class="absolute -mt-20" id="vpc-ip-範圍">&lt;/span>
+&lt;a href="#vpc-ip-%e7%af%84%e5%9c%8d" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>目前 AWS 支援的 IP 範圍是根據 RFC 1918 標準。以下是可用的私有 IP 範圍：&lt;/p>
+&lt;ul>
+&lt;li>10.0.0.0 - 10.255.255.255（10.0.0.0/8，總共 16,777,216 個 IP 地址）&lt;/li>
+&lt;li>172.16.0.0 - 172.31.255.255（172.16.0.0/12，總共 1,048,576 個 IP 地址）&lt;/li>
+&lt;li>192.168.0.0 - 192.168.255.255（192.168.0.0/16，總共 65,536 個 IP 地址）&lt;/li>
+&lt;/ul>
+&lt;p>&lt;b>一個 VPC 最多可以使用 5 個 Ipv4 CIDR 設定，但一般只會設定一個&lt;/b>&lt;/p>
+&lt;br>
+&lt;h2>Default VPC&lt;span class="absolute -mt-20" id="default-vpc">&lt;/span>
+&lt;a href="#default-vpc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>每個 AWS 帳號都會有一個 Default VPC，這個 VPC 是 AWS 預設給你的，裡面已經設定好一些設定，方便你可以快速啟動資源。&lt;/p>
+&lt;p>在 Default VPC 中，會在每個 Availability Zone (AZ) 建立好 Subnet。&lt;/p>
+&lt;br>
+&lt;h2>VPC 懶人包&lt;span class="absolute -mt-20" id="vpc-懶人包">&lt;/span>
+&lt;a href="#vpc-%e6%87%b6%e4%ba%ba%e5%8c%85" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>如果對於上面比較詳細的說明有點複雜，這邊我總結一下 VPC 的重點：&lt;/p>
+&lt;h3>以網路的角度出發&lt;span class="absolute -mt-20" id="以網路的角度出發">&lt;/span>
+&lt;a href="#%e4%bb%a5%e7%b6%b2%e8%b7%af%e7%9a%84%e8%a7%92%e5%ba%a6%e5%87%ba%e7%99%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>下面都先用 EC2 來當作 Subnet 底下的後端服務：&lt;/p>
+&lt;ul>
+&lt;li>Private Subnet 沒辦法對外連網，外面也連不進來。&lt;/li>
+&lt;li>Subnet 裡面的 EC2 可以互相溝通，不需要透過其他的元件。&lt;/li>
+&lt;li>不同的 Subnet 要溝通時，則需要透過 Route Table 元件。&lt;/li>
+&lt;li>Route Table 功用就是去指引網路流量要怎麼走，以及去哪裡。會有目的地 IP 以及下一站要去哪。會經過 Local 中繼站。&lt;/li>
+&lt;li>Public Subnet 讓裡面的 EC2 可以連到 Internet，一樣需要 Route Table 去指引路線，目的地是 Internet，下一站則需要到 Internet Gateway (IGW)。&lt;/li>
+&lt;li>Internet Gateway (IGW) 會放在 VPC 層級上面，是 Public Subnet 對外連線的重要元件。&lt;/li>
+&lt;li>如果要讓 Private Subnet 能夠連 Internet，Route Table 下一站則需要到 NAT Gateway。&lt;/li>
+&lt;li>NAT Gateway 是設定在 Public Subnet 上面，透過它才能讓 Private Subnet 連到 Internet。整個流程如下：&lt;code>Private Subnet &amp;gt; Route Table &amp;gt; NAT Gateway &amp;gt; Internet Gateway (IGW) &amp;gt; Internet&lt;/code>，這個流程是單向的，外面的網路還是連不進來 Private Subnet。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>以安全性的角度出發&lt;span class="absolute -mt-20" id="以安全性的角度出發">&lt;/span>
+&lt;a href="#%e4%bb%a5%e5%ae%89%e5%85%a8%e6%80%a7%e7%9a%84%e8%a7%92%e5%ba%a6%e5%87%ba%e7%99%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>外部連線想要進來 Subnet 時，會需要先經過 Network Access Control List (NACL)。&lt;/li>
+&lt;li>Network Access Control List (NACL) 是隸屬於 Subnet 層級，NACL 會規範，什麼請求可以進來，什麼請求可以出去 Subnet。&lt;/li>
+&lt;li>進入到 Subnet 後，要在到 EC2 時，會在經過一層保護名為 Security groups (SG)。&lt;/li>
+&lt;li>Security groups (SG) 是給 EC2 instance 用的，類似防火牆規範。&lt;/li>
+&lt;/ul>
+&lt;p>Network Access Control List (NACL) 跟 Security groups (SG) 差異&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>差異&lt;/th>
+&lt;th>NACL&lt;/th>
+&lt;th>SG&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>說明&lt;/td>
+&lt;td>是一個子網級別的防火牆，用於控制進入和出去子網的流量。&lt;/td>
+&lt;td>是虛擬防火牆，用於控制 EC2 實例的進入和出去流量。&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>狀態&lt;/td>
+&lt;td>stateless，這意味著進入和出去的流量都必須明確允許。如果允許進入流量，出去的流量必須單獨設定規則允許。&lt;/td>
+&lt;td>stateful，這意味著如果允許進入流量（inbound traffic），相應的出去回應流量（outbound response traffic）也自動被允許，反之亦然。&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;p>最後如果懶得看文字，建議大家可以去看這部影片：&lt;a href="https://www.youtube.com/watch?v=0YG3vo78gSM" target="_blank" rel="noopener">AWS 專家教你：打造高效 VPC 網絡（包含 Subnet、IGW、NAT 等）
+&lt;/a>，6 分鐘的影片，可以快速了解 VPC 的重點。&lt;/p>
+&lt;br>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>什麼是 Amazon VPC：&lt;a href="https://docs.aws.amazon.com/zh_tw/vpc/latest/userguide/what-is-amazon-vpc.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/zh_tw/vpc/latest/userguide/what-is-amazon-vpc.html&lt;/a>&lt;/p>
 &lt;p>AWS CSA Associate 學習筆記 - VPC(Virtual Private Cloud) Part 1：&lt;a href="https://godleon.github.io/blog/AWS/AWS-CSA-associate-VPC-part1/" target="_blank" rel="noopener">https://godleon.github.io/blog/AWS/AWS-CSA-associate-VPC-part1/&lt;/a>&lt;/p>
-&lt;p>Virtual Private Cloud：&lt;a href="https://salmankhalid85.wordpress.com/aws/virtual-private-cloud/" target="_blank" rel="noopener">https://salmankhalid85.wordpress.com/aws/virtual-private-cloud/&lt;/a>&lt;/p></description></item><item><title>Elastic Kubernetes Service (EKS) 介紹</title><link>https://pin-yi.me/blog/aws/eks-introduce/</link><pubDate>Fri, 26 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/eks-introduce/</guid><description>
+&lt;p>Virtual Private Cloud：&lt;a href="https://salmankhalid85.wordpress.com/aws/virtual-private-cloud/" target="_blank" rel="noopener">https://salmankhalid85.wordpress.com/aws/virtual-private-cloud/&lt;/a>&lt;/p>
+&lt;p>【技術分享】Internet Gateway 和 NAT Gateway 的區別在哪? 功能分別是什麼?：&lt;a href="https://medium.com/@awseducate.cloudambassador/%E6%8A%80%E8%A1%93%E5%88%86%E4%BA%AB-internet-gateway-%E5%92%8C-nat-gateway-%E7%9A%84%E5%8D%80%E5%88%A5%E5%9C%A8%E5%93%AA-%E5%8A%9F%E8%83%BD%E5%88%86%E5%88%A5%E6%98%AF%E4%BB%80%E9%BA%BC-b676f62b1d31" target="_blank" rel="noopener">https://medium.com/@awseducate.cloudambassador/%E6%8A%80%E8%A1%93%E5%88%86%E4%BA%AB-internet-gateway-%E5%92%8C-nat-gateway-%E7%9A%84%E5%8D%80%E5%88%A5%E5%9C%A8%E5%93%AA-%E5%8A%9F%E8%83%BD%E5%88%86%E5%88%A5%E6%98%AF%E4%BB%80%E9%BA%BC-b676f62b1d31&lt;/a>&lt;/p></description></item><item><title>Elastic Kubernetes Service (EKS) 介紹</title><link>https://pin-yi.me/blog/aws/eks-introduce/</link><pubDate>Fri, 26 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/eks-introduce/</guid><description>
 &lt;p>由於公司政策調整，除了原先的 Google Cloud Platform (GCP) 之外，我們也開始使用 AWS 服務，其中包括了 EKS (Elastic Kubernetes Service)。這篇文章將會介紹 EKS 的基本概念以及一些使用上的注意事項。&lt;/p>
 &lt;p>後面也會有幾篇 AWS 文章，歡迎大家持續關注。&lt;/p>
 &lt;br>
