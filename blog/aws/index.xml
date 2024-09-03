@@ -81,6 +81,18 @@ alt="VPC Data Flow Virtual Private Cloud" width="800">&lt;figcaption>
 &lt;h2>Default VPC&lt;span class="absolute -mt-20" id="default-vpc">&lt;/span>
 &lt;a href="#default-vpc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>每個 AWS 帳號都會有一個 Default VPC，這個 VPC 是 AWS 預設給你的，裡面已經設定好一些設定，方便你可以快速啟動資源。&lt;/p>
 &lt;p>在 Default VPC 中，會在每個 Availability Zone (AZ) 建立好 Subnet。&lt;/p>
+&lt;p>每個 Subnet 都會有一組可以連到 internet 的 Route Table，所以每個 Subnet 都預設具備連網的功能&lt;/p>
+&lt;p>每個 Subnet 都會有一個 Internet Gateway 存在以及連接，因此 Default VPC 所有 Subnet 都屬於 Public Subnet。&lt;/p>
+&lt;br>
+&lt;h2>VPC Peering&lt;span class="absolute -mt-20" id="vpc-peering">&lt;/span>
+&lt;a href="#vpc-peering" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當不同的 VPC 想要連接時，可以透過 VPC Peering 來連接，VPC Peering 是一種私有的連接，可以在兩個 VPC 之間傳輸流量，使用 Private IP 將兩個 VPC 連接起來。&lt;/p>
+&lt;p>不同的 VPC 的 CIDR 不能重疊，否則無法建立 VPC Peering。&lt;/p>
+&lt;p>VPC Peering 不限制同一個帳號，可以跟其他帳號的 VPC 連接。&lt;/p>
+&lt;p>也可以跨 Region，這種稱為 &lt;code>Inter-Region VPC Peering&lt;/code>&lt;/p>
+&lt;p>Peering 屬於一對一的連接，如果要連接多個 VPC，則需要建立多個 Peering。例如：A 與 B Peering，B 與 C Peering，A 與 C 之間是無法直接溝通。&lt;/p>
+&lt;p>可以設定整個 VPC 進行 Peering，也可以設定特定 Subnet 進行 Peering。&lt;/p>
+&lt;p>需要額外設定 Route Table，才可以兩個 VPC 之間可以溝通。&lt;/p>
+&lt;p>詳細可以看：&lt;a href="https://docs.aws.amazon.com/vpc/latest/peering/what-is-vpc-peering.html" target="_blank" rel="noopener">What is VPC peering? 什麼是 VPC 對等互連？&lt;/a>&lt;/p>
 &lt;br>
 &lt;h2>VPC 懶人包&lt;span class="absolute -mt-20" id="vpc-懶人包">&lt;/span>
 &lt;a href="#vpc-%e6%87%b6%e4%ba%ba%e5%8c%85" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>如果對於上面比較詳細的說明有點複雜，這邊我總結一下 VPC 的重點：&lt;/p>
@@ -88,7 +100,7 @@ alt="VPC Data Flow Virtual Private Cloud" width="800">&lt;figcaption>
 &lt;a href="#%e4%bb%a5%e7%b6%b2%e8%b7%af%e7%9a%84%e8%a7%92%e5%ba%a6%e5%87%ba%e7%99%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>下面都先用 EC2 來當作 Subnet 底下的後端服務：&lt;/p>
 &lt;ul>
 &lt;li>Private Subnet 沒辦法對外連網，外面也連不進來。&lt;/li>
-&lt;li>Subnet 裡面的 EC2 可以互相溝通，不需要透過其他的元件。&lt;/li>
+&lt;li>同一個 Subnet 裡面的 EC2 可以互相溝通，不需要透過其他的元件。&lt;/li>
 &lt;li>不同的 Subnet 要溝通時，則需要透過 Route Table 元件。&lt;/li>
 &lt;li>Route Table 功用就是去指引網路流量要怎麼走，以及去哪裡。會有目的地 IP 以及下一站要去哪。會經過 Local 中繼站。&lt;/li>
 &lt;li>Public Subnet 讓裡面的 EC2 可以連到 Internet，一樣需要 Route Table 去指引路線，目的地是 Internet，下一站則需要到 Internet Gateway (IGW)。&lt;/li>
