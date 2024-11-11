@@ -799,7 +799,7 @@ alt="GitLab Available specific runners" width="700">&lt;figcaption>
 &lt;p>Best Practice for DevOps on GitLab and GCP : GitLab CI/CD - Day 6：&lt;a href="https://ithelp.ithome.com.tw/articles/10214114" target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10214114&lt;/a>&lt;/p>
 &lt;p>Gitlab-CI 入門實作教學 - 單元測試篇：&lt;a href="https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f" target="_blank" rel="noopener">https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f&lt;/a>&lt;/p>
 &lt;p>如何使用 GitLab CI：&lt;a href="https://medium.com/@mvpdw06/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-gitlab-ci-ebf0b68ce24b" target="_blank" rel="noopener">https://medium.com/@mvpdw06/%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8-gitlab-ci-ebf0b68ce24b&lt;/a>&lt;/p></description></item><item><title>Ansible 介紹與實作 (Inventory、Playbooks、Module、Template、Handlers)</title><link>https://pin-yi.me/blog/git-or-cicd/ansible/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/git-or-cicd/ansible/</guid><description>
-&lt;p>本篇文章是接續前面兩篇 &lt;a href="../jenkins-ansible/" >Jenkins 及 Ansible IT 自動化 CI/CD 介紹&lt;/a> 跟 &lt;a href="../jenkins/" >使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot&lt;/a> 文章，歡迎大家先去觀看前面兩篇文章 🤪&lt;/p>
+&lt;p>本篇文章是接續前面兩篇 &lt;a href="../jenkins-ansible/" >Jenkins 及 Ansible IT 自動化 CI/CD 介紹&lt;/a> 跟 &lt;a href="../jenkins-github-tg-bot/" >使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot&lt;/a> 文章，歡迎大家先去觀看前面兩篇文章 🤪&lt;/p>
 &lt;p>本篇所使用到的程式碼都會整理於 &lt;a href="https://github.com/880831ian/Ansible" target="_blank" rel="noopener">GitHub 連結&lt;/a>，大家有興趣可以去瀏覽看看歐！&lt;/p>
 &lt;br>
 &lt;h2>Ansible 是如何運作的？&lt;span class="absolute -mt-20" id="ansible-是如何運作的">&lt;/span>
@@ -1628,7 +1628,7 @@ title="Copy code"
 &lt;a href="#%e5%85%b6%e4%bb%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>其他還有很多可以使用的 Module ，詳情可以查看 &lt;a href="https://docs.ansible.com/ansible/latest/collections/ansible/builtin/index.html" target="_blank" rel="noopener">Ansible.Builtin&lt;/a>。&lt;/p>
 &lt;br>
 &lt;h2>Ansible 發送通知到 Telegram Bot&lt;span class="absolute -mt-20" id="ansible-發送通知到-telegram-bot">&lt;/span>
-&lt;a href="#ansible-%e7%99%bc%e9%80%81%e9%80%9a%e7%9f%a5%e5%88%b0-telegram-bot" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>剛剛看了很多內建的模組，當然 Ansible 還有很多好玩的模組可以使用，我們就跟 &lt;a href="../jenkins/" >使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot 文章&lt;/a> 一樣，將我們取得的內容傳送到 Telegram Bot 吧！那首先我們要先創造一個 Telegram Bot，在 Telegram 找到一個機器人叫 &lt;code>BotFather&lt;/code> 的官方機器人帳號。並使用指令 &lt;code>/newbot&lt;/code>，會看到一下畫面：&lt;/p>
+&lt;a href="#ansible-%e7%99%bc%e9%80%81%e9%80%9a%e7%9f%a5%e5%88%b0-telegram-bot" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>剛剛看了很多內建的模組，當然 Ansible 還有很多好玩的模組可以使用，我們就跟 &lt;a href="../jenkins-github-tg-bot/" >使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot 文章&lt;/a> 一樣，將我們取得的內容傳送到 Telegram Bot 吧！那首先我們要先創造一個 Telegram Bot，在 Telegram 找到一個機器人叫 &lt;code>BotFather&lt;/code> 的官方機器人帳號。並使用指令 &lt;code>/newbot&lt;/code>，會看到一下畫面：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/telegram_1.png"
 alt="Telegram 創建機器人" width="600">&lt;figcaption>
@@ -2314,4 +2314,639 @@ title="Copy code"
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>現代 IT 人一定要知道的 Ansible 自動化組態技巧：&lt;a href="https://chusiang.gitbooks.io/automate-with-ansible/content/" target="_blank" rel="noopener">https://chusiang.gitbooks.io/automate-with-ansible/content/&lt;/a>&lt;/p>
 &lt;p>Ansible 安裝：&lt;a href="https://tso-liang-wu.gitbook.io/learn-ansible-and-jenkins-in-30-days/ansible/ansible/ansible-installation" target="_blank" rel="noopener">https://tso-liang-wu.gitbook.io/learn-ansible-and-jenkins-in-30-days/ansible/ansible/ansible-installation&lt;/a>&lt;/p>
 &lt;p>怎麼用 Docker 練習 Ansible？：&lt;a href="https://chusiang.gitbooks.io/automate-with-ansible/content/05.how-to-practive-the-ansible-with-docker.html" target="_blank" rel="noopener">https://chusiang.gitbooks.io/automate-with-ansible/content/05.how-to-practive-the-ansible-with-docker.html&lt;/a>&lt;/p>
-&lt;p>community.general.telegram module – module for sending notifications via telegram：&lt;a href="https://docs.ansible.com/ansible/latest/collections/community/general/telegram_module.html#ansible-collections-community-general-telegram-module" target="_blank" rel="noopener">https://docs.ansible.com/ansible/latest/collections/community/general/telegram_module.html#ansible-collections-community-general-telegram-module&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>community.general.telegram module – module for sending notifications via telegram：&lt;a href="https://docs.ansible.com/ansible/latest/collections/community/general/telegram_module.html#ansible-collections-community-general-telegram-module" target="_blank" rel="noopener">https://docs.ansible.com/ansible/latest/collections/community/general/telegram_module.html#ansible-collections-community-general-telegram-module&lt;/a>&lt;/p></description></item><item><title>使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot</title><link>https://pin-yi.me/blog/git-or-cicd/jenkins-github-tg-bot/</link><pubDate>Mon, 16 May 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/git-or-cicd/jenkins-github-tg-bot/</guid><description>
+&lt;p>此文章是接續前面 &lt;a href="../jenkins-ansible/" >Jenkins 及 Ansible IT 自動化 CI/CD 介紹&lt;/a> 文章，此篇會實際安裝及實作 Jenkins，大家記得在學習前要先檢查自己的版本是否有新的更新！那我們開始囉 😘&lt;/p>
+&lt;h2>Jenkins 安裝與實作&lt;span class="absolute -mt-20" id="jenkins-安裝與實作">&lt;/span>
+&lt;a href="#jenkins-%e5%ae%89%e8%a3%9d%e8%88%87%e5%af%a6%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我這次會使用 Docker-compose 來進行安裝，除了 Docker 以外也有不同的安裝方式，可以參考 &lt;a href="https://www.jenkins.io/download/" target="_blank" rel="noopener">Jenkins download and deployment&lt;/a>，本次使用的環境版本如下：&lt;/p>
+&lt;h3>版本&lt;span class="absolute -mt-20" id="版本">&lt;/span>
+&lt;a href="#%e7%89%88%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
+&lt;li>macOS：11.6&lt;/li>
+&lt;li>Docker：Docker version 20.10.14, build a224086&lt;/li>
+&lt;li>Jenkins：jenkins/jenkins:lts-jdk11&lt;/li>
+&lt;li>yamllint：1.26.0&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>安裝&lt;span class="absolute -mt-20" id="安裝">&lt;/span>
+&lt;a href="#%e5%ae%89%e8%a3%9d" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>這邊會使用 Jenkins 提供的 &lt;a href="https://hub.docker.com/layers/jenkins/jenkins/jenkins/lts-jdk11/images/sha256-ec98cb8b367b0f9426f71345efe11e001c901704cea0e61fd91beb37af34ef98?context=explore" target="_blank" rel="noopener">官方 LTS 映像檔&lt;/a> 來作為基底，因為我們要多安裝測試程式 &lt;a href="https://yamllint.readthedocs.io/en/stable/index.html" target="_blank" rel="noopener">yamllint&lt;/a>，所以就自己寫一個 Docker-compose：(同樣的程式碼會放在 &lt;a href="https://github.com/880831ian/jenkins-github-tg-bot" target="_blank" rel="noopener">GitHub&lt;/a>，也直接包成映像檔放在 &lt;a href="https://hub.docker.com/r/880831ian/jenkins" target="_blank" rel="noopener">DockerHub&lt;/a>，歡迎大家自行取用)&lt;/p>
+&lt;br>
+&lt;p>&lt;a href="https://github.com/adrienverge/yamllint" target="_blank" rel="noopener">yamlint&lt;/a>，它是語法檢查工具，可以用來檢查 yaml 檔案的語法是否正確以及符合規範，我們看一下實際操作的畫面：&lt;/p>
+&lt;br>
+&lt;p>&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/yamllint.png"
+alt="yamllint 測試" width="800">&lt;figcaption>
+&lt;p>yamllint 測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+可以看到如果不符合 yaml 規範就會跳出錯誤訊息。&lt;/p>
+&lt;br>
+&lt;p>接下來先看一下整個 Docker-compose 結構以及各參數：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── Docker-compose.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── jenkins
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>│   └── Dockerfile&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>&lt;strong>Docker-compose.yaml&lt;/strong>&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">version&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;3.8&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">services&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">jenkins&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">build&lt;/span>: &lt;span style="color:#ae81ff">./jenkins/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">jenkins&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">8080&lt;/span>:&lt;span style="color:#ae81ff">8080&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">50000&lt;/span>:&lt;span style="color:#ae81ff">50000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">restart&lt;/span>: &lt;span style="color:#ae81ff">always&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./jenkins_home:/var/jenkins_home&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>參數說明：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>build: ./jenkins/&lt;/code>：因為要先安裝 yamllint，所以使用 Dockerfile 另外寫。&lt;/li>
+&lt;li>&lt;code>container_name:jenkins&lt;/code>：容器的名稱。&lt;/li>
+&lt;li>&lt;code>ports: -8080:8080 - 50000:50000&lt;/code>：8080 是待會我們瀏覽儀表板會使用到的 Port，如果本機上 8080 已經被佔用，可以自行更換，50000 是 Jenkins 所使用的 Port。&lt;/li>
+&lt;li>&lt;code>restart: always&lt;/code>：當容器停止時，會自動重新啟動容器。&lt;/li>
+&lt;li>&lt;code>volumes: - ./jenkins_home:/var/jenkins_home&lt;/code>：掛載目錄，就算刪除容器一樣可以保留其他設定。我將啟動 &lt;code>Docker-compose.yaml&lt;/code> 的資料夾下多一個 jenkins_home 與容器內 /var/jenkins_home 做映射，大家可以自己去調整。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>&lt;strong>jenkins/Dockerfile&lt;/strong>&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-dockerfile" data-lang="dockerfile">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">FROM&lt;/span>&lt;span style="color:#e6db74"> jenkins/jenkins:lts-jdk11&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">LABEL&lt;/span> maintainer&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;880831ian@gmail.com&amp;#34;&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">USER&lt;/span>&lt;span style="color:#e6db74"> root&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">RUN&lt;/span> apt-get upgrade -y&lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> apt-get update -y&lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> &lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> apt-get install yamllint -y&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>參數說明：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>FROM&lt;/code>：我們使用 Jenkins 官方提供的 LTS 維護版本。&lt;/li>
+&lt;li>&lt;code>USER&lt;/code>：因為要先安裝東西，所以直接給 root 權限。&lt;/li>
+&lt;li>&lt;code>RUN&lt;/code>：先升級完後，再更新，最後再裝 &lt;a href="https://yamllint.readthedocs.io/en/stable/index.html" target="_blank" rel="noopener">yamllint&lt;/a>。(-y 是同意所以詢問)&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>最後使用 &lt;code>docker-compose&lt;/code> 來執行：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ docker-compose up -d&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>要在 Docker-compose.yaml 資料夾下指令才有用。&lt;/p>
+&lt;br>
+&lt;p>下完指令後，他就會在背景開始安裝，可以試著用瀏覽器瀏覽 &lt;code>http://localhost:8080&lt;/code>，查看有沒有跳出下面這個畫面：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/unlock.png"
+alt="瀏覽器訪問 http://localhost:8080" width="800">&lt;figcaption>
+&lt;p>瀏覽器訪問 &lt;code>http://localhost:8080&lt;/code>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們看到它需要輸入一組 Administrator password，我們要使用 &lt;code>docker logs&lt;/code> 來查看，會發現最後會有寫 Please use the following password to proceed to installation 的地方：&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ docker logs jenkins
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>*************************************************************
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>*************************************************************
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>*************************************************************
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Jenkins initial setup is required. An admin user has been created and a password generated.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Please use the following password to proceed to installation:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>70c0780f62a7441f90286be106908378
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>*************************************************************
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>*************************************************************
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>*************************************************************&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>其中的 &lt;code>70c0780f62a7441f90286be106908378&lt;/code> ，就是我們的 Administrator password，直接複製並貼到欄位後按 Continue。&lt;/p>
+&lt;br>
+&lt;p>我們可以看到它詢問是否要安裝套件，我們選擇左邊 Install suggested plugins 安裝推薦的套件即可：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/plugins.png"
+alt="安裝推薦的套件" width="800">&lt;figcaption>
+&lt;p>安裝推薦的套件&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>等待它安裝套件，安裝完後會自動跳到註冊畫面：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/install.png"
+alt="等待安裝&amp;amp;hellip;" width="800">&lt;figcaption>
+&lt;p>等待安裝&amp;hellip;&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>輸入完基本的資料後，按 Save and Continue：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/create_adminuser.png"
+alt="創建 Admin 使用者" width="800">&lt;figcaption>
+&lt;p>創建 Admin 使用者&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>最後看到下面這個畫面就代表我們安裝好囉！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/done.png"
+alt="Jenkins 儀表板" width="1200">&lt;figcaption>
+&lt;p>Jenkins 儀表板&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>建立第一個 Jenkins Job&lt;span class="absolute -mt-20" id="建立第一個-jenkins-job">&lt;/span>
+&lt;a href="#%e5%bb%ba%e7%ab%8b%e7%ac%ac%e4%b8%80%e5%80%8b-jenkins-job" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們已經成功安裝好並進入到 Jenkins 儀表板，我們先來建立第一個 Job，它的功用是告訴我們系統檔案的即時使用狀況，讓我們對 Jenkins 有初步的了解：&lt;/p>
+&lt;ol>
+&lt;li>點選儀表板的新增作業或是 Create a Job：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/create_job.png"
+alt="新增作業" width="1200">&lt;figcaption>
+&lt;p>新增作業&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>輸入 Job 專案名稱並選擇建立 Free-Style 軟體專案：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/disk.png"
+alt="設定 Job 專案" width="1200">&lt;figcaption>
+&lt;p>設定 Job 專案&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>可以看到這邊有不同的專案類型可以選擇，&lt;strong>Free-Style&lt;/strong> 以及 &lt;strong>Pipeline&lt;/strong> 這兩種類型的專案基本上就涵蓋大部分的需求。&lt;strong>Free-Style&lt;/strong> 類型的專案提供了非常大的彈性讓使用者來做原始碼管理以及建置。如果建置流程涉及多個專案，則可以使用 &lt;strong>Pipeline&lt;/strong> 類型的專案來組合及定義建置邏輯。&lt;/p>
+&lt;br>
+&lt;ol start="3">
+&lt;li>接下來設定專案組態：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/describe.png"
+alt="設定專案組態" width="1200">&lt;figcaption>
+&lt;p>設定專案組態&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>要記得幫每一個專案都加上描述，讓其他人知道該專案的用途或是使用時機等。&lt;/p>
+&lt;br>
+&lt;p>接著，在&lt;strong>建置&lt;/strong>的下拉式欄位選擇 &lt;code>選擇建置步驟 &amp;gt; 執行 Shell&lt;/code>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/shell.png"
+alt="設定專案組態" width="1200">&lt;figcaption>
+&lt;p>設定專案組態&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>輸入 &lt;code>df -h&lt;/code> 指令：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/df-h.png"
+alt="設定專案組態" width="1000">&lt;figcaption>
+&lt;p>設定專案組態&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們這邊透過建置 &lt;code>執行 Shell&lt;/code> 這個建置步驟來告訴 Jenkins，未來這個專案被建置，就會執行 &lt;code>df -h&lt;/code> 這個指令。&lt;/p>
+&lt;br>
+&lt;ol start="4">
+&lt;li>專案組態設置完後，我們點選左邊的&lt;strong>馬上建置&lt;/strong>來建置剛剛建好的專案，如果我們設定上沒有問題，應該會在左下角的&lt;strong>建置歷程&lt;/strong>這邊看到我們的第一個建置紀錄：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/build.png"
+alt="建置專案" width="800">&lt;figcaption>
+&lt;p>建置專案&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="5">
+&lt;li>點進去後，再點 &lt;strong>Console Output&lt;/strong>，可以看到這次建置的結果：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/console.png"
+alt="建置專案" width="800">&lt;figcaption>
+&lt;p>建置專案&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>這樣我們的第一個 Jenkins Job 就設定完成囉！Jenkins 也確實的執行我們所設定的指令，並將系統的使用狀況呈現在終端機的輸出上。
+&lt;br>&lt;/p>
+&lt;p>以上就是我們第一個簡單的專案建置流程，當然，Jenkins 可以做到的事情不僅如此，在後面我們會透過安裝不同的套件來強化 Jenkins，來達到完整的持續整合 😁&lt;/p>
+&lt;br>
+&lt;h2>原始碼管理與建置觸發程序&lt;span class="absolute -mt-20" id="原始碼管理與建置觸發程序">&lt;/span>
+&lt;a href="#%e5%8e%9f%e5%a7%8b%e7%a2%bc%e7%ae%a1%e7%90%86%e8%88%87%e5%bb%ba%e7%bd%ae%e8%a7%b8%e7%99%bc%e7%a8%8b%e5%ba%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>上面有提到 Jenkins 作為一個持續整合的工具，與原始碼管理系統的整合尤其重要。我們這一章節，會介紹如何在 Jenkins 上透過原始碼管理 (source code management,SCM) 系統，例如從 GitHub 獲得專案的原始碼，並設置建置觸發程序 (build triggers) 來實踐持續整合。&lt;/p>
+&lt;br>
+&lt;h3>建置專案&lt;span class="absolute -mt-20" id="建置專案">&lt;/span>
+&lt;a href="#%e5%bb%ba%e7%bd%ae%e5%b0%88%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>HTTPS&lt;span class="absolute -mt-20" id="https">&lt;/span>
+&lt;a href="#https" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>接下來我們先建立一個新的 Job，選擇 Free-style 模式，這次要在原始碼管理裡面選擇 Git，在 Repositories &amp;gt; Repository URL 裡面輸入我們這次要測試的 &lt;a href="https://github.com/880831ian/jenkins-github-tg-bot" target="_blank" rel="noopener">repository URL&lt;/a>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/repository.png"
+alt="設定 Repository URL" width="1000">&lt;figcaption>
+&lt;p>設定 Repository URL&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>SSH&lt;span class="absolute -mt-20" id="ssh">&lt;/span>
+&lt;a href="#ssh" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果我們想要透過 SSH 來存取專案，我們會遇到以下狀況：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/ssh_error.png"
+alt="SSH 尚未設定錯誤訊息" width="1000">&lt;figcaption>
+&lt;p>SSH 尚未設定錯誤訊息&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>會有錯誤訊息是因為我們還沒有把 Jenkins 與 GitHub 做 SSH 金鑰配對，所以 GitHub 拒絕 Jenkins 透過 SSH 存取。那要怎麼解決呢？&lt;/p>
+&lt;p>最簡單的方法就是在 Jenkins 主機下&lt;a href="https://help.github.com/articles/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent/" target="_blank" rel="noopener">建立 SSH 金鑰&lt;/a>，並&lt;a href="https://help.github.com/articles/adding-a-new-ssh-key-to-your-github-account/" target="_blank" rel="noopener">將公開金鑰 Key 加入到 GitHub 帳號中&lt;/a>，有需要的朋友可以再自行使用，該範例使用 HTTPS 來做設定。&lt;/p>
+&lt;br>
+&lt;h3>建置觸發程序&lt;span class="absolute -mt-20" id="建置觸發程序">&lt;/span>
+&lt;a href="#%e5%bb%ba%e7%bd%ae%e8%a7%b8%e7%99%bc%e7%a8%8b%e5%ba%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>由於我們還沒有定義任何建置的觸發程序，所以除非我們手動去操作 Jenkins，不然 Jenkins 並不會主動幫我們進行建置。因此，在&lt;strong>建置觸發程序&lt;/strong>這個欄位內，我們可以自由設定我們希望 Jenkins 何時自動幫我們進行建置專案。那依照專案的屬性不同，我們也可以採用不同的建置時機。那最常見的有以下兩種：&lt;/p>
+&lt;br>
+&lt;h4>定期建置&lt;span class="absolute -mt-20" id="定期建置">&lt;/span>
+&lt;a href="#%e5%ae%9a%e6%9c%9f%e5%bb%ba%e7%bd%ae" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>在 Jenkins 中，我們是採用 &lt;a href="https://cloud.google.com/scheduler/docs/configuring/cron-job-schedules" target="_blank" rel="noopener">Cron Format&lt;/a> 的方式來定義建置行程。Cron Format 總共五個欄位，欄位與欄位之間可用空白或 Tab 鍵做區隔：&lt;/p>
+&lt;ol>
+&lt;li>分 (minute)：0 - 59 分&lt;/li>
+&lt;li>時 (hour)：0 - 23 時&lt;/li>
+&lt;li>日 (day of month)：1 - 31 日&lt;/li>
+&lt;li>月 (month)：1 - 12 月&lt;/li>
+&lt;li>星期 (day of week)：星期 0 - 7 (其中 0 與 7 都代表星期天)&lt;/li>
+&lt;/ol>
+&lt;p>假設我們希望每個 30 分鐘就建置一次當前專案，我們可以在定義規則裡面填入 &lt;code>H/15 * * * *&lt;/code>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/cron.png"
+alt="定期建置" width="1000">&lt;figcaption>
+&lt;p>定期建置&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>GitHub hook trigger for GITScm polling&lt;span class="absolute -mt-20" id="github-hook-trigger-for-gitscm-polling">&lt;/span>
+&lt;a href="#github-hook-trigger-for-gitscm-polling" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這種觸發方式在持續整合時非常實用。我們可以讓 Jenkins 自動監測當在原始碼專案有任何的 push event 發生時就進行建置。為了要使用這種方式建置，需要以下幾個步驟來設定：&lt;/p>
+&lt;h5>新增 GitHub personal access token&lt;span class="absolute -mt-20" id="新增-github-personal-access-token">&lt;/span>
+&lt;a href="#%e6%96%b0%e5%a2%9e-github-personal-access-token" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ol>
+&lt;li>進入 GitHub 首頁，點選右上角下拉選單，點選 &lt;strong>Settings&lt;/strong>：&lt;/li>
+&lt;/ol>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_1.png"
+alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
+&lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>先點選左邊的 &lt;strong>Developer settings&lt;/strong> &amp;gt; 點選左邊的 &lt;strong>Personal access tokens&lt;/strong> &amp;gt; 點選右上角的 &lt;strong>Generate new token&lt;/strong>，輸入 token 的描述並勾選 &lt;code>repo&lt;/code> scope 以及 &lt;code>admin:repo_hook&lt;/code> scope 跟 &lt;code>admin:org_hook&lt;/code> scope，點選 &lt;strong>Generate token&lt;/strong>：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_2.png"
+alt="GitHub hook trigger for GITScm polling 設定" width="700">&lt;figcaption>
+&lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>會產生一個 token，請先把 token 複製下來，離開這個畫面後，token 就會看不到了！(此 token 已刪除 ✌️)&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_3.png"
+alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
+&lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h5>設定 Jenkins GitHub&lt;span class="absolute -mt-20" id="設定-jenkins-github">&lt;/span>
+&lt;a href="#%e8%a8%ad%e5%ae%9a-jenkins-github" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ol>
+&lt;li>進入 Jenkins 儀表板頁面，點選左邊&lt;strong>管理 Jenkins&lt;/strong> &amp;gt; System Configuration 的&lt;strong>設定系統&lt;/strong>，往下滑找到 GitHub：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_4.png"
+alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
+&lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>找到後，再 GitHub Servers 下拉欄位選擇 Add GitHub Server，會看到下面畫面，API URL 輸入 &lt;code>https://api.github.com&lt;/code>，Credentials 點 Add：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_5.png"
+alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
+&lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>Kind 選擇 Secret Text，Secret 輸入剛剛存的 Personal Access Token，Description 簡單描述一下：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_6.png"
+alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
+&lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="4">
+&lt;li>設定完後，點選一下右邊的 &lt;strong>Test connection&lt;/strong>，如果我顯示 &lt;code>Credentials verified for user UserName, rate limit: xxx&lt;/code> 就代表成功囉！&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_7.png"
+alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
+&lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h5>設定專案組態&lt;span class="absolute -mt-20" id="設定專案組態">&lt;/span>
+&lt;a href="#%e8%a8%ad%e5%ae%9a%e5%b0%88%e6%a1%88%e7%b5%84%e6%85%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ol>
+&lt;li>接著我們跳回來剛剛的專案組態，並勾選 &lt;strong>GitHub hook trigger for GITScm polling&lt;/strong>：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_8.png"
+alt="設定專案組態" width="1000">&lt;figcaption>
+&lt;p>設定專案組態&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>寫一個 Shell Script 來建置專案：&lt;/li>
+&lt;/ol>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> file in &lt;span style="color:#66d9ef">$(&lt;/span>find . -type f -name &lt;span style="color:#e6db74">&amp;#34;*yaml&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> yamllint $file
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_9.png"
+alt="設定專案組態" width="1000">&lt;figcaption>
+&lt;p>設定專案組態&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>這邊利用一個簡單的 Shell Script 迴圈來對所有 YAML file 進行 yamllint 的檢查，最後點選儲存離開。&lt;/p>
+&lt;br>
+&lt;h5>GitHub 上整合 Jenkins&lt;span class="absolute -mt-20" id="github-上整合-jenkins">&lt;/span>
+&lt;a href="#github-%e4%b8%8a%e6%95%b4%e5%90%88-jenkins" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ol>
+&lt;li>
+&lt;p>先到 GitHub 被建置專案的頁面下點 &lt;strong>Setting&lt;/strong> 標籤 &amp;gt; 點選左邊的 &lt;strong>Webhook&lt;/strong> &amp;gt; 點選右上角的 &lt;strong>Add webhook&lt;/strong> &amp;gt; 輸入 &lt;strong>Jenkins Hook URL&lt;/strong> 到 Payload URL：&lt;/p>
+&lt;p>記得 Jenkins Hook URL 後面要加 &lt;code>/github-webhook/&lt;/code>，小弟我卡在這裡很久 😢 😢&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_10.png"
+alt="Webhooks 設定" width="800">&lt;figcaption>
+&lt;p>Webhooks 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>Jenkins Hook URL 設定&amp;quot;&lt;/li>
+&lt;/ul>
+&lt;p>由於我們是將 Jenkins 運行在本機端，所以 Jenkins Hook URL &lt;code>http://localhost:8080&lt;/code> 是 Private IP。GitHub 沒有辦法抓 Private IP，為了練習，我們可以透過 &lt;a href="https://ngrok.com/" target="_blank" rel="noopener">ngrok&lt;/a> 這套簡單小工具來暫時將 &lt;code>http://localhost:8080&lt;/code> 變成 Public IP。&lt;/p>
+&lt;p>&lt;a href="https://ngrok.com/" target="_blank" rel="noopener">ngrok&lt;/a> 的使用方式很簡單，只要先下載 &lt;code>brew install ngrok/ngrok/ngrok&lt;/code> ，並使用 &lt;code>ngrok http 8080&lt;/code> 指令，將 Private IP 變成 Public IP：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_11.png"
+alt="ngrok 將 Private IP 變成 Public IP" width="1000">&lt;figcaption>
+&lt;p>ngrok 將 Private IP 變成 Public IP&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>圖片中 &lt;code>https://2063-111-235-135-57.jp.ngrok.io&lt;/code> 就是 Public 的 Jenkins Hook URL&lt;/p>
+&lt;br>
+&lt;p>完成後，先點選 &lt;strong>Recent Deliveries&lt;/strong> 檢查是否成功，底下的 Response 需要是 &lt;font color=green>200&lt;/font>，才是對的歐！(這裡一定要先檢查，不然後面會找問題到死 XD)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_12.png"
+alt="Webhooks 設定" width="1000">&lt;figcaption>
+&lt;p>Webhooks 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>測試&lt;span class="absolute -mt-20" id="測試">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們都設定好後，要開始來測試，我們可以直接先點選 &lt;strong>馬上建置&lt;/strong>，來測試是否可以透過 &lt;strong>GitHub personal access token&lt;/strong>，抓取 GitHub 的檔案。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_1.png"
+alt="馬上建置" width="800">&lt;figcaption>
+&lt;p>馬上建置&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到在建置流程那邊發現建置失敗，點進去可以看詳細內容，&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_2.png"
+alt="建置失敗" width="800">&lt;figcaption>
+&lt;p>建置失敗&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>點選左側的 &lt;strong>Console Output&lt;/strong>，可以看到我們有成功獲取 GitHub 上得專案，並且執行我們的 Shell 來檢查 yaml 的檔案格式，發現是因為格式有錯誤，所以建置才會失敗 ❌&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_3.png"
+alt="Console Output" width="1000">&lt;figcaption>
+&lt;p>Console Output&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接下來我們先修改一下 yaml 的檔案，後重新 push 到 Github 上，並觀察 Jenkins 會不會自動建置 ！(修改位置大家可以直接看 &lt;a href="https://github.com/880831ian/jenkins-github-tg-bot/commit/729556412ef8796477a351040604aad8c8083c05" target="_blank" rel="noopener">Commit 結果&lt;/a>)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_4.png"
+alt="Console Output" width="1000">&lt;figcaption>
+&lt;p>Console Output&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>當你 push 完後，發現它會自動建置，請因為我們修改成正確格式，所以他也建置成功囉！&lt;/p>
+&lt;br>
+&lt;p>也可以點選左側有一個新的 &lt;strong>GitHub Hook Log&lt;/strong> ，可以看到我們成功透過 &lt;strong>GitHub hook trigger for GITScm polling&lt;/strong> 偵測到有新的 event，透過 WebHook 讓 Jenkins 知道。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_5.png"
+alt="GitHub Hook Log" width="1000">&lt;figcaption>
+&lt;p>GitHub Hook Log&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>建置後觸發通知&lt;span class="absolute -mt-20" id="建置後觸發通知">&lt;/span>
+&lt;a href="#%e5%bb%ba%e7%bd%ae%e5%be%8c%e8%a7%b8%e7%99%bc%e9%80%9a%e7%9f%a5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當我們自動建置成功當然沒什麼問題，但如果失敗有可能就會影響後續程式的上線時間，所以我們希望建置完成後，可以收到通知，通知除了可以用 email 以外，也可以使用套件去串接我們常用的平台，例如 Telegram、Slack、Line 等等，接下來我會教大家要怎麼去串接這些服務，在開始之前要請大家先安裝兩個套件：&lt;/p>
+&lt;h4>安裝/設定 Build Timestamp&lt;span class="absolute -mt-20" id="安裝設定-build-timestamp">&lt;/span>
+&lt;a href="#%e5%ae%89%e8%a3%9d%e8%a8%ad%e5%ae%9a-build-timestamp" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>&lt;a href="https://plugins.jenkins.io/build-timestamp/" target="_blank" rel="noopener">Build Timestamp&lt;/a> 這個套件可以幫我們在稍後傳送通知時加上當下的時間戳，那要怎麼安裝套件呢？先到儀表板首頁，點選左側的 &lt;strong>管理 Jenkins&lt;/strong> &amp;gt; 點選 &lt;strong>管理外掛程式&lt;/strong>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_1.png"
+alt="管理 Jenkins &amp;amp;gt; 管理外掛程式" width="1200">&lt;figcaption>
+&lt;p>管理 Jenkins &amp;gt; 管理外掛程式&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>再 Plugin Manager 的 可用的裡面搜尋 Build Timestamp，選擇後點下方的 &lt;strong>Download now and install after restart&lt;/strong>，等待他安裝後會自動重啟。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_2.png"
+alt="安裝 Build Timestamp" width="1200">&lt;figcaption>
+&lt;p>安裝 Build Timestamp&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>重啟後從儀表板點選左側 &lt;strong>管理 Jenkins&lt;/strong> &amp;gt; 點選 &lt;strong>設定系統&lt;/strong>，找到 &lt;strong>Build Timestamp&lt;/strong>，開啟設定，並設定 Timezone 為 &lt;code>Asia/Taipei&lt;/code> 以及 pattern &lt;code>yyyy-MM-dd HH:mm:ss z&lt;/code>，這樣我們待會就可以使用 &lt;code>BUILD_TIMESTAMP&lt;/code> 參數來獲取當下時間，記得要按下儲存歐！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_3.png"
+alt="設定 Build Timestamp" width="1200">&lt;figcaption>
+&lt;p>設定 Build Timestamp&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>安裝/設定 Notify.Events&lt;span class="absolute -mt-20" id="安裝設定-notifyevents">&lt;/span>
+&lt;a href="#%e5%ae%89%e8%a3%9d%e8%a8%ad%e5%ae%9a-notifyevents" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>&lt;a href="https://plugins.jenkins.io/notify-events/" target="_blank" rel="noopener">Notify.Events&lt;/a> 這個套件可以串接很多的平台，例如 Telegram、Slack、Line 等，也可以透過它寄發郵件，是一個十分方便的套件，但缺點是他需要註冊，免費版只有每個月 300 次的訊息傳輸量，但在我們測試階段已經十分夠用。一樣我們用剛剛的方法安裝 &lt;strong>Notify.Events&lt;/strong>。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_4.png"
+alt="安裝 Notify.Events" width="1200">&lt;figcaption>
+&lt;p>安裝 Notify.Events&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>安裝好後，Notify.Events 他不需要先設定，它可以依據不同的 Job 有不同的設定，所以我們開啟剛剛的 Job 組態，拉到最下面找到 &lt;strong>建置後動作&lt;/strong> ，選擇 &lt;strong>Notify.Events&lt;/strong>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_5.png"
+alt="安裝 Notify.Events" width="1200">&lt;figcaption>
+&lt;p>安裝 Notify.Events&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>可以看到這邊要先輸入 Token，那 Token 就必須去官網註冊後設定。&lt;/p>
+&lt;br>
+&lt;p>我們先開啟瀏覽器，搜尋 &lt;a href="https://notify.events/en" target="_blank" rel="noopener">Notify.Events&lt;/a>，註冊帳號後，在 Channels 點選 &lt;strong>Create&lt;/strong>，輸入一下 Title 按下 &lt;strong>Save&lt;/strong>。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_6.png"
+alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
+&lt;p>Notify.Events 官網設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>完成後，應該可以看到以下畫面，這邊就可以讓我們選擇來源，以及要發送到哪裡：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_7.png"
+alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
+&lt;p>Notify.Events 官網設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們先選擇 Sources，點選 &lt;strong>Add source&lt;/strong>，可以看到很多來源，選擇 &lt;strong>CI/CD and Version control&lt;/strong> ，再選擇 &lt;strong>Jenkins&lt;/strong>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_8.png"
+alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
+&lt;p>Notify.Events 官網設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>點選 &lt;strong>Next&lt;/strong>，就可以看到以下畫面，它告訴我們要將它提供的 &lt;code>Token&lt;/code> 貼入設定檔，也就是我們剛剛在 Job 組態裡面的那個 Token：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_9.png"
+alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
+&lt;p>Notify.Events 官網設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>設定好 Sources，接下來要設定接收方，回到剛剛 Notify.Events 的儀表板，點選 &lt;strong>Subscribe&lt;/strong>，我們測試使用 Telegram 來當接收方，它會跳出一個視窗，告訴你要怎麼把他的機器人加成好友或是加入群組，這邊就依大家需要自行選擇，那我就將它加入群組，使用 &lt;code>/subscribe DRr0bIZ0 @NotifyEventsBot&lt;/code> 指令來綁定&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_10.png"
+alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
+&lt;p>Notify.Events 官網設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>這時候我們都設定好了，我們回到 Job 組態的 Notify.Events 設定位置，將 Token 貼上去，它可以自訂訊息的模板，可以全部都一樣，也可以針對建置後的狀態，產生不同的訊息模板，我們來自定義設計一下：&lt;/p>
+&lt;p>&lt;strong>Success&lt;/strong>&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>📢 Jenkins 建置通知 📣
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>時間：$BUILD_TIMESTAMP 🕐
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>名稱： &amp;lt;a href&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$PROJECT_URL&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&amp;gt;$PROJECT_NAME&amp;lt;/a&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>次數： &amp;lt;a href&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$BUILD_URL&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&amp;gt;#$BUILD_NUMBER&amp;lt;/a&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>建置狀態： 🟢 &amp;lt;b&amp;gt;$BUILD_STATUS&amp;lt;/b&amp;gt; 🟢
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;lt;a href&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$BUILD_URL&lt;span style="color:#e6db74">/console&amp;#34;&lt;/span>&amp;gt;建置日誌連結&amp;lt;/a&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>--------- 😍😍😍 ---------&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_11.png"
+alt="Notify.Events Success" width="1000">&lt;figcaption>
+&lt;p>Notify.Events Success&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>&lt;strong>Failure&lt;/strong>&lt;/p>
+&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>📢 Jenkins 建置通知 📣
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>時間：$BUILD_TIMESTAMP 🕐
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>名稱： &amp;lt;a href&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$PROJECT_URL&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&amp;gt;$PROJECT_NAME&amp;lt;/a&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>次數： &amp;lt;a href&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$BUILD_URL&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&amp;gt;#$BUILD_NUMBER&amp;lt;/a&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>建置狀態： 🔴 &amp;lt;b&amp;gt;$BUILD_STATUS&amp;lt;/b&amp;gt; 🔴
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;lt;a href&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$BUILD_URL&lt;span style="color:#e6db74">/console&amp;#34;&lt;/span>&amp;gt;建置日誌連結&amp;lt;/a&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>--------- 😭😭😭 ---------&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;button
+class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_12.png"
+alt="Notify.Events Failure" width="1000">&lt;figcaption>
+&lt;p>Notify.Events Failure&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Telegram 通知測試&lt;span class="absolute -mt-20" id="telegram-通知測試">&lt;/span>
+&lt;a href="#telegram-%e9%80%9a%e7%9f%a5%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>最後我們都設定好了，就來測試一下吧！我們先故意將程式碼格式用錯，&lt;a href="https://github.com/880831ian/jenkins-github-tg-bot/commit/e88d35d56f2b2d1b999682c0f748431999bb4b9e" target="_blank" rel="noopener">讓他先跳出錯誤&lt;/a>，&lt;a href="https://github.com/880831ian/jenkins-github-tg-bot/commit/ec0e9f9c2148cecde6f70ec391d4c775fc180029" target="_blank" rel="noopener">再修改&lt;/a>，來看看結果如何吧！(文字連結是對應的 Commit )&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_13.png"
+alt="Telegram 通知" width="600">&lt;figcaption>
+&lt;p>Telegram 通知&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到，我們分別兩次的測試，會依據我們建置後的結果，觸發不同的通知模板。&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://ithelp.ithome.com.tw/users/20103346/ironman/1473" target="_blank" rel="noopener">30 天入門 Ansible 及 Jenkins&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://medium.com/@BuzonXXXX/ci-%E8%A8%AD%E5%AE%9Ajenkins%E9%80%A3%E7%B5%90github-private-repo-111c53d29047" target="_blank" rel="noopener">[CI]設定 jenkins 連結 GitHub Private Repo by Webhook&lt;/a>&lt;/p></description></item></channel></rss>
