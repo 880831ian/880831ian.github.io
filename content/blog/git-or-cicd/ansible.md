@@ -4,7 +4,7 @@ type: docs
 weight: 71
 ---
 
-本篇文章是接續前面兩篇 [Jenkins 及 Ansible IT 自動化 CI/CD 介紹](../jenkins-ansible/) 跟 [使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot](../jenkins/) 文章，歡迎大家先去觀看前面兩篇文章 🤪
+本篇文章是接續前面兩篇 [Jenkins 及 Ansible IT 自動化 CI/CD 介紹](../jenkins-ansible/) 跟 [使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot](../jenkins-github-tg-bot/) 文章，歡迎大家先去觀看前面兩篇文章 🤪
 
 本篇所使用到的程式碼都會整理於 [GitHub 連結](https://github.com/880831ian/Ansible)，大家有興趣可以去瀏覽看看歐！
 
@@ -680,7 +680,7 @@ Hello World
 
 ## Ansible 發送通知到 Telegram Bot
 
-剛剛看了很多內建的模組，當然 Ansible 還有很多好玩的模組可以使用，我們就跟 [使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot 文章](../jenkins/) 一樣，將我們取得的內容傳送到 Telegram Bot 吧！那首先我們要先創造一個 Telegram Bot，在 Telegram 找到一個機器人叫 `BotFather` 的官方機器人帳號。並使用指令 `/newbot`，會看到一下畫面：
+剛剛看了很多內建的模組，當然 Ansible 還有很多好玩的模組可以使用，我們就跟 [使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot 文章](../jenkins-github-tg-bot/) 一樣，將我們取得的內容傳送到 Telegram Bot 吧！那首先我們要先創造一個 Telegram Bot，在 Telegram 找到一個機器人叫 `BotFather` 的官方機器人帳號。並使用指令 `/newbot`，會看到一下畫面：
 
 <br>
 

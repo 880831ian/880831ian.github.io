@@ -16,4 +16,5 @@ sidebar:
 {{< card link="laravel-gitlab-cicd-heroku" title="部署 Laravel 於 Heroku 搭配 GitLab CI/CD" image="/git-or-cicd/laravel-gitlab-cicd-heroku/cover.webp">}}
 {{< card link="gitlab-cicd" title="如何從頭打造專屬的 GitLab CI/CD" image="/git-or-cicd/gitlab-cicd/cover.webp">}}
 {{< card link="ansible" title="Ansible 介紹與實作 (Inventory、Playbooks、Module、Template、Handlers)" image="/git-or-cicd/ansible/cover.webp">}}
+{{< card link="jenkins-github-tg-bot" title="使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot" image="/git-or-cicd/jenkins-github-tg-bot/cover.webp">}}
 {{< /cards>}}
