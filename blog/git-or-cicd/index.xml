@@ -2949,4 +2949,157 @@ alt="Telegram 通知" width="600">&lt;figcaption>
 &lt;br>
 &lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://ithelp.ithome.com.tw/users/20103346/ironman/1473" target="_blank" rel="noopener">30 天入門 Ansible 及 Jenkins&lt;/a>&lt;/p>
-&lt;p>&lt;a href="https://medium.com/@BuzonXXXX/ci-%E8%A8%AD%E5%AE%9Ajenkins%E9%80%A3%E7%B5%90github-private-repo-111c53d29047" target="_blank" rel="noopener">[CI]設定 jenkins 連結 GitHub Private Repo by Webhook&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>&lt;a href="https://medium.com/@BuzonXXXX/ci-%E8%A8%AD%E5%AE%9Ajenkins%E9%80%A3%E7%B5%90github-private-repo-111c53d29047" target="_blank" rel="noopener">[CI]設定 jenkins 連結 GitHub Private Repo by Webhook&lt;/a>&lt;/p></description></item><item><title>Jenkins 及 Ansible IT 自動化 CI/CD 介紹</title><link>https://pin-yi.me/blog/git-or-cicd/jenkins-ansible-it-cicd/</link><pubDate>Mon, 16 May 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/git-or-cicd/jenkins-ansible-it-cicd/</guid><description>
+&lt;p>在軟體開發領域中，IT 自動化 (automation) 及 持續整合 (Continuous Integration, CI) 、持續佈署 (Continuous Deployment,CD) 是 DevOps 精神中很重要的兩個部分，此文章是參考 &lt;a href="https://ithelp.ithome.com.tw/users/20103346/ironman/1473" target="_blank" rel="noopener">30 天入門 Ansible 及 Jenkins&lt;/a> ，再加上自己測試後的筆記紀錄，歡迎大家可先閱讀作者原文，那我們就開始一起學習吧 👊&lt;/p>
+&lt;p>我會分別介紹 &lt;a href="https://www.ansible.com/" target="_blank" rel="noopener">Ansible&lt;/a> 與 &lt;a href="https://www.jenkins.io/" target="_blank" rel="noopener">Jenkins&lt;/a> 這兩個非常熱門的開源軟體再搭配實作來讓大家更了解他們，那在之前我們先來聊聊為什麼需要 IT 自動化以及什麼是持續整合/持續部署吧 🤠&lt;/p>
+&lt;br>
+&lt;h2>為什麼需要 IT 自動化 ?&lt;span class="absolute -mt-20" id="為什麼需要-it-自動化-">&lt;/span>
+&lt;a href="#%e7%82%ba%e4%bb%80%e9%ba%bc%e9%9c%80%e8%a6%81-it-%e8%87%aa%e5%8b%95%e5%8c%96-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當我們在開發任何軟體產品時，除了開發本身的過程需要花相當多的心力外，在產品部署的環節也是讓大家頭痛的一個部分。其環境的搭建或是參數的設定常常會因為一些小原因導致產品無法像在開發時一樣正常運作。尤其當需要部署的主機不只一台時，重複性的工作會花費我們大量的時間。再加上還會因為伺服器提供的作業環境不同、或是其他種種限制而必須做參數上的調整等等。&lt;/p>
+&lt;p>這時候 &lt;code> IT 自動化&lt;/code> 就顯得十分重要，透過自動化，不但可以幫助開發人員有效減少部署產品所需時間外，還可以在有限度的修改下分別針對不同環境去做調整。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-ansible-it-cicd/automation.webp"
+alt="Best Automation Tools for DevOps" width="700">&lt;figcaption>
+&lt;p>&lt;a href="https://www.xenonstack.com/blog/best-automation-tools-for-devops" target="_blank" rel="noopener">Best Automation Tools for DevOps&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>什麼是持續整合/持續部署&lt;span class="absolute -mt-20" id="什麼是持續整合持續部署">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af%e6%8c%81%e7%ba%8c%e6%95%b4%e5%90%88%e6%8c%81%e7%ba%8c%e9%83%a8%e7%bd%b2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當環境搭建成功後，對於服務本身的維護以及監控也是開發流程中相當重要的一環。當我們從原始碼代管服務 (GitHub、GitLab)上取得原始碼後，要如何確保產品在發布前品質沒有問題，一直以來都是開發人員需要思考的一個課題。&lt;/p>
+&lt;p>由於現在多數開發團隊都會透過版本控制來提交並整合開發人員各自修改的程式碼，若在合併分支時沒有把合併衝突 (conflict) 處理恰當，或是合併程式碼後產生某些邏輯錯誤，往往會到產品發佈後才發現不可預期的錯誤。&lt;/p>
+&lt;p>所以有了持續整合/持續部署的機制下，我們可以透過高頻率的整合、測試並分析程式碼品質，在最短時間發現問題以及發生點，進而確保產品每一次的發布都是穩定且高品質的。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-ansible-it-cicd/CICD.png"
+alt="CI/CD 流程圖 (作者打錯是 rsync 不是 rsyne) Day12 什麼是 CICD" width="700">&lt;figcaption>
+&lt;p>CI/CD 流程圖 (作者打錯是 rsync 不是 rsyne) &lt;a href="https://ithelp.ithome.com.tw/articles/10219083" target="_blank" rel="noopener">Day12 什麼是 CICD&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>上面這張圖是簡化版的 CI/CD 流程圖，當我們 Developer 將程式 Push 到原始碼代管服務 (GitHub、GitLab)上，會經過 Webhook 給 Jenkins 這種自動化可以持續整合部署到各自的伺服器上。&lt;/p>
+&lt;p>那 CI &amp;amp; CD 分別負責哪些工作呢？&lt;/p>
+&lt;h3>持續整合 Continuous Integration&lt;span class="absolute -mt-20" id="持續整合-continuous-integration">&lt;/span>
+&lt;a href="#%e6%8c%81%e7%ba%8c%e6%95%b4%e5%90%88-continuous-integration" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>持續整合的英文是 Continuous Integration 我們縮寫成 CI ，後續也會使用 CI 來做說明：&lt;/p>
+&lt;ul>
+&lt;li>流程：&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>
+&lt;p>程式建置&lt;/p>
+&lt;p>開發人員在每一次的 Commit &amp;amp; Push 後，都能夠於統一的環境自動 Build 程式，透過此步驟可以避免每個開發人員因本機的環境或是套件版本不同導致出現異常。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>程式測試&lt;/p>
+&lt;p>當程式編譯完後，透過&lt;strong>單元測試&lt;/strong>測試新寫的功能是否正確，或者確定是否會影響現有功能，透過該步驟進行測試，可以避免開發人員遺忘先在本機檢查，作為&lt;strong>雙重驗證&lt;/strong>之功用。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>目的：
+&lt;ol>
+&lt;li>降低人為疏失風險&lt;/li>
+&lt;li>減少人工手動的反覆動作&lt;/li>
+&lt;li>進行版本控制&lt;/li>
+&lt;li>增加系統一制性與透明化&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>持續佈署 Continuous Deployment&lt;span class="absolute -mt-20" id="持續佈署-continuous-deployment">&lt;/span>
+&lt;a href="#%e6%8c%81%e7%ba%8c%e4%bd%88%e7%bd%b2-continuous-deployment" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>持續佈署的英文是 Continuous Deployment 我們縮寫成 CD ，後續也會使用 CD 來做說明：&lt;/p>
+&lt;ul>
+&lt;li>流程：&lt;/li>
+&lt;/ul>
+&lt;ol>
+&lt;li>
+&lt;p>部署服務&lt;/p>
+&lt;p>透過自動化方式，將寫好的程式碼更新到機器上並公開對外服務，另外需要確保套件版本＆資料庫資料的完整性，也會透過監控系統進行服務存活檢查，若服務異常會即時發送通知告知開發人員。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>目的：
+&lt;ol>
+&lt;li>保持每次更新程式都可以順暢完成&lt;/li>
+&lt;li>確保服務存活&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>我們了解了自動化與 CI/CD 的重要性與功用，那我們要怎麼去實現這些呢！我們先看下面這張圖：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-ansible-it-cicd/devops.webp"
+alt="Top 5 DevOps Automation Tools in 2020" width="800">&lt;figcaption>
+&lt;p>&lt;a href="https://plumlogix.com/top-5-devops-automation-tools-in-2020/" target="_blank" rel="noopener">Top 5 DevOps Automation Tools in 2020&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>這邊整理 2020 年適合用於 DevOps Automation 的工具，那我們本次教學會介紹最多人使用的 Jenkins 以及 Ansible 兩種：&lt;/p>
+&lt;br>
+&lt;h2>Jenkins&lt;span class="absolute -mt-20" id="jenkins">&lt;/span>
+&lt;a href="#jenkins" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Jenkins 是使用 Java 編成語言編寫最受歡迎的開源自動化服務器。它促進了軟體開發過程中的持續整合、持續部署的自動化過程。&lt;/p>
+&lt;p>Jenkins 支持 1800 多個其他軟體套件，Jenkins 易於安裝和使用，它還提供方便瀏覽的項目管理儀表板，它的優點還有：&lt;/p>
+&lt;ul>
+&lt;li>免費開源&lt;/li>
+&lt;li>充滿活力的用戶社群&lt;/li>
+&lt;li>多種工具和技術集成&lt;/li>
+&lt;li>插件支持&lt;/li>
+&lt;li>易於安裝、配置和升級&lt;/li>
+&lt;li>監控外部工作&lt;/li>
+&lt;li>支持各種身份驗證方法、通知、版本控制等等&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h2>Ansible&lt;span class="absolute -mt-20" id="ansible">&lt;/span>
+&lt;a href="#ansible" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Ansible 是一種 IT 自動化工具。它可以部署軟體、配置系統，並編排更高級的自動化任務，例如 CD (持續部署) 或 RollingUpdate 零停機的滾動更新。&lt;/p>
+&lt;p>自動化簡化了複雜的任務，不僅使開發人員的工作更容易管理，也讓他們的注意力可以放在對團體更有價值的其他任務上。換句話說，它可以節省時間並提高效率。Ansible 使用簡單的 YAML 語法，且 Ansible 是一種輕量級且安全的解決方案，它的優點還有：&lt;/p>
+&lt;ul>
+&lt;li>使用 Ansible 不需要任何特殊的編程技能，因為使用的是 YAML 語法&lt;/li>
+&lt;li>Ansible 允許建立高複雜性的 IT 自動化。&lt;/li>
+&lt;li>因為不需要安裝其他套件，所以伺服器上有更多空間來容納應用服務的支援&lt;/li>
+&lt;li>Ansible 在設計上非常簡單且可靠一制性。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h2>Jenkins 跟 Ansible 比較&lt;span class="absolute -mt-20" id="jenkins-跟-ansible-比較">&lt;/span>
+&lt;a href="#jenkins-%e8%b7%9f-ansible-%e6%af%94%e8%bc%83" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">名稱&lt;/th>
+&lt;th style="text-align:center">Jenkins&lt;/th>
+&lt;th style="text-align:center">Ansible&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">套件&lt;/td>
+&lt;td style="text-align:center">Jenkins 支持 1800 多種套件&lt;/td>
+&lt;td style="text-align:center">支持較少套件&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">語言&lt;/td>
+&lt;td style="text-align:center">支持 C、C++、Java、Perl、Python、Ruby 等&lt;/td>
+&lt;td style="text-align:center">支持 C、Python、JavaScript、Ruby 等&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">費用&lt;/td>
+&lt;td style="text-align:center">Jenkins 是免費的&lt;/td>
+&lt;td style="text-align:center">Ansible 不是免費的，但有試用版(Red hat)&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">大小&lt;/td>
+&lt;td style="text-align:center">重量級&lt;/td>
+&lt;td style="text-align:center">輕量級&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">服務&lt;/td>
+&lt;td style="text-align:center">基於伺服器的工具&lt;/td>
+&lt;td style="text-align:center">基於雲上的工具&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;h2>Jenkins 與 Ansible 介紹實作連結&lt;span class="absolute -mt-20" id="jenkins-與-ansible-介紹實作連結">&lt;/span>
+&lt;a href="#jenkins-%e8%88%87-ansible-%e4%bb%8b%e7%b4%b9%e5%af%a6%e4%bd%9c%e9%80%a3%e7%b5%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>由於 Jenkins 與 Ansible 介紹與實作教學文章較長，故個別分開一篇文章來做說明，大家可以去看自己有興趣的文章歐 😎&lt;/p>
+&lt;ul>
+&lt;li>Jenkins：&lt;a href="../jenkins-github-tg-bot/" >使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot&lt;/a>&lt;/li>
+&lt;li>Ansible：&lt;a href="../ansible" >Ansible 介紹與實作 (Inventory、Playbooks、Module、Template、Handlers)&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://ithelp.ithome.com.tw/users/20103346/ironman/1473" target="_blank" rel="noopener">30 天入門 Ansible 及 Jenkins&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://ithelp.ithome.com.tw/articles/10219083" target="_blank" rel="noopener">Day12 什麼是 CICD&lt;/a>&lt;/p>
+&lt;p>&lt;a href="http://www.srcmini.com/21799.html" target="_blank" rel="noopener">Jenkins 和 Ansible 的對比和區別&lt;/a>&lt;/p></description></item></channel></rss>
