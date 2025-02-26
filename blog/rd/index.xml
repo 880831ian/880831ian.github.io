@@ -1,7 +1,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – RD 使用的相關工具</title><link>https://pin-yi.me/blog/rd/</link><description>Recent content in RD 使用的相關工具 on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/rd/index.xml" rel="self" type="application/rss+xml"/><item><title>Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決</title><link>https://pin-yi.me/blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/</guid><description>
 &lt;p>先說結論 &amp;hellip; &lt;del>EFK 真的好多雷 😆&lt;/del> 我們今天又再度踩雷拉，這次又是炸的分身碎骨，花了 4 個多小時才找到原因，也有可能是小弟我跟 EFK 不是很熟 XD。就如標題所說，我在抽 Log 的時候發現有部分的 Log 送不到 Kibana，檢查 Fluentd-Server 的 Log 發現裡面有 &lt;code>Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch&lt;/code> 的錯誤訊息，到底這個 Error 400 是什麼咧，就跟著我一起重溫找問題的苦難吧 XD&lt;/p>
 &lt;br>
-&lt;h2>EFK 結構&lt;span class="absolute -mt-20" id="efk-結構">&lt;/span>
+&lt;h2>EFK 結構&lt;span class="hx-absolute -hx-mt-20" id="efk-結構">&lt;/span>
 &lt;a href="#efk-%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>在開始之前我先簡單說一下我現在的 EFK 結構：&lt;/p>
 &lt;figure>&lt;img src="https://pin-yi.me/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/1.png"
 alt="EFK 結構" width="900">&lt;figcaption>
@@ -10,13 +10,14 @@ alt="EFK 結構" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;p>現在的 EFK 結構如上圖，我在要抽 Log 的 Pod 中多塞一個 fluentd-bit container，將 fluentd-bit 與服務(例如 nginx) 的 log 掛相同路徑，讓 fluentd-bit 可以抽到服務 log，接著就透過 fluentd-server-svc 打到 fluentd-server pod，後面就是常見的 EFK 結構，就不多做說明。&lt;/p>
 &lt;br>
-&lt;h2>問題的出現&lt;span class="absolute -mt-20" id="問題的出現">&lt;/span>
+&lt;h2>問題的出現&lt;span class="hx-absolute -hx-mt-20" id="問題的出現">&lt;/span>
 &lt;a href="#%e5%95%8f%e9%a1%8c%e7%9a%84%e5%87%ba%e7%8f%be" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們就像平常一樣寫好整個 EFK 的 yaml，run 的時候也正常，可以收到 log，但很奇怪的是我們先送 &lt;code>log_false&lt;/code> 的 log 可以正常收到，但再接著送 &lt;code>log_true &lt;/code> 就收不到，我們也嘗試反過來送，先送 &lt;code>log_true&lt;/code>，再送 &lt;code>log_false&lt;/code>，發現換收不到 &lt;code>log_false&lt;/code> 的 log&lt;/p>
 &lt;br>
 &lt;ul>
 &lt;li>log_false&lt;/li>
 &lt;/ul>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;result&amp;#34;&lt;/span>: &lt;span style="color:#66d9ef">false&lt;/span>,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;message&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;我是馬賽克&amp;#34;&lt;/span>,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;code&amp;#34;&lt;/span>: &lt;span style="color:#ae81ff">11223344&lt;/span>,
@@ -27,13 +28,13 @@ alt="EFK 結構" width="900">&lt;figcaption>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;job_name&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;叮叮噹噹聖誕節&amp;#34;&lt;/span>,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;method&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;GET&amp;#34;&lt;/span>,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;url&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;url.com&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -41,17 +42,18 @@ title="Copy code"
 &lt;ul>
 &lt;li>log_true&lt;/li>
 &lt;/ul>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;result&amp;#34;&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;data&amp;#34;&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>,
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;response_code&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;wkCJl1dfr45671607965&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -74,15 +76,15 @@ alt="uken/fluent-plugin-elasticsearch issus 詢問" width="1000">&lt;figcaption>
 &lt;p>有人說可能是 Elasticsearch 的 disk 滿了，也有人說是裝在 Fluentd-Server 的套件 fluent-plugin-elasticsearch 版本有問題，或是將 Elasticsearch 跟 Kibana index 刪除就可以，我有砍掉 index 再重新倒入 Log，還是會有問題。&lt;/p>
 &lt;p>一開始以為是 &lt;code>log_false&lt;/code> 跟 &lt;code>log_true&lt;/code> 的欄位不同，所以才會有這個問題發生（你看就知道我跟 EFK 不熟吧ＸＤ），所以有另外倒一些其他服務(欄位也不同)的 log 進去測試，發現是可以正常抽到，且 kibana 那邊會依照 es 提供的欄位自動新增，所以也不是欄位的問題，那最後的問題是什麼呢？&lt;/p>
 &lt;br>
-&lt;h2>如何解決問題&lt;span class="absolute -mt-20" id="如何解決問題">&lt;/span>
+&lt;h2>如何解決問題&lt;span class="hx-absolute -hx-mt-20" id="如何解決問題">&lt;/span>
 &lt;a href="#%e5%a6%82%e4%bd%95%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>最後在我們仔細檢查後發現，&lt;code>log_false&lt;/code> 跟 &lt;code>log_true&lt;/code> 的欄位其中一樣存的資料型態不太一樣，發現其中的 &lt;code>data&lt;/code> 欄位在 &lt;code>log_false&lt;/code> 的資料型態是 array，在 &lt;code>log_true&lt;/code> 存的時候是字串，所以導致當其中一個 log 寫入後，另一個 log 就會因為同欄位的資料型態有所不同，而無法寫入 log，且在 Fluentd-Server 會出現標題的 Error 400 原因拉～&lt;/p>
 &lt;p>最後重新調整欄位的資料型態，就順利解決此次問題 ✌️✌️✌️&lt;/p>
 &lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Elasticsearch 400 error #467：&lt;a href="https://github.com/uken/fluent-plugin-elasticsearch/issues/467" target="_blank" rel="noopener">https://github.com/uken/fluent-plugin-elasticsearch/issues/467&lt;/a>&lt;/p></description></item><item><title>Kibana 新增 index 索引時一直轉圈圈以及顯示 HTTP 403 Forbidden</title><link>https://pin-yi.me/blog/rd/kibana-create-index-forbidden/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/rd/kibana-create-index-forbidden/</guid><description>
 &lt;p>前幾天在工作使用 Kibana 時，想要新增一個新的索引，發現選擇索引並按下新增的按鈕，會一直轉圈圈，等了一陣子，使用開發工具 F12 查看，跳出了 HTTP 403 Forbidden，到底是什麼原因導致的呢！？我們一起看下去吧，會從問題的出現到問題原因再到如何解決問題，來仔細介紹，希望大家不要像我一樣踩到雷 🤣&lt;/p>
 &lt;br>
-&lt;h2>問題的出現&lt;span class="absolute -mt-20" id="問題的出現">&lt;/span>
+&lt;h2>問題的出現&lt;span class="hx-absolute -hx-mt-20" id="問題的出現">&lt;/span>
 &lt;a href="#%e5%95%8f%e9%a1%8c%e7%9a%84%e5%87%ba%e7%8f%be" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;del>那天是個變冷的 12 月&lt;/del>，要幫 RD 同仁新增 Kibana 的索引時，照往常一樣輸入 Index pattern，按下一步，選擇 Configure settings ：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/1.png"
@@ -109,15 +111,13 @@ alt="開發者工具網頁內容顯示 HTTP 403 Forbidden" width="800">&lt;figca
 &lt;br>
 &lt;p>想說為什麼會有 HTTP 403 Forbidden，之前也沒有看過類似的錯誤訊息，於是就開始在網路上亂晃，最後在同事的幫助下找到了一個跟我們情況很相似的文章 &lt;a href="https://www.cnblogs.com/caoweixiong/p/10972120.html" target="_blank" rel="noopener">Kibana 创建索引 POST 403 (forbidden) on create index&lt;/a>&lt;/p>
 &lt;br>
-&lt;h2>問題原因&lt;span class="absolute -mt-20" id="問題原因">&lt;/span>
+&lt;h2>問題原因&lt;span class="hx-absolute -hx-mt-20" id="問題原因">&lt;/span>
 &lt;a href="#%e5%95%8f%e9%a1%8c%e5%8e%9f%e5%9b%a0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>文章的說明是索引變成只允許讀取的狀態，其原因是因為出現這個 HTTP 403 Forbidden 前，ElasticSearch 的空間滿了，導致 Kibana 會自動的將索引改成只允許讀取的狀態，我們來看一下剛剛的 Index 狀態是不是像他說的一樣變成只允許讀取的狀態呢&lt;/p>
 &lt;br>
-&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
-&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
-&lt;div class="w-full min-w-0 leading-7">
-&lt;div class="mt-6 leading-7 first:mt-0">
-可以到 kibana 的 Dev Tools 下指令來查詢歐，輸入 &lt;code>GET _settings&lt;/code>，就會顯示以下圖片的內容囉
-&lt;/div>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-orange-100 hx-bg-orange-50 hx-text-orange-800 dark:hx-border-orange-400/30 dark:hx-bg-orange-400/20 dark:hx-text-orange-300">
+&lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;/div>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">可以到 kibana 的 Dev Tools 下指令來查詢歐，輸入 &lt;code>GET _settings&lt;/code>，就會顯示以下圖片的內容囉&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -129,24 +129,25 @@ alt="索引只允許讀取的設定變成" width="900">&lt;figcaption>
 &lt;br>
 &lt;p>發現正如文章所說，是因為 read_only_allow_delete 的狀態變成了 &lt;code>true&lt;/code>，所以才沒辦法新增索引～&lt;/p>
 &lt;br>
-&lt;h2>如何解決問題&lt;span class="absolute -mt-20" id="如何解決問題">&lt;/span>
+&lt;h2>如何解決問題&lt;span class="hx-absolute -hx-mt-20" id="如何解決問題">&lt;/span>
 &lt;a href="#%e5%a6%82%e4%bd%95%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們查看文章的解決辦法，有兩種辦法，一個是擴大 ElasticSearch 的空間，以及使用 kibana 的 Dev Tools 下指令修改，那我們兩種都有做，這邊就直接介紹下指令需要輸入什麼～&lt;/p>
 &lt;p>需要再 Dev Tools 輸入以下指令，來修改 Index 的狀態：&lt;/p>
 &lt;br>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">PUT&lt;/span> &lt;span style="color:#960050;background-color:#1e0010">_settings&lt;/span>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">PUT&lt;/span> &lt;span style="color:#960050;background-color:#1e0010">_settings&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>{
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;index&amp;#34;&lt;/span>: {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;blocks&amp;#34;&lt;/span>: {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;read_only_allow_delete&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;false&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -173,5 +174,5 @@ alt="順利新增索引" width="900">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Kibana 创建索引 POST 403 (forbidden) on create index：&lt;a href="https://www.cnblogs.com/caoweixiong/p/10972120.html" target="_blank" rel="noopener">https://www.cnblogs.com/caoweixiong/p/10972120.html&lt;/a>&lt;/p></description></item></channel></rss>

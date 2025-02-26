@@ -1,21 +1,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Google Cloud Platform</title><link>https://pin-yi.me/blog/gcp/</link><description>Recent content in Google Cloud Platform on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/gcp/index.xml" rel="self" type="application/rss+xml"/><item><title>Google Kubernetes Engine Local ephemeral storage 計算方式</title><link>https://pin-yi.me/blog/gcp/gke-local-ephemeral-storage/</link><pubDate>Mon, 02 Sep 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-local-ephemeral-storage/</guid><description>
 &lt;p>此文章主要針對 Google Kubernetes Engine Local ephemeral storage 的計算方式來做介紹。&lt;/p>
 &lt;br>
-&lt;h2>前情提要&lt;span class="absolute -mt-20" id="前情提要">&lt;/span>
+&lt;h2>前情提要&lt;span class="hx-absolute -hx-mt-20" id="前情提要">&lt;/span>
 &lt;a href="#%e5%89%8d%e6%83%85%e6%8f%90%e8%a6%81" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>為什麼會突然在看這個主題呢？&lt;/p>
 &lt;p>主要是這幾天在優化自己 GKE 的 Node Pool 規格時，原先是開 e2-standard-2 / 100GB 的 node，數量是 8 ~ 12 顆 node (透過自動擴展)，改成 n2-standard-4 / 100GB 的 node，數量是 6 ~ 10 顆 node (透過自動擴展)。&lt;/p>
 &lt;p>發現明明 CPU/MEM 資源都夠且更多，但 node 數量卻還是跟原始規格一樣長到 9 顆，使用 Cloud logging 來查看 &lt;code>unschedulable&lt;/code>，發現與 Local ephemeral storage 有關，因此就來了解一下 Local ephemeral storage 是如何計算的。&lt;/p>
 &lt;br>
 &lt;p>我們在 Cloud Logging 用以下指令來查看為何 node 會需要長新的，而不是進到還有資源的 node 上：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>unschedulable
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>unschedulable
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>severity&lt;span style="color:#f92672">=&lt;/span>WARNING
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;ephemeral-storage&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;ephemeral-storage&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -30,99 +31,106 @@ alt="Cloud Logging 查詢結果" width="750">&lt;figcaption>
 &lt;p>但這個很奇怪，我們明明建立了 100GB 的 node，為什麼會不足呢？而且我們還是開 spot instance，理論上 node 會被收回，node disk 也會被清空，所以不應該會出現這個問題才對。&lt;/p>
 &lt;p>因此我們就先來了解 Local ephemeral storage 是如何計算的。&lt;/p>
 &lt;br>
-&lt;h2>Local ephemeral storage 計算方式&lt;span class="absolute -mt-20" id="local-ephemeral-storage-計算方式">&lt;/span>
+&lt;h2>Local ephemeral storage 計算方式&lt;span class="hx-absolute -hx-mt-20" id="local-ephemeral-storage-計算方式">&lt;/span>
 &lt;a href="#local-ephemeral-storage-%e8%a8%88%e7%ae%97%e6%96%b9%e5%bc%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>根據官方文件 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/plan-node-sizes#local_ephemeral_storage_reservation" target="_blank" rel="noopener">Local ephemeral storage reservation&lt;/a>，我們可以知道 GKE 會為每個 node 提供本地的臨時儲存空間，當這個儲存空間在 node 故障刪除時，資料也會被一起遺失。&lt;/p>
 &lt;p>GKE 會依照下列的方式計算本機預留的暫存空間，也就是被偷走的空間 /ᐠ .ᆺ. ᐟ\ﾉ：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;p>&lt;code>EVICTION_THRESHOLD&lt;/code> 是驅逐閾值 ; &lt;code>SYSTEM_RESERVATION&lt;/code> 是系統保留空間。&lt;/p>
 &lt;br>
-&lt;h3>EVICTION_THRESHOLD 驅逐閥值計算&lt;span class="absolute -mt-20" id="eviction_threshold-驅逐閥值計算">&lt;/span>
+&lt;h3>EVICTION_THRESHOLD 驅逐閥值計算&lt;span class="hx-absolute -hx-mt-20" id="eviction_threshold-驅逐閥值計算">&lt;/span>
 &lt;a href="#eviction_threshold-%e9%a9%85%e9%80%90%e9%96%a5%e5%80%bc%e8%a8%88%e7%ae%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在預設情況下，臨時儲存空間是由開機磁碟的大小來決定的，驅逐閾值是開機磁碟大小的 10%。&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * BOOT_DISK_CAPACITY&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * BOOT_DISK_CAPACITY&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;h3>SYSTEM_RESERVATION 系統保留空間計算&lt;span class="absolute -mt-20" id="system_reservation-系統保留空間計算">&lt;/span>
+&lt;h3>SYSTEM_RESERVATION 系統保留空間計算&lt;span class="hx-absolute -hx-mt-20" id="system_reservation-系統保留空間計算">&lt;/span>
 &lt;a href="#system_reservation-%e7%b3%bb%e7%b5%b1%e4%bf%9d%e7%95%99%e7%a9%ba%e9%96%93%e8%a8%88%e7%ae%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>系統保留空間也跟開機磁碟大小有關：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * BOOT_DISK_CAPACITY, 6GiB &amp;#43; 35% * BOOT_DISK_CAPACITY, 100 GiB)&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * BOOT_DISK_CAPACITY, 6GiB &amp;#43; 35% * BOOT_DISK_CAPACITY, 100 GiB)&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;p>會計算 &lt;code>50% * BOOT_DISK_CAPACITY&lt;/code>、&lt;code>6GiB + 35% * BOOT_DISK_CAPACITY&lt;/code>、 &lt;code>100 GiB&lt;/code> 三者中的最小值。奇怪的計算方式 (*´･д･)?。&lt;/p>
 &lt;br>
-&lt;h3>計算可用空間&lt;span class="absolute -mt-20" id="計算可用空間">&lt;/span>
+&lt;h3>計算可用空間&lt;span class="hx-absolute -hx-mt-20" id="計算可用空間">&lt;/span>
 &lt;a href="#%e8%a8%88%e7%ae%97%e5%8f%af%e7%94%a8%e7%a9%ba%e9%96%93" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>最後將開機磁碟大小減去 &lt;code>EVICTION_THRESHOLD&lt;/code> 與 &lt;code>SYSTEM_RESERVATION&lt;/code> 就可以得到可用空間：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>BOOT_DISK_CAPACITY - (EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION)&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>BOOT_DISK_CAPACITY - (EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION)&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;h3>計算範例&lt;span class="absolute -mt-20" id="計算範例">&lt;/span>
+&lt;h3>計算範例&lt;span class="hx-absolute -hx-mt-20" id="計算範例">&lt;/span>
 &lt;a href="#%e8%a8%88%e7%ae%97%e7%af%84%e4%be%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>根據上面的公式我們可以知道 &lt;del>被偷走的空間有多少&lt;/del>，下面舉例兩個不同的開機磁碟大小來計算：&lt;/p>
 &lt;ol>
 &lt;li>開機磁碟大小 100GB&lt;/li>
 &lt;/ol>
 &lt;p>先計算 EVICTION_THRESHOLD：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * 100GB = 10GB&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * 100GB = 10GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;p>再計算 SYSTEM_RESERVATION：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * 100GB, 6GiB &amp;#43; 35% * 100GB, 100 GiB)
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * 100GB, 6GiB &amp;#43; 35% * 100GB, 100 GiB)
 = Min(50GB, 6GiB &amp;#43; 35GB, 100GB)
 = Min(50GB, 41GB, 100GB)
-= 41GB&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+= 41GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;p>接著將 EVICTION_THRESHOLD 與 SYSTEM_RESERVATION 相加：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION = 10GB &amp;#43; 41GB = 51GB&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION = 10GB &amp;#43; 41GB = 51GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -132,38 +140,41 @@ title="Copy code"
 &lt;li>開機磁碟大小 300GB&lt;/li>
 &lt;/ol>
 &lt;p>先計算 EVICTION_THRESHOLD：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * 300GB = 30GB&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * 300GB = 30GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;p>再計算 SYSTEM_RESERVATION：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * 300GB, 6GiB &amp;#43; 35% * 300GB, 100 GiB)
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * 300GB, 6GiB &amp;#43; 35% * 300GB, 100 GiB)
 = Min(150GB, 6GiB &amp;#43; 105GB, 100GB)
 = Min(150GB, 111GB, 100GB)
-= 100GB&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+= 100GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;p>接著將 EVICTION_THRESHOLD 與 SYSTEM_RESERVATION 相加：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION = 30GB &amp;#43; 100GB = 130GB&lt;/code>&lt;/pre>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION = 30GB &amp;#43; 100GB = 130GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -172,7 +183,7 @@ title="Copy code"
 &lt;p>了解計算方式後，那為什麼會出現 Local ephemeral storage 不足的問題呢？&lt;/p>
 &lt;p>後來發現，因為我的多數服務都會使用 gcsfuse 掛載 GCS bucket，而 gcsfuse 預設 ephemeral storage request 會使用 5GB，所以以 100 GB 的開機磁碟，我一個 node 只要超過 9 個 Pod，就會導致 Local ephemeral storage 不足的問題。詳細就請參考：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/cloud-storage-fuse-csi-driver#sidecar-container-resources" target="_blank" rel="noopener">Configure resources for the sidecar container&lt;/a>&lt;/p>
 &lt;br>
-&lt;h2>哪裡可以查看 Local ephemeral storage 使用量？&lt;span class="absolute -mt-20" id="哪裡可以查看-local-ephemeral-storage-使用量">&lt;/span>
+&lt;h2>哪裡可以查看 Local ephemeral storage 使用量？&lt;span class="hx-absolute -hx-mt-20" id="哪裡可以查看-local-ephemeral-storage-使用量">&lt;/span>
 &lt;a href="#%e5%93%aa%e8%a3%a1%e5%8f%af%e4%bb%a5%e6%9f%a5%e7%9c%8b-local-ephemeral-storage-%e4%bd%bf%e7%94%a8%e9%87%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ol>
 &lt;li>可以從 GKE 的 Node Pool UI 介面查看：&lt;/li>
 &lt;/ol>
@@ -203,12 +214,12 @@ alt="kubectl describe node 頁面" width="550">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;p>也可以從 describe 看到目前 request ephemeral-storage 設定的大小，來避免 Local ephemeral storage 出現不足的問題。&lt;/p>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Local ephemeral storage reservation：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/plan-node-sizes#local_ephemeral_storage_reservation" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/plan-node-sizes#local_ephemeral_storage_reservation&lt;/a>&lt;/p>
 &lt;p>Configure resources for the sidecar container：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/cloud-storage-fuse-csi-driver#sidecar-container-resources" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/persistent-volumes/cloud-storage-fuse-csi-driver#sidecar-container-resources&lt;/a>&lt;/p></description></item><item><title>GCP Memorystore HA 高可用性 failover 測試</title><link>https://pin-yi.me/blog/gcp/gcp-memorystore-failover/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-memorystore-failover/</guid><description>
 &lt;p>此文章主要針對 GCP Memorystore failover 來做測試，測試 Memorystore 高可用性 (HA) 在標準 Standard Tier failover 故障轉移需要多久，以及不同 replica 條件下轉移是否會有差異等等。&lt;/p>
 &lt;br>
-&lt;h2>文件說明&lt;span class="absolute -mt-20" id="文件說明">&lt;/span>
+&lt;h2>文件說明&lt;span class="hx-absolute -hx-mt-20" id="文件說明">&lt;/span>
 &lt;a href="#%e6%96%87%e4%bb%b6%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們可以先閱讀 &lt;a href="https://cloud.google.com/memorystore/docs/redis/faq" target="_blank" rel="noopener">Google Memorystore for Redis FAQ&lt;/a> 文章，可以得知 Standard Tier 在 failover 轉移，大約會花 30 秒左右。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/1.png"
@@ -228,9 +239,10 @@ alt="when a failover is triggered" width="700">&lt;figcaption>
 &lt;p>因次會導致有幾秒鐘連不到 Redis。重新連接時，將使用原本的 IP 位址即可自動重新定向到新的服務上。故障轉移後，不需要調整連線設定。&lt;/p>
 &lt;br>
 &lt;p>接下來我們來實際測試看看，我們分成兩個測試組，分別為：1m1s、1m2s 的方式，來看看故障轉移時，需要花多久，還有不同 Replica 條件下會不會有差異。&lt;/p>
-&lt;h2>實作測試 (1m1s)&lt;span class="absolute -mt-20" id="實作測試-1m1s">&lt;/span>
+&lt;h2>實作測試 (1m1s)&lt;span class="hx-absolute -hx-mt-20" id="實作測試-1m1s">&lt;/span>
 &lt;a href="#%e5%af%a6%e4%bd%9c%e6%b8%ac%e8%a9%a6-1m1s" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以只用之前 &lt;a href="../../terraform/" >IaC&lt;/a> 文章來建立，或是用 UI 來建立 Memorystore，這邊用 IaC 來示範：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-terragrunt.hcl" data-lang="terragrunt.hcl">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">terraform&lt;/span> {
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-terragrunt.hcl" data-lang="terragrunt.hcl">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">terraform&lt;/span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> source &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;${get_path_to_repo_root()}/modules/memorystore&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
@@ -248,19 +260,19 @@ alt="when a failover is triggered" width="700">&lt;figcaption>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> redis_configs &lt;span style="color:#f92672">=&lt;/span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;#34;maxmemory-policy&amp;#34; &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;allkeys-lru&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;p>這邊 memorystore module 預設是 Standard Tier，另外小提醒，如果要使用 Replica memory_size_gb 最小必須是 5G。&lt;/p>
 &lt;br>
-&lt;h3>設定監控&lt;span class="absolute -mt-20" id="設定監控">&lt;/span>
+&lt;h3>設定監控&lt;span class="hx-absolute -hx-mt-20" id="設定監控">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>建立完成後，我們也先把監控給拉出來，設定可以參考 &lt;a href="https://cloud.google.com/memorystore/docs/redis/about-manual-failover#stackdriver_verification" target="_blank" rel="noopener">About manual failover&lt;/a>，主要是選擇 &lt;b>Cloud Memorystore Redis &amp;gt; replication &amp;gt; Node role&lt;/b>&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/3.png"
@@ -271,15 +283,16 @@ alt="監控圖表" width="850">&lt;figcaption>
 &lt;br>
 &lt;p>可以看到 node-0 跟 node-1，數字 1 代表 Primary (node-0)、數字 0 代表 Replica (node-1)&lt;/p>
 &lt;br>
-&lt;h3>查看 describe&lt;span class="absolute -mt-20" id="查看-describe">&lt;/span>
+&lt;h3>查看 describe&lt;span class="hx-absolute -hx-mt-20" id="查看-describe">&lt;/span>
 &lt;a href="#%e6%9f%a5%e7%9c%8b-describe" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們也可以下指令查看：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>gcloud redis instances describe ian-1m1s --region&lt;span style="color:#f92672">=&lt;/span>asia-east1 --project&lt;span style="color:#f92672">={&lt;/span>project_id&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>gcloud redis instances describe ian-1m1s --region&lt;span style="color:#f92672">=&lt;/span>asia-east1 --project&lt;span style="color:#f92672">={&lt;/span>project_id&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -294,9 +307,10 @@ alt="describe 畫面" width="650">&lt;figcaption>
 &lt;br>
 &lt;p>接著我們可以參考 &lt;a href="https://cloud.google.com/memorystore/docs/redis/initiate-manual-failover" target="_blank" rel="noopener">Initiate a manual failover&lt;/a> 文章，手動來觸發 failover，這邊提醒一下 手動 failover 有分兩種資料保護模式：limited-data-loss、force-data-loss，詳細請看 &lt;a href="https://cloud.google.com/memorystore/docs/redis/initiate-manual-failover#optional_data_protection_mode" target="_blank" rel="noopener">Optional data protection mode&lt;/a>，這邊測試就不討論兩種保護模式，都使用預設的 limited-data-loss 來測試。&lt;/p>
 &lt;br>
-&lt;h3>寫 shell 測試 redis 連線&lt;span class="absolute -mt-20" id="寫-shell-測試-redis-連線">&lt;/span>
+&lt;h3>寫 shell 測試 redis 連線&lt;span class="hx-absolute -hx-mt-20" id="寫-shell-測試-redis-連線">&lt;/span>
 &lt;a href="#%e5%af%ab-shell-%e6%b8%ac%e8%a9%a6-redis-%e9%80%a3%e7%b7%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>另外，我們在寫一個 shell 到 GKE 裡面 (用同 VPC 打) 打 Memorystore Redis 的 Primary Endpoint 以及 Read Endpoint，看看當 failover 是不是會有連不上的問題 ～&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Pod&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">redis-test&lt;/span>
@@ -374,26 +388,27 @@ alt="describe 畫面" width="650">&lt;figcaption>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> fi
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> sleep 1
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> done&lt;/span> &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> done&lt;/span> &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;h3>開始手動觸發 failover&lt;span class="absolute -mt-20" id="開始手動觸發-failover">&lt;/span>
+&lt;h3>開始手動觸發 failover&lt;span class="hx-absolute -hx-mt-20" id="開始手動觸發-failover">&lt;/span>
 &lt;a href="#%e9%96%8b%e5%a7%8b%e6%89%8b%e5%8b%95%e8%a7%b8%e7%99%bc-failover" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們準備好監控以及也先看好 describe 後，就可以下指令來手動觸發 failover：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>gcloud redis instances failover ian-1m1s --data-protection-mode&lt;span style="color:#f92672">=&lt;/span>limited-data-loss --region&lt;span style="color:#f92672">=&lt;/span>asia-east1 --project&lt;span style="color:#f92672">={&lt;/span>project_id&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>gcloud redis instances failover ian-1m1s --data-protection-mode&lt;span style="color:#f92672">=&lt;/span>limited-data-loss --region&lt;span style="color:#f92672">=&lt;/span>asia-east1 --project&lt;span style="color:#f92672">={&lt;/span>project_id&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -405,8 +420,8 @@ alt="memorystore UI 畫面" width="350">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>後續觀察&lt;span class="absolute -mt-20" id="後續觀察">&lt;/span>
-&lt;a href="#%e5%be%8c%e7%ba%8c%e8%a7%80%e5%af%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>查看監控&lt;span class="absolute -mt-20" id="查看監控">&lt;/span>
+&lt;h2>後續觀察&lt;span class="hx-absolute -hx-mt-20" id="後續觀察">&lt;/span>
+&lt;a href="#%e5%be%8c%e7%ba%8c%e8%a7%80%e5%af%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>查看監控&lt;span class="hx-absolute -hx-mt-20" id="查看監控">&lt;/span>
 &lt;a href="#%e6%9f%a5%e7%9c%8b%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>首先我們先看監控部分，可以看到原本的 node-1 是 Primary 後來掉下來的同時，由 node-2 變成 Primary 最後完成故障轉移。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/6.png"
@@ -423,7 +438,7 @@ alt="describe 畫面" width="650">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>查看腳本&lt;span class="absolute -mt-20" id="查看腳本">&lt;/span>
+&lt;h3>查看腳本&lt;span class="hx-absolute -hx-mt-20" id="查看腳本">&lt;/span>
 &lt;a href="#%e6%9f%a5%e7%9c%8b%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>最後，查看一下腳本的執行紀錄可以發現：在 18:12:58， 出現第一筆 Primary PING 不到的錯誤，到 18:13:18 才恢復，代表故障轉移時間約 20 左右 (最後面會測試 5 次來取平均)，其流程是 Primary 會先連不到，接著變成 Primary 跟 Replica 都連不到，最後剩下 Replica，到都正常。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/8.png"
@@ -432,7 +447,7 @@ alt="shell 畫面" width="500">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>實作測試 (1m2s)&lt;span class="absolute -mt-20" id="實作測試-1m2s">&lt;/span>
+&lt;h2>實作測試 (1m2s)&lt;span class="hx-absolute -hx-mt-20" id="實作測試-1m2s">&lt;/span>
 &lt;a href="#%e5%af%a6%e4%bd%9c%e6%b8%ac%e8%a9%a6-1m2s" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>由於設定都差不多，所以上述 1m1s 設定這邊就不重複說明，記得把 IaC 的 replica_count 改成 2，以及 shell 的 IP 跟 Password 要記得換！&lt;/p>
 &lt;p>直接看監控部分：可以看到現在 node-2 是 1，代表 node-2 是 Primary，其他 node-1、node-0 都是 Replica。&lt;/p>
 &lt;br>
@@ -475,7 +490,7 @@ alt="shell 畫面" width="500">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>整理故障轉移時間&lt;span class="absolute -mt-20" id="整理故障轉移時間">&lt;/span>
+&lt;h2>整理故障轉移時間&lt;span class="hx-absolute -hx-mt-20" id="整理故障轉移時間">&lt;/span>
 &lt;a href="#%e6%95%b4%e7%90%86%e6%95%85%e9%9a%9c%e8%bd%89%e7%a7%bb%e6%99%82%e9%96%93" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
 &lt;thead>
 &lt;tr>
@@ -515,7 +530,7 @@ alt="shell 畫面" width="500">&lt;figcaption>
 &lt;br>
 &lt;p>可以發現，多一個 Replica，在故障轉移的時間可以更快速。&lt;/p>
 &lt;br>
-&lt;h2>最佳實踐&lt;span class="absolute -mt-20" id="最佳實踐">&lt;/span>
+&lt;h2>最佳實踐&lt;span class="hx-absolute -hx-mt-20" id="最佳實踐">&lt;/span>
 &lt;a href="#%e6%9c%80%e4%bd%b3%e5%af%a6%e8%b8%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>所以我們知道，每當發生 Failover 時，一定會出現斷線的問題，官方在 Memorystore for Redis 的 &lt;a href="https://cloud.google.com/memorystore/docs/redis/general-best-practices" target="_blank" rel="noopener">General best practices&lt;/a> 中有提到&lt;a href="https://cloud.google.com/memorystore/docs/redis/general-best-practices#operations_and_scenarios_that_require_a_connection_retry" target="_blank" rel="noopener">需要重新連線的操作和場景&lt;/a>，以下都會導致與 Redis instance 網路連線中斷：&lt;/p>
 &lt;ul>
 &lt;li>
@@ -542,7 +557,7 @@ alt="shell 畫面" width="500">&lt;figcaption>
 &lt;/ul>
 &lt;p>所以我們需要再設計應用程式時，考量到這一點，可以參考 &lt;a href="https://cloud.google.com/memorystore/docs/redis/exponential-backoff" target="_blank" rel="noopener">Exponential backoff&lt;/a> ，要加上重試邏輯，讓應用程式自動重新連線並持續正常運作。&lt;/p>
 &lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Memorystore for Redis FAQ：&lt;a href="https://cloud.google.com/memorystore/docs/redis/faq" target="_blank" rel="noopener">https://cloud.google.com/memorystore/docs/redis/faq&lt;/a>&lt;/p>
 &lt;p>High availability for Memorystore for Redis：&lt;a href="https://cloud.google.com/memorystore/docs/redis/high-availability-for-memorystore-for-redis#when_a_failover_is_triggered" target="_blank" rel="noopener">https://cloud.google.com/memorystore/docs/redis/high-availability-for-memorystore-for-redis#when_a_failover_is_triggered&lt;/a>&lt;/p>
 &lt;p>About manual failover：&lt;a href="https://cloud.google.com/memorystore/docs/redis/about-manual-failover#stackdriver_verification" target="_blank" rel="noopener">https://cloud.google.com/memorystore/docs/redis/about-manual-failover#stackdriver_verification&lt;/a>&lt;/p>
@@ -564,7 +579,7 @@ alt="Google 帳單 (project_2)" width="800">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>費用計算說明&lt;span class="absolute -mt-20" id="費用計算說明">&lt;/span>
+&lt;h2>費用計算說明&lt;span class="hx-absolute -hx-mt-20" id="費用計算說明">&lt;/span>
 &lt;a href="#%e8%b2%bb%e7%94%a8%e8%a8%88%e7%ae%97%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們先來計算一下費用是不是正確，Prometheus Samples Ingested 的 SKU 是 A4E4-DF03-CDB6，可以透過&lt;a href="https://cloud.google.com/skus/?currency=USD&amp;amp;filter=A4E4-DF03-CDB6&amp;amp;hl=en" target="_blank" rel="noopener">這個頁面&lt;/a>來查詢：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/3.png"
@@ -577,7 +592,8 @@ alt="Google Cloud Platform SKUs" width="800">&lt;figcaption>
 &lt;ul>
 &lt;li>calc_metrics.sh&lt;/li>
 &lt;/ul>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#! /bin/bash
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#! /bin/bash
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> $# -ne &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;請使用： &lt;/span>$0&lt;span style="color:#e6db74"> &amp;lt;samples&amp;gt; 來計算費用&amp;#34;&lt;/span>
@@ -621,13 +637,13 @@ alt="Google Cloud Platform SKUs" width="800">&lt;figcaption>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cost&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;scale=2; &lt;/span>&lt;span style="color:#e6db74">${&lt;/span>result&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74"> * 0.024 / 1000000&amp;#34;&lt;/span> | bc&lt;span style="color:#66d9ef">)&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;費用：&lt;/span>$cost&lt;span style="color:#e6db74"> USD&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;費用：&lt;/span>$cost&lt;span style="color:#e6db74"> USD&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -660,7 +676,7 @@ alt="查看 Metrics Management" width="550">&lt;figcaption>
 &lt;br>
 &lt;p>所以可以得知，帳單 Prometheus Samples Ingested 這個 SKU 會這麼高就是這邊的 &lt;b>Billable samples ingested&lt;/b> 所導致，那我們現在可以依照下面的表格 Metrics 知道是哪個 Metrics 花錢最兇，在針對這些 Metrics 來進行調整，以達到減少費用的目的。&lt;/p>
 &lt;br>
-&lt;h2>如何減少花費&lt;span class="absolute -mt-20" id="如何減少花費">&lt;/span>
+&lt;h2>如何減少花費&lt;span class="hx-absolute -hx-mt-20" id="如何減少花費">&lt;/span>
 &lt;a href="#%e5%a6%82%e4%bd%95%e6%b8%9b%e5%b0%91%e8%8a%b1%e8%b2%bb" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們可以從上面的表中知道，是 &lt;code>phpfpm_process_state/gauge&lt;/code> 這個 metric，總共收了 30.71 B 也就是大約 1842.60 美元的花費是裡面最高的。所以我們就先這對如何減少這個 metric 來做說明：&lt;/p>
 &lt;p>要先知道 &lt;code>phpfpm_process_state/gauge&lt;/code> 這個 metric 是怎麼來的呢？&lt;/p>
 &lt;p>首先我們可以從 metric 名稱知道它是 phpfpm 的 process 狀態。我們有開啟 Cluster 的 Managed Service for Prometheus，來使用 Google 管理的 Prometheus (GMP)， 並在服務上面設定 &lt;code>phpfpm-exporter&lt;/code>，並使用 PodMonitoring 來將 Pod 上的 metrics 接到 GMP 上。&lt;/p>
@@ -720,7 +736,8 @@ alt="phpfpm status" width="700">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;p>所以要減少費用，可以調整上述影響 metrics 數量的變因，另一種方式就是，針對需要收集哪些 metrics 來做過濾，可以參考此文件：&lt;a href="https://cloud.google.com/stackdriver/docs/managed-prometheus/setup-managed" target="_blank" rel="noopener">Get started with managed collection&lt;/a>，過濾不要的 metrics ，避免送到 GMP 上，而有多餘的費用，我們可以在 PodMonitoring 上去來過濾要送出 metrics，如下：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">monitoring.googleapis.com/v1&lt;/span>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">monitoring.googleapis.com/v1&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">PodMonitoring&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: {{ &lt;span style="color:#ae81ff">$.Values.deployment.name }}&lt;/span>
@@ -735,13 +752,13 @@ alt="phpfpm status" width="700">&lt;figcaption>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metricRelabeling&lt;/span>:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">action&lt;/span>: &lt;span style="color:#ae81ff">drop&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">regex&lt;/span>: &lt;span style="color:#ae81ff">phpfpm_process_state&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sourceLabels&lt;/span>: [&lt;span style="color:#ae81ff">__name__]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sourceLabels&lt;/span>: [&lt;span style="color:#ae81ff">__name__]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -762,7 +779,7 @@ alt="Metrics Management phpfpm metrics" width="600">&lt;figcaption>
 &lt;/figure>
 &lt;br></description></item><item><title>如何過濾 GCP LOG，減少 Cloud Logging API 的花費</title><link>https://pin-yi.me/blog/gcp/gcp-log-reduce-cloud-logging-api/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-log-reduce-cloud-logging-api/</guid><description>
 &lt;p>當我們使用 GCP 的 Cloud Logging 服務來查看 Log 時，有時候會有一些我們不需要顯示出來的，或是從來都不會去查詢的 Log，再者是 GCP 本身的錯誤導致大量噴錯的 Log ，這些 Log 都會導致 Cloud Logging 的費用增加。&lt;/p>
-&lt;h2>介紹 Cloud Logging&lt;span class="absolute -mt-20" id="介紹-cloud-logging">&lt;/span>
+&lt;h2>介紹 Cloud Logging&lt;span class="hx-absolute -hx-mt-20" id="介紹-cloud-logging">&lt;/span>
 &lt;a href="#%e4%bb%8b%e7%b4%b9-cloud-logging" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先來簡單說一下 Cloud Logging 這項服務的基本架構，請看圖：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/overview.png"
@@ -773,7 +790,7 @@ alt="Cloud Logging 基本架構" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>可以看到 Logs Data 會透過 API 再經過 _Default log sink (router) 存到相應命名的 log bucket (預設配置)，圖中 _Required 以及 _Default 的 log sink 都是 GCP 自動創建的接收器，下面簡述一下它們的區別：&lt;/p>
 &lt;br>
-&lt;h3>_Required 日誌儲存桶&lt;span class="absolute -mt-20" id="_required-日誌儲存桶">&lt;/span>
+&lt;h3>_Required 日誌儲存桶&lt;span class="hx-absolute -hx-mt-20" id="_required-日誌儲存桶">&lt;/span>
 &lt;a href="#_required-%e6%97%a5%e8%aa%8c%e5%84%b2%e5%ad%98%e6%a1%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Cloud Logging 會將以下類型的 Log 存到 _Required 儲存桶&lt;/p>
 &lt;ol>
 &lt;li>
@@ -788,7 +805,7 @@ alt="Cloud Logging 基本架構" width="800">&lt;figcaption>
 &lt;/ol>
 &lt;p>Cloud Logging 會將 _Required 儲存桶 Log 保留 400 天，無法調整該期限，且無法修改或刪除 _Required 儲存桶，也沒辦法停用 _Required log sink 接受器路由到 _Required 儲存桶的設定。&lt;/p>
 &lt;br>
-&lt;h3>_Default 日誌儲存桶&lt;span class="absolute -mt-20" id="_default-日誌儲存桶">&lt;/span>
+&lt;h3>_Default 日誌儲存桶&lt;span class="hx-absolute -hx-mt-20" id="_default-日誌儲存桶">&lt;/span>
 &lt;a href="#_default-%e6%97%a5%e8%aa%8c%e5%84%b2%e5%ad%98%e6%a1%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>只要不是存在 _Required 日誌儲存桶的 Log 就會透過 _Default log sink 接受器路由到 _Default 儲存桶。&lt;/p>
 &lt;p>除非有另外配置自定義設定， 否則 _Default 日誌儲存桶 Log 只會保留 30 天，也一樣無法刪除 _Default 日誌儲存桶。此外 Cloud Logging 的費用是以存在 _Default 日誌儲存桶來計算。&lt;/p>
 &lt;br>
@@ -815,9 +832,9 @@ alt="Cloud Logging 基本架構" width="800">&lt;figcaption>
 &lt;/table>
 &lt;p>查看該專案使用的 Cloud Logging API 費用：&lt;a href="https://console.cloud.google.com/apis/api/logging.googleapis.com/cost" target="_blank" rel="noopener">https://console.cloud.google.com/apis/api/logging.googleapis.com/cost&lt;/a>&lt;/p>
 &lt;br>
-&lt;h2>過濾 Log&lt;span class="absolute -mt-20" id="過濾-log">&lt;/span>
+&lt;h2>過濾 Log&lt;span class="hx-absolute -hx-mt-20" id="過濾-log">&lt;/span>
 &lt;a href="#%e9%81%8e%e6%bf%be-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那現在知道 Cloud Logging 的架構，那當我們遇到需要過濾 Log 時，我們可以使用以下步驟來過濾以節省 Cloud Logging API 費用：&lt;/p>
-&lt;h3>範例說明&lt;span class="absolute -mt-20" id="範例說明">&lt;/span>
+&lt;h3>範例說明&lt;span class="hx-absolute -hx-mt-20" id="範例說明">&lt;/span>
 &lt;a href="#%e7%af%84%e4%be%8b%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>這次範例是 google 在 2023/07/06 所發佈的 Service Health，當 GKE 版本大於 1.24 以上，就會噴&lt;/p>
 &lt;ol>
 &lt;li>
@@ -834,8 +851,8 @@ alt="Cloud Logging 基本架構" width="800">&lt;figcaption>
 &lt;p>附上當時的 Service Health 連結：&lt;a href="https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE" target="_blank" rel="noopener">https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE&lt;/a>&lt;/p>
 &lt;br>
 &lt;p>我們在上面架構圖有說到，Log 會透過 log sink 路由到 bucket，所以我們要將過濾條件加在 log router 上：&lt;/p>
-&lt;div class="steps ml-4 mb-12 border-l border-gray-200 pl-6 dark:border-neutral-800 [counter-reset:step]">
-&lt;h3>選擇 Log Router&lt;span class="absolute -mt-20" id="選擇-log-router">&lt;/span>
+&lt;div class="steps hx-ml-4 hx-mb-12 ltr:hx-border-l rtl:hx-border-r hx-border-gray-200 ltr:hx-pl-6 rtl:hx-pr-6 dark:hx-border-neutral-800 [counter-reset:step]">
+&lt;h3>選擇 Log Router&lt;span class="hx-absolute -hx-mt-20" id="選擇-log-router">&lt;/span>
 &lt;a href="#%e9%81%b8%e6%93%87-log-router" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/1.png"
 alt="選擇 Log Router" width="550">&lt;figcaption>
@@ -843,7 +860,7 @@ alt="選擇 Log Router" width="550">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>選擇 Log Router Sinks&lt;span class="absolute -mt-20" id="選擇-log-router-sinks">&lt;/span>
+&lt;h3>選擇 Log Router Sinks&lt;span class="hx-absolute -hx-mt-20" id="選擇-log-router-sinks">&lt;/span>
 &lt;a href="#%e9%81%b8%e6%93%87-log-router-sinks" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>選擇 _Default 的 Log Router Sinks，點選右邊按鈕的 Edit Sink&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/2.png"
@@ -852,7 +869,7 @@ alt="選擇 _Default 的 Log Router Sinks">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>設定 Sink details&lt;span class="absolute -mt-20" id="設定-sink-details">&lt;/span>
+&lt;h3>設定 Sink details&lt;span class="hx-absolute -hx-mt-20" id="設定-sink-details">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a-sink-details" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>第一個是 details，可以輸入說明，這邊輸入：google 有 bug 會噴大量的意外 LOG，怕費用飆高，先用官方建議的來過濾 LOG，詳細可以看： &lt;a href="https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE" target="_blank" rel="noopener">https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE&lt;/a>&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/3.png"
@@ -861,7 +878,7 @@ alt="輸入 Sink details 說明">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>選擇 Sink Service 跟 Bucket&lt;span class="absolute -mt-20" id="選擇-sink-service-跟-bucket">&lt;/span>
+&lt;h3>選擇 Sink Service 跟 Bucket&lt;span class="hx-absolute -hx-mt-20" id="選擇-sink-service-跟-bucket">&lt;/span>
 &lt;a href="#%e9%81%b8%e6%93%87-sink-service-%e8%b7%9f-bucket" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接著 sink 服務選擇 Logging bucket，以及對應儲存的 log bucket (這邊基本上都是預設)&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/4.png"
@@ -870,7 +887,7 @@ alt="選擇 Logging bucket">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>設定 include Log&lt;span class="absolute -mt-20" id="設定-include-log">&lt;/span>
+&lt;h3>設定 include Log&lt;span class="hx-absolute -hx-mt-20" id="設定-include-log">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a-include-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>選擇那些可以被 include 到 sink 接收器的 LOG 格式 (這邊基本上都是預設)&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/5.png"
@@ -879,7 +896,7 @@ alt="預設的 LOG 格式">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>設定 filter Log&lt;span class="absolute -mt-20" id="設定-filter-log">&lt;/span>
+&lt;h3>設定 filter Log&lt;span class="hx-absolute -hx-mt-20" id="設定-filter-log">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a-filter-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>這邊就是我們要輸入過濾的地方，先點擊 ADD EXCLUSION，輸入過濾的名稱，以及過濾的內容格式，我們輸入 google 在 Service Health 所提供的格式，最後按下 UPDATE SINK&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/6.png"
@@ -888,7 +905,7 @@ alt="新增要過濾的 LOG 格式">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>設定完成&lt;span class="absolute -mt-20" id="設定完成">&lt;/span>
+&lt;h3>設定完成&lt;span class="hx-absolute -hx-mt-20" id="設定完成">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a%e5%ae%8c%e6%88%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>等待更新完成，就可以看到我們已經在接收器上設定好過濾條件囉～&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/7.png"
@@ -897,7 +914,7 @@ alt="查看詳細接收器設定">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>檢查 Log 是否過濾成功&lt;span class="absolute -mt-20" id="檢查-log-是否過濾成功">&lt;/span>
+&lt;h3>檢查 Log 是否過濾成功&lt;span class="hx-absolute -hx-mt-20" id="檢查-log-是否過濾成功">&lt;/span>
 &lt;a href="#%e6%aa%a2%e6%9f%a5-log-%e6%98%af%e5%90%a6%e9%81%8e%e6%bf%be%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>最後再檢查一下 Log 是不是沒有收到該錯誤的 Log 內容&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/8.png"
@@ -907,7 +924,7 @@ alt="檢查 LOG 是否不會再出現">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;/div>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Routing and storage overview &lt;a href="https://cloud.google.com/logging/docs/routing/overview" target="_blank" rel="noopener">https://cloud.google.com/logging/docs/routing/overview&lt;/a>&lt;/p></description></item><item><title>Google Kubernetes Engine CronJob 會有短暫時間沒有執行 Job</title><link>https://pin-yi.me/blog/gcp/gke-cronjob-not-working/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-cronjob-not-working/</guid><description>
 &lt;p>前陣子公司建立在 Google Kubernetes Engine 叢集上的 CronJob 服務會有短暫時間沒有執行 Job。先前情提要一下，此 CronJob 的設定是每分鐘都會執行 (圖一)，所以理當來說 Log 應該要可以看到每分鐘都有此 CronJob 的紀錄，但有時候會發生 CronJob 短暫時間都沒有執行的狀況，找了一陣子都沒有找到原因，最後開支援單請 Google 那邊協助查看，終於找到原因拉 😍。那就跟我一起看一下發生的過程，以及 Google 幫我們找到的原因，以及要如何解決等等～&lt;/p>
 &lt;br>
@@ -917,7 +934,7 @@ alt="(圖一) CronJob schedule 時間為每分鐘執行" width="600">&lt;figcapt
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>問題發生以及問題原因&lt;span class="absolute -mt-20" id="問題發生以及問題原因">&lt;/span>
+&lt;h2>問題發生以及問題原因&lt;span class="hx-absolute -hx-mt-20" id="問題發生以及問題原因">&lt;/span>
 &lt;a href="#%e5%95%8f%e9%a1%8c%e7%99%bc%e7%94%9f%e4%bb%a5%e5%8f%8a%e5%95%8f%e9%a1%8c%e5%8e%9f%e5%9b%a0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們使用 Google Cloud Platform 裡面的記錄功能，可以看到 (圖二)，在每分鐘執行的 Log 中，有短暫時間沒有執行 Job，但這個時間除了 CronJob 以外，其他的服務都是好的。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/2.png"
@@ -949,11 +966,10 @@ alt="(圖五) 有問題的叢集位置類型" width="450">&lt;figcaption>
 &lt;br>
 &lt;p>Google 的建議是可以考慮使用另一個 regional cluster，讓 master node 在更新時不會只在單一地區，或是一樣使用舊的 zonal cluster，透過設定 Maintenance window 或者 Maintenance exclusions 來降低服務受到 workload 的影響。參考資料 [2]&lt;/p>
 &lt;br>
-&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
-&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
-&lt;div class="w-full min-w-0 leading-7">
-&lt;div class="mt-6 leading-7 first:mt-0">
-&lt;ol>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-orange-100 hx-bg-orange-50 hx-text-orange-800 dark:hx-border-orange-400/30 dark:hx-bg-orange-400/20 dark:hx-text-orange-300">
+&lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;/div>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;ol>
 &lt;li>
 &lt;p>就算把 node_pool 裡面的自動升級給停掉，也沒有辦法解決此問題！因為此 master control plane (也就是 master node) 的升級，不是 worker node 的 node pool 升級，是由 GKE 負責維護的，所以他們會定期升級 control plane，也沒辦法停止此類的升級。&lt;/p>
 &lt;/li>
@@ -965,7 +981,7 @@ alt="(圖五) 有問題的叢集位置類型" width="450">&lt;figcaption>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;h2>解決問題&lt;span class="absolute -mt-20" id="解決問題">&lt;/span>
+&lt;h2>解決問題&lt;span class="hx-absolute -hx-mt-20" id="解決問題">&lt;/span>
 &lt;a href="#%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>最後我們選擇將叢集給整個重建，來確保 CronJob 不會有沒有執行到的狀況發生，重建叢集跟搬服務的過程很辛苦的 😰 希望大家不要發生 QQ，最後我們來看一下重建完後，在 master control plane 更新的時候，還會不會有 CronJob 沒有執行的情況發生。&lt;/p>
 &lt;br>
 &lt;p>新叢集使用 regional cluster 來建立，在 2/1 也有 master control plane 的升級。 (圖六)&lt;/p>
@@ -989,12 +1005,12 @@ alt="(圖八) 新叢集位置類型" width="450">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>[1] Standard cluster upgrades：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades&lt;/a>&lt;/p>
 &lt;p>[2] maintenance-windows-and-exclusions：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions&lt;/a>&lt;/p></description></item><item><title>Google Cloud Platform (GCP) - IAM 與管理</title><link>https://pin-yi.me/blog/gcp/iam/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/iam/</guid><description>
 &lt;p>IAM 的全名是 Identity and Access Management，當我們藉由 IAM，可以授與特定 Google Cloud 資源的 &lt;strong>精細&lt;/strong> 訪問權限，並防止對其他資源的訪問。疑！？為什麼是精細？我們接著看下去，我們可以採用最小權限安全原則，該原則要求任何人都不應擁有超出實際所需的權限。&lt;/p>
 &lt;br>
-&lt;h2>IAM 的工作原理&lt;span class="absolute -mt-20" id="iam-的工作原理">&lt;/span>
+&lt;h2>IAM 的工作原理&lt;span class="hx-absolute -hx-mt-20" id="iam-的工作原理">&lt;/span>
 &lt;a href="#iam-%e7%9a%84%e5%b7%a5%e4%bd%9c%e5%8e%9f%e7%90%86" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們先來了解一下 IAM 的工作原理，藉由 IAM，我們可以定義誰 (哪一個身份) 對哪些資源有哪種的訪問權限 (角色) 來管理訪問權限控制。什麼是資源？例如， Compute Engine 虛擬機 (GCE)、Google Kubernetes Engine (GKE) 集群和 Cloud Storage 存儲分區都是 Google Cloud 資源，我們用於整理資源的組織或資料夾、項目等也都是資源&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/logo.png"
@@ -1004,12 +1020,10 @@ alt="GCP IAM Logo" width="150">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;p>我們可以把它理解成&lt;/p>
-&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
-&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
-&lt;div class="w-full min-w-0 leading-7">
-&lt;div class="mt-6 leading-7 first:mt-0">
-什麼 『 人 』，可以對什麼『 資源 』，做什麼『 事情 』
-&lt;/div>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-orange-100 hx-bg-orange-50 hx-text-orange-800 dark:hx-border-orange-400/30 dark:hx-bg-orange-400/20 dark:hx-text-orange-300">
+&lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;/div>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">什麼 『 人 』，可以對什麼『 資源 』，做什麼『 事情 』&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -1028,7 +1042,7 @@ alt="IAM 中的權限管理" width="800">&lt;figcaption>
 &lt;li>政策 (Policy)：允許政策 (Allow Policy) 是將一個或多個主體綁定在各個角色，當想要定義誰 (主體) 對資源擁有何種類型的訪問 (角色) 時，可以創建允許政策並將其附加到資源。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;h2>IAM 測試&lt;span class="absolute -mt-20" id="iam-測試">&lt;/span>
+&lt;h2>IAM 測試&lt;span class="hx-absolute -hx-mt-20" id="iam-測試">&lt;/span>
 &lt;a href="#iam-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>接下來，我們來測試看看 IAM 實際設定以及用途吧！ 我們會使用 GCP 所以提供的 &lt;a href="https://www.cloudskillsboost.google/focuses/551?parent=catalog" target="_blank" rel="noopener">[Qwiklabs] Cloud IAM：Qwik Start&lt;/a> 來進行測試，之後的步驟會跟 Cloud IAM：Qwik Start 內容一樣，所以大家可以邊操作邊參考呦！那我們開始囉 🙃&lt;/p>
 &lt;p>進入網頁後，請先登入自己的 Google 帳號，接著點選左上角的 &lt;strong>Start Lab&lt;/strong>，會跳出與下面圖片類似的內容：&lt;/p>
 &lt;br>
@@ -1039,7 +1053,7 @@ alt="測試用的帳號密碼" width="250">&lt;figcaption>
 &lt;/figure>
 &lt;p>這邊會提供兩組的帳號及密碼，分別是 Username1 以及 Username2 (後面會以 Username 1 跟 2 來說明)，密碼會用共用，且會在同一個專案下。&lt;/p>
 &lt;br>
-&lt;h3>用第一個 Username1 登入 GCP&lt;span class="absolute -mt-20" id="用第一個-username1-登入-gcp">&lt;/span>
+&lt;h3>用第一個 Username1 登入 GCP&lt;span class="hx-absolute -hx-mt-20" id="用第一個-username1-登入-gcp">&lt;/span>
 &lt;a href="#%e7%94%a8%e7%ac%ac%e4%b8%80%e5%80%8b-username1-%e7%99%bb%e5%85%a5-gcp" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>點選 &lt;strong>Open Google Console&lt;/strong> 按鈕來開啟 GCP 主控台&lt;/li>
 &lt;li>登入的帳號就輸入第一個 Username1 &lt;student-03-XXXXXX>，密碼輸入共用密碼 &lt;lsLrXXXXX>，最後登入&lt;/li>
@@ -1052,12 +1066,12 @@ alt="登入 Username 1 GCP 主控台" width="1000">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>用第二個 Username2 登入 GCP&lt;span class="absolute -mt-20" id="用第二個-username2-登入-gcp">&lt;/span>
+&lt;h3>用第二個 Username2 登入 GCP&lt;span class="hx-absolute -hx-mt-20" id="用第二個-username2-登入-gcp">&lt;/span>
 &lt;a href="#%e7%94%a8%e7%ac%ac%e4%ba%8c%e5%80%8b-username2-%e7%99%bb%e5%85%a5-gcp" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ul>
 &lt;li>步驟與第一個相同，這邊就不在重複，但建議使用無痕，避免 Username1 跟 Username2 搶來搶去，以及登入帳號要選 Username2，應該不會選錯吧 🤣&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;h3>Username1 IAM 主控台&lt;span class="absolute -mt-20" id="username1-iam-主控台">&lt;/span>
+&lt;h3>Username1 IAM 主控台&lt;span class="hx-absolute -hx-mt-20" id="username1-iam-主控台">&lt;/span>
 &lt;a href="#username1-iam-%e4%b8%bb%e6%8e%a7%e5%8f%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>到 Username1 的 GCP 主控台首頁&lt;/li>
 &lt;li>點選左側的 menu &amp;gt; &lt;strong>IAM 與管理&lt;/strong>&lt;/li>
@@ -1099,16 +1113,14 @@ alt="ADD IAM" width="1000">&lt;figcaption>
 &lt;/table>
 &lt;p>我們的 Username1 為 owner，Username2 為 viewer&lt;/p>
 &lt;br>
-&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
-&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
-&lt;div class="w-full min-w-0 leading-7">
-&lt;div class="mt-6 leading-7 first:mt-0">
-Google 建議：Base 角色包含所有 Google Cloud 服務的數千個權限。除非別無選擇，否則不要授與用戶 Base 角色，請設定最有限的自訂義角色或是可以滿足該需求的角色即可
-&lt;/div>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-orange-100 hx-bg-orange-50 hx-text-orange-800 dark:hx-border-orange-400/30 dark:hx-bg-orange-400/20 dark:hx-text-orange-300">
+&lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;/div>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">Google 建議：Base 角色包含所有 Google Cloud 服務的數千個權限。除非別無選擇，否則不要授與用戶 Base 角色，請設定最有限的自訂義角色或是可以滿足該需求的角色即可&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;h3>切換到 Username2 IAM 主控台&lt;span class="absolute -mt-20" id="切換到-username2-iam-主控台">&lt;/span>
+&lt;h3>切換到 Username2 IAM 主控台&lt;span class="hx-absolute -hx-mt-20" id="切換到-username2-iam-主控台">&lt;/span>
 &lt;a href="#%e5%88%87%e6%8f%9b%e5%88%b0-username2-iam-%e4%b8%bb%e6%8e%a7%e5%8f%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們可以在表格裡面收尋 Username1 跟 Username2 的帳號，可以看一下他們授與的角色是否與上面說的一致，大概可以參考以下圖片：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/4.png"
@@ -1125,7 +1137,7 @@ alt="Username2 權限不足" width="500">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>再切回 Username1 Cloud Storage&lt;span class="absolute -mt-20" id="再切回-username1-cloud-storage">&lt;/span>
+&lt;h3>再切回 Username1 Cloud Storage&lt;span class="hx-absolute -hx-mt-20" id="再切回-username1-cloud-storage">&lt;/span>
 &lt;a href="#%e5%86%8d%e5%88%87%e5%9b%9e-username1-cloud-storage" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>接下來我們要建立一個 GCS 儲存空間，點選 menu &amp;gt; &lt;strong>Cloud Storage&lt;/strong> &amp;gt; &lt;strong>Browser&lt;/strong>&lt;/li>
 &lt;li>點選 &lt;strong>Create a bucket&lt;/strong>&lt;/li>
@@ -1139,7 +1151,7 @@ alt="Create a bucket" width="1000">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>上傳範例檔案&lt;span class="absolute -mt-20" id="上傳範例檔案">&lt;/span>
+&lt;h3>上傳範例檔案&lt;span class="hx-absolute -hx-mt-20" id="上傳範例檔案">&lt;/span>
 &lt;a href="#%e4%b8%8a%e5%82%b3%e7%af%84%e4%be%8b%e6%aa%94%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>進入新建立的 Cloud Storage，點選 &lt;strong>Upload fiiles&lt;/strong> 按鈕&lt;/li>
 &lt;li>上傳一個 txt 檔案，可以先取名為 &lt;code>sample.txt&lt;/code>，或是上傳後使用最後三個小點圖案內的 Rename 來修改名稱&lt;/li>
@@ -1151,14 +1163,14 @@ alt="Upload sample.txt fiiles" width="1200">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>驗證專案檢視者存取權限&lt;span class="absolute -mt-20" id="驗證專案檢視者存取權限">&lt;/span>
+&lt;h3>驗證專案檢視者存取權限&lt;span class="hx-absolute -hx-mt-20" id="驗證專案檢視者存取權限">&lt;/span>
 &lt;a href="#%e9%a9%97%e8%ad%89%e5%b0%88%e6%a1%88%e6%aa%a2%e8%a6%96%e8%80%85%e5%ad%98%e5%8f%96%e6%ac%8a%e9%99%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>我們再切換回 Username2 的主控台，選擇 menu &amp;gt; &lt;strong>Cloud Storage&lt;/strong> &amp;gt; &lt;strong>Browser&lt;/strong>&lt;/li>
 &lt;li>就可以看到跟上面一樣的儲存區&lt;/li>
 &lt;/ol>
 &lt;p>Username2 被授與 &amp;ldquo;檢視者 Viewer&amp;rdquo; 角色，這個角色有不影響狀態的只讀權限。這個範例中說明這個功能，他僅能檢視，沒有辦法上傳&lt;/p>
 &lt;br>
-&lt;h3>移除專案存取權限&lt;span class="absolute -mt-20" id="移除專案存取權限">&lt;/span>
+&lt;h3>移除專案存取權限&lt;span class="hx-absolute -hx-mt-20" id="移除專案存取權限">&lt;/span>
 &lt;a href="#%e7%a7%bb%e9%99%a4%e5%b0%88%e6%a1%88%e5%ad%98%e5%8f%96%e6%ac%8a%e9%99%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>我們再次切回 Username 主控台，選擇 menu &amp;gt; &lt;strong>IAM 與管理&lt;/strong> ，找到 Username2 旁邊的鉛筆圖案&lt;/li>
 &lt;/ol>
@@ -1178,16 +1190,14 @@ alt="移除 Username2 權限" width="550">&lt;figcaption>
 &lt;p>移除 Username2 權限&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
-&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
-&lt;div class="w-full min-w-0 leading-7">
-&lt;div class="mt-6 leading-7 first:mt-0">
-這個動作要完成生效到所有服務上，所以會需要一點時間，詳細可以參考&lt;a href="https://cloud.google.com/iam/docs/faq" target="_blank" rel="noopener">點我&lt;/a>
-&lt;/div>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-orange-100 hx-bg-orange-50 hx-text-orange-800 dark:hx-border-orange-400/30 dark:hx-bg-orange-400/20 dark:hx-text-orange-300">
+&lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;/div>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">這個動作要完成生效到所有服務上，所以會需要一點時間，詳細可以參考&lt;a href="https://cloud.google.com/iam/docs/faq" target="_blank" rel="noopener">點我&lt;/a>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;h3>檢查 Username2 是否有存取權限&lt;span class="absolute -mt-20" id="檢查-username2-是否有存取權限">&lt;/span>
+&lt;h3>檢查 Username2 是否有存取權限&lt;span class="hx-absolute -hx-mt-20" id="檢查-username2-是否有存取權限">&lt;/span>
 &lt;a href="#%e6%aa%a2%e6%9f%a5-username2-%e6%98%af%e5%90%a6%e6%9c%89%e5%ad%98%e5%8f%96%e6%ac%8a%e9%99%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>切換到 Username2 主控台，選擇 menu &amp;gt; &lt;strong>Cloud Storage&lt;/strong> &amp;gt; &lt;strong>Browser&lt;/strong>&lt;/li>
 &lt;li>會發現出現以下的錯誤訊息，代表我們移除權限成功&lt;/li>
@@ -1199,7 +1209,7 @@ alt="Username2 沒有權限" width="800">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>新增儲存角色&lt;span class="absolute -mt-20" id="新增儲存角色">&lt;/span>
+&lt;h3>新增儲存角色&lt;span class="hx-absolute -hx-mt-20" id="新增儲存角色">&lt;/span>
 &lt;a href="#%e6%96%b0%e5%a2%9e%e5%84%b2%e5%ad%98%e8%a7%92%e8%89%b2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>我們再次切換到 Username1 主控版，選擇 menu &amp;gt; &amp;gt; &lt;strong>IAM 與管理&lt;/strong>，點選上方 &lt;strong>+ ADD&lt;/strong>，在 New principals 上貼上 Username2 的帳號，Role 選擇 &lt;strong>Storage Object Viewer&lt;/strong>&lt;/li>
 &lt;/ol>
@@ -1216,7 +1226,7 @@ alt="查看 Username2 權限" width="1000">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>檢查 Username2 是否有存取權限&lt;span class="absolute -mt-20" id="檢查-username2-是否有存取權限-1">&lt;/span>
+&lt;h3>檢查 Username2 是否有存取權限&lt;span class="hx-absolute -hx-mt-20" id="檢查-username2-是否有存取權限-1">&lt;/span>
 &lt;a href="#%e6%aa%a2%e6%9f%a5-username2-%e6%98%af%e5%90%a6%e6%9c%89%e5%ad%98%e5%8f%96%e6%ac%8a%e9%99%90-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>切換到 Username2 主控台，因為 Username2 沒有專案檢視者的角色，所以看不到專案以及任何的資源，但這個使用者對我們剛剛設定的 Cloud Storage 有特別的存取權&lt;/li>
 &lt;li>打開右上角的 Activate Cloud Shell 命令列工具 ，如下圖：&lt;/li>
@@ -1231,13 +1241,14 @@ alt="開啟 Activate Cloud Shell 命令列工具" width="1200">&lt;figcaption>
 &lt;ol start="3">
 &lt;li>輸入以下指令&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gsutil ls gs://&amp;lt;剛剛建的 Cloud Storage 名稱&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gsutil ls gs://&amp;lt;剛剛建的 Cloud Storage 名稱&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1259,31 +1270,31 @@ alt="Check my progress" width="600">&lt;figcaption>
 &lt;/figure>
 &lt;p>到這邊就完成了我們在 IAM 的測試囉～我們知道 IAM 可以設定很多的角色，以及測試了查看、新增、修改、刪除角色的功能，希望大家會喜歡今天的文章 🥰&lt;/p>
 &lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>IAM 概覽：&lt;a href="https://cloud.google.com/iam/docs/overview" target="_blank" rel="noopener">https://cloud.google.com/iam/docs/overview&lt;/a>&lt;/p>
 &lt;p>什麼是 Cloud IAM？GCP 權限管理服務介紹：&lt;a href="https://blog.cloud-ace.tw/identity-security/what-is-cloud-iam/" target="_blank" rel="noopener">https://blog.cloud-ace.tw/identity-security/what-is-cloud-iam/&lt;/a>&lt;/p></description></item><item><title>Google Cloud Platform (GCP) - Compute Engine</title><link>https://pin-yi.me/blog/gcp/compute-engine/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/compute-engine/</guid><description>
 &lt;p>跟大家介紹一下今天的主題 Google Compute Engine(GCE)，GCE 是 Google Cloud 上的基礎架構服務 (IaaS)，該平台可以提供大規模的虛擬機器以及相關的基礎建設 (包含硬碟、網路、附載平衡器&amp;hellip; 等等)來建置及運作您的服務，那我們可以將 GCE 服務的主要功能劃分成以下幾點：&lt;/p>
 &lt;br>
-&lt;h2>Google Compute Engine 特色&lt;span class="absolute -mt-20" id="google-compute-engine-特色">&lt;/span>
-&lt;a href="#google-compute-engine-%e7%89%b9%e8%89%b2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>穩健的網路功能&lt;span class="absolute -mt-20" id="穩健的網路功能">&lt;/span>
+&lt;h2>Google Compute Engine 特色&lt;span class="hx-absolute -hx-mt-20" id="google-compute-engine-特色">&lt;/span>
+&lt;a href="#google-compute-engine-%e7%89%b9%e8%89%b2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>穩健的網路功能&lt;span class="hx-absolute -hx-mt-20" id="穩健的網路功能">&lt;/span>
 &lt;a href="#%e7%a9%a9%e5%81%a5%e7%9a%84%e7%b6%b2%e8%b7%af%e5%8a%9f%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>提供使用者擁有穩健的網路功能，以運行各項應用程式及服務。&lt;/p>
 &lt;br>
-&lt;h3>自訂網路與預設網路&lt;span class="absolute -mt-20" id="自訂網路與預設網路">&lt;/span>
+&lt;h3>自訂網路與預設網路&lt;span class="hx-absolute -hx-mt-20" id="自訂網路與預設網路">&lt;/span>
 &lt;a href="#%e8%87%aa%e8%a8%82%e7%b6%b2%e8%b7%af%e8%88%87%e9%a0%90%e8%a8%ad%e7%b6%b2%e8%b7%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>GCE 包含內部與外部的網路連線能力，讓使用者可以透過自訂規劃來建置屬於自己服務適用的網路，而在 GCE 服務開通當下，也提供預設的 default network，內建常用的路由與防火牆設定 (例如：SSH、RDP、ICMP&amp;hellip; 等)，供入門使用者直接使用。&lt;/p>
 &lt;br>
-&lt;h3>防火牆規則&lt;span class="absolute -mt-20" id="防火牆規則">&lt;/span>
+&lt;h3>防火牆規則&lt;span class="hx-absolute -hx-mt-20" id="防火牆規則">&lt;/span>
 &lt;a href="#%e9%98%b2%e7%81%ab%e7%89%86%e8%a6%8f%e5%89%87" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>除了預設防火牆規則外，使用者也可以透過自建防火牆來開放可以連入的 IP。&lt;/p>
 &lt;br>
-&lt;h3>各區域的 HTTP(S) 的負載平衡&lt;span class="absolute -mt-20" id="各區域的-https-的負載平衡">&lt;/span>
+&lt;h3>各區域的 HTTP(S) 的負載平衡&lt;span class="hx-absolute -hx-mt-20" id="各區域的-https-的負載平衡">&lt;/span>
 &lt;a href="#%e5%90%84%e5%8d%80%e5%9f%9f%e7%9a%84-https-%e7%9a%84%e8%b2%a0%e8%bc%89%e5%b9%b3%e8%a1%a1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>為 Layer 7 的負載平衡設備，透過設定可以串連多台主機或是主機群組，讓服務不再只是依賴於單點存在的伺服器。Layer 7 的負載平衡更可以識別路由規劃，進一步可以提供不同路由的重導規則設定，也可以提供 CDN 的 Cache 功能。&lt;/p>
 &lt;br>
-&lt;h3>網路的負載平衡&lt;span class="absolute -mt-20" id="網路的負載平衡">&lt;/span>
+&lt;h3>網路的負載平衡&lt;span class="hx-absolute -hx-mt-20" id="網路的負載平衡">&lt;/span>
 &lt;a href="#%e7%b6%b2%e8%b7%af%e7%9a%84%e8%b2%a0%e8%bc%89%e5%b9%b3%e8%a1%a1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>為 Layer4 的負載平衡設備，可以透過 Protocol 與 Port 的方式來重導外部流量到 GCE 主機或主機群，並可以透過 Health Check 的方式，讓流量僅通過健康的主機，避免服務中斷。&lt;/p>
 &lt;br>
-&lt;h3>子網路&lt;span class="absolute -mt-20" id="子網路">&lt;/span>
+&lt;h3>子網路&lt;span class="hx-absolute -hx-mt-20" id="子網路">&lt;/span>
 &lt;a href="#%e5%ad%90%e7%b6%b2%e8%b7%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>透過 CIDR 的方式設定 GCE Network 中的各子網路範圍，並可以透過路由的方式串接各子網路中間的通訊，讓 GCE 網路的設計規劃可以更有彈性，也可以讓子網路的規劃來實作更安全的雲端網路架構。&lt;/p>
 &lt;br>
-&lt;h2>Google Compute Engine 測試&lt;span class="absolute -mt-20" id="google-compute-engine-測試">&lt;/span>
+&lt;h2>Google Compute Engine 測試&lt;span class="hx-absolute -hx-mt-20" id="google-compute-engine-測試">&lt;/span>
 &lt;a href="#google-compute-engine-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們使用 cloudskillsboost 提供的 &lt;a href="https://www.cloudskillsboost.google/focuses/3563?locale=zh_TW&amp;amp;parent=catalog" target="_blank" rel="noopener">Creating a Virtual Machine &lt;/a> 來做練習，打開後，請先登入自己的 Google 帳號，接著點選左上角的 &lt;strong>Start Lab&lt;/strong>，會跳出與下面圖片類似的內容：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/1.png"
@@ -1292,7 +1303,7 @@ alt="測試用的帳號密碼" width="250">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>新增新的 VM 實例&lt;span class="absolute -mt-20" id="新增新的-vm-實例">&lt;/span>
+&lt;h3>新增新的 VM 實例&lt;span class="hx-absolute -hx-mt-20" id="新增新的-vm-實例">&lt;/span>
 &lt;a href="#%e6%96%b0%e5%a2%9e%e6%96%b0%e7%9a%84-vm-%e5%af%a6%e4%be%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>點選 &lt;strong>Open Google Console&lt;/strong> 按鈕來開啟 GCP 主控台&lt;/li>
 &lt;li>登入帳號就使用上面圖片所提供的帳號密碼來進行登入&lt;/li>
@@ -1377,18 +1388,19 @@ alt="VM 實例" width="1000">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>安裝 NGINX Web 服務器&lt;span class="absolute -mt-20" id="安裝-nginx-web-服務器">&lt;/span>
+&lt;h3>安裝 NGINX Web 服務器&lt;span class="hx-absolute -hx-mt-20" id="安裝-nginx-web-服務器">&lt;/span>
 &lt;a href="#%e5%ae%89%e8%a3%9d-nginx-web-%e6%9c%8d%e5%8b%99%e5%99%a8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>點擊 VM instances 實例最後的 SSH，會開啟 SSH 用戶端&lt;/li>
 &lt;li>在 SSH 終端，要先獲得 &lt;code>root&lt;/code> 訪問權限，才更方便的進行後續的動作，請先使用一下指令：&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>sudo su -&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>sudo su -&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1396,13 +1408,14 @@ title="Copy code"
 &lt;ol start="3">
 &lt;li>利用 &lt;code>root&lt;/code> 用戶，來更新操作系統：&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>apt-get update&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>apt-get update&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1416,13 +1429,14 @@ alt="更新操作系統" width="1000">&lt;figcaption>
 &lt;ol start="4">
 &lt;li>安裝 NGINX：&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>apt-get nginx -y&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>apt-get nginx -y&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1436,13 +1450,14 @@ alt="安裝 NGINX" width="1000">&lt;figcaption>
 &lt;ol start="5">
 &lt;li>最後確認 NGINX 是否運行：&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>ps auwx | grep nginx&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>ps auwx | grep nginx&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1473,19 +1488,20 @@ alt="Check my progress" width="500">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>使用 gcloud 創建一個新實例&lt;span class="absolute -mt-20" id="使用-gcloud-創建一個新實例">&lt;/span>
+&lt;h3>使用 gcloud 創建一個新實例&lt;span class="hx-absolute -hx-mt-20" id="使用-gcloud-創建一個新實例">&lt;/span>
 &lt;a href="#%e4%bd%bf%e7%94%a8-gcloud-%e5%89%b5%e5%bb%ba%e4%b8%80%e5%80%8b%e6%96%b0%e5%af%a6%e4%be%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們剛剛是使用網頁版來新增，當然也可以使用 gcloud 指令來新增，這個工具有預先裝在 &lt;a href="https://cloud.google.com/shell#how_do_i_get_started" target="_blank" rel="noopener">Google Cloud Shell&lt;/a> 中。Cloud Shell 是一個基於 Debian 的虛擬機，包含了常用的開發工具 (&lt;code>gcloud&lt;/code>、&lt;code>git&lt;/code> 等工具)，另外你也可以將 gcloud 下載至本機上來做使用，請閱讀&lt;a href="https://cloud.google.com/sdk/gcloud/" target="_blank" rel="noopener"> gcloud 命令行工具指南&lt;/a>&lt;/p>
 &lt;br>
 &lt;ol>
 &lt;li>在 Cloud Shell 中，使用 &lt;code>gcloud&lt;/code> 來新增新的虛擬機實例：&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud compute instances create gcelab2 --machine-type n1-standard-2 --zone us-central1-f&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud compute instances create gcelab2 --machine-type n1-standard-2 --zone us-central1-f&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1499,7 +1515,7 @@ alt="Check my progress" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>到這邊就完成了我們 Google Compute Engine 測試囉～我們知道可以新增 GCE 將實體主機的內容，移植到雲端上囉！希望大家會喜歡今天的文章 🥰&lt;/p>
 &lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Compute Engine 基本介紹：&lt;a href="https://gdgcloud-taipei.gitbook.io/google-cloud-platform-in-practice/google-cloud-shang-de-yun-suan-fu-wu/compute-engine/compute-engine-ji-ben-jie-shao" target="_blank" rel="noopener">https://gdgcloud-taipei.gitbook.io/google-cloud-platform-in-practice/google-cloud-shang-de-yun-suan-fu-wu/compute-engine/compute-engine-ji-ben-jie-shao&lt;/a>&lt;/p>
 &lt;p>Creating a Virtual Machine：&lt;a href="https://www.cloudskillsboost.google/focuses/3563?locale=zh_TW&amp;amp;parent=catalog" target="_blank" rel="noopener">https://www.cloudskillsboost.google/focuses/3563?locale=zh_TW&amp;amp;parent=catalog&lt;/a>&lt;/p></description></item><item><title>Google Cloud Platform (GCP) - Cloud Source Repositories</title><link>https://pin-yi.me/blog/gcp/cloud-source-repositories/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/cloud-source-repositories/</guid><description>
 &lt;p>跟大家介紹一下今天的主題 Cloud Source Repositories，聽到 Source Repositories 是不是感覺跟什麼東西很像呀，沒錯，就跟我們的 GitHub or GitLab 一樣，可以用來存放我們的程式碼的儲存庫，我們來看看官方怎麼介紹他吧：&lt;/p>
@@ -1512,8 +1528,8 @@ alt="官方介紹 Cloud Source Repositories" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>很好歐，非常簡單明瞭 🤣，沒錯，Cloud Source Repositories 就是託管在 Google Cloud 上功能齊全(？)的私有 Git 儲存庫。為什麼會打一個問號呢？是因為他其實沒有那麼好用，所以我們通常的做法，還是會依靠 GitHab 或是 GitLab 來存放程式碼，再透過鏡像 (mirror) 的方式到 Google Cloud Source Repositories。 那我們就開始囉～&lt;/p>
 &lt;br>
-&lt;h2>Cloud Source Repositories 測試&lt;span class="absolute -mt-20" id="cloud-source-repositories-測試">&lt;/span>
-&lt;a href="#cloud-source-repositories-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>建立 GitLab Project&lt;span class="absolute -mt-20" id="建立-gitlab-project">&lt;/span>
+&lt;h2>Cloud Source Repositories 測試&lt;span class="hx-absolute -hx-mt-20" id="cloud-source-repositories-測試">&lt;/span>
+&lt;a href="#cloud-source-repositories-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>建立 GitLab Project&lt;span class="hx-absolute -hx-mt-20" id="建立-gitlab-project">&lt;/span>
 &lt;a href="#%e5%bb%ba%e7%ab%8b-gitlab-project" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>首先，我們用 GitLab 來當示範，如何透過鏡像 (mirror) 到 Cloud Source Repositories 上面，我們先在 GitLab 上建立一個 Project：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/2.png"
@@ -1522,29 +1538,31 @@ alt="建立 GitLab Project" width="800">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>使用 gcloud 指令建立 Source Repo&lt;span class="absolute -mt-20" id="使用-gcloud-指令建立-source-repo">&lt;/span>
+&lt;h3>使用 gcloud 指令建立 Source Repo&lt;span class="hx-absolute -hx-mt-20" id="使用-gcloud-指令建立-source-repo">&lt;/span>
 &lt;a href="#%e4%bd%bf%e7%94%a8-gcloud-%e6%8c%87%e4%bb%a4%e5%bb%ba%e7%ab%8b-source-repo" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>首先，一定要先裝 &lt;code>gcloud&lt;/code> 指令到本機，這個步驟，前面文章也有說過，這邊就不在說明，我們先使用一下指令來查看目前所在的 GCP 專案：&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud config get-value project&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud config get-value project&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;br>
 &lt;p>正常來說，如果有先用 config 設定好，會直接跳出你目前的專案 ID，如果沒有跳出來，請使用下面指令來設定：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud config set project &amp;lt;project id&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud config set project &amp;lt;project id&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1552,13 +1570,14 @@ title="Copy code"
 &lt;ol start="2">
 &lt;li>接著我們要啟動該專案的 Cloud Source Repositories API：&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud services enable sourcerepo.googleapis.com&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud services enable sourcerepo.googleapis.com&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1566,13 +1585,14 @@ title="Copy code"
 &lt;ol start="3">
 &lt;li>創建 Cloud Source Repositories&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud source repos create &amp;lt;repo name&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud source repos create &amp;lt;repo name&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1592,7 +1612,7 @@ alt="成功建立 Source Repositories" width="1000">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>將程式碼新增至存放區中&lt;span class="absolute -mt-20" id="將程式碼新增至存放區中">&lt;/span>
+&lt;h3>將程式碼新增至存放區中&lt;span class="hx-absolute -hx-mt-20" id="將程式碼新增至存放區中">&lt;/span>
 &lt;a href="#%e5%b0%87%e7%a8%8b%e5%bc%8f%e7%a2%bc%e6%96%b0%e5%a2%9e%e8%87%b3%e5%ad%98%e6%94%be%e5%8d%80%e4%b8%ad" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>我們要在這一步來設定鏡像 (mirror)，首先我們看剛剛上面建立好的 Source Repositories，其中有一個&lt;strong>手動產生的憑證&lt;/strong>，點選 &lt;strong>產生及儲存 Git 憑證&lt;/strong>&lt;/li>
 &lt;/ol>
@@ -1626,13 +1646,14 @@ alt="Configure Git" width="800">&lt;figcaption>
 &lt;ol start="4">
 &lt;li>接著請複製以下指令貼到終端機內，會生成憑證密碼：&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>grep &lt;span style="color:#e6db74">&amp;#39;source.developers.google.com&amp;#39;&lt;/span> ~/.gitcookies | tail -1 | cut -d&lt;span style="color:#f92672">=&lt;/span> -f2&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>grep &lt;span style="color:#e6db74">&amp;#39;source.developers.google.com&amp;#39;&lt;/span> ~/.gitcookies | tail -1 | cut -d&lt;span style="color:#f92672">=&lt;/span> -f2&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1646,14 +1667,15 @@ alt="生成憑證密碼" width="800">&lt;figcaption>
 &lt;ol start="5">
 &lt;li>接著請複製以下指令貼到終端機內，將用戶名存儲在 CSR_USER 環境變量中：&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>CSR_USER&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>grep &lt;span style="color:#e6db74">&amp;#39;source.developers.google.com&amp;#39;&lt;/span> ~/.gitcookies | &lt;span style="color:#ae81ff">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> tail -1 | cut -d&lt;span style="color:#e6db74">$&amp;#39;\t&amp;#39;&lt;/span> -f7 | cut -d&lt;span style="color:#f92672">=&lt;/span> -f1&lt;span style="color:#66d9ef">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>CSR_USER&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>grep &lt;span style="color:#e6db74">&amp;#39;source.developers.google.com&amp;#39;&lt;/span> ~/.gitcookies | &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> tail -1 | cut -d&lt;span style="color:#e6db74">$&amp;#39;\t&amp;#39;&lt;/span> -f7 | cut -d&lt;span style="color:#f92672">=&lt;/span> -f1&lt;span style="color:#66d9ef">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1667,13 +1689,14 @@ alt="用戶名存儲在 CSR_USER 環境變量中" width="800">&lt;figcaption>
 &lt;ol start="6">
 &lt;li>接著請複製以下指令貼到終端機內，將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中 (repo name 要改成你在 gcp 上面的 repo)：&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>CSR_REPO&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>gcloud source repos describe &amp;lt;repo name&amp;gt; --format&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;value(url)&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>CSR_REPO&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>gcloud source repos describe &amp;lt;repo name&amp;gt; --format&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;value(url)&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1687,13 +1710,14 @@ alt="將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中" width="800">&l
 &lt;ol start="7">
 &lt;li>接著請複製以下指令貼到終端機內，將存儲庫的 URL（包括用戶名）印到終端機上：&lt;/li>
 &lt;/ol>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>echo $CSR_REPO | sed &lt;span style="color:#e6db74">&amp;#34;s/:\/\//:\/\/&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>CSR_USER&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">@/&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>echo $CSR_REPO | sed &lt;span style="color:#e6db74">&amp;#34;s/:\/\//:\/\/&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>CSR_USER&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">@/&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1706,7 +1730,7 @@ alt="存儲庫的 URL（包括用戶名）印到終端機上" width="800">&lt;fi
 &lt;br>
 &lt;p>經過上面操作，我們可以在第 4 步驟拿到密碼，以及在第 7 步驟拿到完整的 GCP URL，接著我們要到 GItLab Mirror 來設定鏡像。&lt;/p>
 &lt;br>
-&lt;h3>到 GitLab Mirror 設定鏡像&lt;span class="absolute -mt-20" id="到-gitlab-mirror-設定鏡像">&lt;/span>
+&lt;h3>到 GitLab Mirror 設定鏡像&lt;span class="hx-absolute -hx-mt-20" id="到-gitlab-mirror-設定鏡像">&lt;/span>
 &lt;a href="#%e5%88%b0-gitlab-mirror-%e8%a8%ad%e5%ae%9a%e9%8f%a1%e5%83%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>先從右側 muen &amp;gt; 選擇 &lt;strong>Settings&lt;/strong> &amp;gt; 點選 &lt;strong>Repository&lt;/strong>，找到 &lt;strong>Mirroring repositories&lt;/strong>&lt;/li>
 &lt;/ol>
@@ -1746,12 +1770,12 @@ alt="GitLab 推程式測試" width="800">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://cloud.google.com/source-repositories/docs" target="_blank" rel="noopener">Cloud Source Repositories documentation&lt;/a>&lt;/p>
 &lt;p>&lt;a href="https://cloud.google.com/architecture/mirroring-gitlab-repositories-to-cloud-source-repositories" target="_blank" rel="noopener">Mirroring GitLab repositories to Cloud Source Repositories&lt;/a>&lt;/p></description></item><item><title>Google Cloud Platform (GCP) - Container Registry</title><link>https://pin-yi.me/blog/gcp/container-registry/</link><pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/container-registry/</guid><description>
 &lt;p>跟大家介紹一下今天的主題 Container Registry，Container Registry 是儲存、管理和保護 Docker 容器映像檔的存放區，可以讓團隊透過同一項服務服務集中管理 Docker 映像檔、也可以執行安全漏洞分析，還能透過精密的存取權管理機制，來決定誰可以存取哪些內容。簡單來說他就是一個讓我們存放 Docker 映像檔的地方，他有以下幾個特點：&lt;/p>
 &lt;br>
-&lt;h2>Container Registry 特點&lt;span class="absolute -mt-20" id="container-registry-特點">&lt;/span>
+&lt;h2>Container Registry 特點&lt;span class="hx-absolute -hx-mt-20" id="container-registry-特點">&lt;/span>
 &lt;a href="#container-registry-%e7%89%b9%e9%bb%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ol>
 &lt;li>安全的私人 Docker 註冊資料庫：只需要幾分鐘的時間，即可開始在 Google Cloud Platform 中使用安全的私人 Docker 映像檔儲存空間，控管能夠存取、檢視或下載映像檔的人員，並在受到 Google 安全防護機制保護的基礎架構上穩定執行。&lt;/li>
 &lt;/ol>
@@ -1819,7 +1843,7 @@ alt="流程圖" width="1200">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>Cloud Source Repositories 測試&lt;span class="absolute -mt-20" id="cloud-source-repositories-測試">&lt;/span>
+&lt;h2>Cloud Source Repositories 測試&lt;span class="hx-absolute -hx-mt-20" id="cloud-source-repositories-測試">&lt;/span>
 &lt;a href="#cloud-source-repositories-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>前面 GitLab 鏡像設定，請先參考上上篇 &lt;a href="https://pin-yi.me/blog/gcp/cloud-source-repositories/" >Google Cloud Platform (GCP) - Cloud Source Repositories&lt;/a>，上上篇會帶大家從 GitLab 鏡像到 Cloud Source Repositories，所以我們就接續之前的內容，繼續往下開始學習吧～&lt;/p>
 &lt;br>
 &lt;ol>
@@ -1846,20 +1870,21 @@ alt="建立觸發條件 2" width="900">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>撰寫 cloudbuild.yaml 設定檔&lt;span class="absolute -mt-20" id="撰寫-cloudbuildyaml-設定檔">&lt;/span>
+&lt;h3>撰寫 cloudbuild.yaml 設定檔&lt;span class="hx-absolute -hx-mt-20" id="撰寫-cloudbuildyaml-設定檔">&lt;/span>
 &lt;a href="#%e6%92%b0%e5%af%ab-cloudbuildyaml-%e8%a8%ad%e5%ae%9a%e6%aa%94" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在開始建立檔案前，先來跟大家說說檔案內有哪些設定吧：&lt;/p>
 &lt;br>
 &lt;p>首先 Cloud Build 建構器是裝有常用的程式語言和工具的容器映像。我們可以配置 Cloud Build，讓建構器中運行特定命令，我舉個例子讓大家了解：&lt;/p>
 &lt;p>以下程式碼是來自 &lt;a href="https://hub.docker.com/search?q=&amp;amp;type=image" target="_blank" rel="noopener">Docker Hub&lt;/a> 的 &lt;code>ubnutu&lt;/code> 映像檔中所執行的命令：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">steps&lt;/span>:
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">steps&lt;/span>:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;ubuntu&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">args&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;echo&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;hello world&amp;#34;&lt;/span>]&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">args&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;echo&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;hello world&amp;#34;&lt;/span>]&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1901,7 +1926,8 @@ title="Copy code"
 &lt;p>接著我們來試著寫一個 cloudbuild.yaml 來建構我們的 nginx 服務，並部署到 Compute Engine 上。&lt;/p>
 &lt;br>
 &lt;p>我們先回到 Gitlab 該專案下的目錄，新增 cloudbuild.yaml 檔案，將複製以下內容：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">steps&lt;/span>:
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">steps&lt;/span>:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Docker Build&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcr.io/cloud-builders/docker&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">args&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;build&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;-t&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;gcr.io/$PROJECT_ID/ian-test:ian-nginx-test&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>]
@@ -1924,13 +1950,13 @@ title="Copy code"
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">env&lt;/span>:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;CLOUDSDK_COMPUTE_REGION=asia-east1&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;CLOUDSDK_COMPUTE_ZONE=asia-east1-b&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;CLOUDSDK_COMPUTE_ZONE=asia-east1-b&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -1941,34 +1967,34 @@ title="Copy code"
 &lt;li>Build VM：這邊我們使用 &lt;code>gcr.io/google.com/cloudsdktool/cloud-sdk&lt;/code>，可以透過它來建立 VM，並且執行 tag 名為 ian-nginx-test 的映像檔，後面環境變數是來設定 VM 的區域等等。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;div class="overflow-x-auto mt-6 flex rounded-lg border py-2 ltr:pr-4 rtl:pl-4 contrast-more:border-current contrast-more:dark:border-current border-orange-100 bg-orange-50 text-orange-800 dark:border-orange-400/30 dark:bg-orange-400/20 dark:text-orange-300">
-&lt;div class="ltr:pl-3 ltr:pr-2 rtl:pr-3 rtl:pl-2">&lt;/div>
-&lt;div class="w-full min-w-0 leading-7">
-&lt;div class="mt-6 leading-7 first:mt-0">
-&lt;code>ian-test&lt;/code> 是 Container Registry 資料夾名稱，&lt;code>ian-nginx-test&lt;/code> 是 Container Registry 映像檔的 tag，&lt;code>ian-test-vm&lt;/code> 是我們建立 VM 的名字，所以要記得改成自己的命名歐！
-&lt;/div>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-orange-100 hx-bg-orange-50 hx-text-orange-800 dark:hx-border-orange-400/30 dark:hx-bg-orange-400/20 dark:hx-text-orange-300">
+&lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;/div>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;code>ian-test&lt;/code> 是 Container Registry 資料夾名稱，&lt;code>ian-nginx-test&lt;/code> 是 Container Registry 映像檔的 tag，&lt;code>ian-test-vm&lt;/code> 是我們建立 VM 的名字，所以要記得改成自己的命名歐！&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;h3>撰寫 Dockerfile&lt;span class="absolute -mt-20" id="撰寫-dockerfile">&lt;/span>
+&lt;h3>撰寫 Dockerfile&lt;span class="hx-absolute -hx-mt-20" id="撰寫-dockerfile">&lt;/span>
 &lt;a href="#%e6%92%b0%e5%af%ab-dockerfile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來剛剛有提到 Docker Build 會將我們放在一起的 Dockerfile 給 build 起來，所以我們也要先寫好要用的 Dockerfile：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Dockerfile" data-lang="Dockerfile">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">FROM&lt;/span>&lt;span style="color:#e6db74"> nginx:latest&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Dockerfile" data-lang="Dockerfile">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">FROM&lt;/span>&lt;span style="color:#e6db74"> nginx:latest&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">COPY&lt;/span> ./index.html /usr/share/nginx/html/&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">COPY&lt;/span> ./index.html /usr/share/nginx/html/&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;br>
 &lt;p>我們的 Dockerfile 很簡單，簡單寫了要使用的映像檔，以及將我們等等要測試的 index 複製到裡面&lt;/p>
 &lt;br>
-&lt;h3>撰寫測試 index.html&lt;span class="absolute -mt-20" id="撰寫測試-indexhtml">&lt;/span>
-&lt;a href="#%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6-indexhtml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-html" data-lang="html">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&amp;lt;!DOCTYPE html&amp;gt;&lt;/span>
+&lt;h3>撰寫測試 index.html&lt;span class="hx-absolute -hx-mt-20" id="撰寫測試-indexhtml">&lt;/span>
+&lt;a href="#%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6-indexhtml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-html" data-lang="html">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&amp;lt;!DOCTYPE html&amp;gt;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;lt;&lt;span style="color:#f92672">html&lt;/span> &lt;span style="color:#a6e22e">lang&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;en&amp;#34;&lt;/span>&amp;gt;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">head&lt;/span>&amp;gt;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">meta&lt;/span> &lt;span style="color:#a6e22e">charset&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;UTF-8&amp;#34;&lt;/span> /&amp;gt;
@@ -1979,20 +2005,20 @@ title="Copy code"
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">body&lt;/span>&amp;gt;
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 我是測試檔案
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;/&lt;span style="color:#f92672">body&lt;/span>&amp;gt;
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;lt;/&lt;span style="color:#f92672">html&lt;/span>&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;lt;/&lt;span style="color:#f92672">html&lt;/span>&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;br>
 &lt;p>這個測試檔案，會蓋過 nginx 的預設畫面，當我們成功將 VM 建立後，瀏覽 80 Port 時，應該會跳出這個測試的網頁。&lt;/p>
 &lt;br>
-&lt;h3>Commit 到 GitLab&lt;span class="absolute -mt-20" id="commit-到-gitlab">&lt;/span>
+&lt;h3>Commit 到 GitLab&lt;span class="hx-absolute -hx-mt-20" id="commit-到-gitlab">&lt;/span>
 &lt;a href="#commit-%e5%88%b0-gitlab" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當我們都新增好檔案後，我們就將程式推到我們前幾篇的 Cloud Source Repositories 已經鏡像的 GitLab 中，接著就是等待見證奇蹟的時候了ＸＤ&lt;/p>
 &lt;ol>
 &lt;li>當我們推送後，我們先檢查 Cloud Source Repositories 是否有成功從 GitLab 鏡像過來：&lt;/li>
@@ -2044,6 +2070,6 @@ alt="測試用 index.html" width="700">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Cloud Builder：&lt;a href="https://cloud.google.com/build/docs/cloud-builders" target="_blank" rel="noopener">https://cloud.google.com/build/docs/cloud-builders&lt;/a>&lt;/p>
 &lt;p>Day27 - 用 Cloud Build 實作 CI 部分：&lt;a href="https://ithelp.ithome.com.tw/articles/10224727" target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10224727&lt;/a>&lt;/p></description></item></channel></rss>

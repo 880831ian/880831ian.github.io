@@ -16,7 +16,7 @@ alt="軟體架構以及基礎設施的演進" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>當我們使用分散式系統或是微服務時發生故障時，會很難快速的恢復服務，因為每個服務都互相依賴，在以往都是透過經驗以及對系統的了解來得以解決。那有什麼其他的方式，能夠讓我們更快掌握每個服務呢？我們先來了解一個名詞：可觀測性(Observability)&lt;/p>
 &lt;br>
-&lt;h2>可觀測性(Observability)&lt;span class="absolute -mt-20" id="可觀測性observability">&lt;/span>
+&lt;h2>可觀測性(Observability)&lt;span class="hx-absolute -hx-mt-20" id="可觀測性observability">&lt;/span>
 &lt;a href="#%e5%8f%af%e8%a7%80%e6%b8%ac%e6%80%a7observability" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可觀測性有三個重要的特性，分別是：&lt;/p>
 &lt;p>Metrics 負責監控系統有什麼狀況，當要發生服務故障前可以透過設定閥值搭配告警提早得知。&lt;/p>
 &lt;p>Logs 當問題發生時，可以用來查看故障時正在執行哪些服務，以及產生的錯誤資訊。&lt;/p>
@@ -76,7 +76,7 @@ alt="ECK Trace 示意圖" width="900">&lt;figcaption>
 &lt;li>為什麼花這麼長的時間&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;h2>Opentelemetry&lt;span class="absolute -mt-20" id="opentelemetry">&lt;/span>
+&lt;h2>Opentelemetry&lt;span class="hx-absolute -hx-mt-20" id="opentelemetry">&lt;/span>
 &lt;a href="#opentelemetry" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那我們這次要介紹的可觀測性(Observability)工具就是 Opentelemetry，縮寫 OTel，它是由 CNCF (Cloud Native Computing Foundation) 組織孵化的開源專案，在 2021 年 5 月由 OpenTracing 與 OpenCensus 兩個框架合併，結合兩項分散式追蹤框架最重要的特性成為下一代收集遙測數據的新標準。&lt;/p>
 &lt;br>
 &lt;ul>
@@ -109,7 +109,7 @@ alt="Opentelemetry" width="500">&lt;figcaption>
 &lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Observability：&lt;a href="https://linkedin.github.io/school-of-sre/level101/metrics_and_monitoring/observability/" target="_blank" rel="noopener">https://linkedin.github.io/school-of-sre/level101/metrics_and_monitoring/observability/&lt;/a>&lt;/p>
 &lt;p>[OpenTelemetry] 現代化監控使用 OpenTelemetry 實現 : 可觀測性(Observability)：&lt;a href="https://marcus116.blogspot.com/2022/01/modern-monitoring-using-openTelemetry-with-Observability.html" target="_blank" rel="noopener">https://marcus116.blogspot.com/2022/01/modern-monitoring-using-openTelemetry-with-Observability.html&lt;/a>&lt;/p>
 &lt;p>[OpenTelemetry] 現代化監控使用 OpenTelemetry 實現 : OpenTelemetry 開放遙測：&lt;a href="https://marcus116.blogspot.com/2022/01/opentelemetry-opentelemetry.html" target="_blank" rel="noopener">https://marcus116.blogspot.com/2022/01/opentelemetry-opentelemetry.html&lt;/a>&lt;/p>
@@ -121,7 +121,7 @@ alt="Opentelemetry" width="500">&lt;figcaption>
 ( Datadog Agent 請參考：&lt;a href="https://docs.datadoghq.com/containers/kubernetes/" target="_blank" rel="noopener">https://docs.datadoghq.com/containers/kubernetes/&lt;/a> )&lt;/p>
 &lt;p>程式部分也同步上傳到 github 上，&lt;a href="https://github.com/880831ian/opentelemetry-ingress-nginx-controller" target="_blank" rel="noopener">可以點我前往&lt;/a>&lt;/p>
 &lt;br>
-&lt;h2>檔案說明&lt;span class="absolute -mt-20" id="檔案說明">&lt;/span>
+&lt;h2>檔案說明&lt;span class="hx-absolute -hx-mt-20" id="檔案說明">&lt;/span>
 &lt;a href="#%e6%aa%94%e6%a1%88%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
 &lt;li>
 &lt;p>otel-collector.yaml：
@@ -139,65 +139,68 @@ Ingress Nginx Controller 的設定檔，這邊的 podAnnotations 是為了讓 In
 &lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;h2>執行步驟&lt;span class="absolute -mt-20" id="執行步驟">&lt;/span>
+&lt;h2>執行步驟&lt;span class="hx-absolute -hx-mt-20" id="執行步驟">&lt;/span>
 &lt;a href="#%e5%9f%b7%e8%a1%8c%e6%ad%a5%e9%a9%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ol>
 &lt;li>
 &lt;p>先 clone 這個 repo (廢話 xD)&lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>先建立 OpenTelemetry Collector，執行以下指令：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>helm upgrade collector &lt;span style="color:#ae81ff">\
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>helm upgrade collector &lt;span style="color:#ae81ff">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> opentelemetry-collector &lt;span style="color:#ae81ff">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --repo https://open-telemetry.github.io/opentelemetry-helm-charts &lt;span style="color:#ae81ff">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --install &lt;span style="color:#ae81ff">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --create-namespace &lt;span style="color:#ae81ff">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --namespace opentelemetry &lt;span style="color:#ae81ff">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> -f &lt;span style="color:#e6db74">&amp;#34;otel-collector.yaml&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> -f &lt;span style="color:#e6db74">&amp;#34;otel-collector.yaml&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;/li>
 &lt;li>
 &lt;p>再建立 Ingress Nginx Controller，執行以下指令：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>helm upgrade ingress-nginx &lt;span style="color:#ae81ff">\
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>helm upgrade ingress-nginx &lt;span style="color:#ae81ff">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> ingress-nginx &lt;span style="color:#ae81ff">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --repo https://kubernetes.github.io/ingress-nginx &lt;span style="color:#ae81ff">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --install &lt;span style="color:#ae81ff">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --create-namespace &lt;span style="color:#ae81ff">\
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --namespace ingress-nginx &lt;span style="color:#ae81ff">\
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> -f &lt;span style="color:#e6db74">&amp;#34;ingress-nginx-values.yaml&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> -f &lt;span style="color:#e6db74">&amp;#34;ingress-nginx-values.yaml&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;/li>
 &lt;li>
 &lt;p>接著建立測試用 Nginx 服務，執行以下指令：&lt;/p>
-&lt;div class="code-block relative mt-6 first:mt-0 group/code">&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl apply -f nginx.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="opacity-0 transition group-hover/code:opacity-100 flex gap-1 absolute m-[11px] right-0 top-0">
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl apply -f nginx.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
-class="code-copy-btn group/copybtn transition-all active:opacity-50 bg-primary-700/5 border border-black/5 text-gray-600 hover:text-gray-900 rounded-md p-1.5 dark:bg-primary-300/10 dark:border-white/10 dark:text-gray-400 dark:hover:text-gray-50"
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
 >
-&lt;div class="group-[.copied]/copybtn:hidden copy-icon pointer-events-none h-4 w-4">&lt;/div>
-&lt;div class="hidden group-[.copied]/copybtn:block success-icon pointer-events-none h-4 w-4">&lt;/div>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
 &lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;h2>測試&lt;span class="absolute -mt-20" id="測試">&lt;/span>
+&lt;h2>測試&lt;span class="hx-absolute -hx-mt-20" id="測試">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當你執行完上面的步驟後，你會發現有產生兩個 namespace，一個是 ingress-nginx，另一個是 opentelemetry，並且會有 OpenTelemetry Collector、Ingress Nginx Controller、Nginx 等服務，如下：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/opentelemetry/opentelemetry-ingress-nginx-controller/1.png"
@@ -240,9 +243,9 @@ alt="Datadog Dashboard" width="1000">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>結論&lt;span class="absolute -mt-20" id="結論">&lt;/span>
+&lt;h2>結論&lt;span class="hx-absolute -hx-mt-20" id="結論">&lt;/span>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>透過 OpenTelemetry Collector 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上，這樣就可以透過 Ingress Nginx Controller 的 Metrics 來做監控了，對於 RD 再開發上，有 Traces 也更方便 RD 他們找到程式的瓶頸 (有可能是服務導致的)。&lt;/p>
 &lt;br>
-&lt;h2>參考資料&lt;span class="absolute -mt-20" id="參考資料">&lt;/span>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Configure Nginx Ingress Controller to use JSON log format：&lt;a href="https://dev.to/bzon/send-gke-nginx-ingress-controller-logs-to-stackdriver-2ih4" target="_blank" rel="noopener">https://dev.to/bzon/send-gke-nginx-ingress-controller-logs-to-stackdriver-2ih4&lt;/a>&lt;/p>
 &lt;p>淺談 OpenTelemetry - Collector Compoents：&lt;a href="https://ithelp.ithome.com.tw/articles/10290703" target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10290703&lt;/a>&lt;/p></description></item></channel></rss>
