@@ -46,8 +46,8 @@ params:
     displayTitle: true
     displayLogo: true
     logo:
-      path: images/logo.jpeg
-      dark: images/logo.jpeg
+      path: images/logo.png
+      dark: images/logo.png
     width: full
 
   page:
