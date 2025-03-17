@@ -1,4 +1,97 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Kubernetes</title><link>https://pin-yi.me/blog/kubernetes/</link><description>Recent content in Kubernetes on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/kubernetes/index.xml" rel="self" type="application/rss+xml"/><item><title>kube-dns vs CoreDNS 比較，DNS 的最佳實踐</title><link>https://pin-yi.me/blog/kubernetes/kube-dns-vs-core-dns/</link><pubDate>Tue, 23 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/kube-dns-vs-core-dns/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Kubernetes</title><link>https://pin-yi.me/blog/kubernetes/</link><description>Recent content in Kubernetes on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/kubernetes/index.xml" rel="self" type="application/rss+xml"/><item><title>K8s Node Log Stdout Logrotate 回收機制</title><link>https://pin-yi.me/blog/kubernetes/k8s-node-log-stdout-logrotate/</link><pubDate>Wed, 12 Mar 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-node-log-stdout-logrotate/</guid><description>
+&lt;p>我們知道可觀測性的三大支柱是 Log、Metics、Trace，其中 Log 是最基礎的一環，透過 Log 我們可以了解應用程式的運作狀況，當應用程式出現問題時，透過 Log 可以快速定位問題，進而解決問題。&lt;/p>
+&lt;p>以我們公司為例，我們主要使用 GCP，現在也開始用 AWS 來當作 DR 的環境。在 GCP 我們原本會使用 Log Exporter 來查看服務及系統的 Log，但為了更方便的管理，我們改使用 Datadog 來統一收集 Log (AWS 也是)。&lt;/p>
+&lt;p>要如何傳遞給 Datadog，我們依照 Datadog 官方文件建議，將 Log Stdout，讓 Datadog agent 去收集 Log，這樣就可以統一管理 Log 了，詳細可參考 &lt;a href="https://docs.datadoghq.com/containers/kubernetes/log/?tab=datadogoperator" target="_blank" rel="noopener">Datadog Kubernetes log collection&lt;/a>。&lt;/p>
+&lt;br>
+&lt;h2>疑問&lt;span class="hx-absolute -hx-mt-20" id="疑問">&lt;/span>
+&lt;a href="#%e7%96%91%e5%95%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我之前ㄧ直以為 Container Log Stdout 不會寫實體檔，後來發現，其實它還是會寫，但當 Node 重啟，或是 Pod 被刪除時，才會移除，要怎麼查看，我們可以進到 GKE or EKS 的 node 機器上，到 &lt;code>/var/log/pods/&lt;/code> 路徑底下，就可以看到運作在該 node 上的 pod，資料夾名稱會是以 &lt;code>{namespace}_{pod name}_xxx&lt;/code> 來命名。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/1.jpg"
+alt="How nodes handle container logs 圖片：Logging Architecture" width="550">&lt;figcaption>
+&lt;p>How nodes handle container logs 圖片：&lt;a href="https://kubernetes.io/docs/concepts/cluster-administration/logging/#how-nodes-handle-container-logs" target="_blank" rel="noopener">Logging Architecture&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>所以就好奇，是誰來管理這些 Log 的回收機制呢？如果沒有回收機制，Log 不會把 Node 的 Disk 給寫爆嗎？&lt;/p>
+&lt;br>
+&lt;h2>Node Logrotate&lt;span class="hx-absolute -hx-mt-20" id="node-logrotate">&lt;/span>
+&lt;a href="#node-logrotate" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當然，有在使用過相關 Log 工具，對 Logrotate 一定不陌生，第一個想法就想說，會不會 Node 上有對應的 Logrotate 設定，去定期的去處理 &lt;code>/var/log&lt;/code> 的檔案，因次我們這邊針對 GKE(GCP) 以及 EKS(AWS) 來做說明：&lt;/p>
+&lt;ul>
+&lt;li>GKE&lt;/li>
+&lt;/ul>
+&lt;p>首先，我們先連線到 GKE Node 上，進到 &lt;code>/etc/logrotate.d&lt;/code> 底下，可以看到以下圖片的設定，在 GKE 裡面只有一個 Logrotate 設定檔，他會針對整個 &lt;code>/var/log&lt;/code> 底下的 log 檔案做處理。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/2.png"
+alt="GKE /etc/logrotate.d 底下檔案設定" width="550">&lt;figcaption>
+&lt;p>GKE /etc/logrotate.d 底下檔案設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>EKS&lt;/li>
+&lt;/ul>
+&lt;p>一樣的步驟，進到 &lt;code>/etc/logrotate.d&lt;/code> 底下，可以看到以下圖片的設定，EKS 會有多個 Logrotate 設定檔，但卻沒有對 &lt;code>/var/log/pods&lt;/code> 底下的 log 檔案做處理，所以 EKS 需要額外去寫 DameonSet 來處理 &lt;code>/var/log/pods&lt;/code> 底下的 log 檔案回收嗎？&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/3.png"
+alt="EKS /etc/logrotate.d 底下檔案設定" width="500">&lt;figcaption>
+&lt;p>EKS /etc/logrotate.d 底下檔案設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>尋找答案&lt;span class="hx-absolute -hx-mt-20" id="尋找答案">&lt;/span>
+&lt;a href="#%e5%b0%8b%e6%89%be%e7%ad%94%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>最後在 Kubernetes 官方文件中 &lt;a href="https://kubernetes.io/docs/concepts/cluster-administration/logging/#log-rotation" target="_blank" rel="noopener">Logging Architecture&lt;/a> 有看到兩個設定值，分別是 &lt;code>containerLogMaxSize&lt;/code> (預設 10Mi)，以及 &lt;code>containerLogMaxFiles&lt;/code>(預設 5)。kubelet 會根據這兩個設定值來決定是否要回收 Log。&lt;/p>
+&lt;p>如果 Log 檔案大小超過 &lt;code>containerLogMaxSize&lt;/code>，kubelet 就會重新開始寫新的 Log 檔案，如果 Log 檔案數量超過 &lt;code>containerLogMaxFiles&lt;/code>，kubelet 會刪除最舊的 Log 檔案。&lt;/p>
+&lt;p>那要怎麼查看當前 node 的 kubelet 設定值呢？可以透過以下指令：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>journalctl -u kubelet --no-pager | grep &lt;span style="color:#e6db74">&amp;#34;container-log-max&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>就可以看到底下兩個設定值：（圖片上面是 EKS，下面是 GKE）&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/4.png"
+alt="查看 containerLogMaxSize 跟 containerLogMaxFiles 當前設定值" width="750">&lt;figcaption>
+&lt;p>查看 containerLogMaxSize 跟 containerLogMaxFiles 當前設定值&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以發現都跟預設值一樣。&lt;/p>
+&lt;br>
+&lt;p>那我們也直接進到 &lt;code>/var/log/pods&lt;/code> 底下，來查看是否是依照這個規律去運作。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/5.png"
+alt="進入 /var/log/pods" width="650">&lt;figcaption>
+&lt;p>進入 /var/log/pods&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到，就跟上面說的資料夾名稱是由 &lt;code>{namespace}_{pod name}_xxx&lt;/code> 來命名，我們進去到隨機一個資料夾來查看 Log 檔案。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>GKE&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/6.png" width="650">
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>EKS&lt;/li>
+&lt;/ul>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/7.png" width="650">
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到，GKE 跟 EKS 檔案數量都是 5 個，且每個都是小於 10Mi (因為計算誤差，所以有些會顯示 11、12)，所以可以確定是依照 &lt;code>containerLogMaxSize&lt;/code> 跟 &lt;code>containerLogMaxFiles&lt;/code> 在運作的。&lt;/p>
+&lt;p>也可以看到 GKE Log，第一次查看最舊的檔案是 &lt;code>0.log.20250317-081814.gz&lt;/code>，第二次查看最舊的檔案就變成 &lt;code>0.log.20250317-081844.gz&lt;/code>，就代表超過 5 份 Log 檔案，kubelet 就會刪除最舊的 Log 檔案。&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Logging Architecture 日誌架構：&lt;a href="https://kubernetes.io/docs/concepts/cluster-administration/logging/#log-rotation" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/cluster-administration/logging/#log-rotation&lt;/a>&lt;/p>
+&lt;p>Datadog Kubernetes log collection：&lt;a href="https://docs.datadoghq.com/containers/kubernetes/log/?tab=datadogoperator" target="_blank" rel="noopener">https://docs.datadoghq.com/containers/kubernetes/log/?tab=datadogoperator&lt;/a>&lt;/p></description></item><item><title>kube-dns vs CoreDNS 比較，DNS 的最佳實踐</title><link>https://pin-yi.me/blog/kubernetes/kube-dns-vs-core-dns/</link><pubDate>Tue, 23 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/kube-dns-vs-core-dns/</guid><description>
 &lt;p>前情提要：由於上一篇筆記 &lt;a href="../pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a> 的後續規劃中，有提出我們想研究看看 Core DNS 來取代 Kube DNS，因此，這篇筆記要來比較一下 Kube DNS 以及 Core DNS 的差異以及兩者的優缺點，另外還會說明一下 DNS 的最佳實踐做法。&lt;/p>
 &lt;br>
 &lt;p>前面概論介紹 K8s 內的 DNS 以及 CoreDNS 主要都是參考 &lt;a href="https://weng-albert.medium.com/%E6%8E%A2%E7%A7%98k8s-dns-%E8%A7%A3%E5%AF%86ip%E6%9F%A5%E8%A9%A2%E8%88%87%E6%9C%8D%E5%8B%99%E7%99%BC%E7%8F%BE-034de2e72abe" target="_blank" rel="noopener">探秘K8S DNS：解密IP查詢與服務發現&lt;/a>、&lt;a href="https://weng-albert.medium.com/coredns%E7%B0%A1%E5%96%AE%E9%99%A4%E9%8C%AF-%E8%A7%A3%E6%B1%BA%E4%BD%A0%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E8%88%AC%E5%95%8F%E9%A1%8C-71d255e39548" target="_blank" rel="noopener">CoreDNS簡單除錯：解決你遇到的一般問題&lt;/a>，詳細可以查看原文。&lt;/p>
