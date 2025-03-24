@@ -1,7 +1,11 @@
 ---
 title: "Google Cloud Platform (GCP) - IAM 與管理"
 type: docs
-weight: 56
+weight: 9995
+date: 2024-05-07
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 IAM 的全名是 Identity and Access Management，當我們藉由 IAM，可以授與特定 Google Cloud 資源的 **精細** 訪問權限，並防止對其他資源的訪問。疑！？為什麼是精細？我們接著看下去，我們可以採用最小權限安全原則，該原則要求任何人都不應擁有超出實際所需的權限。

@@ -38,6 +38,11 @@ menu:
       url: "https://github.com/880831ian/"
       params:
         icon: github
+    - name: linkedin
+      weight: 6
+      url: "https://www.linkedin.com/in/pinyi/"
+      params:
+        icon: linkedin
 
 params:
   # description: Modern, responsive, batteries-included Hugo theme for creating beautiful static websites.

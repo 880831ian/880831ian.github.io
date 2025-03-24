@@ -1,7 +1,7 @@
 ---
 title: "Google Kubernetes Engine Local ephemeral storage 計算方式"
 type: docs
-weight: 51
+weight: 9991
 description: Google Kubernetes Engine Local ephemeral storage 計算方式
 images:
   - gcp/gke-local-ephemeral-storage/og.webp

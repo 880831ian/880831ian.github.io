@@ -1,7 +1,11 @@
 ---
 title: "GCP Prometheus Samples Ingested 計算方式及如何減少費用"
 type: docs
-weight: 53
+weight: 9992
+date: 2024-07-10
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 最近在優化公司帳單費用，發現公司有幾個 project 裡面的 Prometheus Samples Ingested 費用很高，此文章會針對費用如何計算以及如何去減少費用來做說明。

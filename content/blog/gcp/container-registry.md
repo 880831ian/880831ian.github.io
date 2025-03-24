@@ -1,7 +1,11 @@
 ---
 title: "Google Cloud Platform (GCP) - Container Registry"
 type: docs
-weight: 59
+weight: 9998
+date: 2024-05-07
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 跟大家介紹一下今天的主題 Container Registry，Container Registry 是儲存、管理和保護 Docker 容器映像檔的存放區，可以讓團隊透過同一項服務服務集中管理 Docker 映像檔、也可以執行安全漏洞分析，還能透過精密的存取權管理機制，來決定誰可以存取哪些內容。簡單來說他就是一個讓我們存放 Docker 映像檔的地方，他有以下幾個特點：

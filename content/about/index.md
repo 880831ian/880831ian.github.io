@@ -28,7 +28,26 @@ toc: false
 
 - Google Cloud Professional Cloud Architect
 
+    證照編號: ed519d0fcb984d428460841eb83419c8 / 發照日期： Feb 21, 2025 / 到期日：Feb 21, 2027
+
 <img src="/about/pca.png" width="550" />
+
+<br>
+
+- RED HAT CERTIFIED ENGINEER (RHCE)
+
+    證照編號: 190-008-011 / 發照日期： July 5, 2019 / 到期日：July 5, 2021
+
+<img src="/about/rhce.png" width="550" />
+
+<br>
+
+- RED HAT CERTIFIED SYSTEM ADMINISTRATOR (RHCSA)
+
+    證照編號: 190-008-011 / 發照日期： Jan 11, 2019 / 到期日：Jan 11, 2021
+
+<img src="/about/rhcsa.png" width="550" />
+
 
 <br>
 

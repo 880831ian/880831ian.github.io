@@ -1,7 +1,11 @@
 ---
 title: "Google Cloud Platform (GCP) - Compute Engine"
 type: docs
-weight: 57
+weight: 9996
+date: 2024-05-07
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 跟大家介紹一下今天的主題 Google Compute Engine(GCE)，GCE 是 Google Cloud 上的基礎架構服務 (IaaS)，該平台可以提供大規模的虛擬機器以及相關的基礎建設 (包含硬碟、網路、附載平衡器... 等等)來建置及運作您的服務，那我們可以將 GCE 服務的主要功能劃分成以下幾點：
