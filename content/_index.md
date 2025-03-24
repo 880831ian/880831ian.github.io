@@ -1,15 +1,27 @@
 ---
 title: "哈囉 歡迎來到 Pin-Yi の 部落格"
-# toc: false
+layout: hextra-home
 ---
 
+<div class="hx-mt-6 hx-mb-6">
+{{< hextra/hero-headline >}}
+  哈囉 歡迎來到 Pin-Yi の 部落格
+{{< /hextra/hero-headline >}}
+</div>
+
+<div class="hx-mb-12">
+{{< hextra/hero-subtitle >}}
+  筆記搬移中 ´-ω-)b ，可以先到 [舊部落格](https://blog.pin-yi.me) 看看，下方有所有的文章清單，也可以使用右上角的搜尋功能找尋文章。
+{{< /hextra/hero-subtitle >}}
+</div>
+
+<div class="hx-mb-6">
+{{< hextra/hero-button text="開始閱讀" link="blog" >}}
+</div>
+
 <br>
 
-筆記搬移中 ´-ω-)b ，可以先到 [舊部落格](https://blog.pin-yi.me) 看看
-
-<br>
-
-{{< cards >}}
+{{< hextra/feature-grid cols=4 >}}
 {{< card link="blog/gcp/gcs-cors" title="GCS Bucket CORS 錯誤解決方法" image="/gcp/gcs-cors/cover.webp" >}}
 {{< card link="blog/kubernetes/k8s-node-log-stdout-logrotate" title="K8s Node Log Stdout Logrotate 回收機制" image="/kubernetes/k8s-node-log-stdout-logrotate/cover.webp" >}}
 {{< card link="blog/aws/vpc-introduce" title="Amazon Virtual Private Cloud (VPC) 介紹" image="/aws/vpc-introduce/cover.webp" >}}
@@ -75,4 +87,4 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 {{< card link="blog/other/snyk" title="找出程式碼、開源套件、容器的安全漏洞工具 - Snyk" image="/other/snyk/cover.webp">}}
 
 {{< card link="blog/lecture/20240529-devops-introduce" title="朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座 (2024/05/29)" image="/lecture/20240529-devops-introduce/cover.webp">}}
-{{< /cards>}}
+{{< /hextra/feature-grid >}}

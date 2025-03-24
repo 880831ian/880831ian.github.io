@@ -45,8 +45,6 @@ menu:
         icon: linkedin
 
 params:
-  # description: Modern, responsive, batteries-included Hugo theme for creating beautiful static websites.
-
   navbar:
     displayTitle: true
     displayLogo: true
@@ -83,6 +81,12 @@ params:
       emitMetadata: 0
       inputPosition: top
       lang: zh-TW
+
+  search:
+    enable: true
+    type: flexsearch
+    flexsearch:
+      index: content
 
 services:
   googleAnalytics:
