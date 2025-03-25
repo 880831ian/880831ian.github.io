@@ -2,7 +2,7 @@
 title: "Google Cloud Platform (GCP) - Compute Engine"
 type: docs
 weight: 9996
-date: 2024-05-07
+date: 2022-06-29
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/

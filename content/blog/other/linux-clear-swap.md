@@ -1,7 +1,11 @@
 ---
 title: "清除 Linux 機器上的 Swap (Buff、Cache、Swap 比較)"
 type: docs
-weight: 58
+weight: 9998
+date: 2022-06-06
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 今天在工作時，遇到機器的 Swap 超過預警值，需要手動去清除 Swap，那剛好就由這次機會來介紹要如何清除 Linux 機器上的 Swap，以及查詢 Linux 記憶體的使用狀況！

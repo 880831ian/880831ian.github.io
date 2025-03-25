@@ -2,7 +2,7 @@
 title: "Google Cloud Platform (GCP) - Cloud Build"
 type: docs
 weight: 9999
-date: 2024-05-07
+date: 2022-07-06
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/

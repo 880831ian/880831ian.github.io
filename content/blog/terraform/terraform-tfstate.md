@@ -1,7 +1,11 @@
 ---
 title: "Terraform 如何多人共同開發 (將 tfstate 存在後端)"
 type: docs
-weight: 4
+weight: 9996
+date: 2023-05-29
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 此篇是接續上一篇 [什麼是 IaC ? Terraform 又是什麼？](https://pin-yi.me/terraform/)的 Terraform 文章，我們在上一篇有提到 `terraform apply` 完後，會多一個檔案 `*.tfstate`，這個檔案是用來存放服務狀態的檔案，它包含基礎架構的狀態和資源的詳細信息。假設大家都在自己的本地去 apply 同一個服務，會導致每個人的 tfstate 檔案內容不同，有可能去覆蓋掉其他人已經調整的內容，因此我們必須將此 tfstate 檔案存放在一個地方，讓大家都去使用同一份檔案來調整資源。

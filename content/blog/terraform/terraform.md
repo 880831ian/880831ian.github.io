@@ -1,7 +1,11 @@
 ---
 title: "什麼是 IaC ? Terraform 又是什麼？"
 type: docs
-weight: 1
+weight: 9999
+date: 2022-09-26
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 跟上一篇 Snyk 一樣，本系列也是去參加 DevOpsDay Taipei 2022 活動聽到各位產業大佬目前在使用的名詞以及技術，想說回家也充實一下自己，了解一下在 DevOpsDay 最常出現的 IaC 是什麼？以及聽說很方便的 Terraform 又是什麼，將學習的過程打成此篇筆記，歡迎大家多交流，那我們就開始囉。

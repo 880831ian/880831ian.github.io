@@ -1,7 +1,11 @@
 ---
 title: "Pod 出現 cURL error 6: Could not resolve host"
 type: docs
-weight: 76
+weight: 9992
+date: 2024-07-19
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 此篇主要是來記錄一下在正式環境服務出現 `cURL error 6: Could not resolve host` 的問題，以及如何解決。

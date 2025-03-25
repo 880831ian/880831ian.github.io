@@ -1,7 +1,11 @@
 ---
 title: "使用 Terraform 建立 Google Compute Engine"
 type: docs
-weight: 2
+weight: 9998
+date: 2022-11-28
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 嗨嗨大家好，距離上一篇筆記又隔了 3 個月，最近公司有專案在忙，沒時間把上次提到的 Terraform 應用筆記寫完，現在他來拉～～～ 😂 我們這次的主題是使用 Terraform 來建立 Google Compute Engine 的機器，想知道要怎麼用一段程式碼就可以建立、修改、刪除 Google Compute Engine 的機器一定要來看這一篇～我們開始囉 🧑‍💻
@@ -10,7 +14,7 @@ weight: 2
 
 ## 撰寫 Google Compute Engine tf 檔案
 
-相信大家有先看完上一篇 [什麼是 IaC ? Terraform 又是什麼？](https://blog.pin-yi.me/terraform/) 才來看這一篇的對吧 😎，對於 Terraform 的程式架構及指令，我們這邊就不多做介紹，我們直接來看程式要怎麼寫～(程式碼主要是參考[官方文件](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance)，加上一些其他的設定來做介紹，程式碼也會同步到 Github ，需要的也可以去 Clone 來使用歐！ [Github 程式碼連結](https://github.com/880831ian/terraform-gce) )
+相信大家有先看完上一篇 [什麼是 IaC ? Terraform 又是什麼？](../terraform/) 才來看這一篇的對吧 😎，對於 Terraform 的程式架構及指令，我們這邊就不多做介紹，我們直接來看程式要怎麼寫～(程式碼主要是參考[官方文件](https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance)，加上一些其他的設定來做介紹，程式碼也會同步到 Github ，需要的也可以去 Clone 來使用歐！ [Github 程式碼連結](https://github.com/880831ian/terraform-gce) )
 
 <br>
 

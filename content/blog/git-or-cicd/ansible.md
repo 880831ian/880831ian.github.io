@@ -1,7 +1,11 @@
 ---
 title: "Ansible 介紹與實作 (Inventory、Playbooks、Module、Template、Handlers)"
 type: docs
-weight: 71
+weight: 9997
+date: 2022-05-16
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 本篇文章是接續前面兩篇 [Jenkins 及 Ansible IT 自動化 CI/CD 介紹](../jenkins-ansible/) 跟 [使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot](../jenkins-github-tg-bot/) 文章，歡迎大家先去觀看前面兩篇文章 🤪

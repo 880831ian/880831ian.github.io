@@ -1,6 +1,11 @@
 ---
-title: "朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座 (2024/05/29)"
+title: "朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座"
 type: docs
+weight: 9997
+date: 2024-05-29
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 ## 講座資訊

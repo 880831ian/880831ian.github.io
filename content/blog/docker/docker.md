@@ -1,9 +1,11 @@
 ---
 title: "Docker 介紹 (如何使用 Docker-compose 建置 PHP+MySQl+Nginx 環境)"
 type: docs
-weight: 1000
----
-
+weight: 9999
+date: 2024-05-26
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 ## 什麼是 Docker ?

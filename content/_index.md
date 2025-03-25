@@ -11,12 +11,12 @@ layout: hextra-home
 
 <div class="hx-mb-12">
 {{< hextra/hero-subtitle >}}
-  筆記搬移中 ´-ω-)b ，可以先到 [舊部落格](https://blog.pin-yi.me) 看看，下方有所有的文章清單，也可以使用右上角的搜尋功能找尋文章。
+  筆記搬移中 ´-ω-)b ，可以先到 [[舊部落格]](https://blog.pin-yi.me) 看看，下方有所有的文章清單，也可以使用右上角的搜尋功能找尋文章。
 {{< /hextra/hero-subtitle >}}
 </div>
 
 <div class="hx-mb-6">
-{{< hextra/hero-button text="開始閱讀" link="blog" >}}
+{{< hextra/hero-button text="我是誰 (́◉◞౪◟◉‵)" link="about" >}}
 </div>
 
 <br>

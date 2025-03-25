@@ -1,7 +1,11 @@
 ---
 title: "部署 Pod 遇到 container veth name provided (eth0) already exists 錯誤"
 type: docs
-weight: 78
+weight: 9994
+date: 2023-09-13
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 此文章要來記錄一下公司同事在正式服務上遇到的問題，會詳細說明遇到事情的經過，以及開單詢問 google support 最後討論出的暫時解決的辦法：

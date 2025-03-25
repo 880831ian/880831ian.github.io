@@ -1,7 +1,11 @@
 ---
 title: "正式環境上踩到 StatefulSet 的雷，拿到 P1 的教訓"
 type: docs
-weight: 77
+weight: 9993
+date: 2023-10-27
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 此文章要來記錄一下前陣子在公司的正式環境踩到 StatefulSet 的雷，事情是這樣的，我們有些服務，是使用 StatefulSet 來建置，至於為什麼不用 Deployment，這個說來話長 (也不是因為需要特定的 Pod 名稱、或是網路標記等等)，我們這邊先不討論，這個 StatefulSet 服務是 Nginx + PHP-FPM，為了避免流量進入到 processes 已經被用光的 Pod 中，我們在 StatefulSet 的 PHP Container 上有設定 readiness，readiness 的設定長得像以下：

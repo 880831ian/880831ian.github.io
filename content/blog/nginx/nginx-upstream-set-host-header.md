@@ -1,7 +1,11 @@
 ---
 title: "想使用 Nginx Upstream Proxy 到外部服務，並帶入對應的 header 該怎麼做？"
 type: docs
-weight: 998
+weight: 9998
+date: 2023-10-16
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 此文章要來記錄一下最近在公司服務入口遇到的一些小問題，以及解決的方法。簡單說明一下，我們的服務入口是用 Nginx 來當作 proxy server，將不同路徑或是 servername 導到對應的後端程式，或是外部的服務上(例如 AWS cloudfront.net)，本篇要測試的是如果使用要同時使用 upstream 到外部服務，且需要帶 host header 該怎麼做。

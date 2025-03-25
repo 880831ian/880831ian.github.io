@@ -1,8 +1,7 @@
 ---
 title: "Identity and Access Management (IAM) 介紹"
 type: docs
-weight: 97
-description: Identity and Access Management (IAM) 介紹
+weight: 9997
 images:
   - aws/iam-introduce/og.webp
 date: 2024-07-26

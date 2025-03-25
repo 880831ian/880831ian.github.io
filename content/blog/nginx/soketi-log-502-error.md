@@ -1,7 +1,11 @@
 ---
 title: "Soketi WebSocket Server LOG 不定時出現 502 error 以及 connect() failed (111: Connection refused)"
 type: docs
-weight: 999
+weight: 9999
+date: 2023-09-20
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 此文章要來記錄一下 RD 同仁前陣子有反應使用 Soketi 這個 WebSocket Server 會不定時在 LOG 出現 502 error 錯誤訊息以及 connect() failed (111: Connection refused) while connecting to upstream，雖然說服務使用上不會影響很大，但還是希望我們可以協助找出 502 的原因。

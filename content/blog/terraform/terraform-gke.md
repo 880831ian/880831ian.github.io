@@ -1,7 +1,11 @@
 ---
 title: "使用 Terraform 建立 Google Kubernetes Engine"
 type: docs
-weight: 3
+weight: 9997
+date: 2022-11-29
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 我們接續昨天的建立 Google Kubernetes Engine 文章，今天要來介紹的是如何用 Terraform 建立 Google Kubernetes Engine，由於使用 terraform 去建立、修改、刪除的指令大家應該都清楚了，那我今天的文章就不在多說，直接來介紹一下要怎麼撰寫 Google Kubernetes Engine tf 檔案 😏
@@ -18,7 +22,7 @@ weight: 3
 
 ### 限制使用的版本
 
-在上一篇 [使用 Terraform 建立 Google Compute Engine](https://pin-yi.me/terraform-gce/)，我們知道 Terraform 其實就是對應的提供商，提供對應的 api 來讓我們可以用 terraform 去建置很多 IaC，但供應商提供的 api 會隨著版本而有所更動，可能換了一個版本，原本可以使用的 resource 參數就會有所不同，所以我們可以在一開始，先設定好這隻 tf 要使用的供應商及對應的版本，可以參考以下程式碼：
+在上一篇 [使用 Terraform 建立 Google Compute Engine](../terraform-gce/)，我們知道 Terraform 其實就是對應的提供商，提供對應的 api 來讓我們可以用 terraform 去建置很多 IaC，但供應商提供的 api 會隨著版本而有所更動，可能換了一個版本，原本可以使用的 resource 參數就會有所不同，所以我們可以在一開始，先設定好這隻 tf 要使用的供應商及對應的版本，可以參考以下程式碼：
 
 ```tf
 terraform {

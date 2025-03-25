@@ -1,7 +1,11 @@
 ---
 title: "如何啟用 GitLab 的 Package Registry 以及將儲存位置從伺服器改到 GCS 上"
 type: docs
-weight: 50
+weight: 9994
+date: 2022-12-29
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 今天接到一個案子，RD 部門之後想要使用 GitLab 的 Package Registry 功能來發布套件，且不想把它存在 GitLab 伺服器上，希望可以直接存到 GCP 的 Google Cloud Storage 上，所以才會有了此篇筆記來記錄一下整個過程。

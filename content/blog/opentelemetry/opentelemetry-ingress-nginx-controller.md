@@ -1,7 +1,11 @@
 ---
 title: "如何透過 OpenTelemetry 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上"
 type: docs
-weight: 3
+weight: 9999
+date: 2023-09-13
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 由於最近公司想要導入 Datadog，在測試過程中順便導入 OpenTelemetry 來收集 Metrics 與 Traces 並送到 Datadog 上 ～

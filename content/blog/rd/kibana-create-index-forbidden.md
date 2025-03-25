@@ -1,7 +1,11 @@
 ---
 title: "Kibana 新增 index 索引時一直轉圈圈以及顯示 HTTP 403 Forbidden"
 type: docs
-weight: 4
+weight: 9999
+date: 2024-05-01
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 前幾天在工作使用 Kibana 時，想要新增一個新的索引，發現選擇索引並按下新增的按鈕，會一直轉圈圈，等了一陣子，使用開發工具 F12 查看，跳出了 HTTP 403 Forbidden，到底是什麼原因導致的呢！？我們一起看下去吧，會從問題的出現到問題原因再到如何解決問題，來仔細介紹，希望大家不要像我一樣踩到雷 🤣

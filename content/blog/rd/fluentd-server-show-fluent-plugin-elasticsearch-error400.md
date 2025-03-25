@@ -1,7 +1,11 @@
 ---
 title: "Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決"
 type: docs
-weight: 4
+weight: 9998
+date: 2022-12-08
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 先說結論 ... ~~EFK 真的好多雷 😆~~ 我們今天又再度踩雷拉，這次又是炸的分身碎骨，花了 4 個多小時才找到原因，也有可能是小弟我跟 EFK 不是很熟 XD。就如標題所說，我在抽 Log 的時候發現有部分的 Log 送不到 Kibana，檢查 Fluentd-Server 的 Log 發現裡面有 `Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch` 的錯誤訊息，到底這個 Error 400 是什麼咧，就跟著我一起重溫找問題的苦難吧 XD

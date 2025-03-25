@@ -1,7 +1,11 @@
 ---
 title: "Kubernetes (K8s) 介紹 - 基本"
 type: docs
-weight: 100
+weight: 9999
+date: 2022-04-28
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 ## 什麼是 Kubernetes (K8s)?

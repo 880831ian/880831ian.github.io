@@ -1,7 +1,11 @@
 ---
 title: "如何從頭打造專屬的 GitLab CI/CD"
 type: docs
-weight: 70
+weight: 9996
+date: 2022-05-26
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 自從上次學完 Jenkins 及 Ansible CI/CD，就覺得 CI/CD 實在太酷了！能夠自動化的去持續整合 (Continuous Integration, CI) 以及持續佈署 (Continuous Deployment,CD) 專案，再加上這幾天複習了 Git 的使用方法，突然想到，要怎麼設定我們將程式推到遠端的 Git Repo，能夠再搭配 CI/CD 去做測試，並且把程式碼自動部署到正式的服務機器設備上呢？

@@ -1,7 +1,7 @@
 ---
 title: "K8s Node Log Stdout Logrotate 回收機制"
 type: docs
-weight: 74
+weight: 9990
 description: K8s Node Log Stdout Logrotate 回收機制
 images:
   - kubernetes/k8s-node-log-stdout-logrotate/og.webp

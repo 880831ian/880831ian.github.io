@@ -1,7 +1,7 @@
 ---
 title: "Amazon Virtual Private Cloud (VPC) 介紹"
 type: docs
-weight: 95
+weight: 9995
 description: Amazon Virtual Private Cloud (VPC) 介紹
 images:
   - aws/vpc-introduce/og.webp

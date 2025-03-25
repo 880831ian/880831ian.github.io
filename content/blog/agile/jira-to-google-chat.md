@@ -1,7 +1,7 @@
 ---
 title: "串接 Jira 工單自動化通知到 Google Chat"
 type: docs
-weight: 99
+weight: 9999
 description: 如何串接 Jira 工單自動化通知到 Google Chat
 images:
   - agile/jira-to-google-chat/og.webp

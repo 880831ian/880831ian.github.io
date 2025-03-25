@@ -1,7 +1,11 @@
 ---
 title: "Kubernetes (K8s) 介紹 - 進階 (Service、Ingress、StatefulSet、Deployment、ReplicaSet、ConfigMap)"
 type: docs
-weight: 99
+weight: 9998
+date: 2022-05-03
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 前面我們在[基本篇](../k8s)中，為了使 Pod 能夠與本機連線，使用了 `port-forward`，還有另一種方法就是今天要介紹的第一個主題：Service

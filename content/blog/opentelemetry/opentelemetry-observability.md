@@ -1,7 +1,11 @@
 ---
 title: "什麼是 Opentelemetry？可觀測性 (Observability) 又是什麼？"
 type: docs
-weight: 3
+weight: 9998
+date: 2023-09-06
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 在介紹 Opentelemetry 之前，我們要先了解一下目前軟體架構以及基礎設施的演進：

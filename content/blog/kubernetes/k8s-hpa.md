@@ -1,7 +1,11 @@
 ---
 title: "Kubernetes (K8s) HorizontalPodAutoscaler (HPA) 原理與實作"
 type: docs
-weight: 80
+weight: 9996
+date: 2022-07-12
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 此篇是要介紹 HorizontalPodAutoscaler (HPA) 的原理以及實作內容，那我們先來說明一下 HorizontalPodAutoscaler 是什麼吧！

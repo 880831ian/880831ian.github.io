@@ -1,7 +1,11 @@
 ---
 title: "如何將 Terraform 改寫成 module ?"
 type: docs
-weight: 4
+weight: 9995
+date: 2023-06-16
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
 當我們要管理的資源越來越多後，會產生很多的 tf 檔案，假設我們現在有三個 gce 服務，會在以下三個不同環境上面運作，每個環境都會有我們之前學會的基本 tf 檔案(包含 provider.tf 、main.tf、backend.tf)，且其中的 main.tf 檔案內有些設定會不太一樣，如下：

@@ -2,7 +2,7 @@
 title: "如何過濾 GCP LOG，減少 Cloud Logging API 的花費"
 type: docs
 weight: 9994
-date: 2024-04-24
+date: 2023-07-30
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/

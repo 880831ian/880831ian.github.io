@@ -1,7 +1,7 @@
 ---
 title: "GCP Prometheus Samples Ingested 計算方式及如何減少費用"
 type: docs
-weight: 9992
+weight: 9991
 date: 2024-07-10
 authors:
   - name: Ian_zhuang

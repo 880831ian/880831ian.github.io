@@ -1,7 +1,7 @@
 ---
 title: "Elastic Kubernetes Service (EKS) 介紹"
 type: docs
-weight: 96
+weight: 9996
 date: 2024-07-26
 authors:
   - name: Ian_zhuang

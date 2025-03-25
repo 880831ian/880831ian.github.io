@@ -1,7 +1,7 @@
 ---
 title: "kube-dns vs CoreDNS 比較，DNS 的最佳實踐"
 type: docs
-weight: 75
+weight: 9991
 date: 2024-07-23
 authors:
   - name: Ian_zhuang

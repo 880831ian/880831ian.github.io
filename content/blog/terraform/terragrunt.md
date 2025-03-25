@@ -1,10 +1,14 @@
 ---
 title: "如何導入 Terragrunt，Terragrunt 好處是什麼？"
 type: docs
-weight: 4
+weight: 9994
+date: 2023-06-21
+authors:
+  - name: Ian_zhuang
+    link: https://pin-yi.me/about/
 ---
 
-我們接續上一篇的 [如何將 Terraform 改寫成 module ?](https://pin-yi.me/terraform-module/) ，我們已經將 Terraform 改成 module 的方式來進行管理，但當我們要管理的資源越來越多，且有分不同的專案時，整個服務架構會長的像以下：
+我們接續上一篇的 [如何將 Terraform 改寫成 module ?](../terraform-module/) ，我們已經將 Terraform 改成 module 的方式來進行管理，但當我們要管理的資源越來越多，且有分不同的專案時，整個服務架構會長的像以下：
 
 <br>
 

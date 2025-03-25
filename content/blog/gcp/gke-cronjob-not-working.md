@@ -2,7 +2,7 @@
 title: "Google Kubernetes Engine CronJob 會有短暫時間沒有執行 Job"
 type: docs
 weight: 9993
-date: 2024-04-30
+date: 2023-02-10
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/

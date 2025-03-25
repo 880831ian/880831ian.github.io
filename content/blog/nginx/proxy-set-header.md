@@ -1,7 +1,7 @@
 ---
 title: "Nginx Proxy Set Header 注意事項"
 type: docs
-weight: 997
+weight: 9997
 description: Nginx Proxy Set Header 注意事項
 images:
   - nginx/proxy-set-header/og.webp

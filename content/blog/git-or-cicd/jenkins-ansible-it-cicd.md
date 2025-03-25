@@ -1,11 +1,11 @@
 ---
 title: "Jenkins 及 Ansible IT 自動化 CI/CD 介紹"
 type: docs
-weight: 73
+weight: 9999
 description: Jenkins 及 Ansible IT 自動化 CI/CD 介紹"
 images:
   - git-or-cicd/jenkins-ansible-it-cicd/og.webp
-date: 2022-05-16
+date: 2022-05-11
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/

@@ -1,7 +1,7 @@
 ---
 title: "使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot"
 type: docs
-weight: 72
+weight: 9998
 description: 使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot
 images:
   - git-or-cicd/jenkins-github-tg-bot/og.webp
