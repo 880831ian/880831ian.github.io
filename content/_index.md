@@ -73,6 +73,8 @@ layout: hextra-home
 {{< card link="blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400" title="Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決" image="/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/cover.webp">}}
 {{< card link="blog/rd/kibana-create-index-forbidden" title="Kibana 新增 index 索引時一直轉圈圈以及顯示 HTTP 403 Forbidden" image="/rd/kibana-create-index-forbidden/cover.webp">}}
 
+{{< card link="blog/redis/redis-introduce" title="Redis 介紹" image="/redis/redis-introduce/cover.webp">}}
+
 {{< card link="blog/git-or-cicd/gitlab-package-registry-to-gcs" title="如何啟用 GitLab 的 Package Registry 以及將儲存位置從伺服器改到 GCS 上" image="/git-or-cicd/gitlab-package-registry-to-gcs/cover.webp">}}
 {{< card link="blog/git-or-cicd/git-merge-multiple-commit" title="如何合併多個 commit，且推到遠端呢？" image="/git-or-cicd/git-merge-multiple-commit/cover.webp">}}
 {{< card link="blog/git-or-cicd/laravel-gitlab-cicd-heroku" title="部署 Laravel 於 Heroku 搭配 GitLab CI/CD" image="/git-or-cicd/laravel-gitlab-cicd-heroku/cover.webp">}}
