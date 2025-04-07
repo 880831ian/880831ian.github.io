@@ -1,0 +1,1351 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Redis</title><link>https://pin-yi.me/blog/redis/</link><description>Recent content in Redis on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/redis/index.xml" rel="self" type="application/rss+xml"/><item><title>Redis 哨兵模式 (Sentinel) 搭配 Docker 實作</title><link>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose/</link><pubDate>Tue, 19 Apr 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose/</guid><description>
+&lt;h2>什麼是 Redis 哨兵模式 (Sentinel) ?&lt;span class="hx-absolute -hx-mt-20" id="什麼是-redis-哨兵模式-sentinel-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-redis-%e5%93%a8%e5%85%b5%e6%a8%a1%e5%bc%8f-sentinel-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>有關 Redis 之前有寫一篇 &lt;a href="../redis/" >Redis 的介紹文&lt;/a>，有興趣可以去看看！&lt;/p>
+&lt;p>Redis 提供非常實用的功能來讓我們實現多機的 in-memory 資料庫：&lt;/p>
+&lt;ul>
+&lt;li>主從複製模式 (Master-Slave Replication)&lt;/li>
+&lt;li>哨兵模式 (Sentinel)&lt;/li>
+&lt;li>叢集模式 (Cluster)&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>我們這邊主要介紹哨兵模式 (Sentinel)，但主要也是由主從複製模式 (Master-Slave Replication) 修改而來：&lt;/p>
+&lt;p>哨兵模式就是用來監視 Redis 系統，哨兵會監控 Master 是否正常運作。如果遇到 Master 出現故障或是離線時，哨兵之間會開始判斷，直到我們所設定需達到的判斷數量後，哨兵會將其所屬的 Slave 變成 Master，並再將其他的 Slave 指向新的 Master。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal.png"
+alt="哨兵模式 (Sentinel)" width="550">&lt;figcaption>
+&lt;p>哨兵模式 (Sentinel)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>監控&lt;span class="hx-absolute -hx-mt-20" id="監控">&lt;/span>
+&lt;a href="#%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>哨兵會和要監控的 Master 建立兩條連接，&lt;code>Cmd&lt;/code> 和 &lt;code>Pub/Sub&lt;/code>：&lt;/p>
+&lt;ul>
+&lt;li>Cmd 是哨兵用來定期向 Master 發送 &lt;code>Info&lt;/code> 命令以取得 Master 的訊息，訊息中會包含 Master 有哪些 Slave。當與 Master 獲得 Slave 訊息後，哨兵也會和 Slave 建立連接。&lt;/li>
+&lt;li>哨兵也會定期透過 &lt;code>Cmd&lt;/code> 向 Master、Slave 和其他哨兵發送 &lt;code>Ping&lt;/code> 指令來檢查是否存在，確認節點狀態等。&lt;/li>
+&lt;li>&lt;code>Pub/Sub&lt;/code> 讓哨兵可以透過訂閱 Master 和 Slave 的 &lt;code>__Sentinel__:hello&lt;/code> 這個頻道來和其他哨兵定期的進行資訊交換。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>主觀下線 (SDOWN)&lt;span class="hx-absolute -hx-mt-20" id="主觀下線-sdown">&lt;/span>
+&lt;a href="#%e4%b8%bb%e8%a7%80%e4%b8%8b%e7%b7%9a-sdown" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>主觀下線是指單個哨兵認為 Master 已經停止服務了，有可能是網路不通或是接收不到訂閱等，而哨兵的判斷是依據傳送 Ping 指令之後一定時間內是否收到回覆或是錯誤訊息，如果有哨兵就會主觀認為這個 Master 已經下線停止服務了。&lt;/p>
+&lt;br>
+&lt;h3>客觀下線 (ODOWN)&lt;span class="hx-absolute -hx-mt-20" id="客觀下線-odown">&lt;/span>
+&lt;a href="#%e5%ae%a2%e8%a7%80%e4%b8%8b%e7%b7%9a-odown" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>客觀下線是指由多個哨兵對同一個 Master 各自進行主觀下線的判斷後，再綜合所有哨兵的判斷。若是認為主觀下線的哨兵到達我們所配置的數量後，即為客觀下線。&lt;/p>
+&lt;br>
+&lt;h3>故障轉移 (Failover)&lt;span class="hx-absolute -hx-mt-20" id="故障轉移-failover">&lt;/span>
+&lt;a href="#%e6%95%85%e9%9a%9c%e8%bd%89%e7%a7%bb-failover" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當 Master 已經被標記為客觀下線時，起初發現 Master 下線的哨兵會發起一個選舉 (採用的是 Raft 演算法)，並要求其他哨兵選他做為領頭哨兵，領頭哨兵會負責進行故障的恢復。當選的標準是要有超過一半的哨兵同意，所以哨兵的數量建議設定成奇數個。&lt;/p>
+&lt;p>此時若有多個哨兵同時參選領頭哨兵，則有可能會發生一輪後沒有產生勝選者，則所有的哨兵會再等隨機一個時間再次發起參選的請求，進行下一輪的選舉，一直到選出領頭為止。所以若哨兵數量為偶數就很有可能一直無法選出領頭哨兵。&lt;/p>
+&lt;br>
+&lt;p>選出領頭哨兵後，領頭哨兵會開始從下線的 Master 所屬 Slave 中跳選出一個來變成新的 Master，挑選的依據如下：&lt;/p>
+&lt;ol>
+&lt;li>所有在線的 Slave 擁有最高優先權的，優先權可以透過 slave-priority 來做設定。&lt;/li>
+&lt;li>如果有多個同為最高優先權的 Slave，則會選擇複製最完整的。&lt;/li>
+&lt;li>若還是有多個 Slave 皆符合上述條件，則選擇 id 最小的。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>接著領頭哨兵會將舊的 Master 更新成新的 Master 的 Slave ，讓其恢復服務後以 Slave 的身份繼續運作。&lt;/p>
+&lt;br>
+&lt;h2>用 Docker 實作 Redis 哨兵模式&lt;span class="hx-absolute -hx-mt-20" id="用-docker-實作-redis-哨兵模式">&lt;/span>
+&lt;a href="#%e7%94%a8-docker-%e5%af%a6%e4%bd%9c-redis-%e5%93%a8%e5%85%b5%e6%a8%a1%e5%bc%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那接下來會使用 Docker 來實作 Redis 的哨兵模式，&lt;a href="https://github.com/880831ian/docker-compose-redis-sentinel" target="_blank" rel="noopener">範例程式連結 點我&lt;/a> 😘&lt;/p>
+&lt;p>版本資訊&lt;/p>
+&lt;ul>
+&lt;li>macOS：11.6&lt;/li>
+&lt;li>Docker：Docker version 20.10.12, build e91ed57&lt;/li>
+&lt;li>Nginx：1.20&lt;/li>
+&lt;li>PHP：7.4-fpm&lt;/li>
+&lt;li>Redis：latest&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>檔案結構&lt;span class="hx-absolute -hx-mt-20" id="檔案結構">&lt;/span>
+&lt;a href="#%e6%aa%94%e6%a1%88%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>.
+├── Docker-compose.yaml
+├── docker-volume
+│   ├── log
+│   │   └── nginx
+│   │   ├── access.log
+│   │   └── error.log
+│   ├── nginx
+│   │   └── nginx.conf
+│   ├── php
+│   │   └── index.php
+│   ├── redis-master
+│   ├── redis-slave1
+│   └── redis-slave2
+├── redis.sh
+├── php
+│   └── Dockerfile
+└── sentinel
+├── Docker-compose.yaml
+├── sentinel1.conf
+├── sentinel2.conf
+└── sentinel3.conf&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>這是主要的結構，簡單說明一下：&lt;/p>
+&lt;ul>
+&lt;li>Docker-compose.yaml：會放置要產生的 Nginx、PHP、redis-master、redis-slave1、redis-slave2 容器設定檔。&lt;/li>
+&lt;li>docker-volume：是我們要掛載進去到容器內的檔案，包含像是 nginx.conf 或是 log/nginx 以及 redis 記憶體儲存內容。&lt;/li>
+&lt;li>redis.sh：是我另外多寫的腳本，可以在最後方面我們測試 Redis sentinel 是否成功。&lt;/li>
+&lt;li>php/Dokcerfile：因為在 php 要使用 redis 需要多安裝一些設定，所以用 Dockerfile 另外寫 PHP 的映像檔。&lt;/li>
+&lt;li>sentinel/Docker-compose.yaml：會放置要產生的 sentinel1、sentinel2、sentinel3 的容器設定檔。&lt;/li>
+&lt;li>sentinel(1、2、3).conf：哨兵的設定檔。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>那我們就依照安裝的設定開始說明：&lt;/p>
+&lt;h3>Docker-compose.yaml&lt;span class="hx-absolute -hx-mt-20" id="docker-composeyaml">&lt;/span>
+&lt;a href="#docker-composeyaml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">version&lt;/span>: &lt;span style="color:#e6db74">&amp;#39;3.8&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">services&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">nginx&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">nginx:1.20&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;8888:80&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/nginx/:/etc/nginx/conf.d/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/log/nginx/:/var/log/nginx/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">php&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">build&lt;/span>: &lt;span style="color:#ae81ff">./php&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">expose&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">9000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/php/:/var/www/html&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">redis-master&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-master&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/redis-master/:/data&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">6379&lt;/span>:&lt;span style="color:#ae81ff">6379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server --appendonly yes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">redis-slave1&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-slave1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/redis-slave1/:/data&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">6380&lt;/span>:&lt;span style="color:#ae81ff">6379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server --slaveof redis-master 6379 --appendonly yes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">depends_on&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">redis-master&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">redis-slave2&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-slave2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/redis-slave2/:/data&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">6381&lt;/span>:&lt;span style="color:#ae81ff">6379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server --slaveof redis-master 6379 --appendonly yes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">depends_on&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">redis-master&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">redis-slave1&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>詳細的 Docker 設定說明，可以參考 &lt;a href="../../docker/docker" >Docker 介紹&lt;/a> 內有詳細設定說明。比較特別的地方是：&lt;/p>
+&lt;p>redis-(master、slave1、slave2)&lt;/p>
+&lt;ul>
+&lt;li>volumes：將 redis 的資料掛載到 docker-volume/redis-(master、slave1、slave2)。&lt;/li>
+&lt;li>command：使用 redis-server 啟動，並且將該服務器轉變成指定服務器的從屬服務器 (slave server)。(如果想要保存 redis 的資料，要記得在 後面加上 &amp;ndash;appendonly yes)&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>docker-volume/nginx/nginx.conf&lt;span class="hx-absolute -hx-mt-20" id="docker-volumenginxnginxconf">&lt;/span>
+&lt;a href="#docker-volumenginxnginxconf" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>server {
+listen 80;
+server_name default_server;
+return 404;
+}
+server {
+listen 80;
+server_name test.com;
+index index.php index.html;
+error_log /var/log/nginx/error.log warn;
+access_log /var/log/nginx/access.log;
+root /var/www/html;
+location / {
+try_files $uri $uri/ /index.php?$query_string;
+}
+location ~ \.php$ {
+fastcgi_pass php:9000;
+fastcgi_index index.php;
+include fastcgi_params;
+fastcgi_param SCRIPT_FILENAME /var/www/html$fastcgi_script_name;
+}
+}&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Nginx 設定檔案。&lt;/p>
+&lt;br>
+&lt;h3>php/Dockerfile&lt;span class="hx-absolute -hx-mt-20" id="phpdockerfile">&lt;/span>
+&lt;a href="#phpdockerfile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Dockerfile" data-lang="Dockerfile">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">FROM&lt;/span>&lt;span style="color:#e6db74"> php:7.4-fpm&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">RUN&lt;/span> pecl install -o -f redis &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span>&lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> rm -rf /tmp/pear &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span>&lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> echo &lt;span style="color:#e6db74">&amp;#34;extension=redis.so&amp;#34;&lt;/span> &amp;gt; /usr/local/etc/php/conf.d/redis.ini &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span>&lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> echo &lt;span style="color:#e6db74">&amp;#34;session.save_handler = redis&amp;#34;&lt;/span> &amp;gt;&amp;gt; /usr/local/etc/php/conf.d/redis.ini &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span>&lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> echo &lt;span style="color:#e6db74">&amp;#34;session.save_path = tcp://redis:6379&amp;#34;&lt;/span> &amp;gt;&amp;gt; /usr/local/etc/php/conf.d/redis.ini&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>因為 PHP 要使用 Redis，會需要安裝一些套件，所以我們將 PHP 分開來，使用 Dockerfile 來設定映像檔。&lt;/p>
+&lt;br>
+&lt;h3>sentinel/sentine.conf&lt;span class="hx-absolute -hx-mt-20" id="sentinelsentineconf">&lt;/span>
+&lt;a href="#sentinelsentineconf" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>因為 sentine 內容都基本上相同，所以舉一個來說明：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>port 26379
+#設定要監控的 Master，最後的 2 代表判定客觀下線所需的哨兵數
+sentinel monitor mymaster 192.168.176.4 6379 2
+#哨兵 Ping 不到 Master 超過此毫秒數會認定主觀下線
+sentinel down-after-milliseconds mymaster 5000
+#failover 超過次毫秒數即代表 failover 失敗
+sentinel failover-timeout mymaster 180000&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>要設定指定的 Port sentine1 是 26379、sentine2 是 26380、sentine3 是 26381。接下來要設定要監控的 Master，最後的數字代表我們前面有提到客觀下線需要達到的哨兵數。以及主觀下線的時間跟 failover 超過的時間。&lt;/p>
+&lt;br>
+&lt;h3>sentinel/Docker-compose.yaml&lt;span class="hx-absolute -hx-mt-20" id="sentineldocker-composeyaml">&lt;/span>
+&lt;a href="#sentineldocker-composeyaml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">version&lt;/span>: &lt;span style="color:#e6db74">&amp;#39;3.8&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">services&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sentinel1&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel-1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">26379&lt;/span>:&lt;span style="color:#ae81ff">26379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel /usr/local/etc/redis/sentinel.conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./sentinel1.conf:/usr/local/etc/redis/sentinel.conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sentinel2&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel-2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">26380&lt;/span>:&lt;span style="color:#ae81ff">26379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel /usr/local/etc/redis/sentinel.conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./sentinel2.conf:/usr/local/etc/redis/sentinel.conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sentinel3&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel-3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">26381&lt;/span>:&lt;span style="color:#ae81ff">26379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel /usr/local/etc/redis/sentinel.conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./sentinel3.conf:/usr/local/etc/redis/sentinel.conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">default&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">external&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">redis_default&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>docker-volume/php/index.php&lt;span class="hx-absolute -hx-mt-20" id="docker-volumephpindexphp">&lt;/span>
+&lt;a href="#docker-volumephpindexphp" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-php" data-lang="php">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;lt;?&lt;/span>&lt;span style="color:#a6e22e">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$redis &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">Redis&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$sentinel &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">array&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">array&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;host&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;192.168.176.4&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;port&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">6379&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;role&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;master&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">array&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;host&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;192.168.176.5&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;port&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">6379&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;role&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;slave1&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">array&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;host&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;192.168.176.6&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;port&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">6379&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;role&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;slave2&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">foreach&lt;/span> ($sentinel &lt;span style="color:#66d9ef">as&lt;/span> $value) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">try&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> $redis&lt;span style="color:#f92672">-&amp;gt;&lt;/span>&lt;span style="color:#a6e22e">connect&lt;/span>($value[&lt;span style="color:#e6db74">&amp;#39;host&amp;#39;&lt;/span>], $value[&lt;span style="color:#e6db74">&amp;#39;port&amp;#39;&lt;/span>]);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> $redis&lt;span style="color:#f92672">-&amp;gt;&lt;/span>&lt;span style="color:#a6e22e">set&lt;/span>(&lt;span style="color:#e6db74">&amp;#39;foo&amp;#39;&lt;/span>, &lt;span style="color:#e6db74">&amp;#39;bar&amp;#39;&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">echo&lt;/span> &lt;span style="color:#e6db74">&amp;#34;連線成功 &amp;#34;&lt;/span> &lt;span style="color:#f92672">.&lt;/span> $value[&lt;span style="color:#e6db74">&amp;#39;host&amp;#39;&lt;/span>] &lt;span style="color:#f92672">.&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&amp;lt;br&amp;gt;目前 master：&amp;#34;&lt;/span> &lt;span style="color:#f92672">.&lt;/span> $value[&lt;span style="color:#e6db74">&amp;#39;role&amp;#39;&lt;/span>] &lt;span style="color:#f92672">.&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&amp;lt;br&amp;gt;&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> } &lt;span style="color:#66d9ef">catch&lt;/span> (&lt;span style="color:#a6e22e">\Exception&lt;/span> $e) {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">continue&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>為了要讓 PHP 可以知道目前的 Master 是哪一個服務器，所以寫了一個 try&amp;hellip;catch 來做判斷，並且把3個服務內容都放到陣列中，後續再測試中會再說明。&lt;/p>
+&lt;br>
+&lt;h3>redis.sh&lt;span class="hx-absolute -hx-mt-20" id="redissh">&lt;/span>
+&lt;a href="#redissh" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/bin/bash
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>green&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;32m&amp;#34;&lt;/span>;white&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;0m&amp;#34;&lt;/span>;red&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;31m&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;master IPAddress:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>master_ip&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>docker inspect redis-master | grep &lt;span style="color:#e6db74">&amp;#34;IP&amp;#34;&lt;/span> | egrep -o &lt;span style="color:#e6db74">&amp;#34;[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}&amp;#34;&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo $master_ip;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;------------------------------&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;slave1 IPAddress:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>slave1_ip&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>docker inspect redis-slave1 | grep &lt;span style="color:#e6db74">&amp;#34;IP&amp;#34;&lt;/span> | egrep -o &lt;span style="color:#e6db74">&amp;#34;[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}&amp;#34;&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo $slave1_ip;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;------------------------------&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;slave2 IPAddress:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>slave2_ip&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>docker inspect redis-slave2 | grep &lt;span style="color:#e6db74">&amp;#34;IP&amp;#34;&lt;/span> | egrep -o &lt;span style="color:#e6db74">&amp;#34;[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}&amp;#34;&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo $slave2_ip;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;------------------------------&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;master:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker exec -it redis-master redis-cli info Replication | grep role
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;slave1:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker exec -it redis-slave1 redis-cli info Replication | grep role
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;slave2:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker exec -it redis-slave2 redis-cli info Replication | grep role&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這個是我自己所寫的腳本，再等等測試時，可以詳細知道目前服務的角色轉移狀況。&lt;/p>
+&lt;br>
+&lt;h2>測試&lt;span class="hx-absolute -hx-mt-20" id="測試">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們先用 docker-compose up 來啟動 Docker-compose.yaml ，接著下 sh redis.sh 指令來查看各服務的 IP 位置以及目前角色：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/docker-compose-up-1.png"
+alt="啟動 Docker-compose.yaml" width="650">&lt;figcaption>
+&lt;p>啟動 Docker-compose.yaml&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-1.png"
+alt="使用 redis.sh 檢查目前 IP 及角色" width="650">&lt;figcaption>
+&lt;p>使用 redis.sh 檢查目前 IP 及角色&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接下來先修改 docker-volume/php/index.php&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-php" data-lang="php">&lt;span style="display:flex;">&lt;span>$sentinel &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">array&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">array&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;host&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;192.168.208.4&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;port&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">6379&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;role&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;master&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">array&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;host&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;192.168.208.5&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;port&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">6379&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;role&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;slave1&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">array&lt;/span>(
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;host&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;192.168.208.6&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;port&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#ae81ff">6379&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#39;role&amp;#39;&lt;/span> &lt;span style="color:#f92672">=&amp;gt;&lt;/span> &lt;span style="color:#e6db74">&amp;#39;slave2&amp;#39;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ),
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>);&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>將各自的 IP 帶入測試的網站中。&lt;/p>
+&lt;br>
+&lt;p>可以瀏覽 &lt;code>test.com:8888&lt;/code> 是否有正常抓到 redis 的 master&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-1.png"
+alt="test.com:8888 測試網站" width="650">&lt;figcaption>
+&lt;p>test.com:8888 測試網站&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>再來修改 sentinel 內的 sentinel(1、2、3).conf 檔案&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>port 26379
+#設定要監控的 Master，最後的 2 代表判定客觀下線所需的哨兵數
+sentinel monitor mymaster 192.168.208.4 6379 2
+#哨兵 Ping 不到 Master 超過此毫秒數會認定主觀下線
+sentinel down-after-milliseconds mymaster 5000
+#failover 超過次毫秒數即代表 failover 失敗
+sentinel failover-timeout mymaster 180000&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>將要監控的 Master IP 帶入 sentinel monitor mymaster。&lt;/p>
+&lt;br>
+&lt;p>再啟動 sentinel/Docker-compose.yaml&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/docker-compose-up-2.png"
+alt="啟動 Docker-compose.yaml" width="700">&lt;figcaption>
+&lt;p>啟動 Docker-compose.yaml&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接下來我們來模擬假設 Master 服務中斷後，sentinel 會發生什麼事情：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>docker stop redis-master&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>下完指令後，再使用 &lt;code>sh redis.sh&lt;/code> 來看看目前的 role 狀態：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-2.png"
+alt="使用 redis.sh 檢查目前 IP 及角色" width="700">&lt;figcaption>
+&lt;p>使用 redis.sh 檢查目前 IP 及角色&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>發現已經抓不到 master IP 以及他的角色。&lt;/p>
+&lt;br>
+&lt;p>等待一下子後，重新下 &lt;code>sh redis.sh&lt;/code> 來看目前的 role 狀態：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-3.png"
+alt="使用 redis.sh 檢查目前 IP 及角色" width="700">&lt;figcaption>
+&lt;p>使用 redis.sh 檢查目前 IP 及角色&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>就會發現已經將 master 轉移到原 slave1。&lt;/p>
+&lt;br>
+&lt;p>那我們來看一下 sentinel 在背後做了哪些事情：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-1.png"
+alt="判斷是否主觀下線及客觀下線，並發起投票" width="1200">&lt;figcaption>
+&lt;p>判斷是否主觀下線及客觀下線，並發起投票&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到三個哨兵都認為 master 為 主觀下線 (sdown)，這時 sentinel-2 就認定為 客觀下線 (odown)，並發起投票要求成為領頭哨兵。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-2.png"
+alt="進行透票，確認誰當選" width="1200">&lt;figcaption>
+&lt;p>進行透票，確認誰當選&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們可以看到 Sentinel2 和 Sentinel3 都投給 Sentinel2，所以最後 Sentinel2 當選。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-3.png"
+alt="領頭哨兵選定新 master" width="1200">&lt;figcaption>
+&lt;p>領頭哨兵選定新 master&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接著 sentinel2 選出 redis-slave1 (192.168.208.5:6379) 作為 Master ，並且使用 &lt;code>failover-state-send-slaveof-noone&lt;/code> 來將 redis-slave1 解除 Slave 狀態變成獨立的 master，隨後將 redis-slave1 升成 master。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-4.png"
+alt="設定 master 並修改原 master 變成 slave" width="1200">&lt;figcaption>
+&lt;p>設定 master 並修改原 master 變成 slave&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>設定完新的 Master 後，Sentinel2 讓原本的 Master 轉為 Slave，並且讓 redis-slave2(192.168.208.6:6379) 指向新的 Master。最後 Sentinel1 和 Sentinel3 開始從 Sentinel2 取得設定然後更新自己的設定，至此整個故障轉移就完成了。&lt;/p>
+&lt;br>
+&lt;p>最後我們來看一下我們用 PHP 連線的測試：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-2.png"
+alt="連線 master" width="700">&lt;figcaption>
+&lt;p>連線 master&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>就會發現，已經 slave1 變成現在的 master。&lt;/p>
+&lt;br>
+&lt;p>那我們最後把原本的 master 恢復，看看會發生什麼事情：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-3.png"
+alt="連線 master" width="700">&lt;figcaption>
+&lt;p>連線 master&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>會發現因為該啟動 master，所以他還認為他是 master，但過一下下，在查看就正常顯示 slave1 為 master，舊的 master 就變成 slave。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>Redis 常見錯誤問題&lt;/li>
+&lt;/ul>
+&lt;p>在學習的時候，有發現啟動 sentinel 的時候，會跳出 &lt;code>WARNING: Sentinel was not able to save the new configuration on disk!!!: Permission denied&lt;/code> 錯誤訊息，後來再去翻 redis github 的 issus 才發現作者也有發現這個問題，且已經修復了，主要是權限的問題，以及要掛載目錄而非 conf 檔案。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/bug.png"
+alt="redis WARNING 錯誤訊息 github issus" width="700">&lt;figcaption>
+&lt;p>redis WARNING 錯誤訊息 &lt;a href="https://github.com/redis/redis/issues/8172" target="_blank" rel="noopener">github issus&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Redis (六) - 主從複製、哨兵與叢集模式：&lt;a href="https://blog.tienyulin.com/redis-master-slave-replication-sentinel-cluster/" target="_blank" rel="noopener">https://blog.tienyulin.com/redis-master-slave-replication-sentinel-cluster/&lt;/a>&lt;/p></description></item><item><title>Redis 介紹</title><link>https://pin-yi.me/blog/redis/redis-introduce/</link><pubDate>Tue, 08 Mar 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/redis/redis-introduce/</guid><description>
+&lt;h2>什麼是 Redis ?&lt;span class="hx-absolute -hx-mt-20" id="什麼是-redis-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-redis-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Redis 全名是 Remote Dictionary Server ，是快速的開源記憶體鍵值資料庫 (keys-value database)。&lt;/p>
+&lt;p>由於 Redis 的回應時間極短，低於一毫秒，可以讓遊戲、金融服務、醫療保健等即時應用服務每秒處理幾百萬個請求。&lt;/p>
+&lt;br>
+&lt;h3>Redis 的優勢&lt;span class="hx-absolute -hx-mt-20" id="redis-的優勢">&lt;/span>
+&lt;a href="#redis-%e7%9a%84%e5%84%aa%e5%8b%a2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>效能&lt;span class="hx-absolute -hx-mt-20" id="效能">&lt;/span>
+&lt;a href="#%e6%95%88%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>所有的 Redis 資料都是存放在記憶體中，進而實現低延遲和高傳輸量的資料存取。&lt;/p>
+&lt;br>
+&lt;h4>彈性的資料結構&lt;span class="hx-absolute -hx-mt-20" id="彈性的資料結構">&lt;/span>
+&lt;a href="#%e5%bd%88%e6%80%a7%e7%9a%84%e8%b3%87%e6%96%99%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>一般的鍵值資料庫提供的資料結構有限，而 Redis 提供多樣化的資料結構來滿足服務的需求，包含字串(Strings)、哈希(Hashes)、列表(Lists)、集合(Sets)、有序集合(Zset)。(後續會有詳細介紹)&lt;/p>
+&lt;br>
+&lt;h4>簡單易用&lt;span class="hx-absolute -hx-mt-20" id="簡單易用">&lt;/span>
+&lt;a href="#%e7%b0%a1%e5%96%ae%e6%98%93%e7%94%a8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>Redis 可以用更少、更精簡的指令來取代傳統複雜的程式碼，可以存取應用程式的資料。並支援 Java、Python、PHP、C/C++、C#、JavaScript、Node.js、Ruby、R、GO。&lt;/p>
+&lt;br>
+&lt;h4>複寫和持久性&lt;span class="hx-absolute -hx-mt-20" id="複寫和持久性">&lt;/span>
+&lt;a href="#%e8%a4%87%e5%af%ab%e5%92%8c%e6%8c%81%e4%b9%85%e6%80%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>Redis 採主要-複本架構，支援非同步複寫，可以將資料複寫到多個複本伺服器。不但可以提升讀取效能(因為請求可分割到多部伺服器)，還可以再主服務器發生故障時快速恢復。至於持久性，Redis 支援時間點備份，會將資料複製到磁碟中。&lt;/p>
+&lt;br>
+&lt;h2>實際操作&lt;span class="hx-absolute -hx-mt-20" id="實際操作">&lt;/span>
+&lt;a href="#%e5%af%a6%e9%9a%9b%e6%93%8d%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>安裝 Redis&lt;span class="hx-absolute -hx-mt-20" id="安裝-redis">&lt;/span>
+&lt;a href="#%e5%ae%89%e8%a3%9d-redis" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>使用 Homebrew 來安裝 Redis (Mac OS：11.6)&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ brew install redis&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>安裝好用 -v 檢查版本&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ redis-server -v
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Redis server v&lt;span style="color:#f92672">=&lt;/span>6.2.6 sha&lt;span style="color:#f92672">=&lt;/span>00000000:0 malloc&lt;span style="color:#f92672">=&lt;/span>libc bits&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">64&lt;/span> build&lt;span style="color:#f92672">=&lt;/span>c6f3693d1aced7d9
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ redis-cli -v
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>redis-cli 6.2.6&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>一個是 Server、另一個是 Cli，所以在稍後測試時，需要開啟兩個 Terminal 來執行歐！&lt;/p>
+&lt;br>
+&lt;h3>執行 Redis&lt;span class="hx-absolute -hx-mt-20" id="執行-redis">&lt;/span>
+&lt;a href="#%e5%9f%b7%e8%a1%8c-redis" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>Server&lt;span class="hx-absolute -hx-mt-20" id="server">&lt;/span>
+&lt;a href="#server" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ redis-server
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>39403:C &lt;span style="color:#ae81ff">08&lt;/span> Mar &lt;span style="color:#ae81ff">2022&lt;/span> 11:13:17.500 &lt;span style="color:#75715e"># oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>39403:C &lt;span style="color:#ae81ff">08&lt;/span> Mar &lt;span style="color:#ae81ff">2022&lt;/span> 11:13:17.500 &lt;span style="color:#75715e"># Redis version=6.2.6, bits=64, commit=00000000, modified=0, pid=39403, just started&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>39403:C &lt;span style="color:#ae81ff">08&lt;/span> Mar &lt;span style="color:#ae81ff">2022&lt;/span> 11:13:17.500
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>39403:M &lt;span style="color:#ae81ff">08&lt;/span> Mar &lt;span style="color:#ae81ff">2022&lt;/span> 11:13:17.501 * Increased maximum number of open files to &lt;span style="color:#ae81ff">10032&lt;/span> &lt;span style="color:#f92672">(&lt;/span>it was originally set to 256&lt;span style="color:#f92672">)&lt;/span>.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>39403:M &lt;span style="color:#ae81ff">08&lt;/span> Mar &lt;span style="color:#ae81ff">2022&lt;/span> 11:13:17.501 * monotonic clock: POSIX clock_gettime
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> _._
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> _.-&lt;span style="color:#e6db74">``&lt;/span>__ &lt;span style="color:#e6db74">&amp;#39;&amp;#39;&lt;/span>-._
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> _.-&lt;span style="color:#e6db74">``&lt;/span> &lt;span style="color:#e6db74">`&lt;/span>. &lt;span style="color:#e6db74">`&lt;/span>_. &lt;span style="color:#e6db74">&amp;#39;&amp;#39;&lt;/span>-._ Redis 6.2.6 &lt;span style="color:#f92672">(&lt;/span>00000000/0&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">64&lt;/span> bit
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> .-&lt;span style="color:#e6db74">``&lt;/span> .-&lt;span style="color:#e6db74">```&lt;/span>. &lt;span style="color:#e6db74">```&lt;/span>&lt;span style="color:#ae81ff">\/&lt;/span> _.,_ &lt;span style="color:#e6db74">&amp;#39;&amp;#39;&lt;/span>-._
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">(&lt;/span> &lt;span style="color:#e6db74">&amp;#39; , .-` | `, ) Running in standalone mode
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> |`-._`-...-` __...-.``-._|&amp;#39;&lt;/span>&lt;span style="color:#e6db74">`&lt;/span> _.-&lt;span style="color:#e6db74">&amp;#39;| Port: 6379
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> | `-._ `._ / _.-&amp;#39;&lt;/span> | PID: &lt;span style="color:#ae81ff">39403&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">`&lt;/span>-._ &lt;span style="color:#e6db74">`&lt;/span>-._ &lt;span style="color:#e6db74">`&lt;/span>-./ _.-&lt;span style="color:#e6db74">&amp;#39; _.-&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> |&lt;span style="color:#e6db74">`&lt;/span>-._&lt;span style="color:#e6db74">`&lt;/span>-._ &lt;span style="color:#e6db74">`&lt;/span>-.__.-&lt;span style="color:#e6db74">&amp;#39; _.-&amp;#39;&lt;/span>_.-&lt;span style="color:#e6db74">&amp;#39;|
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> | `-._`-._ _.-&amp;#39;&lt;/span>_.-&lt;span style="color:#e6db74">&amp;#39; | https://redis.io
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> `-._ `-._`-.__.-&amp;#39;&lt;/span>_.-&lt;span style="color:#e6db74">&amp;#39; _.-&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> |&lt;span style="color:#e6db74">`&lt;/span>-._&lt;span style="color:#e6db74">`&lt;/span>-._ &lt;span style="color:#e6db74">`&lt;/span>-.__.-&lt;span style="color:#e6db74">&amp;#39; _.-&amp;#39;&lt;/span>_.-&lt;span style="color:#e6db74">&amp;#39;|
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> | `-._`-._ _.-&amp;#39;&lt;/span>_.-&lt;span style="color:#e6db74">&amp;#39; |
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> `-._ `-._`-.__.-&amp;#39;&lt;/span>_.-&lt;span style="color:#e6db74">&amp;#39; _.-&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">`&lt;/span>-._ &lt;span style="color:#e6db74">`&lt;/span>-.__.-&lt;span style="color:#e6db74">&amp;#39; _.-&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">`&lt;/span>-._ _.-&lt;span style="color:#e6db74">&amp;#39;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> `-.__.-&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>39403:M &lt;span style="color:#ae81ff">08&lt;/span> Mar &lt;span style="color:#ae81ff">2022&lt;/span> 11:13:17.503 &lt;span style="color:#75715e"># Server initialized&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>39403:M &lt;span style="color:#ae81ff">08&lt;/span> Mar &lt;span style="color:#ae81ff">2022&lt;/span> 11:13:17.503 * Ready to accept connections&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>如果出現上面符號，就代表 Server 已經啟動，接下來再開另一個 Terminal 來執行 Cli。&lt;/p>
+&lt;br>
+&lt;h4>Cli&lt;span class="hx-absolute -hx-mt-20" id="cli">&lt;/span>
+&lt;a href="#cli" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>開啟後，在下一個 &lt;code>ping&lt;/code> 指令，該指令用於檢測 redis 服務是否啟動，正常會顯示 &lt;code>pong&lt;/code>。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ redis-cli
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; ping
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>PONG&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>接下來，我們都會在 Cli 視窗做測試，會詳細介紹每一個資料型態以及其適合情境。&lt;/p>
+&lt;p>後續會使用 Cli 畫面來做示範，但也有不錯的圖形化工具可以用於 redis 上 &lt;a href="https://github.com/qishibo/AnotherRedisDesktopManager" target="_blank" rel="noopener">AnotherRedisDesktopManager&lt;/a> 大家可以去試用看看~&lt;/p>
+&lt;br>
+&lt;h3>資料型態&lt;span class="hx-absolute -hx-mt-20" id="資料型態">&lt;/span>
+&lt;a href="#%e8%b3%87%e6%96%99%e5%9e%8b%e6%85%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>字串 (Strings)&lt;span class="hx-absolute -hx-mt-20" id="字串-strings">&lt;/span>
+&lt;a href="#%e5%ad%97%e4%b8%b2-strings" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;h5>set、get&lt;span class="hx-absolute -hx-mt-20" id="setget">&lt;/span>
+&lt;a href="#setget" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>這是最基本的型態，可以存放 binary, string, integer, float資料，一個 Strings 的欄位，最高可儲存 512 Megabytes，這裡會用到的指令是 &lt;code>set&lt;/code>、&lt;code>get&lt;/code> ，分別用來儲存以及讀取字串，我們來看一下範例吧。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; set string hello-world
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>OK
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; get string
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;hello-world&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>我們先用 &lt;code>set&lt;/code> 將 hello-world 字串存到 string 這個 key，再用 &lt;code>get&lt;/code> 顯示 string 裡面的 value。&lt;/p>
+&lt;br>
+&lt;h5>incr、decr&lt;span class="hx-absolute -hx-mt-20" id="incrdecr">&lt;/span>
+&lt;a href="#incrdecr" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>Redis 還有一些方便的指令，如果存入的 value 是 integer 型態，就可以使用 &lt;code>incr&lt;/code> 、&lt;code>decr&lt;/code> ，來累加與累減。分別代表累加，像是我們的 ++ ，以及累減，像是我們的 - -。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; set num &lt;span style="color:#ae81ff">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>OK
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; incr num
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">11&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; incr num
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">12&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; decr num
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">11&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; decr num
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>append&lt;span class="hx-absolute -hx-mt-20" id="append">&lt;/span>
+&lt;a href="#append" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>如果 key 已經存在並且它是字串，可以使用 &lt;code>append&lt;/code> 指令，會從字串最後面附加進去，如果不存在，則會直接建立一個，並把值存進去。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; exists str
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; append str &lt;span style="color:#e6db74">&amp;#34;Hello&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">5&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; append str &lt;span style="color:#e6db74">&amp;#34; World~&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">12&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; get str
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;Hello World~&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>getrange&lt;span class="hx-absolute -hx-mt-20" id="getrange">&lt;/span>
+&lt;a href="#getrange" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>可以輸入字串的開始位元與結束位元，會依照你輸入的去顯示字串。我把它理解成是陣列的 key 與 value 的關係。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; set a &lt;span style="color:#e6db74">&amp;#34;This is a string&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>OK
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; getrange a &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;This&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; getrange a -3 -1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;ing&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; getrange a &lt;span style="color:#ae81ff">0&lt;/span> -1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;This is a string&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; getrange a &lt;span style="color:#ae81ff">10&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;string&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>mset&lt;span class="hx-absolute -hx-mt-20" id="mset">&lt;/span>
+&lt;a href="#mset" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>我們也可以設定的時候，把要設定的值都一起設定，只需要使用 &lt;code>mset&lt;/code> 就可以達成。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; mset &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>OK
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; get &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; get &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;2&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; get &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>nil&lt;span style="color:#f92672">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>如果用 &lt;code>get&lt;/code> 顯示資料，若沒有對應的 key ，會顯示 (nil)。&lt;/p>
+&lt;br>
+&lt;h5>字串型態適合場景&lt;span class="hx-absolute -hx-mt-20" id="字串型態適合場景">&lt;/span>
+&lt;a href="#%e5%ad%97%e4%b8%b2%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>字串(strings) 型態適合用於圖片快取 （使用binary）、累計次數、觀看累計次數&lt;/strong>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/string.png"
+alt="String 適用場景圖" width="550">&lt;figcaption>
+&lt;p>String 適用場景圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>哈希 (Hashes)&lt;span class="hx-absolute -hx-mt-20" id="哈希-hashes">&lt;/span>
+&lt;a href="#%e5%93%88%e5%b8%8c-hashes" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>可以把他想像成二維陣列，應該會比較好理解，我網路上找了一張圖，應該會比較清楚！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/hash.png"
+alt="Hashes 示意圖 (Redis 基本資料形態)" width="500">&lt;figcaption>
+&lt;p>Hashes 示意圖 (&lt;a href="https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/" target="_blank" rel="noopener">Redis 基本資料形態&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>Hashes 是用來存放一組相同性質的資料，這些資料 Hashes 或是物件的某一屬性，與 String 較為不同的是他可以取回單一個欄位資料，但 String 必須取回所有資料，單一個 Key 可以存放2^32 - 1的資料欄位，&lt;/p>
+&lt;p>他的資料型態有像是，一個 user001 裡面是一個 Hashes，Hashes 裡面又會存放 name、phone、gender ，我們來實際操作看看。&lt;/p>
+&lt;br>
+&lt;h5>hset、hget&lt;span class="hx-absolute -hx-mt-20" id="hsethget">&lt;/span>
+&lt;a href="#hsethget" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hset student name ian phone &lt;span style="color:#ae81ff">0980123456&lt;/span> gender M
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hget student name
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;ian&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hget student phone
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;0980123456&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hget student gender
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;M&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Hashes 的話要使用 &lt;code>hset&lt;/code>、&lt;code>hget&lt;/code> 來對 Hashes 做儲存以及讀取。&lt;/p>
+&lt;br>
+&lt;h5>hgetall&lt;span class="hx-absolute -hx-mt-20" id="hgetall">&lt;/span>
+&lt;a href="#hgetall" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>想要一次顯示 Hashes 裡面的 key 跟 value ，可以使用 &lt;code>hgetall&lt;/code> 來顯示全部資料。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hset student name ian phone &lt;span style="color:#ae81ff">0980123456&lt;/span> gender M
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hgetall student
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;name&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;ian&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;phone&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>4&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;0980123456&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>5&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;gender&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>6&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;M&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>hkeys&lt;span class="hx-absolute -hx-mt-20" id="hkeys">&lt;/span>
+&lt;a href="#hkeys" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>想要單獨顯示 Hashes 裡面的 key ，可以使用 &lt;code>hkeys&lt;/code> 來顯示。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hset student name ian phone &lt;span style="color:#ae81ff">0980123456&lt;/span> gender M
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hkeys student
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;name&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;phone&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;gender&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>hvals&lt;span class="hx-absolute -hx-mt-20" id="hvals">&lt;/span>
+&lt;a href="#hvals" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>想要單獨顯示 Hashes 裡面的 value ，可以使用 &lt;code>hvals&lt;/code> 來顯示。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hset student name ian phone &lt;span style="color:#ae81ff">0980123456&lt;/span> gender M
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hvals student
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;ian&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;0980123456&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;M&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>hlen&lt;span class="hx-absolute -hx-mt-20" id="hlen">&lt;/span>
+&lt;a href="#hlen" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>想要顯示 Hashes 裡面的 key 長度，可以使用 &lt;code>hlen &lt;/code> 來顯示。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hgetall student
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;name&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;ian&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;gender&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>4&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;M&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hlen student
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>hincrby&lt;span class="hx-absolute -hx-mt-20" id="hincrby">&lt;/span>
+&lt;a href="#hincrby" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>想要增加 Hashes 裡面的 value 整數，可以使用 &lt;code>hincrby &lt;/code> 來新增。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hset test a &lt;span style="color:#ae81ff">10&lt;/span> b &lt;span style="color:#ae81ff">20&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hincrby test a &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">12&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>hdel&lt;span class="hx-absolute -hx-mt-20" id="hdel">&lt;/span>
+&lt;a href="#hdel" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>想要刪除 Hashes 裡面的 key，可以使用 &lt;code>hdel &lt;/code> 來刪除。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hset student name ian phone &lt;span style="color:#ae81ff">0980123456&lt;/span> gender M
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hdel student phone
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; hgetall student
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;name&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;ian&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;gender&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>4&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;M&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>哈希型態適合場景&lt;span class="hx-absolute -hx-mt-20" id="哈希型態適合場景">&lt;/span>
+&lt;a href="#%e5%93%88%e5%b8%8c%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>哈希(Hashes) 型態適合用於每次只需要取用一部分的資料&lt;/strong>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/hash-template.png"
+alt="Hashes 適用場景圖" width="550">&lt;figcaption>
+&lt;p>Hashes 適用場景圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>列表 (Lists)&lt;span class="hx-absolute -hx-mt-20" id="列表-lists">&lt;/span>
+&lt;a href="#%e5%88%97%e8%a1%a8-lists" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;h5>lpush、lrange&lt;span class="hx-absolute -hx-mt-20" id="lpushlrange">&lt;/span>
+&lt;a href="#lpushlrange" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>Lists 資料型態可以想像成程式語言中的Array物件。Lists 單一個Key可以存放2^32 - 1，這邊會使用到 &lt;code>lpush&lt;/code>、&lt;code>lrange&lt;/code> 來對 &lt;code>Lists&lt;/code> 做儲存以及讀取。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; lpush list2 a a b b c d e
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">7&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; lrange list2 &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;e&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;d&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;c&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>4&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;b&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>5&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;b&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>6&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;a&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>7&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;a&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>rpush&lt;span class="hx-absolute -hx-mt-20" id="rpush">&lt;/span>
+&lt;a href="#rpush" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>除了從隊伍頭放入資料，也可以用 &lt;code>rpush&lt;/code> 從隊伍尾放入資料，如果使用 &lt;code>lrange&lt;/code> 來顯示方向也會相反歐。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; rpush list3 a a b b c d e
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">7&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; lrange list3 &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;a&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;a&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;b&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>4&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;b&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>5&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;c&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>6&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;d&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>7&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;e&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>lpop、rpop&lt;span class="hx-absolute -hx-mt-20" id="lpoprpop">&lt;/span>
+&lt;a href="#lpoprpop" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>也可以使用 &lt;code>lpop&lt;/code>、&lt;code>rpop&lt;/code> 分別從隊伍頭或尾彈出一筆資料。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; rpush list3 a a b b c d e
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">7&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; lpop list3
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;a&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; rpop list3
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">&amp;#34;e&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>lset&lt;span class="hx-absolute -hx-mt-20" id="lset">&lt;/span>
+&lt;a href="#lset" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>可以使用 &lt;code>lset&lt;/code> 來設定指定位置的資料。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; lrange list3 &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;a&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;b&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;c&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; lset list3 &lt;span style="color:#ae81ff">1&lt;/span> w
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>OK
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; lrange list3 &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;a&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;w&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;c&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>列表型態適合場景&lt;span class="hx-absolute -hx-mt-20" id="列表型態適合場景">&lt;/span>
+&lt;a href="#%e5%88%97%e8%a1%a8%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>列表(Lists) 型態適合用於文章列表或者資料分頁展示的應用&lt;/strong>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/list.png"
+alt="Lists 適用場景圖" width="600">&lt;figcaption>
+&lt;p>Lists 適用場景圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>集合 (Sets)&lt;span class="hx-absolute -hx-mt-20" id="集合-sets">&lt;/span>
+&lt;a href="#%e9%9b%86%e5%90%88-sets" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>其實跟 Lists 一樣，就是資料的集合，只是 &lt;code>Sets&lt;/code> 多了一層限制，就是集合中的值不能重複，這邊會使用到 &lt;code>sadd&lt;/code>、&lt;code>smembers&lt;/code> 來對 &lt;code>Sets&lt;/code> 做儲存以及讀取。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; sadd set1 a b c d a a b b
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">4&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; smembers set1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;c&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;a&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;b&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>4&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;d&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到他實際寫入的只有 4 筆資料。&lt;/p>
+&lt;br>
+&lt;h5>spop&lt;span class="hx-absolute -hx-mt-20" id="spop">&lt;/span>
+&lt;a href="#spop" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>從 &lt;code>set&lt;/code> 集合中隨機跳出一定數量的資料。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; sadd set1 a a b b c d
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">4&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; spop set1 &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;c&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;d&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; spop set1 &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;a&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;b&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>sismember&lt;span class="hx-absolute -hx-mt-20" id="sismember">&lt;/span>
+&lt;a href="#sismember" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>可以使用 &lt;code>sismember&lt;/code> 來檢查輸入值是否為 &lt;code>Set&lt;/code> 集合的成員。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; sadd set a b b c d
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">4&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; sismember set d
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; sismember set f
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">0&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>srem&lt;span class="hx-absolute -hx-mt-20" id="srem">&lt;/span>
+&lt;a href="#srem" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>可以使用 &lt;code>srem&lt;/code> 來刪除 &lt;code>Set&lt;/code> 集合中的成員。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; sadd set a b b c d
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">4&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; srem set a d
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; smembers set
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;b&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;c&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>sdiff&lt;span class="hx-absolute -hx-mt-20" id="sdiff">&lt;/span>
+&lt;a href="#sdiff" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>會顯示第一個集合與其他集合不同的值。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; sadd set1 a b c d
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">4&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; sadd set2 a b
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; sadd set3 b
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; sdiff set1 set2 set3
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;c&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;d&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>集合型態適合場景&lt;span class="hx-absolute -hx-mt-20" id="集合型態適合場景">&lt;/span>
+&lt;a href="#%e9%9b%86%e5%90%88%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>集合(Sets) 型態適合用於文章中的Tag標籤、或是要排除相同資料&lt;/strong>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/set.png"
+alt="Sets 適用場景圖" width="700">&lt;figcaption>
+&lt;p>Sets 適用場景圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>有序集合 (Zset)&lt;span class="hx-absolute -hx-mt-20" id="有序集合-zset">&lt;/span>
+&lt;a href="#%e6%9c%89%e5%ba%8f%e9%9b%86%e5%90%88-zset" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>故名思義，有序集合就是有排序的集合，Sorted Sets 結構會 &lt;strong>多一個數字值去為排序的權重&lt;/strong> 來決定先後順序，這邊會使用到 &lt;code>zadd&lt;/code> 、 &lt;code> zrangebyscore&lt;/code> 來對 &lt;code>Zset&lt;/code> 做儲存以及讀取。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd sortset &lt;span style="color:#ae81ff">10&lt;/span> &lt;span style="color:#e6db74">&amp;#39;10&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd sortset &lt;span style="color:#ae81ff">6&lt;/span> &lt;span style="color:#e6db74">&amp;#39;6&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd sortset &lt;span style="color:#ae81ff">2&lt;/span> &lt;span style="color:#e6db74">&amp;#39;2&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd sortset &lt;span style="color:#ae81ff">99&lt;/span> &lt;span style="color:#e6db74">&amp;#39;99&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zrangebyscore sortset &lt;span style="color:#ae81ff">0&lt;/span> &lt;span style="color:#ae81ff">100&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;2&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;6&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;10&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>4&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;99&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>就可以看出在顯示的時候並不是依照寫入順序，而是依照我們所設定的權重去排序的。&lt;/p>
+&lt;br>
+&lt;h5>withscores&lt;span class="hx-absolute -hx-mt-20" id="withscores">&lt;/span>
+&lt;a href="#withscores" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>如果想要顯示 value 與 score ，可以使用 withscores 來顯示。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd money &lt;span style="color:#ae81ff">2000&lt;/span> tom
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd money &lt;span style="color:#ae81ff">3500&lt;/span> peter
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd money &lt;span style="color:#ae81ff">5000&lt;/span> jack
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zrange money &lt;span style="color:#ae81ff">0&lt;/span> -1 withscores
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;tom&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;2000&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;peter&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>4&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;3500&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>5&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;jack&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>6&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;5000&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>zremrangebyscore&lt;span class="hx-absolute -hx-mt-20" id="zremrangebyscore">&lt;/span>
+&lt;a href="#zremrangebyscore" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>移除有序集合中，指定分數內區間的所有成員。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd money &lt;span style="color:#ae81ff">2000&lt;/span> tom
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd money &lt;span style="color:#ae81ff">3500&lt;/span> peter
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd money &lt;span style="color:#ae81ff">5000&lt;/span> jack
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zremrangebyscore money &lt;span style="color:#ae81ff">1500&lt;/span> &lt;span style="color:#ae81ff">3500&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zrange money &lt;span style="color:#ae81ff">0&lt;/span> -1 withscores
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;jack&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;5000&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>zcard&lt;span class="hx-absolute -hx-mt-20" id="zcard">&lt;/span>
+&lt;a href="#zcard" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>可以使用 zcard 來計算集合中元素的數量。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd sort &lt;span style="color:#ae81ff">10&lt;/span> &lt;span style="color:#ae81ff">10&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd sort &lt;span style="color:#ae81ff">3&lt;/span> &lt;span style="color:#ae81ff">3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd sort &lt;span style="color:#ae81ff">66&lt;/span> &lt;span style="color:#ae81ff">66&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zadd sort &lt;span style="color:#ae81ff">33&lt;/span> &lt;span style="color:#ae81ff">33&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; zcard sort
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">4&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h5>有序集合型態適合場景&lt;span class="hx-absolute -hx-mt-20" id="有序集合型態適合場景">&lt;/span>
+&lt;a href="#%e6%9c%89%e5%ba%8f%e9%9b%86%e5%90%88%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>有序集合(Zset) 型態適合用於需要有序排列的資料&lt;/strong>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/zset.png"
+alt="Zset 適用場景圖" width="550">&lt;figcaption>
+&lt;p>Zset 適用場景圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>發布訂閱 (PUB/SUB)&lt;span class="hx-absolute -hx-mt-20" id="發布訂閱-pubsub">&lt;/span>
+&lt;a href="#%e7%99%bc%e5%b8%83%e8%a8%82%e9%96%b1-pubsub" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Redis 發布訂閱 (pub/sub) 是一種消息通信模式，發送者 (pub) 發送消息，訂閱者 (sub) 接收消息。&lt;/p>
+&lt;p>Redis 客戶端可以使用 &lt;code>subscribe&lt;/code> 來訂閱任意數量的頻道。&lt;/p>
+&lt;p>下面這張圖是頻道1，以及訂閱這個頻道的三個用戶端分別是客戶端2、客戶端7、客戶端5&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/channel.png"
+alt="Subscribe 示意圖" width="550">&lt;figcaption>
+&lt;p>Subscribe 示意圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>當我們有新消息通過 &lt;code>publish&lt;/code> 指令發送給頻道1 ，這個消息就會被發送給有訂閱頻道1的三個客戶端。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/message.png"
+alt="Publish 示意圖" width="550">&lt;figcaption>
+&lt;p>Publish 示意圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們來模擬一下吧 ! 先開兩個 Terminal 來執行 &lt;code>redis-cli&lt;/code> 一個當作發送(pub)，另一個當作接收(sub)。&lt;/p>
+&lt;p>我們先用第一個 Terminal 訂閱一個頻道 channel_1&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; subscribe channel_1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Reading messages... &lt;span style="color:#f92672">(&lt;/span>press Ctrl-C to quit&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;subscribe&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;channel_1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>開啟另一個 Terminal 發送訊息到 channel_1&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; publish channel_1 &lt;span style="color:#e6db74">&amp;#34;Hello World~&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; publish channel_1 &lt;span style="color:#e6db74">&amp;#34;ian~&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; publish channel_1 &lt;span style="color:#e6db74">&amp;#34;test~&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+這時候再切換回來第一個 Terminal ，就可以看到他接收到我們傳送的訊息
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>127.0.0.1:6379&amp;gt; subscribe channel_1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Reading messages... &lt;span style="color:#f92672">(&lt;/span>press Ctrl-C to quit&lt;span style="color:#f92672">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;subscribe&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;channel_1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#f92672">(&lt;/span>integer&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;message&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;channel_1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;Hello World~&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;message&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;channel_1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;ian~&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>1&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;message&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>2&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;channel_1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>3&lt;span style="color:#f92672">)&lt;/span> &lt;span style="color:#e6db74">&amp;#34;test~&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Redis 官網：&lt;a href="https://redis.io" target="_blank" rel="noopener">https://redis.io&lt;/a>&lt;/p>
+&lt;p>Redis：&lt;a href="https://aws.amazon.com/tw/redis/" target="_blank" rel="noopener">https://aws.amazon.com/tw/redis/&lt;/a>&lt;/p>
+&lt;p>Redis 基本資料形態：&lt;a href="https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/" target="_blank" rel="noopener">https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/&lt;/a>&lt;/p>
+&lt;p>Redis 發布訂閱：&lt;a href="https://www.runoob.com/redis/redis-pub-sub.html" target="_blank" rel="noopener">https://www.runoob.com/redis/redis-pub-sub.html&lt;/a>&lt;/p></description></item></channel></rss>
