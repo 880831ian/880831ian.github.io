@@ -1,7 +1,7 @@
 ---
 title: "如何從頭打造專屬的 GitLab CI/CD"
 type: docs
-weight: 9996
+weight: 9995
 date: 2022-05-26
 authors:
   - name: Ian_zhuang

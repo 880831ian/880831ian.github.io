@@ -1,7 +1,7 @@
 ---
 title: "部署 Laravel 於 Heroku 搭配 GitLab CI/CD"
 type: docs
-weight: 9995
+weight: 9994
 date: 2022-05-26
 authors:
   - name: Ian_zhuang

@@ -1,7 +1,7 @@
 ---
 title: "Jenkins 及 Ansible IT 自動化 CI/CD 介紹"
 type: docs
-weight: 9999
+weight: 9998
 description: Jenkins 及 Ansible IT 自動化 CI/CD 介紹"
 images:
   - git-or-cicd/jenkins-ansible-it-cicd/og.webp

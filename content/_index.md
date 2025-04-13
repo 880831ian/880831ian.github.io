@@ -70,10 +70,12 @@ layout: hextra-home
 
 {{< card link="blog/agile/jira-to-google-chat" title="串接 Jira 工單自動化通知到 Google Chat" image="/agile/jira-to-google-chat/cover.webp">}}
 
+{{< card link="blog/rd/redis-sentinel-docker-compose-haproxy-efk" title="用 EFK 收集容器日誌 (HAProxy、Redis Sentinel、Docker-compose)" image="/rd/redis-sentinel-docker-compose-haproxy-efk/cover.webp">}}
 {{< card link="blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400" title="Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決" image="/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/cover.webp">}}
 {{< card link="blog/rd/kibana-create-index-forbidden" title="Kibana 新增 index 索引時一直轉圈圈以及顯示 HTTP 403 Forbidden" image="/rd/kibana-create-index-forbidden/cover.webp">}}
 
-{{< card link="blog/redis/redis-sentinel-docker-compose" title="Redis 哨兵模式 (Sentinel) 搭配 Docker 實作" image="/redis/redis-sentinel-docker-compose/cover.webp">}}
+{{< card link="blog/redis/redis-sentinel-docker-compose-haproxy" title="用 HAProxy 對 Redis 做負載平衡 (Redis Sentinel、Docker-compose)" image="/redis/redis-sentinel-docker-compose-haproxy/cover.webp">}}
+{{< card link="blog/redis/redis-sentinel-docker-compose" title="Redis 哨兵模式 (Sentinel) 搭配 Docker-compose 實作" image="/redis/redis-sentinel-docker-compose/cover.webp">}}
 {{< card link="blog/redis/redis-introduce" title="Redis 介紹" image="/redis/redis-introduce/cover.webp">}}
 
 {{< card link="blog/git-or-cicd/gitlab-package-registry-to-gcs" title="如何啟用 GitLab 的 Package Registry 以及將儲存位置從伺服器改到 GCS 上" image="/git-or-cicd/gitlab-package-registry-to-gcs/cover.webp">}}

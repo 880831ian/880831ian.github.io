@@ -1,7 +1,7 @@
 ---
 title: "如何合併多個 commit，且推到遠端呢？"
 type: docs
-weight: 9994
+weight: 9993
 date: 2022-06-21
 authors:
   - name: Ian_zhuang

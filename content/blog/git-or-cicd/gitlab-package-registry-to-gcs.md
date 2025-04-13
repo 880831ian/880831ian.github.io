@@ -1,7 +1,7 @@
 ---
 title: "如何啟用 GitLab 的 Package Registry 以及將儲存位置從伺服器改到 GCS 上"
 type: docs
-weight: 9994
+weight: 9992
 date: 2022-12-29
 authors:
   - name: Ian_zhuang

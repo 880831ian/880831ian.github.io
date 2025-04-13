@@ -1,7 +1,7 @@
 ---
 title: "Ansible 介紹與實作 (Inventory、Playbooks、Module、Template、Handlers)"
 type: docs
-weight: 9997
+weight: 9996
 date: 2022-05-16
 authors:
   - name: Ian_zhuang

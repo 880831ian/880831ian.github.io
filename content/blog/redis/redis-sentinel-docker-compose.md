@@ -1,5 +1,5 @@
 ---
-title: "Redis 哨兵模式 (Sentinel) 搭配 Docker 實作"
+title: "Redis 哨兵模式 (Sentinel) 搭配 Docker-compose 實作"
 type: docs
 weight: 9998
 date: 2022-04-19
