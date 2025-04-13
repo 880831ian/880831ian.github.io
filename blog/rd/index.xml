@@ -1,4 +1,521 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – RD 使用的相關工具</title><link>https://pin-yi.me/blog/rd/</link><description>Recent content in RD 使用的相關工具 on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/rd/index.xml" rel="self" type="application/rss+xml"/><item><title>Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決</title><link>https://pin-yi.me/blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/</link><pubDate>Thu, 08 Dec 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – RD 使用的相關工具</title><link>https://pin-yi.me/blog/rd/</link><description>Recent content in RD 使用的相關工具 on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/rd/index.xml" rel="self" type="application/rss+xml"/><item><title>用 EFK 收集容器日誌 (HAProxy、Redis Sentinel、Docker-compose)</title><link>https://pin-yi.me/blog/rd/redis-sentinel-docker-compose-haproxy-efk/</link><pubDate>Fri, 22 Apr 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/rd/redis-sentinel-docker-compose-haproxy-efk/</guid><description>
+&lt;p>前情提要：本篇是 &lt;a href="../../redis/redis-sentinel-docker-compose-haproxy/" >用 HAProxy 對 Redis 做負載平衡 (Redis Sentinel、Docker-compose)&lt;/a>
+以及 &lt;a href="../../redis/redis-sentinel-docker-compose/" >Redis 哨兵模式 (Sentinel) 搭配 Docker-compose 實作&lt;/a> 的後續文章，主要會優化原本的程式碼，並使用 EFK 來收集 LOG！&lt;/p>
+&lt;h2>什麼是 EFK ?&lt;span class="hx-absolute -hx-mt-20" id="什麼是-efk-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-efk-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>隨著現在各種程式系統複雜度越來越高，特別是現在都往雲上開始作部署，當我們想要查看 log 的時候，不可能一個一個去登入各節點去查看 log，不僅效率低，也會有安全性的問題，所以不可能讓工程師直接去訪問每一個節點。&lt;/p>
+&lt;p>而且現在大規模的系統基本上都採用叢集的部署方式，意味著對每個 service，會啟動多個完全一樣的 POD 對外提供服務，每個 container 都會產生自己的 log，從產生 log 來看，你根本不知道是由哪個 POD 產生的，這樣對查看分佈式的日誌更加困難。&lt;/p>
+&lt;p>所以在雲時代，需要一個收集並分析 log 的解決方案。首先需要將分佈在各個角落的 log 統一收集到一個集中的地方，方便查看。收集之後，還可以進行各種統計以及分析，甚至用流行的大數據或機器學習的方法來進行分析。&lt;/p>
+&lt;br>
+&lt;p>所以誕生了 ELK 或是 EFK 的解決方式：&lt;/p>
+&lt;p>ELK 是由 Elasticsearch、Logstash、Kibana 所組成， EFK 是由 Elasticsearch、(Filebeats or Fluentd)、Kibana 所組成，兩者的差異在中間使用的開源程式，我會分別介紹一下每一個程式主要的用途：&lt;/p>
+&lt;ul>
+&lt;li>Elasticsearch：它是一個集中儲存 log 的地方，更重要的是它是一個全文檢索以及分析的引擎，它能讓用戶以近乎實時的方式來查看、分析海量的數據。&lt;/li>
+&lt;li>Logstash、Filebeats、Fluentd：它們主要是收集分佈在各處的 log 並進行處理(Filebeats 僅收集)。&lt;/li>
+&lt;li>Kibana：它是為 Elasticsearch 開發的前端 GUI，可以讓用戶很方便的以圖形化進行查詢 Elasticsearch 中儲存的數據，同時也提供各式各樣的模組可以使用。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>Logstash、Filebeats、Fluentd 關係：&lt;/p>
+&lt;p>Filebeats 是一個輕量級收集本地 log 數據的方案，它僅能收集本地的 log，不能對 log 做處理，所以 Filebeats 通常會將 log 送到 Logstash 做進一步的處理。&lt;/p>
+&lt;p>那為什麼不直接使用 Logstash 來收集收集並處理 log 呢？&lt;/p>
+&lt;p>因為 Logstash 會消耗許多的記憶體，所以才會先透過 Filebeats 收集資料再傳給 Logstash 做處理。&lt;/p>
+&lt;p>另外 Filebeats、Logstash、Elasticsearch 和 Kibana 都是屬於同一家公司的開源項目：&lt;a href="https://www.elastic.co/guide/index.html" target="_blank" rel="noopener">https://www.elastic.co/guide/&lt;/a>&lt;/p>
+&lt;p>而 Fluentd 則是另一家公司的開源項目：&lt;a href="https://docs.fluentd.org/" target="_blank" rel="noopener">https://docs.fluentd.org/&lt;/a>&lt;/p>
+&lt;p>那我們在這邊就使用 Fluentd 來做我們的 EFK 示範：&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/efk.jpeg"
+alt="EFK 示意圖 EFK Stack: Elasticsearch, Fluentd and Kibana on Docker" width="700">&lt;figcaption>
+&lt;p>EFK 示意圖 &lt;a href="https://aesher9o1.medium.com/efk-stack-elasticsearch-fluentd-and-kibana-on-docker-be60597fa99" target="_blank" rel="noopener">EFK Stack: Elasticsearch, Fluentd and Kibana on Docker&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>上面這張圖代表我們會有很多 Docker 容器的 log (也就是之前的 redis 以及其他 nginx 等的容器)，會先透過 Fluentd 收集並處理各容器的 log 在傳送到 Elasticsearch 集中儲存，再使用 Kibana 圖形化介面來查詢或檢索儲在 Elasticsearch 的 log。&lt;/p>
+&lt;br>
+&lt;h2>實作&lt;span class="hx-absolute -hx-mt-20" id="實作">&lt;/span>
+&lt;a href="#%e5%af%a6%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那接下來會使用 Docker-compose 實作 EFK 的 LOG 分析，&lt;a href="https://github.com/880831ian/docker-compose-redis-sentinel-haproxy-efk" target="_blank" rel="noopener">範例程式連結 點我&lt;/a> 😘&lt;/p>
+&lt;p>版本資訊&lt;/p>
+&lt;ul>
+&lt;li>macOS：11.6&lt;/li>
+&lt;li>Docker：Docker version 20.10.12, build e91ed57&lt;/li>
+&lt;li>Nginx：1.20&lt;/li>
+&lt;li>PHP：7.4-fpm&lt;/li>
+&lt;li>Redis：6.2.6&lt;/li>
+&lt;li>HAProxy：HAProxy version 2.5.5-384c5c5 2022/03/14 - &lt;a href="https://haproxy.org/" target="_blank" rel="noopener">https://haproxy.org/&lt;/a>&lt;/li>
+&lt;li>Elasticsearch：8.1.3&lt;/li>
+&lt;li>Fluentd：v1.14&lt;/li>
+&lt;li>Kibana：8.1.3&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>檔案結構&lt;span class="hx-absolute -hx-mt-20" id="檔案結構">&lt;/span>
+&lt;a href="#%e6%aa%94%e6%a1%88%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>.
+├── docker-volume
+│   ├── fluentd
+│   │   └── fluent.conf
+│   ├── haproxy
+│   │   └── haproxy.cfg
+│   ├── nginx
+│   │   └── nginx.conf
+│   ├── php
+│   │   ├── info.php
+│   │   ├── r.php
+│   │   └── rw.php
+│   └── redis
+│   ├── redis.conf
+│   ├── redis1
+│   ├── redis2
+│   └── redis3
+├── docker.sh
+├── efk
+│   └── Docker-compose.yaml
+├── fluentd
+│   └── Dockerfile
+├── haproxy_sentinel
+│   ├── Docker-compose.yaml
+│   ├── sentinel1
+│   │   └── sentinel.conf
+│   ├── sentinel2
+│   │   └── sentinel.conf
+│   └── sentinel3
+│   └── sentinel.conf
+├── nginx_php_redis
+│   └── Docker-compose.yaml
+└── php
+└── Dockerfile&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>這是主要的結構，簡單說明一下：(檔案越來越多了XD，這次把每一個都有分類，所以結構會與之前不太相同)&lt;/p>
+&lt;ul>
+&lt;li>docker-volume/fluentd/fluent.conf：fluentd 的設定檔。&lt;/li>
+&lt;li>docker-volume/haproxy/haproxy.cfg：haproxy 的設定檔。&lt;/li>
+&lt;li>docker-volume/nginx/nginx.conf：nginx 的設定檔。&lt;/li>
+&lt;li>docker-volume/php/(r.php、rw.php)：測試用檔案。&lt;/li>
+&lt;li>docker-volume/redis/redis.conf：redis 的設定檔。&lt;/li>
+&lt;li>docker-volume/redis/(redis1、redis2、redis3)：放 redis 的資料。&lt;/li>
+&lt;li>docker.sh：是我另外多寫的腳本，可以查看相對應的角色。&lt;/li>
+&lt;li>efk/Docker-compose.yaml：會放置要產生的 elasticsearch、kibana、fluentd 的容器設定檔。&lt;/li>
+&lt;li>fluentd/Dockerfile：因為 fluentd 需要另外安裝 fluent-plugin-elasticsearch 才能使用，所以用 Dockerfile 另外寫 fluent 的映像檔。&lt;/li>
+&lt;li>haproxy_sentinel/Docker-compose.yaml：會放置要產生的 haproxy、sentinel1、sentinel2、sentinel3 的容器設定檔。&lt;/li>
+&lt;li>haproxy_sentinel/(sentinel1、sentinel2、sentinel3)/.conf：哨兵的設定檔。&lt;/li>
+&lt;li>nginx_php_redis/Docker-compose.yaml：會放置要產生的 nginx、php、redis1、redis2、redis3 的容器設定檔。&lt;/li>
+&lt;li>php/Dokcerfile：因為在 php 要使用 redis 需要多安裝一些設定，所以用 Dockerfile 另外寫 PHP 的映像檔。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>那我們就依照安裝的設定開始說明：(這邊只說明與上一篇不同地方，重複的就請大家回去看之前的文章)
+&lt;br>&lt;/p>
+&lt;h3>docker-volume/fluentd/fluent.conf&lt;span class="hx-absolute -hx-mt-20" id="docker-volumefluentdfluentconf">&lt;/span>
+&lt;a href="#docker-volumefluentdfluentconf" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>&amp;lt;source&amp;gt;
+@type forward
+bind 0.0.0.0
+port 24224
+&amp;lt;/source&amp;gt;
+&amp;lt;match *.**&amp;gt;
+@type copy
+&amp;lt;store&amp;gt;
+@type elasticsearch
+host elasticsearch
+port 9200
+logstash_format true
+logstash_prefix fluentd
+logstash_dateformat %Y%m%d
+include_tag_key true
+type_name access_log
+tag_key @log_name
+flush_interval 1s
+&amp;lt;/store&amp;gt;
+&amp;lt;store&amp;gt;
+@type stdout
+&amp;lt;/store&amp;gt;
+&amp;lt;/match&amp;gt;&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這是 fluent 的設定檔，可以在這邊做自訂的設定，例如 host、port、預設日期、tag_key 等等。&lt;/p>
+&lt;br>
+&lt;h3>fluentd/Dockerfile&lt;span class="hx-absolute -hx-mt-20" id="fluentddockerfile">&lt;/span>
+&lt;a href="#fluentddockerfile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Dockerfile" data-lang="Dockerfile">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">FROM&lt;/span>&lt;span style="color:#e6db74"> fluent/fluentd:v1.14&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">USER&lt;/span>&lt;span style="color:#e6db74"> root&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">RUN&lt;/span> &lt;span style="color:#f92672">[&lt;/span>&lt;span style="color:#e6db74">&amp;#34;gem&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;install&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;fluent-plugin-elasticsearch&amp;#34;&lt;/span>&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>因為我們需要先安裝 fluent-plugin-elasticsearch 才可以讓 fluentd 來使用 elasticsearch，所以多寫一個 Dockerfile 來設定。&lt;/p>
+&lt;br>
+&lt;h3>efk/Docker-compose.yaml&lt;span class="hx-absolute -hx-mt-20" id="efkdocker-composeyaml">&lt;/span>
+&lt;a href="#efkdocker-composeyaml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">version&lt;/span>: &lt;span style="color:#e6db74">&amp;#39;3.8&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">services&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">elasticsearch&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">elasticsearch:8.1.3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">elasticsearch&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">discovery.type=single-node&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">xpack.security.enabled=false&lt;/span> &lt;span style="color:#75715e"># elasticsearch 8.x版本後會自動開啟SSL&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipv4_address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">9200&lt;/span>:&lt;span style="color:#ae81ff">9200&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">kibana&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">kibana:8.1.3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">kibana&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">ELASTICSEARCH_HOSTS=http://elasticsearch:9200&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># - I18N_LOCALE=zh-CN&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipv4_address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.4&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">5601&lt;/span>:&lt;span style="color:#ae81ff">5601&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">depends_on&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">elasticsearch&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fluentd&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">build&lt;/span>: &lt;span style="color:#ae81ff">../fluentd&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">fluentd&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../docker-volume/fluentd:/fluentd/etc&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">depends_on&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">elasticsearch&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;24224:24224&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;24224:24224/udp&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipv4_address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.5&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#ae81ff">bridge&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">efk_network&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipam&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">config&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">subnet&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.0&lt;/span>&lt;span style="color:#ae81ff">/16&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">gateway&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.1&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這邊是設定 EFK 三個容器的檔案，比較特別的是 elasticsearch 在 8.x 版本後會自動開啟 SSL 連線，所以沒有使用的或是在測試中的要先把它關掉，不然會連不上！，kibana 它支援 I18N 多語系，但目前沒有繁體中文，所以想要看中文的可以切成 zh-CH 的簡體中文來使用，其他就是基本的設定 Posts 以及我們全部設定好 IP，在後續測試會比較方便～&lt;/p>
+&lt;br>
+&lt;h3>nginx_php_redis/Docker-compose.yaml&lt;span class="hx-absolute -hx-mt-20" id="nginx_php_redisdocker-composeyaml">&lt;/span>
+&lt;a href="#nginx_php_redisdocker-composeyaml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">version&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;3.8&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">services&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">nginx&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">8080&lt;/span>:&lt;span style="color:#ae81ff">80&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../docker-volume/nginx/:/etc/nginx/conf.d/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">logging&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;fluentd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fluentd-address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.5&lt;/span>:&lt;span style="color:#ae81ff">24224&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tag&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">php&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">build&lt;/span>: &lt;span style="color:#ae81ff">../php&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">expose&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">9000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../docker-volume/php/:/var/www/html&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">logging&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;fluentd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fluentd-address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.5&lt;/span>:&lt;span style="color:#ae81ff">24224&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tag&lt;/span>: &lt;span style="color:#ae81ff">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">redis1&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/redis.conf --appendonly yes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../docker-volume/redis/redis1/:/data&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../docker-volume/redis/:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipv4_address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.11&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">6379&lt;/span>:&lt;span style="color:#ae81ff">6379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">logging&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;fluentd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fluentd-address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.5&lt;/span>:&lt;span style="color:#ae81ff">24224&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tag&lt;/span>: &lt;span style="color:#ae81ff">redis1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">redis2&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/redis.conf --slaveof redis1 6379 --appendonly yes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../docker-volume/redis/redis2/:/data&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../docker-volume/redis/:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipv4_address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.12&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">6380&lt;/span>:&lt;span style="color:#ae81ff">6379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">depends_on&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">redis1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">logging&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;fluentd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fluentd-address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.5&lt;/span>:&lt;span style="color:#ae81ff">24224&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tag&lt;/span>: &lt;span style="color:#ae81ff">redis2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">redis3&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/redis.conf --slaveof redis1 6379 --appendonly yes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../docker-volume/redis/redis3/:/data&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../docker-volume/redis/:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipv4_address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.13&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">6381&lt;/span>:&lt;span style="color:#ae81ff">6379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">depends_on&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">redis1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">redis2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">logging&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;fluentd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fluentd-address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.5&lt;/span>:&lt;span style="color:#ae81ff">24224&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tag&lt;/span>: &lt;span style="color:#ae81ff">redis3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">external&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">efk_network&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>那這邊基本上都與上一篇一樣，沒有修改特別的地方，只有修改網路名稱以及：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">logging&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;fluentd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fluentd-address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.5&lt;/span>:&lt;span style="color:#ae81ff">24224&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tag&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>我們要把每一個容器的 log 進行收集與處理，所以我們使用 logging 然後 driver 選擇 fluentd，並且要設定 fluentd 的 IP 位置以及每一個容器可設定不同的 tag 方便我們查詢。&lt;/p>
+&lt;br>
+&lt;h3>haproxy_sentinel/Docker-compose.yaml&lt;span class="hx-absolute -hx-mt-20" id="haproxy_sentineldocker-composeyaml">&lt;/span>
+&lt;a href="#haproxy_sentineldocker-composeyaml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">version&lt;/span>: &lt;span style="color:#e6db74">&amp;#39;3.8&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">services&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">haproxy&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">haproxy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">haproxy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../docker-volume/haproxy/:/usr/local/etc/haproxy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipv4_address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.20&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">16379&lt;/span>:&lt;span style="color:#ae81ff">6379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">8404&lt;/span>:&lt;span style="color:#ae81ff">8404&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">logging&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;fluentd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fluentd-address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.5&lt;/span>:&lt;span style="color:#ae81ff">24224&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tag&lt;/span>: &lt;span style="color:#ae81ff">haproxy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sentinel1&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel-1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">26379&lt;/span>:&lt;span style="color:#ae81ff">26379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/sentinel.conf --sentinel&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./sentinel1:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">logging&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;fluentd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fluentd-address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.5&lt;/span>:&lt;span style="color:#ae81ff">24224&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tag&lt;/span>: &lt;span style="color:#ae81ff">sentinel1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sentinel2&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel-2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">26380&lt;/span>:&lt;span style="color:#ae81ff">26379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/sentinel.conf --sentinel&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./sentinel2:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">logging&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;fluentd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fluentd-address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.5&lt;/span>:&lt;span style="color:#ae81ff">24224&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tag&lt;/span>: &lt;span style="color:#ae81ff">sentinel2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sentinel3&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel-3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">26381&lt;/span>:&lt;span style="color:#ae81ff">26379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/sentinel.conf --sentinel&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./sentinel3:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">logging&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;fluentd&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">options&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">fluentd-address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.5&lt;/span>:&lt;span style="color:#ae81ff">24224&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tag&lt;/span>: &lt;span style="color:#ae81ff">sentinel3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">efk_network&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">external&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">efk_network&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>與前面一樣，多了一個 logging 來設定 fluentd 位置以及 tag。&lt;/p>
+&lt;br>
+&lt;h2>測試&lt;span class="hx-absolute -hx-mt-20" id="測試">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們先用 docker-compose up 來啟動 efk/Docker-compose.yaml，接著再啟動 nginx_php_redis/Docker-compose.yaml，最後啟動 haproxy_sentinel/Docker-compose.yaml：&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/efk-compose.png"
+alt="啟動 efk/Docker-compose.yaml" width="700">&lt;figcaption>
+&lt;p>啟動 efk/Docker-compose.yaml&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/nginx-php-redis-compose.png"
+alt="啟動 nginx_php_redis/Docker-compose.yaml" width="700">&lt;figcaption>
+&lt;p>啟動 nginx_php_redis/Docker-compose.yaml&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/haproxy-sentinel-compose.png"
+alt="啟動 efk/Docker-compose.yaml" width="700">&lt;figcaption>
+&lt;p>啟動 efk/Docker-compose.yaml&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>(啟動 efk 時要等他跑完，因為他需要啟動一陣子，如果還沒等他啟動完畢就啟動下一個，會導致 fluentd 的 fluentd-address 尚未設定好，導致啟動錯誤)&lt;/p>
+&lt;br>
+&lt;p>這時候可以使用瀏覽器搜尋以下網址：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>test.com:5601&lt;/code>：Kibana GUI 頁面。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/gui.png"
+alt="kibana 設定" width="1000">&lt;figcaption>
+&lt;p>kibana 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>如果連線成功進來，就代表我們有安裝好 Elasticsearch 以及 kibana，那我們來做一些設定，讓我們可以在 kibana 上面看到 log。&lt;/p>
+&lt;p>先點選左邊的欄位，點選 &amp;ldquo;Stack Management&amp;rdquo; ，可以看到目前的 kibana 的版本，再點選左邊的 &amp;ldquo;Kibana &amp;gt; Date Views&amp;rdquo;：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/kibana.png"
+alt="kibana 設定" width="1000">&lt;figcaption>
+&lt;p>kibana 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>然後會跳出一個視窗點選 &amp;ldquo;Create data view&amp;rdquo;，在 name 欄位輸入 fluentd* (右側有 fluentd 加時間，代表我們接 fluentd 有成功)，按下 &amp;ldquo;Create data view&amp;rdquo;&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/fluentd.png"
+alt="kibana 設定" width="1000">&lt;figcaption>
+&lt;p>kibana 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>接著點選左側的欄位，點選 &amp;ldquo;Analytics &amp;gt; Discover&amp;rdquo; ，就可以看到我們目前所有的 log 囉！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/fluentd-1.png"
+alt="kibana 設定" width="1000">&lt;figcaption>
+&lt;p>kibana 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/log.png"
+alt="kibana Analytics &amp;amp;gt; Discover" width="1000">&lt;figcaption>
+&lt;p>kibana Analytics &amp;gt; Discover&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>elastic 官網：&lt;a href="https://www.elastic.co/" target="_blank" rel="noopener">https://www.elastic.co/&lt;/a>&lt;/p>
+&lt;p>fluentd 官網：&lt;a href="https://www.fluentd.org/" target="_blank" rel="noopener">https://www.fluentd.org/&lt;/a>&lt;/p>
+&lt;p>Build the EFK system used for simulating logging server on Docker：&lt;a href="https://stackoverflow.com/questions/71155142/build-the-efk-system-used-for-simulating-logging-server-on-docker" target="_blank" rel="noopener">https://stackoverflow.com/questions/71155142/build-the-efk-system-used-for-simulating-logging-server-on-docker&lt;/a>&lt;/p>
+&lt;p>開源日誌管理方案ELK 和EFK 的區別：&lt;a href="https://wsgzao.github.io/post/efk/" target="_blank" rel="noopener">https://wsgzao.github.io/post/efk/&lt;/a>&lt;/p></description></item><item><title>Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決</title><link>https://pin-yi.me/blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/</link><pubDate>Thu, 08 Dec 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/</guid><description>
 &lt;p>先說結論 &amp;hellip; &lt;del>EFK 真的好多雷 😆&lt;/del> 我們今天又再度踩雷拉，這次又是炸的分身碎骨，花了 4 個多小時才找到原因，也有可能是小弟我跟 EFK 不是很熟 XD。就如標題所說，我在抽 Log 的時候發現有部分的 Log 送不到 Kibana，檢查 Fluentd-Server 的 Log 發現裡面有 &lt;code>Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch&lt;/code> 的錯誤訊息，到底這個 Error 400 是什麼咧，就跟著我一起重溫找問題的苦難吧 XD&lt;/p>
 &lt;br>
 &lt;h2>EFK 結構&lt;span class="hx-absolute -hx-mt-20" id="efk-結構">&lt;/span>

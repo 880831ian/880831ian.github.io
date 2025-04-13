@@ -677,7 +677,7 @@ alt="slave (redis3)" width="600">&lt;figcaption>
 &lt;p>selcukusta/redis-sentinel-with-haproxy：&lt;a href="https://github.com/selcukusta/redis-sentinel-with-haproxy" target="_blank" rel="noopener">https://github.com/selcukusta/redis-sentinel-with-haproxy&lt;/a>&lt;/p>
 &lt;p>How to Enable Health Checks in HAProxy：&lt;a href="https://www.haproxy.com/blog/how-to-enable-health-checks-in-haproxy/" target="_blank" rel="noopener">https://www.haproxy.com/blog/how-to-enable-health-checks-in-haproxy/&lt;/a>&lt;/p></description></item><item><title>Redis 哨兵模式 (Sentinel) 搭配 Docker-compose 實作</title><link>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose/</link><pubDate>Tue, 19 Apr 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose/</guid><description>
 &lt;h2>什麼是 Redis 哨兵模式 (Sentinel) ?&lt;span class="hx-absolute -hx-mt-20" id="什麼是-redis-哨兵模式-sentinel-">&lt;/span>
-&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-redis-%e5%93%a8%e5%85%b5%e6%a8%a1%e5%bc%8f-sentinel-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>有關 Redis 之前有寫一篇 &lt;a href="../redis/" >Redis 的介紹文&lt;/a>，有興趣可以去看看！&lt;/p>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-redis-%e5%93%a8%e5%85%b5%e6%a8%a1%e5%bc%8f-sentinel-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>有關 Redis 之前有寫一篇 &lt;a href="../redis-introduce/" >Redis 的介紹文&lt;/a>，有興趣可以去看看！&lt;/p>
 &lt;p>Redis 提供非常實用的功能來讓我們實現多機的 in-memory 資料庫：&lt;/p>
 &lt;ul>
 &lt;li>主從複製模式 (Master-Slave Replication)&lt;/li>
