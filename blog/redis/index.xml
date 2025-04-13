@@ -1,4 +1,681 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Redis</title><link>https://pin-yi.me/blog/redis/</link><description>Recent content in Redis on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/redis/index.xml" rel="self" type="application/rss+xml"/><item><title>Redis 哨兵模式 (Sentinel) 搭配 Docker 實作</title><link>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose/</link><pubDate>Tue, 19 Apr 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Redis</title><link>https://pin-yi.me/blog/redis/</link><description>Recent content in Redis on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/redis/index.xml" rel="self" type="application/rss+xml"/><item><title>用 HAProxy 對 Redis 做負載平衡 (Redis Sentinel、Docker-compose)</title><link>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose-haproxy/</link><pubDate>Fri, 22 Apr 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose-haproxy/</guid><description>
+&lt;p>前情提要：本篇是 &lt;a href="../redis-sentinel-docker-compose" >Redis 哨兵模式 (Sentinel) 搭配 Docker-compose 實作
+&lt;/a> 的後續文章，主要會優化原本的程式碼，並加上 HAProxy 來做負載平衡！&lt;/p>
+&lt;h2>什麼是 HAProxy 以及負載均衡 ?&lt;span class="hx-absolute -hx-mt-20" id="什麼是-haproxy-以及負載均衡-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-haproxy-%e4%bb%a5%e5%8f%8a%e8%b2%a0%e8%bc%89%e5%9d%87%e8%a1%a1-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>HAProxy 是一個使用 C 語言編寫的自由及開放原始碼軟體，其提供高可用性、負載均衡，以及基於 TCP 和 HTTP 的應用程式代理。&lt;/p>
+&lt;p>負載平衡 (Load Balance)：&lt;/p>
+&lt;p>現在很多網路服務都需要服務大量使用者，以前可以砸錢擴充機器硬體設施，但隨著網路服務的用量暴增，增加伺服器硬體設備已經無法解決問題。&lt;/p>
+&lt;p>為了可以擴充服務，負載平衡成為主流的技術，這幾年雖然雲端與分散式儲存運算技術火紅，除非有特別的使用需求，不然在技術上負載均衡算是比較容易達成與掌握的技術。&lt;/p>
+&lt;p>負載平衡除了分流能力之外，有另一個很大的好處就是可以提供 High Availability，也就是傳說中的 HA 架構，好讓你一台機器掛了其他伺服器可以繼續服務，降低斷線率。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy.png"
+alt="HAProxy 與 Reids Sentinel 示意圖 selcukusta/redis-sentinel-with-haproxy" width="700">&lt;figcaption>
+&lt;p>HAProxy 與 Reids Sentinel 示意圖 &lt;a href="https://github.com/selcukusta/redis-sentinel-with-haproxy" target="_blank" rel="noopener">selcukusta/redis-sentinel-with-haproxy&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>實作&lt;span class="hx-absolute -hx-mt-20" id="實作">&lt;/span>
+&lt;a href="#%e5%af%a6%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那接下來會使用 Docker-compose 實作 Redis 哨兵模式 + HAProxy，&lt;a href="https://github.com/880831ian/docker-compose-redis-sentinel-haproxy" target="_blank" rel="noopener">範例程式連結 點我&lt;/a> 😘&lt;/p>
+&lt;p>版本資訊&lt;/p>
+&lt;ul>
+&lt;li>macOS：11.6&lt;/li>
+&lt;li>Docker：Docker version 20.10.12, build e91ed57&lt;/li>
+&lt;li>Nginx：1.20&lt;/li>
+&lt;li>PHP：7.4-fpm&lt;/li>
+&lt;li>Redis：6.2.6&lt;/li>
+&lt;li>HAProxy：HAProxy version 2.5.5-384c5c5 2022/03/14 - &lt;a href="https://haproxy.org/" target="_blank" rel="noopener">https://haproxy.org/&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>檔案結構&lt;span class="hx-absolute -hx-mt-20" id="檔案結構">&lt;/span>
+&lt;a href="#%e6%aa%94%e6%a1%88%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>.
+├── Docker-compose.yaml
+├── docker-volume
+│   ├── haproxy
+│   │   └── haproxy.cfg
+│   ├── nginx
+│   │   └── nginx.conf
+│   ├── php
+│   │   ├── info.php
+│   │   ├── r.php
+│   │   └── rw.php
+│   └── redis
+│   ├── redis.conf
+│   ├── redis1
+│   ├── redis2
+│   └── redis3
+├── php
+│   └── Dockerfile
+├── redis.sh
+└── sentinel
+├── Docker-compose.yaml
+├── sentinel1
+│   └── sentinel.conf
+├── sentinel2
+│   └── sentinel.conf
+└── sentinel3
+└── sentinel.conf&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>這是主要的結構，簡單說明一下：&lt;/p>
+&lt;ul>
+&lt;li>Docker-compose.yaml：會放置要產生的 Nginx、PHP、redis1、redis2、redis3 容器設定檔。&lt;/li>
+&lt;li>docker-volume/haproxy/haproxy.cfg：haproxy 的設定檔。&lt;/li>
+&lt;li>docker-volume/nginx/nginx.conf：nginx 的設定檔。&lt;/li>
+&lt;li>docker-volume/php/(r.php、rw.php)：測試用檔案。&lt;/li>
+&lt;li>docker-volume/redis/redis.conf：redis 的設定檔。&lt;/li>
+&lt;li>docker-volume/redis/(redis1、redis2、redis3)：放 redis 的資料。&lt;/li>
+&lt;li>php/Dokcerfile：因為在 php 要使用 redis 需要多安裝一些設定，所以用 Dockerfile 另外寫 PHP 的映像檔。&lt;/li>
+&lt;li>redis.sh：是我另外多寫的腳本，可以查看相對應的角色。&lt;/li>
+&lt;li>sentinel/Docker-compose.yaml：會放置要產生的 haproxy、sentinel1、sentinel2、sentinel3 的容器設定檔。&lt;/li>
+&lt;li>sentinel/(sentinel1、sentinel2、sentinel3)/.conf：哨兵的設定檔。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>那我們就依照安裝的設定開始說明：&lt;/p>
+&lt;h3>Docker-compose.yaml&lt;span class="hx-absolute -hx-mt-20" id="docker-composeyaml">&lt;/span>
+&lt;a href="#docker-composeyaml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">version&lt;/span>: &lt;span style="color:#e6db74">&amp;#39;3.8&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">services&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">nginx&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">nginx:1.20&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">HAProxy_Redis&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;8888:80&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/nginx/:/etc/nginx/conf.d/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./log/nginx/:/var/log/nginx/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">php&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">build&lt;/span>: &lt;span style="color:#ae81ff">./php&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">HAProxy_Redis&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">expose&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">9000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/php/:/var/www/html&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">redis1&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/redis.conf --appendonly yes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/redis/redis1/:/data&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/redis/:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./log/redis1:/var/log/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">HAProxy_Redis&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipv4_address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.11&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">6379&lt;/span>:&lt;span style="color:#ae81ff">6379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">redis2&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/redis.conf --slaveof redis1 6379 --appendonly yes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/redis/redis2/:/data&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/redis/:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./log/redis2:/var/log/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">HAProxy_Redis&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipv4_address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.12&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">6380&lt;/span>:&lt;span style="color:#ae81ff">6379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">depends_on&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">redis1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">redis3&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/redis.conf --slaveof redis1 6379 --appendonly yes&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/redis/redis3/:/data&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./docker-volume/redis/:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./log/redis3:/var/log/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">HAProxy_Redis&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipv4_address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.13&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">6381&lt;/span>:&lt;span style="color:#ae81ff">6379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">depends_on&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">redis1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">redis2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">HAProxy_Redis&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">driver&lt;/span>: &lt;span style="color:#ae81ff">bridge&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">HAProxy_Redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipam&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">config&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">subnet&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.0&lt;/span>&lt;span style="color:#ae81ff">/16&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">gateway&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.1&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>一樣詳細的 Docker 設定說明，可以參考 &lt;a href="../../docker/docker" >Docker 介紹&lt;/a> 內有詳細設定說明。其他比較特別的地方是：&lt;/p>
+&lt;ul>
+&lt;li>幫每一個容器都設定好 IP ，方便後續測試使用。&lt;/li>
+&lt;li>有掛載 log 目錄，可以將我們設定好的 log 做收集。&lt;/li>
+&lt;li>呈上，有加入 environment 時區，這樣在看 log 的時候才知道正確時間。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>docker-volume/haproxy/haproxy.cfg&lt;span class="hx-absolute -hx-mt-20" id="docker-volumehaproxyhaproxycfg">&lt;/span>
+&lt;a href="#docker-volumehaproxyhaproxycfg" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-cfg" data-lang="cfg">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">global&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">log stdout format raw local0 info&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">defaults&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">mode http # 默認模式 { tcp | http | health }，tcp 是4層，http 是7層，health 只會返回 OK&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">timeout client 10s # 客戶端超時&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">timeout connect 5s # 連接超時&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">timeout server 10s # 伺服器超時&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">timeout http-request 10s&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">log global&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">listen admin_status&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">bind 0.0.0.0:8404&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">mode http&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">stats enable&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">stats uri /redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">stats realm Global\ statistics&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">stats refresh 1s&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">listen rw-redis # 判斷是否為 master 並可讀可寫&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">bind 0.0.0.0:16379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">mode tcp&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">balance roundrobin&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">option tcp-check # redis 健康检查，確保是 master&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tcp-check connect&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tcp-check send PING\r\n&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tcp-check expect string +PONG&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tcp-check send info\ replication\r\n&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tcp-check expect string role:master&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tcp-check send QUIT\r\n&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">tcp-check expect string +OK&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">server redis1 redis1:6379 check inter 2000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">server redis2 redis2:6379 check inter 2000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">server redis3 redis3:6379 check inter 2000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">listen r-redis # 判斷是否為 master、slave 並可讀&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">bind 0.0.0.0:16380&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">mode tcp&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">balance roundrobin&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">server redis1 redis1:6379 check inter 2000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">server redis2 redis2:6379 check inter 2000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#a6e22e">server redis3 redis3:6379 check inter 2000&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這裡是本章的重點，我們會在這邊設定好 haproxy，詳細說明請看：&lt;/p>
+&lt;p>defaults：
+一些初始值，像是 mode 我們預設 http，它主要有三種模式 { tcp | http | health }，tcp 是4層，http 是7層，health 只會返回 OK，以及客戶端、連接、伺服器、http 請求超時時間設定。&lt;/p>
+&lt;p>listen admin_status：&lt;/p>
+&lt;ul>
+&lt;li>bind：我們要開啟 HAProxy 監控平台的 port。&lt;/li>
+&lt;li>mode：模式，我們使用 http 模式。&lt;/li>
+&lt;li>stats ：是否要啟動平台。&lt;/li>
+&lt;li>stats uri：平台網址，我們使用 redis。&lt;/li>
+&lt;li>stats refresh：平台自動更新時間，我們設定 1 秒。&lt;/li>
+&lt;/ul>
+&lt;p>listen rw-redis：&lt;/p>
+&lt;ul>
+&lt;li>bind ：rw 使用 16379 Port 來當輸出。&lt;/li>
+&lt;li>balance：使用負載平衡。&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>option tcp-check # redis 健康检查，確保是 master
+tcp-check connect
+tcp-check send PING\r\n
+tcp-check expect string &amp;#43;PONG
+tcp-check send info\ replication\r\n
+tcp-check expect string role:master
+tcp-check send QUIT\r\n
+tcp-check expect string &amp;#43;OK&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>上面這些是用來判斷角色是不是 master。&lt;/p>
+&lt;p>最後放我們 3 個 redis 服務：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code> server redis1 redis1:6379 check inter 2000
+server redis2 redis2:6379 check inter 2000
+server redis3 redis3:6379 check inter 2000&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>check：開啟健康偵測。&lt;/li>
+&lt;li>inter：參數更改檢查間隔，預設是 2 秒。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>docker-volume/nginx/nginx.conf&lt;span class="hx-absolute -hx-mt-20" id="docker-volumenginxnginxconf">&lt;/span>
+&lt;a href="#docker-volumenginxnginxconf" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>server {
+listen 80;
+server_name default_server;
+return 404;
+}
+server {
+listen 80;
+server_name test.com;
+index index.php index.html;
+error_log /var/log/nginx/error.log warn;
+access_log /var/log/nginx/access.log;
+root /var/www/html;
+location / {
+try_files $uri $uri/ /index.php?$query_string;
+}
+location ~ \.php$ {
+fastcgi_pass php:9000;
+fastcgi_index index.php;
+include fastcgi_params;
+fastcgi_param SCRIPT_FILENAME /var/www/html$fastcgi_script_name;
+}
+}&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>Nginx 設定檔案。&lt;/p>
+&lt;br>
+&lt;h3>docker-volume/php/rw.php&lt;span class="hx-absolute -hx-mt-20" id="docker-volumephprwphp">&lt;/span>
+&lt;a href="#docker-volumephprwphp" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-php" data-lang="php">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;lt;?&lt;/span>&lt;span style="color:#a6e22e">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$redis &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">Redis&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$redis&lt;span style="color:#f92672">-&amp;gt;&lt;/span>&lt;span style="color:#a6e22e">connect&lt;/span>(&lt;span style="color:#e6db74">&amp;#39;172.20.0.20&amp;#39;&lt;/span>, &lt;span style="color:#ae81ff">16379&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$r &lt;span style="color:#f92672">=&lt;/span> $redis&lt;span style="color:#f92672">-&amp;gt;&lt;/span>&lt;span style="color:#a6e22e">info&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">echo&lt;/span> $r[&lt;span style="color:#e6db74">&amp;#39;run_id&amp;#39;&lt;/span>] &lt;span style="color:#f92672">.&lt;/span> &lt;span style="color:#e6db74">&amp;#39;&amp;lt;br&amp;gt;&amp;#39;&lt;/span> &lt;span style="color:#f92672">.&lt;/span> $r[&lt;span style="color:#e6db74">&amp;#39;role&amp;#39;&lt;/span>] &lt;span style="color:#f92672">.&lt;/span> &lt;span style="color:#e6db74">&amp;#39;&amp;lt;br&amp;gt;&amp;lt;br&amp;gt;&amp;#39;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">echo&lt;/span> &lt;span style="color:#e6db74">&amp;#39;&amp;lt;pre&amp;gt;&amp;#39;&lt;/span>, &lt;span style="color:#a6e22e">print_r&lt;/span>($r), &lt;span style="color:#e6db74">&amp;#39;&amp;lt;/pre&amp;gt;&amp;#39;&lt;/span>;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>跟 &lt;code>r.php&lt;/code> 比較不同的是，使用 16379 Port，我們在 &lt;code>haproxy.cfg&lt;/code> 有設定 rw-redis，來判斷是不是 master 並且是可讀可寫。&lt;/p>
+&lt;br>
+&lt;h3>docker-volume/php/r.php&lt;span class="hx-absolute -hx-mt-20" id="docker-volumephprphp">&lt;/span>
+&lt;a href="#docker-volumephprphp" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-php" data-lang="php">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">&amp;lt;?&lt;/span>&lt;span style="color:#a6e22e">php&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$redis &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">new&lt;/span> &lt;span style="color:#a6e22e">Redis&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$redis&lt;span style="color:#f92672">-&amp;gt;&lt;/span>&lt;span style="color:#a6e22e">connect&lt;/span>(&lt;span style="color:#e6db74">&amp;#39;172.20.0.20&amp;#39;&lt;/span>, &lt;span style="color:#ae81ff">16380&lt;/span>);
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$r &lt;span style="color:#f92672">=&lt;/span> $redis&lt;span style="color:#f92672">-&amp;gt;&lt;/span>&lt;span style="color:#a6e22e">info&lt;/span>();
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">echo&lt;/span> $r[&lt;span style="color:#e6db74">&amp;#39;run_id&amp;#39;&lt;/span>] &lt;span style="color:#f92672">.&lt;/span> &lt;span style="color:#e6db74">&amp;#39;&amp;lt;br&amp;gt;&amp;#39;&lt;/span> &lt;span style="color:#f92672">.&lt;/span> $r[&lt;span style="color:#e6db74">&amp;#39;role&amp;#39;&lt;/span>] &lt;span style="color:#f92672">.&lt;/span> &lt;span style="color:#e6db74">&amp;#39;&amp;lt;br&amp;gt;&amp;lt;br&amp;gt;&amp;#39;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">echo&lt;/span> &lt;span style="color:#e6db74">&amp;#39;&amp;lt;pre&amp;gt;&amp;#39;&lt;/span>, &lt;span style="color:#a6e22e">print_r&lt;/span>($r), &lt;span style="color:#e6db74">&amp;#39;&amp;lt;/pre&amp;gt;&amp;#39;&lt;/span>;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>使用 16380 Port，在 &lt;code>haproxy.cfg&lt;/code> 有設定 r-redis，來顯示是不是 master、slave 且可讀。&lt;/p>
+&lt;br>
+&lt;h3>php/Dockerfile&lt;span class="hx-absolute -hx-mt-20" id="phpdockerfile">&lt;/span>
+&lt;a href="#phpdockerfile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Dockerfile" data-lang="Dockerfile">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">FROM&lt;/span>&lt;span style="color:#e6db74"> php:7.4-fpm&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">RUN&lt;/span> pecl install -o -f redis &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span>&lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> rm -rf /tmp/pear &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span>&lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> echo &lt;span style="color:#e6db74">&amp;#34;extension=redis.so&amp;#34;&lt;/span> &amp;gt; /usr/local/etc/php/conf.d/redis.ini &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span>&lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> echo &lt;span style="color:#e6db74">&amp;#34;session.save_handler = redis&amp;#34;&lt;/span> &amp;gt;&amp;gt; /usr/local/etc/php/conf.d/redis.ini &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span>&lt;span style="color:#f92672">&amp;amp;&amp;amp;&lt;/span> echo &lt;span style="color:#e6db74">&amp;#34;session.save_path = tcp://redis:6379&amp;#34;&lt;/span> &amp;gt;&amp;gt; /usr/local/etc/php/conf.d/redis.ini&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>因為 PHP 要使用 Redis，會需要安裝一些套件，所以我們將 PHP 分開來，使用 Dockerfile 來設定映像檔。&lt;/p>
+&lt;br>
+&lt;h3>redis.sh&lt;span class="hx-absolute -hx-mt-20" id="redissh">&lt;/span>
+&lt;a href="#redissh" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/bin/bash
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>green&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;32m&amp;#34;&lt;/span>;white&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;0m&amp;#34;&lt;/span>;red&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;\033[1;31m&amp;#34;&lt;/span>;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;redis1 IPAddress:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>redis1_ip&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>docker inspect redis1 | grep &lt;span style="color:#e6db74">&amp;#34;IPv4&amp;#34;&lt;/span> | egrep -o &lt;span style="color:#e6db74">&amp;#34;[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}&amp;#34;&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo $redis1_ip;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;------------------------------&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;redis2 IPAddress:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>redis2_ip&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>docker inspect redis2 | grep &lt;span style="color:#e6db74">&amp;#34;IPv4&amp;#34;&lt;/span> | egrep -o &lt;span style="color:#e6db74">&amp;#34;[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}&amp;#34;&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo $redis2_ip;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;------------------------------&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;redis3 IPAddress:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>redis3_ip&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>docker inspect redis3 | grep &lt;span style="color:#e6db74">&amp;#34;IPv4&amp;#34;&lt;/span> | egrep -o &lt;span style="color:#e6db74">&amp;#34;[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}&amp;#34;&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo $redis3_ip;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;------------------------------&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;haproxy IPAddress:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>haproxy_ip&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>docker inspect haproxy | grep &lt;span style="color:#e6db74">&amp;#34;IPv4&amp;#34;&lt;/span> | egrep -o &lt;span style="color:#e6db74">&amp;#34;[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}&amp;#34;&lt;/span>&lt;span style="color:#e6db74">`&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo $haproxy_ip;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;------------------------------&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;redis1:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker exec -it redis1 redis-cli info Replication | grep role
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;redis2:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker exec -it redis2 redis-cli info Replication | grep role
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;redis3:&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>docker exec -it redis3 redis-cli info Replication | grep role&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這個是我自己所寫的腳本，可以詳細知道目前服務的角色轉移狀況。&lt;/p>
+&lt;br>
+&lt;h3>sentinel/Docker-compose.yaml&lt;span class="hx-absolute -hx-mt-20" id="sentineldocker-composeyaml">&lt;/span>
+&lt;a href="#sentineldocker-composeyaml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yml" data-lang="yml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">version&lt;/span>: &lt;span style="color:#e6db74">&amp;#39;3.8&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">services&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">haproxy&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">haproxy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">haproxy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../docker-volume/haproxy/:/usr/local/etc/haproxy&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">HAProxy_Redis&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ipv4_address&lt;/span>: &lt;span style="color:#ae81ff">172.20.0.20&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">16379&lt;/span>:&lt;span style="color:#ae81ff">6379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">8404&lt;/span>:&lt;span style="color:#ae81ff">8404&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sentinel1&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel-1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">HAProxy_Redis&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">26379&lt;/span>:&lt;span style="color:#ae81ff">26379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/sentinel.conf --sentinel&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./sentinel1:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../log/sentinel1:/var/log/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sentinel2&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel-2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">HAProxy_Redis&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">26380&lt;/span>:&lt;span style="color:#ae81ff">26379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/sentinel.conf --sentinel&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./sentinel2:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../log/sentinel2:/var/log/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sentinel3&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">redis&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">container_name&lt;/span>: &lt;span style="color:#ae81ff">redis-sentinel-3&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">HAProxy_Redis&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">26381&lt;/span>:&lt;span style="color:#ae81ff">26379&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">command&lt;/span>: &lt;span style="color:#ae81ff">redis-server /usr/local/etc/redis/sentinel.conf --sentinel&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">./sentinel3:/usr/local/etc/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">../log/sentinel3:/var/log/redis/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">environment&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">TZ=Asia/Taipei&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">networks&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">HAProxy_Redis&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">external&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">HAProxy_Redis&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>sentinel/sentine.conf&lt;span class="hx-absolute -hx-mt-20" id="sentinelsentineconf">&lt;/span>
+&lt;a href="#sentinelsentineconf" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>因為 sentine 內容都基本上相同，所以舉一個來說明：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>port 26379
+logfile &amp;#34;/var/log/redis/redis-sentinel.log&amp;#34;
+protected-mode no
+#設定要監控的 Master，最後的 2 代表判定客觀下線所需的哨兵數
+sentinel monitor mymaster 172.20.0.11 6379 2
+#哨兵 Ping 不到 Master 超過此毫秒數會認定主觀下線
+sentinel down-after-milliseconds mymaster 5000&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>要設定指定的 Port sentine1 是 26379、sentine2 是 26380、sentine3 是 26381。接下來要設定要監控的 Master，最後的數字代表我們前面有提到客觀下線需要達到的哨兵數。以及主觀下線的時間跟 failover 超過的時間。&lt;/p>
+&lt;br>
+&lt;h2>測試&lt;span class="hx-absolute -hx-mt-20" id="測試">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們先用 docker-compose up 來啟動 Docker-compose.yaml，接著再啟動 sentinel/Docker-compose.yaml：&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/yaml.png"
+alt="啟動 Docker-compose.yaml" width="700">&lt;figcaption>
+&lt;p>啟動 Docker-compose.yaml&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/sentinel-yaml.png"
+alt="啟動 sentinel/Docker-compose.yaml" width="700">&lt;figcaption>
+&lt;p>啟動 sentinel/Docker-compose.yaml&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>由於為了測試，有先將所有容器設定好 IP，就不會像上一篇文章一樣要去抓 IP ，才能啟動 Sentinel。&lt;/p>
+&lt;br>
+&lt;p>這時候可以使用瀏覽器搜尋以下網址：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>test.com:8404/redis&lt;/code>：HAProxy 監看平台(只取片段)。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404.png"
+alt="HAProxy 監控平台" width="1200">&lt;figcaption>
+&lt;p>HAProxy 監控平台&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>&lt;code>test.com:8888/rw.php&lt;/code>：只會顯示 master，並且可讀可寫。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/rw.png"
+alt="master (redis1)" width="600">&lt;figcaption>
+&lt;p>master (redis1)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>&lt;code>test.com:8888/r.php&lt;/code>：會顯示 master、slave，且可讀。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r1.png"
+alt="master (redis1)" width="600">&lt;figcaption>
+&lt;p>master (redis1)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r3.png"
+alt="slave (redis2)" width="600">&lt;figcaption>
+&lt;p>slave (redis2)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r2.png"
+alt="slave (redis3)" width="600">&lt;figcaption>
+&lt;p>slave (redis3)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接下來可以執行：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ sh redis.sh
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>redis1 IPAddress:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>172.20.0.11
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>------------------------------
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>redis2 IPAddress:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>172.20.0.12
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>------------------------------
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>redis3 IPAddress:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>172.20.0.13
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>------------------------------
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>haproxy IPAddress:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>172.20.0.20
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>------------------------------
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>redis1:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>role:master
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>redis2:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>role:slave
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>redis3:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>role:slave&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>就會顯示三個 redis 的 IP 以及 haproxy 的 IP，這些都是已經寫在 Docker-compose.yaml 檔案內的，如果忘記的可以再往前看 ↑&lt;/p>
+&lt;p>接下來我們可以先一直 F5 &lt;code>test.com:8888/r.php&lt;/code>，來模擬大量的讀取請求，如果發現網站內容一直在更換，就代表我們成功透過 HAProxy 做到負載平衡了，可以將讀取的需求分給三個服務做處理！那因為 &lt;code>test.com:8888/rw.php&lt;/code> 他只會抓 master，所以刷新還是同一個 master。&lt;/p>
+&lt;br>
+&lt;p>還記得我們上次用 Redis 的哨兵模式嗎？那我們用它來搭配 Haproxy 會有什麼結果呢？&lt;/p>
+&lt;p>我們先使用 &lt;code>docker stop&lt;/code> 來模擬服務中斷：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ docker stop redis1
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>redis1&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到 &lt;code>test.com:8404/redis&lt;/code> 原本綠色的 redis1 開始變成黃色，最後變成紅色：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-1.png"
+alt="模擬中斷服務 HAProxy 監控平台" width="1200">&lt;figcaption>
+&lt;p>模擬中斷服務 HAProxy 監控平台&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>最後可以看到 Redis Sentinel 作動，將 master 轉移到 redis3：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-2.png"
+alt="模擬中斷服務 HAProxy 監控平台" width="1200">&lt;figcaption>
+&lt;p>模擬中斷服務 HAProxy 監控平台&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>這時候我們再去看 &lt;code>test.com:8888/rw.php&lt;/code> ，就會發現與剛剛的 master 不太一樣囉，因為已經變成 redis2 了！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/rw-1.png"
+alt="master (redis2)" width="600">&lt;figcaption>
+&lt;p>master (redis2)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>代表我們 HAProxy 也有成功將 master 給顯示出來！&lt;/p>
+&lt;br>
+&lt;p>我們再去看 &lt;code>test.com:8888/r.php&lt;/code> ，就可以發現剩下 redis2 以及 redis 3 了，因為 redis1 被我們給暫停服務了，而且 redis2 變成 master！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r4.png"
+alt="master (redis2)" width="600">&lt;figcaption>
+&lt;p>master (redis2)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r2.png"
+alt="slave (redis3)" width="600">&lt;figcaption>
+&lt;p>slave (redis3)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>HAProxy 首頁：&lt;a href="http://www.haproxy.org/" target="_blank" rel="noopener">http://www.haproxy.org/&lt;/a>&lt;/p>
+&lt;p>HAproxy的安裝設定及範例：&lt;a href="https://tw511.com/a/01/6959.html" target="_blank" rel="noopener">https://tw511.com/a/01/6959.html&lt;/a>&lt;/p>
+&lt;p>redis sentinel集群配置及haproxy配置：&lt;a href="https://www.cnblogs.com/tzm7614/p/5691912.html" target="_blank" rel="noopener">https://www.cnblogs.com/tzm7614/p/5691912.html&lt;/a>&lt;/p>
+&lt;p>富人用 L4 Switch，窮人用 Linux HAProxy！：&lt;a href="https://blog.toright.com/posts/3967/%E5%AF%8C%E4%BA%BA%E7%94%A8-l4-switch%EF%BC%8C%E7%AA%AE%E4%BA%BA%E7%94%A8-linux-haproxy%EF%BC%81.html" target="_blank" rel="noopener">https://blog.toright.com/posts/3967/%E5%AF%8C%E4%BA%BA%E7%94%A8-l4-switch%EF%BC%8C%E7%AA%AE%E4%BA%BA%E7%94%A8-linux-haproxy%EF%BC%81.html&lt;/a>&lt;/p>
+&lt;p>selcukusta/redis-sentinel-with-haproxy：&lt;a href="https://github.com/selcukusta/redis-sentinel-with-haproxy" target="_blank" rel="noopener">https://github.com/selcukusta/redis-sentinel-with-haproxy&lt;/a>&lt;/p>
+&lt;p>How to Enable Health Checks in HAProxy：&lt;a href="https://www.haproxy.com/blog/how-to-enable-health-checks-in-haproxy/" target="_blank" rel="noopener">https://www.haproxy.com/blog/how-to-enable-health-checks-in-haproxy/&lt;/a>&lt;/p></description></item><item><title>Redis 哨兵模式 (Sentinel) 搭配 Docker-compose 實作</title><link>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose/</link><pubDate>Tue, 19 Apr 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose/</guid><description>
 &lt;h2>什麼是 Redis 哨兵模式 (Sentinel) ?&lt;span class="hx-absolute -hx-mt-20" id="什麼是-redis-哨兵模式-sentinel-">&lt;/span>
 &lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-redis-%e5%93%a8%e5%85%b5%e6%a8%a1%e5%bc%8f-sentinel-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>有關 Redis 之前有寫一篇 &lt;a href="../redis/" >Redis 的介紹文&lt;/a>，有興趣可以去看看！&lt;/p>
 &lt;p>Redis 提供非常實用的功能來讓我們實現多機的 in-memory 資料庫：&lt;/p>
