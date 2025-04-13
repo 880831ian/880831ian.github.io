@@ -10,7 +10,7 @@ authors:
 
 ## 什麼是 Redis 哨兵模式 (Sentinel) ?
 
-有關 Redis 之前有寫一篇 [Redis 的介紹文](../redis/)，有興趣可以去看看！
+有關 Redis 之前有寫一篇 [Redis 的介紹文](../redis-introduce/)，有興趣可以去看看！
 
 Redis 提供非常實用的功能來讓我們實現多機的 in-memory 資料庫：
 *  主從複製模式 (Master-Slave Replication)
