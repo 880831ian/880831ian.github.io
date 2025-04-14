@@ -4,7 +4,7 @@ title: PIN-YI
 
 enableRobotsTXT: true
 enableGitInfo: true
-defaultContentLanguage: zh-tw
+defaultContentLanguage: en
 
 module:
   imports:
@@ -85,8 +85,6 @@ params:
   search:
     enable: true
     type: flexsearch
-    flexsearch:
-      index: content
 
 services:
   googleAnalytics:

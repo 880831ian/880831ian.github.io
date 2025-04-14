@@ -9,7 +9,7 @@
           {{ if .Title }}<h1>{{ .Title }}</h1>{{ end }}
           <div class="hx-mt-4 hx-mb-16 hx-text-gray-500 hx-text-sm hx-flex hx-items-center hx-flex-wrap hx-gap-y-2">
             {{- with $date := .Date }}<span class="hx-mr-1">發布於 {{ partial "utils/format-date" $date }}  ·  </span>{{ end -}}
-            {{- $lastUpdated := (T "lastUpdated") | default "Last updated on" -}}
+            {{- $lastUpdated := (T "lastUpdated") | default "最後更新於" -}}
             {{ if .Site.Params.displayUpdatedDate }}
             {{- with .Lastmod }}<span class="hx-mr-1">{{ $lastUpdated }} {{ partial "utils/format-date" . }}</span>{{ end -}}
             {{ end }}

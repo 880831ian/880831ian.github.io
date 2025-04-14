@@ -85,11 +85,13 @@ layout: hextra-home
 {{< card link="blog/git-or-cicd/ansible" title="Ansible 介紹與實作 (Inventory、Playbooks、Module、Template、Handlers)" image="/git-or-cicd/ansible/cover.webp">}}
 {{< card link="blog/git-or-cicd/jenkins-github-tg-bot" title="使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot" image="/git-or-cicd/jenkins-github-tg-bot/cover.webp">}}
 {{< card link="blog/git-or-cicd/jenkins-ansible-it-cicd" title="Jenkins 及 Ansible IT 自動化 CI/CD 介紹" image="/git-or-cicd/jenkins-ansible-it-cicd/cover.webp">}}
+{{< card link="blog/git-or-cicd/git-introduce" title="Git 介紹" image="/git-or-cicd/git-introduce/cover.webp">}}
+
 
 {{< card link="blog/other/linux-command" title="Linux 常用指令" image="/other/linux-command/cover.webp">}}
 {{< card link="blog/other/linux-clear-swap" title="清除 Linux 機器上的 Swap (Buff、Cache、Swap 比較)" image="/other/linux-clear-swap/cover.webp">}}
 {{< card link="blog/other/bookstack" title="Bookstack 開源知識庫筆記平台安裝 (K8s + docker)" image="/other/bookstack/cover.webp">}}
 {{< card link="blog/other/snyk" title="找出程式碼、開源套件、容器的安全漏洞工具 - Snyk" image="/other/snyk/cover.webp">}}
 
-{{< card link="blog/lecture/20240529-devops-introduce" title="朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座 (2024/05/29)" image="/lecture/20240529-devops-introduce/cover.webp">}}
+{{< card link="blog/conference-or-lecture/20240529-devops-introduce" title="朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座 (2024/05/29)" image="/conference-or-lecture/20240529-devops-introduce/cover.webp">}}
 {{< /hextra/feature-grid >}}
