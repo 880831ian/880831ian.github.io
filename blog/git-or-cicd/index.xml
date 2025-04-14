@@ -3179,4 +3179,834 @@ alt="Top 5 DevOps Automation Tools in 2020" width="800">&lt;figcaption>
 &lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://ithelp.ithome.com.tw/users/20103346/ironman/1473" target="_blank" rel="noopener">30 天入門 Ansible 及 Jenkins&lt;/a>&lt;/p>
 &lt;p>&lt;a href="https://ithelp.ithome.com.tw/articles/10219083" target="_blank" rel="noopener">Day12 什麼是 CICD&lt;/a>&lt;/p>
-&lt;p>&lt;a href="http://www.srcmini.com/21799.html" target="_blank" rel="noopener">Jenkins 和 Ansible 的對比和區別&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;p>&lt;a href="http://www.srcmini.com/21799.html" target="_blank" rel="noopener">Jenkins 和 Ansible 的對比和區別&lt;/a>&lt;/p></description></item><item><title>Git 介紹</title><link>https://pin-yi.me/blog/git-or-cicd/git-introduce/</link><pubDate>Fri, 15 Apr 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/git-or-cicd/git-introduce/</guid><description>
+&lt;h2>什麼是 Git ?&lt;span class="hx-absolute -hx-mt-20" id="什麼是-git-">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-git-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>不管是不是工程師，只要常常需要使用電腦工作，每天一定都會新增、修改、刪除許多檔案，我們看到這張圖：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/sample.png"
+alt="很多人的電腦裡面都有這樣的內容" width="450">&lt;figcaption>
+&lt;p>很多人的電腦裡面都有這樣的內容&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>這張圖是一個菜鳥工程師在整理檔案時的方法，因為每一天都會對這份檔案做不同的處理，但為了保留以前的版本，所以也不會刪除舊的檔案，只好用日期或是版本來做分類，時間越久，檔案就累積越多，假如不小心刪除，也找不回來紀錄，也不清楚不同檔案的差異，所以有了 Git 這項工具。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>Git 為分散式版本控制系統，是為了更好管理Linux內核而開發的。&lt;/li>
+&lt;li>Git 的優點：免費開源、速度快、檔案體積小、分散式系統。&lt;/li>
+&lt;li>Git 的缺點：指令繁雜，但可以透過 GUI 工具解決。&lt;/li>
+&lt;li>Git 會紀錄哪些資料：更動前 vs 更動後的程式碼、修改者、修改時間、修改原因（修改者需要自行撰寫 commit message）。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>我們也常常聽到 GitHub or GitLab 那跟 Git 是一樣的東西嗎？&lt;/p>
+&lt;p>Ans：GitHub(GitLab) 是基於 Web 的平台，結合了 Git 的版本控制功能，為開發團隊提供了儲存、分享、發布和合作開發項目的中心化雲存儲的場所。&lt;/p>
+&lt;br>
+&lt;h2>Git 操作指令&lt;span class="hx-absolute -hx-mt-20" id="git-操作指令">&lt;/span>
+&lt;a href="#git-%e6%93%8d%e4%bd%9c%e6%8c%87%e4%bb%a4" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Git 的操作指令繁多，包含環境類、查看類、提交類、分支類、遠端類、合併類、還原類等等，所以才有了 Git GUI 工具，筆者很推薦 &lt;a href="https://www.gitkraken.com/" target="_blank" rel="noopener">Gitkraken&lt;/a>，雖然需要付費，但真的很方便，畫面也很乾淨簡潔。如果是學生的話，還可以使用 &lt;a href="https://education.github.com/pack" target="_blank" rel="noopener">GitHub Student Developer Pack&lt;/a> 免費使用歐！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/gitkraken.png"
+alt="Git GUI 工具 (Gitkraken)" width="600">&lt;figcaption>
+&lt;p>Git GUI 工具 (Gitkraken)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接下來我們會依照環境類、查看類、提交類、分支類、遠端類、合併類、還原類依序下去介紹～&lt;/p>
+&lt;h3>環境類&lt;span class="hx-absolute -hx-mt-20" id="環境類">&lt;/span>
+&lt;a href="#%e7%92%b0%e5%a2%83%e9%a1%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>使用每一個程式或工具，必須先把它安裝到自己電腦上對吧！但因為大家使用的系統都不一樣，所以這邊就不列出要怎麼進行安裝，可以參考 &lt;a href="https://git-scm.com/book/zh-tw/v2/%E9%96%8B%E5%A7%8B-Git-%E5%AE%89%E8%A3%9D%E6%95%99%E5%AD%B8" target="_blank" rel="noopener">Git 安裝教學&lt;/a>&lt;/p>
+&lt;p>當我們安裝好後，我們就可以一起進入 Git 的世界囉！&lt;/p>
+&lt;br>
+&lt;h4>init&lt;span class="hx-absolute -hx-mt-20" id="init">&lt;/span>
+&lt;a href="#init" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>首先，找一個你要開始進行版本控制 (Git) 的資料夾， 使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git init&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>要記得要到版本控制的資料夾目錄下才使用這個指令歐！&lt;/p>
+&lt;br>
+&lt;p>使用完後，會看到跑出下面這些文字：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/init.png"
+alt="Git init" width="600">&lt;figcaption>
+&lt;p>Git init&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>此外資料夾內也會多一個隱藏檔案 &lt;code>.git&lt;/code> ，他是用來存放 git 的紀錄，所以不要亂刪除歐：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ tree -a -d
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>└── .git
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ├── hooks
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ├── info
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ├── objects
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> │   ├── info
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> │   └── pack
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> └── refs
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ├── heads
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> └── tags&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>回到剛剛圖片，它說明默認會使用 master 這個來作為初始分支，並記得要使用 &lt;code>git config&lt;/code> 來做設定，那 &lt;code>git config&lt;/code> 是要做什麼用的呢！？&lt;/p>
+&lt;h4>config&lt;span class="hx-absolute -hx-mt-20" id="config">&lt;/span>
+&lt;a href="#config" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>在推送 Commit 的時候，會顯示使用者名稱以及電子郵件，所以要先在推送前設定好，這時就使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;pre>&lt;code>$ git config --global user.name &amp;#34;your name&amp;#34;
+$ git config --global user.email &amp;#34;your email&amp;#34;&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>分別設定使用者名稱以及電子郵件，這樣共同使用版本控制的人，才分的出來誰是誰！ (若只要在單個專案下設定使用者名稱及電子郵件，就不需要設定 &amp;ndash;global 參數)&lt;/p>
+&lt;br>
+&lt;h3>查看類&lt;span class="hx-absolute -hx-mt-20" id="查看類">&lt;/span>
+&lt;a href="#%e6%9f%a5%e7%9c%8b%e9%a1%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>status&lt;span class="hx-absolute -hx-mt-20" id="status">&lt;/span>
+&lt;a href="#status" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們剛剛已經設定好 config ，如果想查看檔案的 git 狀態，就使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git status&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以查看現在資料夾內有哪些檔案還沒加入版本控制，或是已經加入但還沒 Commit 變成新版本。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/status.png"
+alt="Git status" width="600">&lt;figcaption>
+&lt;p>Git status&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>綠色代表已經加入版本控制但還沒有 Commit ，紅色代表尚未加入追蹤。&lt;/p>
+&lt;br>
+&lt;h4>log&lt;span class="hx-absolute -hx-mt-20" id="log">&lt;/span>
+&lt;a href="#log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>當我們想要查看 Commit 的幾個版本，或是是誰 Commit 的等等資訊，可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git log&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/log.png"
+alt="Git log" width="600">&lt;figcaption>
+&lt;p>Git log&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到一串英文加數字，它是SHA-1 校驗碼也代表你推的這一個版本的識別 ID，也可以看到是由誰推送跟時間與推送的文字說明。&lt;/p>
+&lt;br>
+&lt;h4>diff&lt;span class="hx-absolute -hx-mt-20" id="diff">&lt;/span>
+&lt;a href="#diff" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>當我們假設已經 Commit 後，想要比較不同版本內容的差異，就使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git diff 116e 442c&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>116e 代表最新的版本，442c 代表上一個版本，可以看上面 &lt;code>log&lt;/code> 的辨識 ID，因為校驗碼很長，最少需要前4個數字跟英文，才可以知道是哪一個版本。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/diff.png"
+alt="Git diff" width="600">&lt;figcaption>
+&lt;p>Git diff&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>紅色代表最新版本因為我們是用 116e 最新版本來跟綠色上一個版本 442c 來做比較。&lt;/p>
+&lt;br>
+&lt;h4>reflog&lt;span class="hx-absolute -hx-mt-20" id="reflog">&lt;/span>
+&lt;a href="#reflog" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果我們在操作 Git 的時候執行錯誤，需要回復到前幾個版本，但還想要查看歷史紀錄，如果我們使用前面說的 &lt;code>git log&lt;/code> 是看不到已經舊的紀錄，這時要使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git reflog&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reflog.png"
+alt="Git reflog (圖一)" width="600">&lt;figcaption>
+&lt;p>Git reflog (圖一)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/log-1.png"
+alt="Git log (圖二)" width="600">&lt;figcaption>
+&lt;p>Git log (圖二)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到圖一是使用 &lt;code>reflog&lt;/code> 就可以知道我們還原的紀錄，但使用 &lt;code>log&lt;/code> 查看，會發現沒有辦法看到 test-2 的紀錄。&lt;/p>
+&lt;br>
+&lt;h3>提交類&lt;span class="hx-absolute -hx-mt-20" id="提交類">&lt;/span>
+&lt;a href="#%e6%8f%90%e4%ba%a4%e9%a1%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>add&lt;span class="hx-absolute -hx-mt-20" id="add">&lt;/span>
+&lt;a href="#add" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>當我們上面使用 &lt;code>git init&lt;/code> 初始化資料夾後，還沒有開始進行版本控制，需要使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git add .
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>$ git add test.txt&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>將檔案加入版本控制的暫存區。它的格式是 &lt;code>git add [檔案名稱]&lt;/code> ，如果想要把資料夾全部檔案都加入版本控制，可以使用 &lt;code>.&lt;/code> 來加入。&lt;/p>
+&lt;br>
+&lt;h4>commit&lt;span class="hx-absolute -hx-mt-20" id="commit">&lt;/span>
+&lt;a href="#commit" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>當我們新增完後，要將它提交出去，就要使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git commit -m &lt;span style="color:#e6db74">&amp;#34;內容打這&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/commit.png"
+alt="Git commit" width="600">&lt;figcaption>
+&lt;p>Git commit&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們可以在雙引號內輸入我們修改的內容，方便其他人了解該版本的差異。&lt;/p>
+&lt;br>
+&lt;h3>分支類&lt;span class="hx-absolute -hx-mt-20" id="分支類">&lt;/span>
+&lt;a href="#%e5%88%86%e6%94%af%e9%a1%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>branch&lt;span class="hx-absolute -hx-mt-20" id="branch">&lt;/span>
+&lt;a href="#branch" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們專案初始化後，一開始都只會有一個 master 分支，如果想要新增分支，可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git branch &lt;span style="color:#e6db74">&amp;#34;分支名稱&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>會將所在分支的檔案狀態複製到新增的分支上，當該分支改動時，不會影響到原本的分支。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/branch.png"
+alt="Git branch" width="600">&lt;figcaption>
+&lt;p>Git branch&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>checkout&lt;span class="hx-absolute -hx-mt-20" id="checkout">&lt;/span>
+&lt;a href="#checkout" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果想要切換不同版本或是分支，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git checkout &lt;span style="color:#e6db74">&amp;#34;分支名稱/分支ID&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>來切換不同的分支或是以前的版本。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/checkout_1.png"
+alt="Git checkout" width="600">&lt;figcaption>
+&lt;p>Git checkout&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>如果想要同時建立分支並切換，可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git chechout -b &lt;span style="color:#e6db74">&amp;#34;分支名稱&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>&lt;code>-b&lt;/code> 這個參數就等於是 &lt;code>git branch &amp;quot;分支&amp;quot; &amp;amp; git checkout &amp;quot;分支&amp;quot;&lt;/code>。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/checkout_2.png"
+alt="Git checkout -b" width="600">&lt;figcaption>
+&lt;p>Git checkout -b&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>遠端類&lt;span class="hx-absolute -hx-mt-20" id="遠端類">&lt;/span>
+&lt;a href="#%e9%81%a0%e7%ab%af%e9%a1%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>clone&lt;span class="hx-absolute -hx-mt-20" id="clone">&lt;/span>
+&lt;a href="#clone" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果我們遠端上已經有版本庫，想要下載到本地端，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git clone &lt;span style="color:#f92672">[&lt;/span>遠端網址&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>會在下指令的當前路徑下，下載整個遠端的專案。&lt;/p>
+&lt;br>
+&lt;h4>remote&lt;span class="hx-absolute -hx-mt-20" id="remote">&lt;/span>
+&lt;a href="#remote" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果要新增遠端版本庫，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git remote add &lt;span style="color:#f92672">[&lt;/span>簡稱&lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#f92672">[&lt;/span>遠端網址&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>取一個可以代表要新增的遠端 Git 版本庫簡稱。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/remote_1.png"
+alt="Git remote" width="600">&lt;figcaption>
+&lt;p>Git remote&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>如果想要檢視已經設定好的遠端版本庫，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git remote&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>他會列出每個遠端本版本庫的簡稱。&lt;/p>
+&lt;p>也可以使用 &lt;code>git remote -v&lt;/code> 指令，會顯示 Git 用來讀寫遠端簡稱時所用的網址：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/remote_2.png"
+alt="Git remote -v" width="600">&lt;figcaption>
+&lt;p>Git remote -v&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>push&lt;span class="hx-absolute -hx-mt-20" id="push">&lt;/span>
+&lt;a href="#push" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>當我們已經設定好遠端版本庫的位址，我們如果想要將本地端的專案版本庫放到遠端，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git push &lt;span style="color:#f92672">[&lt;/span>簡稱&lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#f92672">[&lt;/span>分支名稱&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>將本地端版本庫推到遠端的版本庫。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/push.png"
+alt="Git push" width="600">&lt;figcaption>
+&lt;p>Git push&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>上面這張圖片，就是把本地端的 &lt;code>master&lt;/code> 分支內容，推一份到 &lt;code>origin&lt;/code> 這個地方 (可能是 GitHub 或公司內部 Git 伺服器)，並且在 &lt;code>origin&lt;/code> 這個地方形成同名的 &lt;code>master&lt;/code> 分支。&lt;/p>
+&lt;br>
+&lt;p>但很多人不知道的是，其實 push 指令的完整型態長這樣：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git push origin master:master&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>意思就是「把本地的 &lt;code>master&lt;/code> 分支內容，推一份到 &lt;code>origin&lt;/code> 上，並且在 &lt;code>origin&lt;/code> 上建立一個 &lt;code>master&lt;/code> 分支」&lt;/p>
+&lt;br>
+&lt;p>如果我們把指令改為：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git push origin master:dog&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>意思就會變成「把本地的 &lt;code>master&lt;/code> 分支內容，推一份到 &lt;code>origin&lt;/code> 上，並且在 &lt;code>origin&lt;/code> 上建立一個 &lt;code>dog&lt;/code> 分支」&lt;/p>
+&lt;br>
+&lt;h4>pull&lt;span class="hx-absolute -hx-mt-20" id="pull">&lt;/span>
+&lt;a href="#pull" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果我們想要將遠端的專案 &lt;strong>下載並合併&lt;/strong> 至本地端，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git pull &lt;span style="color:#f92672">[&lt;/span>簡稱&lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#f92672">[&lt;/span>分支名稱&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>將遠端專案資料下載並合併到本地端。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/pull.png"
+alt="Git pull" width="600">&lt;figcaption>
+&lt;p>Git pull&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>fetch&lt;span class="hx-absolute -hx-mt-20" id="fetch">&lt;/span>
+&lt;a href="#fetch" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果我們單純只想要將遠端的專案 &lt;strong>下載&lt;/strong> 至本地端，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git fetch &lt;span style="color:#f92672">[&lt;/span>簡稱&lt;span style="color:#f92672">]&lt;/span> &lt;span style="color:#f92672">[&lt;/span>分支名稱&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>將遠端專案資料下載到本地端。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/fetch.png"
+alt="Git fetch" width="600">&lt;figcaption>
+&lt;p>Git fetch&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>clone、pull、fetch 差異&lt;span class="hx-absolute -hx-mt-20" id="clonepullfetch-差異">&lt;/span>
+&lt;a href="#clonepullfetch-%e5%b7%ae%e7%95%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">差異&lt;/th>
+&lt;th style="text-align:center">clone&lt;/th>
+&lt;th style="text-align:center">fetch&lt;/th>
+&lt;th style="text-align:center">pull&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">功能&lt;/td>
+&lt;td style="text-align:center">會把遠端整份專案都下載到本地端&lt;/td>
+&lt;td style="text-align:center">只會下載，並不會合併&lt;/td>
+&lt;td style="text-align:center">會下載且合併檔案&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">補充說明&lt;/td>
+&lt;td style="text-align:center">適用於專案一開始時使用，如果 clone 之後要再更新，通常是執行 &lt;code>git fetch&lt;/code> or &lt;code>git pull&lt;/code>&lt;/td>
+&lt;td style="text-align:center">假設我遠端叫 &lt;code>orgin&lt;/code>，當執行時，Git 會比對本地端與遠端，會「下載 &lt;code>origin&lt;/code> 上有但本地端沒有的檔案下來」&lt;/td>
+&lt;td style="text-align:center">pull 與 fetch 做的事情差不多，多了一個進行合併的功能&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;h3>合併類&lt;span class="hx-absolute -hx-mt-20" id="合併類">&lt;/span>
+&lt;a href="#%e5%90%88%e4%bd%b5%e9%a1%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>merge&lt;span class="hx-absolute -hx-mt-20" id="merge">&lt;/span>
+&lt;a href="#merge" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果想要將不同分支內容合併，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git merge &lt;span style="color:#f92672">[&lt;/span>分支名稱&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>像下面這張圖，我們將分支 123 合併到分支 master。(要記得先切換到要合併的主分支，才可以合併其他的分支進來)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/merge.png"
+alt="Git merge" width="600">&lt;figcaption>
+&lt;p>Git merge&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>merge (fast-fastward)&lt;span class="hx-absolute -hx-mt-20" id="merge-fast-fastward">&lt;/span>
+&lt;a href="#merge-fast-fastward" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>merge 有一個參數叫做 fast-fastward，我們先看圖片再來說明：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/merge_1.gif"
+alt="Git merge fast-fastward 圖一 (CS Visualized: Useful Git Commands)" width="700">&lt;figcaption>
+&lt;p>Git merge fast-fastward 圖一 (&lt;a href="https://dev.to/lydiahallie/cs-visualized-useful-git-commands-37p1#merge" target="_blank" rel="noopener">CS Visualized: Useful Git Commands&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/merge_2.gif"
+alt="Git merge no fast-fastward 圖二 (CS Visualized: Useful Git Commands)" width="700">&lt;figcaption>
+&lt;p>Git merge no fast-fastward 圖二 (&lt;a href="https://dev.to/lydiahallie/cs-visualized-useful-git-commands-37p1#merge" target="_blank" rel="noopener">CS Visualized: Useful Git Commands&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>圖一是我們的 &lt;code>fast-fastward&lt;/code>，也是 Git 預設的合併方式，當我們要將 dev 合併到 master，&lt;code>fast-fastward&lt;/code> 會將 dev 分支的 commit 紀錄合併到 master 上，然而圖二是不使用 &lt;code>fast-fastward&lt;/code> 方式，會保留 dev 分支上的 commit 紀錄，並在 master 上新增一個。&lt;/p>
+&lt;br>
+&lt;p>&lt;code>no fast-fastward&lt;/code> 好處是可以完整保留每個分支的 commit 紀錄，壞處是假如 commit 紀錄只有一個，合併多次就會出現很多小叉路。要怎麽使用 &lt;code>no fast-fastward&lt;/code>：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git merge --no-ff &lt;span style="color:#f92672">[&lt;/span>分支名稱&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h4>rebase (合併)&lt;span class="hx-absolute -hx-mt-20" id="rebase-合併">&lt;/span>
+&lt;a href="#rebase-%e5%90%88%e4%bd%b5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果想要重新修改特定分支的「 基礎版本 」，要把另一個分支的變更，當成我這隻分支的基礎，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git rebase &lt;span style="color:#f92672">[&lt;/span>分支名稱&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/rebase_1.gif"
+alt="Git rebase (合併) (CS Visualized: Useful Git Commands)" width="700">&lt;figcaption>
+&lt;p>Git rebase (合併) (&lt;a href="https://dev.to/lydiahallie/cs-visualized-useful-git-commands-37p1#Rebasing" target="_blank" rel="noopener">CS Visualized: Useful Git Commands&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>rebase (修改)&lt;span class="hx-absolute -hx-mt-20" id="rebase-修改">&lt;/span>
+&lt;a href="#rebase-%e4%bf%ae%e6%94%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果想要修改特定分支上任何一個版本資訊，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git rebase -i &lt;span style="color:#f92672">[&lt;/span>HEAD~?&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>但要記得，如果再使用前，要先詢問是否有人正在使用此分支，因為 rebase 會改變歷史紀錄。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/rebase_2.gif"
+alt="Git rebase (修改) (CS Visualized: Useful Git Commands)" width="700">&lt;figcaption>
+&lt;p>Git rebase (修改) (&lt;a href="https://dev.to/lydiahallie/cs-visualized-useful-git-commands-37p1#Rebasing" target="_blank" rel="noopener">CS Visualized: Useful Git Commands&lt;/a>)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>cherry-pick&lt;span class="hx-absolute -hx-mt-20" id="cherry-pick">&lt;/span>
+&lt;a href="#cherry-pick" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果想要從某個分支，拉幾個 Commit 進來該分支，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git cherry-pick &lt;span style="color:#f92672">[&lt;/span>分支ID&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>但做此動作，需要解決修改後的版本衝突。&lt;/p>
+&lt;br>
+&lt;h3>還原類&lt;span class="hx-absolute -hx-mt-20" id="還原類">&lt;/span>
+&lt;a href="#%e9%82%84%e5%8e%9f%e9%a1%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>reset&lt;span class="hx-absolute -hx-mt-20" id="reset">&lt;/span>
+&lt;a href="#reset" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果想要還原任意 Commit，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git reset &lt;span style="color:#f92672">[&lt;/span>HEAD~?&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>會還原選擇的 Commit，且檔案還是維持最新版本。&lt;/p>
+&lt;br>
+&lt;p>&lt;code>reset&lt;/code> 指令可以搭配參數使用，常見到的三種參數，方別是 &lt;code>--mixed&lt;/code>、&lt;code>--soft&lt;/code>、&lt;code>--hard&lt;/code>，不同的參數執行之後會有稍微不太一樣的結果。&lt;/p>
+&lt;ul>
+&lt;li>mixed 模式：&lt;code>--mixed&lt;/code> 是預設的參數，如果沒有特別加其他參數，&lt;code>got reset&lt;/code> 會使用 &lt;code>--mix&lt;/code> 模式。這個模式會把暫存區的檔案丟掉，但不會影響到工作目錄的檔案，也就是說 Commit 拆出來的檔案會留在工作目錄(實體的檔案)，但不會留在暫存區。&lt;/li>
+&lt;li>soft 模式：這個模式下的 reset，工作目錄跟暫存區檔案都不會被丟掉，所以看起來只有 HEAD 的移動而已。也因此，Commit 拆出來的檔案會直接放在暫存區。&lt;/li>
+&lt;li>hard 模式：在這個模式下，不管是工作目錄以及暫存區的檔案都會丟掉。&lt;/li>
+&lt;/ul>
+&lt;p>以下用表格在整理一次：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">模式&lt;/th>
+&lt;th style="text-align:center">mixed 模式&lt;/th>
+&lt;th style="text-align:center">soft 模式&lt;/th>
+&lt;th style="text-align:center">hard 模式&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">工作目錄(實體的檔案)&lt;/td>
+&lt;td style="text-align:center">不變&lt;/td>
+&lt;td style="text-align:center">不變&lt;/td>
+&lt;td style="text-align:center">丟掉&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">暫存區&lt;/td>
+&lt;td style="text-align:center">丟掉&lt;/td>
+&lt;td style="text-align:center">不變&lt;/td>
+&lt;td style="text-align:center">丟掉&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;p>文字說明也不太懂對吧！沒錯我也是 😂，所以我整理了三種不同的範例，我們一起做看看吧！&lt;/p>
+&lt;p>我們先開一個新專案，在 master 上面 commit 2 次，可以參考下方圖片：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_1.png"
+alt="Git reset 示範" width="700">&lt;figcaption>
+&lt;p>Git reset 示範&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們用 &lt;code>git log&lt;/code> 來看一下記錄：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_2.png"
+alt="Git reset 示範 log 紀錄" width="700">&lt;figcaption>
+&lt;p>Git reset 示範 log 紀錄&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>都設定好後，我們要來測試每個參數的不同之處，先以預設的 &lt;code>--mixed&lt;/code> 來測試：&lt;/p>
+&lt;h5>reset - mixed&lt;span class="hx-absolute -hx-mt-20" id="reset---mixed">&lt;/span>
+&lt;a href="#reset---mixed" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>我們下 &lt;code>git reset --minxed&lt;/code> 按 Tab 可以看要還原的 commit，我們之後的測試都是還原到 &lt;code>24aeb0d -- [HEAD^] add a.txt&lt;/code> 這個，來觀察 &lt;code>add b.txt&lt;/code> 這個 commit 的變化。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_3.png"
+alt="Git reset mixed 模式" width="800">&lt;figcaption>
+&lt;p>Git reset mixed 模式&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>所以我們的指令是 &lt;code>git reset --mixed 24aebo4&lt;/code>，我們再來觀看看看，檔案狀態也就是 b.txt 以及暫存區狀態。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_4.png"
+alt="Git reset mixed 模式" width="800">&lt;figcaption>
+&lt;p>Git reset mixed 模式&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>可以看到使用 &lt;code>--mixed&lt;/code> 模式，檔案 b.txt 還會存在，只是移除暫存區。&lt;/p>
+&lt;br>
+&lt;h5>reset - soft&lt;span class="hx-absolute -hx-mt-20" id="reset---soft">&lt;/span>
+&lt;a href="#reset---soft" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>我們指令是 &lt;code>git reset --soft 24aebo4&lt;/code>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_5.png"
+alt="Git reset soft 模式" width="800">&lt;figcaption>
+&lt;p>Git reset soft 模式&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>可以看到使用 &lt;code>--soft&lt;/code> 模式，檔案 b.txt 還會存在，且會在暫存區。&lt;/p>
+&lt;br>
+&lt;h5>reset - hard&lt;span class="hx-absolute -hx-mt-20" id="reset---hard">&lt;/span>
+&lt;a href="#reset---hard" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>我們指令是 &lt;code>git reset --hard 24aebo4&lt;/code>：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_6.png"
+alt="Git reset hard 模式" width="800">&lt;figcaption>
+&lt;p>Git reset hard 模式&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>可以看到使用 &lt;code>--hard&lt;/code> 模式，檔案 b.txt 不見了，所以也不會在暫存區。&lt;/p>
+&lt;br>
+&lt;h4>revert&lt;span class="hx-absolute -hx-mt-20" id="revert">&lt;/span>
+&lt;a href="#revert" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果想要還原任意 Commit，但又想保留在歷史紀錄，就可以使用：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git revert &lt;span style="color:#f92672">[&lt;/span>HEAD~?&lt;span style="color:#f92672">]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>會還原選擇的 Commit，檔案也會還原到舊的版本&lt;/p>
+&lt;br>
+&lt;h4>reset 與 revert 差異&lt;span class="hx-absolute -hx-mt-20" id="reset-與-revert-差異">&lt;/span>
+&lt;a href="#reset-%e8%88%87-revert-%e5%b7%ae%e7%95%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align:center">指令&lt;/th>
+&lt;th style="text-align:center">reset&lt;/th>
+&lt;th style="text-align:center">revert&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align:center">改變歷史狀態&lt;/td>
+&lt;td style="text-align:center">是&lt;/td>
+&lt;td style="text-align:center">否&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align:center">說明&lt;/td>
+&lt;td style="text-align:center">把目前狀態設定成某個指定的 Commit 狀態，通常適用於尚未推到遠端的 Commit&lt;/td>
+&lt;td style="text-align:center">新增一個 Commit 來取消另一個 Commit 的內容，原本的 Commit 依舊會保留在歷史紀錄中。通常適用於已經推到遠端的 Commit&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;h3>其他&lt;span class="hx-absolute -hx-mt-20" id="其他">&lt;/span>
+&lt;a href="#%e5%85%b6%e4%bb%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>tag&lt;span class="hx-absolute -hx-mt-20" id="tag">&lt;/span>
+&lt;a href="#tag" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>標籤是用於標記特定的點或是提交的歷史，通常會用來標記發佈版本的名稱或是編號，例如：&lt;code>v1.0&lt;/code>。標籤看起來有點像是分支，但打上標籤的提交是固定的，不能隨意的變更位置。&lt;/p>
+&lt;p>Git 中有兩種標籤類型：輕量標籤(lightweight tag)和標示標籤(annotated tag)，他們有什麼區別呢？我們分別列出他們不同之處。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>
+&lt;p>輕量標籤(lightweight tag)&lt;/p>
+&lt;ul>
+&lt;li>不可以變更的暫時標籤&lt;/li>
+&lt;li>可以添加名稱&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;li>
+&lt;p>標示標籤(annotated tag)&lt;/p>
+&lt;ul>
+&lt;li>可以添加打標籤者的名稱、email、日期&lt;/li>
+&lt;li>可以添加名稱&lt;/li>
+&lt;li>可以添加註解&lt;/li>
+&lt;li>可以添加簽名&lt;/li>
+&lt;/ul>
+&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>一般情況下，標示標籤都會用在較為重要的提交上，如發布提交可以使用標示標籤來新增註解或簽名，另一方面，輕量標籤通常使用在本機端最為暫時性的使用或是一次性使用。&lt;/p>
+&lt;p>我們分別來看一下要如何新增輕量標籤(lightweight tag)以及標示標籤(annotated tag)吧！&lt;/p>
+&lt;br>
+&lt;p>我們先隨意在分支上推一次 commit ，如下圖，讓我們等等有 commit 可以來新增標籤：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/tag.png"
+alt="在隨意的分支推一個 commit" width="800">&lt;figcaption>
+&lt;p>在隨意的分支推一個 commit&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h5>輕量標籤&lt;span class="hx-absolute -hx-mt-20" id="輕量標籤">&lt;/span>
+&lt;a href="#%e8%bc%95%e9%87%8f%e6%a8%99%e7%b1%a4" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>使用 &lt;code>tag&lt;/code> 且不帶其他的參數來下指令：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git tag lightweight bc4c597&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>lightweight 是我們 tag 名稱，bc4c597 是剛剛 commit 的 SHA-1&lt;/p>
+&lt;br>
+&lt;p>接著我們使用 &lt;code>git show lightweight&lt;/code> 來查看標籤：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/tag_1.png"
+alt="輕量標籤 lightweight" width="800">&lt;figcaption>
+&lt;p>輕量標籤 lightweight&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>可以發現因為我們使用「輕量標籤」，所以沒有存任何資訊，但可以在圖片第一行最後面看到我們使用的 tag。&lt;/p>
+&lt;br>
+&lt;h5>標示標籤&lt;span class="hx-absolute -hx-mt-20" id="標示標籤">&lt;/span>
+&lt;a href="#%e6%a8%99%e7%a4%ba%e6%a8%99%e7%b1%a4" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>我們一樣使用 &lt;code>tag&lt;/code>，但後面可以加上 -a -m 參數：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-sh" data-lang="sh">&lt;span style="display:flex;">&lt;span>$ git tag annotated bc4c597 -a -m &lt;span style="color:#e6db74">&amp;#34;可以備註&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>&lt;code>-a&lt;/code> 參數是請 Git 幫我們建立有附註的標籤，後面的 &lt;code>-m&lt;/code> 則是跟我們 commit 一樣可以來輸入訊息&lt;/p>
+&lt;br>
+&lt;p>接著我們使用 &lt;code>git show annotated&lt;/code> 來查看標籤：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/tag_2.png"
+alt="標示標籤 annotated" width="800">&lt;figcaption>
+&lt;p>標示標籤 annotated&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>可以看到我們使用標示標籤，所以可以查看標籤是誰填寫、他的信箱、填寫時間以及他的備註內容。&lt;/p>
+&lt;br>
+&lt;p>官方文件對於這兩種標籤的說明：&lt;/p>
+&lt;p>有標示標籤主要用來做像是軟體版號之類的用途，而輕量標籤則是來於個人使用或暫時的標記用途。簡單來說，有標示標籤的好處是有更多關於這張標籤的資訊，假設不是很在乎這些資訊，使用一般的輕量標籤也是沒有問題的！&lt;/p>
+&lt;br>
+&lt;h2>Git 常見問題&lt;span class="hx-absolute -hx-mt-20" id="git-常見問題">&lt;/span>
+&lt;a href="#git-%e5%b8%b8%e8%a6%8b%e5%95%8f%e9%a1%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
+&lt;li>Git 裡的 HEAD 是什麼？&lt;/li>
+&lt;/ul>
+&lt;p>HEAD 本身是一個指標，通常會指向某個本地端分支或是其他 Commit，所以也可以把 HEAD 當作目前所在的分支。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>刪除合併後的分支會發生什麼事情嗎？&lt;/li>
+&lt;/ul>
+&lt;p>分支本身就像指標或是貼紙一樣，貼在某個 Commit 上面，分支並不是目錄或是檔案，所以當我們刪除已經合併過的分支，不會造成檔案或目錄跟著被刪除。&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>什麼是 Git？為什麼要學習它？：&lt;a href="https://gitbook.tw/chapters/introduction/what-is-git" target="_blank" rel="noopener">https://gitbook.tw/chapters/introduction/what-is-git&lt;/a>&lt;/p>
+&lt;p>Git：基本概念介紹與指令：&lt;a href="https://medium.com/@tina2793778/git-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9%E8%88%87%E6%8C%87%E4%BB%A4-d5d85607cd7d" target="_blank" rel="noopener">https://medium.com/@tina2793778/git-%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5%E4%BB%8B%E7%B4%B9%E8%88%87%E6%8C%87%E4%BB%A4-d5d85607cd7d&lt;/a>&lt;/p>
+&lt;p>[Git] 初始設定：&lt;a href="https://ithelp.ithome.com.tw/articles/10240965" target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10240965&lt;/a>&lt;/p>
+&lt;p>連猴子都能懂的Git入門指南：&lt;a href="https://backlog.com/git-tutorial/tw/" target="_blank" rel="noopener">https://backlog.com/git-tutorial/tw/&lt;/a>&lt;/p>
+&lt;p>Git教學】分支合併: merge 與 rebase 差異：&lt;a href="https://www.maxlist.xyz/2020/05/02/git-merge-rebase/" target="_blank" rel="noopener">https://www.maxlist.xyz/2020/05/02/git-merge-rebase/&lt;/a>&lt;/p>
+&lt;p>Git 面試題：&lt;a href="https://gitbook.tw/interview" target="_blank" rel="noopener">https://gitbook.tw/interview&lt;/a>&lt;/p>
+&lt;p>Reset、Revert 跟 Rebase 指令有什麼差別？：&lt;a href="https://gitbook.tw/chapters/rewrite-history/reset-revert-and-rebase" target="_blank" rel="noopener">https://gitbook.tw/chapters/rewrite-history/reset-revert-and-rebase&lt;/a>&lt;/p></description></item></channel></rss>
