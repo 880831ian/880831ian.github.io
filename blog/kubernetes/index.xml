@@ -1,4 +1,343 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Kubernetes</title><link>https://pin-yi.me/blog/kubernetes/</link><description>Recent content in Kubernetes on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/kubernetes/index.xml" rel="self" type="application/rss+xml"/><item><title>K8s Node Log Stdout Logrotate 回收機制</title><link>https://pin-yi.me/blog/kubernetes/k8s-node-log-stdout-logrotate/</link><pubDate>Wed, 12 Mar 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-node-log-stdout-logrotate/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Kubernetes</title><link>https://pin-yi.me/blog/kubernetes/</link><description>Recent content in Kubernetes on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/kubernetes/index.xml" rel="self" type="application/rss+xml"/><item><title>Kubernetes 開啟 Region 後，如何減少跨 Zone 網路費用</title><link>https://pin-yi.me/blog/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/</link><pubDate>Thu, 15 May 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/</guid><description>
+&lt;p>由於最近公司開始導入 Multi Zone 架構，這時候會出現一個問題，就是明明我是同一個 GKE，但因為有多個 Zone，導致開始會有一些跨 Zone 的網路傳輸費用產生 (每 Gib 會收 0.01 美元)，可以參考下方圖片：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/1.png"
+alt="跨域費用說明" width="1000">&lt;figcaption>
+&lt;p>跨域費用說明&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>所以此文章會針對要如何減少跨 Zone 網路費用進行測試以及提供解決辦法。&lt;/p>
+&lt;br>
+&lt;h2>建置 GKE 環境&lt;span class="hx-absolute -hx-mt-20" id="建置-gke-環境">&lt;/span>
+&lt;a href="#%e5%bb%ba%e7%bd%ae-gke-%e7%92%b0%e5%a2%83" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;blockquote>
+&lt;p>[!NOTE] GKE 資訊：
+Tier / Mode：Standard&lt;br>版本：1.32.2-gke.1297002&lt;br>Location type：Regional&lt;br>Default node zones：[&amp;quot;asia-east1-a&amp;quot;, &amp;quot;asia-east1-b&amp;quot;]&lt;/p>
+&lt;/blockquote>
+&lt;br>
+&lt;ul>
+&lt;li>使用的 Module 請參考：&lt;a href="https://github.com/880831ian/IaC/tree/master/modules/gke" target="_blank" rel="noopener">880831ian/IaC&lt;/a>&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-hcl" data-lang="hcl">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">terraform&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> source &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;${get_path_to_repo_root()}/modules/gke&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">include&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> path &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">find_in_parent_folders&lt;/span>(&lt;span style="color:#e6db74">&amp;#34;root.hcl&amp;#34;&lt;/span>)
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>inputs &lt;span style="color:#f92672">=&lt;/span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;test&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> regional &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> region &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;asia-east1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> zones &lt;span style="color:#f92672">=&lt;/span> [&lt;span style="color:#e6db74">&amp;#34;asia-east1-a&amp;#34;, &amp;#34;asia-east1-b&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> release_channel &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;REGULAR&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> master_ipv4_cidr_block &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;172.16.1.16/28&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> network_project_id &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;xxxxx&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> network &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;default&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> subnetwork &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;default-asia-east1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> gcs_fuse_csi_driver &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> enable_maintenance &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> monitoring_enable_managed_prometheus &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> deletion_protection &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#66d9ef">false&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> node_pools &lt;span style="color:#f92672">=&lt;/span> [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> name &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;test-pool&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> machine_type &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">&amp;#34;e2-small&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> min_count &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> max_count &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>(這邊小提醒，如果使用多個 Zone，在 node 的 CA 記得要用 min_count 跟 max_count，他才是依照 Zone 去長，也就是 test-pool 會分別在 Zone A 跟 Zone B 去長歐)&lt;/p>
+&lt;br>
+&lt;h2>測試連線&lt;span class="hx-absolute -hx-mt-20" id="測試連線">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6%e9%80%a3%e7%b7%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>原生 Service 測試&lt;span class="hx-absolute -hx-mt-20" id="原生-service-測試">&lt;/span>
+&lt;a href="#%e5%8e%9f%e7%94%9f-service-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>建立完後，啟動兩個 nginx 服務，分別叫做 nginx-a 跟 nginx-b，各會有兩個 pod，並使用 podAntiAffinity 來限制同一個服務能建立在兩個 Zone 上面。&lt;/p>
+&lt;p>相關的程式碼都會放在 &lt;a href="https://github.com/880831ian/k8s-open-region-how-to-reduce-cross-zone-costs" target="_blank" rel="noopener">880831ian/k8s-open-region-how-to-reduce-cross-zone-costs&lt;/a>&lt;/p>
+&lt;br>
+&lt;h4>程式碼&lt;span class="hx-absolute -hx-mt-20" id="程式碼">&lt;/span>
+&lt;a href="#%e7%a8%8b%e5%bc%8f%e7%a2%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>下面附上其中一個 nginx-a 服務 yaml (nginx-b 也跟 nginx-a 一樣，只有名稱改變)&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">apps/v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Deployment&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-a&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">replicas&lt;/span>: &lt;span style="color:#ae81ff">2&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">matchLabels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">nginx-a&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">template&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">labels&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">nginx-a&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">affinity&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">podAntiAffinity&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">requiredDuringSchedulingIgnoredDuringExecution&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">labelSelector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">matchExpressions&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">key&lt;/span>: &lt;span style="color:#ae81ff">app&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">operator&lt;/span>: &lt;span style="color:#ae81ff">In&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">values&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">nginx-a&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">topologyKey&lt;/span>: &lt;span style="color:#ae81ff">topology.kubernetes.io/zone&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">containers&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">nginx:latest&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">containerPort&lt;/span>: &lt;span style="color:#ae81ff">80&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumeMounts&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">mountPath&lt;/span>: &lt;span style="color:#ae81ff">/etc/nginx/conf.d&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">volumes&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">configMap&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Service&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-a&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">selector&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">app&lt;/span>: &lt;span style="color:#ae81ff">nginx-a&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ports&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">protocol&lt;/span>: &lt;span style="color:#ae81ff">TCP&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">port&lt;/span>: &lt;span style="color:#ae81ff">80&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">targetPort&lt;/span>: &lt;span style="color:#ae81ff">80&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">ConfigMap&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">nginx-conf&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">data&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">default.conf&lt;/span>: |&lt;span style="color:#e6db74">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> server {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> listen 80;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> location / {
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> return 200 &amp;#34;$hostname\n&amp;#34;;
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> }
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> }&lt;/span> &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h4>顯示部署完的服務狀態&lt;span class="hx-absolute -hx-mt-20" id="顯示部署完的服務狀態">&lt;/span>
+&lt;a href="#%e9%a1%af%e7%a4%ba%e9%83%a8%e7%bd%b2%e5%ae%8c%e7%9a%84%e6%9c%8d%e5%8b%99%e7%8b%80%e6%85%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們使用指令，列出四個 pod 各別的 node 以及所在的 Zone&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>printf &lt;span style="color:#e6db74">&amp;#34;%-30s %-35s %-20s\n&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;POD&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;NODE&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;ZONE&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;---------------------------------------------------------------------------------------------&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl get pod -o&lt;span style="color:#f92672">=&lt;/span>custom-columns&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#39;POD:metadata.name,NODE:spec.nodeName&amp;#39;&lt;/span> --no-headers | &lt;span style="color:#66d9ef">while&lt;/span> read pod node; &lt;span style="color:#66d9ef">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> zone&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>kubectl get node &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$node&lt;span style="color:#e6db74">&amp;#34;&lt;/span> -o&lt;span style="color:#f92672">=&lt;/span>jsonpath&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#39;{.metadata.labels.topology\.kubernetes\.io/zone}&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf &lt;span style="color:#e6db74">&amp;#34;%-30s %-35s %-20s\n&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$pod&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$node&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$zone&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/2.png"
+alt="Pod 所在 Node 以及 Zone" width="850">&lt;figcaption>
+&lt;p>Pod 所在 Node 以及 Zone&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接著，我們從 nginx-a-98f749dc6-jzl8m (Zone A) 發起連線打 nginx-b 的 svc，觀察一下他會打到同樣是 Zone A 的 nginx-b-795d6c85b8-c2k45，還是 Zone B 的 nginx-b-795d6c85b8-tncfm，或是隨機分配呢？&lt;/p>
+&lt;p>我們使用以下指令打 1000 次並觀察次數&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#f92672">{&lt;/span>1..1000&lt;span style="color:#f92672">}&lt;/span>; &lt;span style="color:#66d9ef">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> curl -s http://nginx-b.default.svc.cluster.local
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span> | sort | uniq -c&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/3.png"
+alt="Pod 所在 Node 以及 Zone" width="550">&lt;figcaption>
+&lt;p>Pod 所在 Node 以及 Zone&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>為了測試準確性，我們重複測試 3 次&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>同 nginx-a Zone A 打 nginx-b svc&lt;/th>
+&lt;th>nginx-b Zone A&lt;/th>
+&lt;th>nginx-b Zone B&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>第一次打 1000 次&lt;/td>
+&lt;td>482&lt;/td>
+&lt;td>518&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>第二次打 1000 次&lt;/td>
+&lt;td>493&lt;/td>
+&lt;td>507&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>第三次打 1000 次&lt;/td>
+&lt;td>498&lt;/td>
+&lt;td>502&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;p>就上面測試結果可以得知，他是隨機去分配到 Zone A 或是 Zone B 的 Nginx-b Pod，因為 Service 本來就會依照預設的 Round-Robin 來去分配。&lt;/p>
+&lt;br>
+&lt;h3>使用 Topology Aware Routing 測試&lt;span class="hx-absolute -hx-mt-20" id="使用-topology-aware-routing-測試">&lt;/span>
+&lt;a href="#%e4%bd%bf%e7%94%a8-topology-aware-routing-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>簡單說明一下，Topology Aware Routing 縮寫是 (TAR/TAH) 中文叫做：拓樸感知路由&lt;/p>
+&lt;p>在 K8s 1.27 以前叫作 Topology Aware Hints，所以縮寫才會是 TAH，邏輯是需要在 Service 的 annotation 加上 &lt;code>service.kubernetes.io/topology-mode: Auto&lt;/code> （1.27 Version），以前版本設定方式會不同。&lt;/p>
+&lt;p>它可以幫助網路流量盡可能的保持在同一個 Zone 裡面，Pod 之前優先使用同 Zone 流量來提高可靠性、性能以及減少成本。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/4.png"
+alt="設定完成後，會顯示來至 endpoint-slice-controller" width="750">&lt;figcaption>
+&lt;p>設定完成後，會顯示來至 endpoint-slice-controller&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>當設定上去後，因為 EndpointSlice 這邊會記錄每個 Pod 是屬於哪個 Zone，當並提供給 kube-proxy 知道，進而讓流量往同樣的 Zone 走。&lt;/p>
+&lt;br>
+&lt;h4>顯示部署完的服務狀態&lt;span class="hx-absolute -hx-mt-20" id="顯示部署完的服務狀態-1">&lt;/span>
+&lt;a href="#%e9%a1%af%e7%a4%ba%e9%83%a8%e7%bd%b2%e5%ae%8c%e7%9a%84%e6%9c%8d%e5%8b%99%e7%8b%80%e6%85%8b-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>那我們一樣用同樣的步驟再來測試一次：&lt;/p>
+&lt;p>使用一樣的指令，先列出四個 pod 各別的 node 以及所在的 zone (服務都有重啟過)&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>printf &lt;span style="color:#e6db74">&amp;#34;%-30s %-35s %-20s\n&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;POD&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;NODE&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;ZONE&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;---------------------------------------------------------------------------------------------&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl get pod -o&lt;span style="color:#f92672">=&lt;/span>custom-columns&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#39;POD:metadata.name,NODE:spec.nodeName&amp;#39;&lt;/span> --no-headers | &lt;span style="color:#66d9ef">while&lt;/span> read pod node; &lt;span style="color:#66d9ef">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> zone&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>kubectl get node &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$node&lt;span style="color:#e6db74">&amp;#34;&lt;/span> -o&lt;span style="color:#f92672">=&lt;/span>jsonpath&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#39;{.metadata.labels.topology\.kubernetes\.io/zone}&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> printf &lt;span style="color:#e6db74">&amp;#34;%-30s %-35s %-20s\n&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$pod&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$node&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$zone&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/5.png"
+alt="測試結果" width="850">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們從 nginx-a-fd5bdb699-6qnwb (Zone A) 發起連線打 nginx-b 的 svc，一樣觀察他會打到同樣是 zone A 的 nginx-b-795d6c85b8-2q7m2，還是 Zone B 的 nginx-b-795d6c85b8-82427？&lt;/p>
+&lt;p>我們使用以下指令打 1000 次並觀察次數&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#f92672">{&lt;/span>1..1000&lt;span style="color:#f92672">}&lt;/span>; &lt;span style="color:#66d9ef">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> curl -s http://nginx-b.default.svc.cluster.local
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span> | sort | uniq -c&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/6.png"
+alt="Pod 所在 Node 以及 Zone" width="550">&lt;figcaption>
+&lt;p>Pod 所在 Node 以及 Zone&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>為了公平性，我們也比照原本測試的，重複測試 3 次&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>同 nginx-a Zone A 打 nginx-b svc&lt;/th>
+&lt;th>nginx-b Zone A&lt;/th>
+&lt;th>nginx-b Zone B&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>第一次打 1000 次&lt;/td>
+&lt;td>1000&lt;/td>
+&lt;td>0&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>第二次打 1000 次&lt;/td>
+&lt;td>1000&lt;/td>
+&lt;td>0&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>第三次打 1000 次&lt;/td>
+&lt;td>1000&lt;/td>
+&lt;td>0&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;blockquote>
+&lt;p>[!TIP] 所以可以得知：
+只要 Service 有加上該 annotation，就可以透過 EndpointSlice 走到同樣的 Zone。&lt;/p>
+&lt;/blockquote>
+&lt;br>
+&lt;p>另外，我們也來測試看看，如果打的過程中，將 nginx-b Zone A nginx-b-795d6c85b8-2q7m2 Pod 給移除，那觀察流量會不會自動轉到 Zone B 呢？！&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/7.png"
+alt="Pod 所在 Node 以及 Zone" width="850">&lt;figcaption>
+&lt;p>Pod 所在 Node 以及 Zone&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>測試結果：當一開始進到 nginx-b-795d6c85b8-2q7m2 的流量，遇到 nginx-b-795d6c85b8-2q7m2 服務中斷，由於該 Nginx-b 在 Zone A 沒有其他 Pod，所以就會切回去使用 Zone B 的 Nginx-b 服務 (nginx-b-795d6c85b8-82427)，但當 Zone A 的 Nginx-b 服務好了，又會再走回 Zone A (nginx-b-795d6c85b8-w2vr4) &amp;lt; 是後面長出來的 Pod。&lt;/p>
+&lt;br>
+&lt;h4>使用的建議&lt;span class="hx-absolute -hx-mt-20" id="使用的建議">&lt;/span>
+&lt;a href="#%e4%bd%bf%e7%94%a8%e7%9a%84%e5%bb%ba%e8%ad%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;ul>
+&lt;li>
+&lt;p>確保 K8s 版本在 1.27 以上，1.27 以下需要使用 &lt;code>service.kubernetes.io/topology-aware-hints&lt;/code>。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>每個服務要均勻分配在每個 Zone 上面。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>確保服務在更新時，同 Zone 上面的數量足夠，避免切到其他 Zone 導致費用產生。&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Google Cloud 內部 VM 之間的資料移轉定價：&lt;a href="https://cloud.google.com/vpc/network-pricing?hl=zh-TW" target="_blank" rel="noopener">https://cloud.google.com/vpc/network-pricing?hl=zh-TW&lt;/a>&lt;/p>
+&lt;p>Topology Aware Routing：&lt;a href="https://kubernetes.io/docs/concepts/services-networking/topology-aware-routing/" target="_blank" rel="noopener">https://kubernetes.io/docs/concepts/services-networking/topology-aware-routing/&lt;/a>&lt;/p>
+&lt;p>AWS 相關文件 (AWS 也會有類似問題)：&lt;a href="https://aws.amazon.com/tw/blogs/containers/exploring-the-effect-of-topology-aware-hints-on-network-traffic-in-amazon-elastic-kubernetes-service/" target="_blank" rel="noopener">https://aws.amazon.com/tw/blogs/containers/exploring-the-effect-of-topology-aware-hints-on-network-traffic-in-amazon-elastic-kubernetes-service/&lt;/a>&lt;/p></description></item><item><title>K8s Node Log Stdout Logrotate 回收機制</title><link>https://pin-yi.me/blog/kubernetes/k8s-node-log-stdout-logrotate/</link><pubDate>Wed, 12 Mar 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-node-log-stdout-logrotate/</guid><description>
 &lt;p>我們知道可觀測性的三大支柱是 Log、Metics、Trace，其中 Log 是最基礎的一環，透過 Log 我們可以了解應用程式的運作狀況，當應用程式出現問題時，透過 Log 可以快速定位問題，進而解決問題。&lt;/p>
 &lt;p>以我們公司為例，我們主要使用 GCP，現在也開始用 AWS 來當作 DR 的環境。在 GCP 我們原本會使用 Log Exporter 來查看服務及系統的 Log，但為了更方便的管理，我們改使用 Datadog 來統一收集 Log (AWS 也是)。&lt;/p>
 &lt;p>要如何傳遞給 Datadog，我們依照 Datadog 官方文件建議，將 Log Stdout，讓 Datadog agent 去收集 Log，這樣就可以統一管理 Log 了，詳細可參考 &lt;a href="https://docs.datadoghq.com/containers/kubernetes/log/?tab=datadogoperator" target="_blank" rel="noopener">Datadog Kubernetes log collection&lt;/a>。&lt;/p>
