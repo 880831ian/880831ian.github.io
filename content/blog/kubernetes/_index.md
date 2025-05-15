@@ -12,6 +12,7 @@ sidebar:
 
 {{< cards >}}
 
+{{< card link="k8s-open-region-how-to-reduce-cross-zone-costs" title="Kubernetes 開啟 Region 後，如何減少跨 Zone 網路費用" image="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/cover.webp">}}
 {{< card link="k8s-node-log-stdout-logrotate" title="K8s Node Log Stdout Logrotate 回收機制" image="/kubernetes/k8s-node-log-stdout-logrotate/cover.webp">}}
 {{< card link="kube-dns-vs-core-dns" title="kube-dns vs CoreDNS 比較，DNS 的最佳實踐" image="/kubernetes/kube-dns-vs-core-dns/cover.webp">}}
 {{< card link="pod-curl-error-6-could-not-resolve-host" title="Pod 出現 cURL error 6: Could not resolve host" image="/kubernetes/pod-curl-error-6-could-not-resolve-host/cover.webp">}}

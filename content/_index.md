@@ -22,6 +22,7 @@ layout: hextra-home
 <br>
 
 {{< hextra/feature-grid cols=4 >}}
+{{< card link="blog/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs" title="Kubernetes 開啟 Region 後，如何減少跨 Zone 網路費用" image="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/cover.webp" >}}
 {{< card link="blog/gcp/gcs-cors" title="GCS Bucket CORS 錯誤解決方法" image="/gcp/gcs-cors/cover.webp" >}}
 {{< card link="blog/kubernetes/k8s-node-log-stdout-logrotate" title="K8s Node Log Stdout Logrotate 回收機制" image="/kubernetes/k8s-node-log-stdout-logrotate/cover.webp" >}}
 {{< card link="blog/aws/vpc-introduce" title="Amazon Virtual Private Cloud (VPC) 介紹" image="/aws/vpc-introduce/cover.webp" >}}
