@@ -43,7 +43,7 @@
 &lt;li>可以跨多個專案以及區域來存取後端&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/advanced-traffic-management.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/1.jpg"
 alt="Global external Application Load Balancer" width="250">&lt;figcaption>
 &lt;p>Global external Application Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -74,7 +74,7 @@ alt="Global external Application Load Balancer" width="250">&lt;figcaption>
 &lt;li>有支援 Cloud CDN，但選擇 Standrad 則不能用&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/classic-traffic-management.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/2.jpg"
 alt="Classic Application Load Balancer" width="250">&lt;figcaption>
 &lt;p>Classic Application Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -105,7 +105,7 @@ alt="Classic Application Load Balancer" width="250">&lt;figcaption>
 &lt;li>可以跨多個專案，但只能選擇該區域的資源 (且沒辦法接 Bucket)&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/application-external-regional.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/3.jpg"
 alt="Regional external Application Load Balancer" width="250">&lt;figcaption>
 &lt;p>Regional external Application Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -134,7 +134,7 @@ alt="Regional external Application Load Balancer" width="250">&lt;figcaption>
 &lt;li>自動故障轉移到同一或不同區域的健康後端&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/application-internal-cross-region.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/4.jpg"
 alt="Cross-Region internal Application Load Balancer" width="250">&lt;figcaption>
 &lt;p>Cross-Region internal Application Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -163,7 +163,7 @@ alt="Cross-Region internal Application Load Balancer" width="250">&lt;figcaption
 &lt;li>自動故障轉移到同一區域內的健康後端&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/application-internal-regional.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/5.jpg"
 alt="Regional internal Application Load Balancer" width="250">&lt;figcaption>
 &lt;p>Regional internal Application Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -209,7 +209,7 @@ alt="Regional internal Application Load Balancer" width="250">&lt;figcaption>
 &lt;li>整合 Google Cloud Armor 進行 DDoS 防護&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/proxy-advanced-traffic-management.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/6.jpg"
 alt="Global external Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Global external Proxy Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -240,7 +240,7 @@ alt="Global external Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;li>在 Premium Tier 中可作為全球性負載平衡器，在 Standard Tier 中僅限於區域性部署&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/proxy-classic-traffic-management.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/7.jpg"
 alt="Classic Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Classic Proxy Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -270,7 +270,7 @@ alt="Classic Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;li>相較於全球性負載平衡器，區域性負載平衡器的成本較低，適合預算有限的應用程式&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-external-regional.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/8.jpg"
 alt="Regional external Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Regional external Proxy Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -299,7 +299,7 @@ alt="Regional external Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;li>自動故障轉移到同一或不同區域的健康後端&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-internal-cross-region.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/9.jpg"
 alt="Cross-Region internal Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Cross-Region internal Proxy Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -328,7 +328,7 @@ alt="Cross-Region internal Proxy Network Load Balancer" width="250">&lt;figcapti
 &lt;li>自動故障轉移到同一區域內的健康後端&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-internal-cross-region.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/10.jpg"
 alt="Regional internal Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Regional internal Proxy Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -375,7 +375,7 @@ alt="Regional internal Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;li>適用於需要低延遲和高效能的應用場景&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-external-passthrough.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/11.jpg"
 alt="External passthrough Network Load Balancer" width="200">&lt;figcaption>
 &lt;p>External passthrough Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -407,7 +407,7 @@ alt="External passthrough Network Load Balancer" width="200">&lt;figcaption>
 &lt;li>適用於需要高效能和低延遲的內部服務通訊&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-internal-passthrough.svg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/12.jpg"
 alt="Internal passthrough Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Internal passthrough Network Load Balancer&lt;/p>
 &lt;/figcaption>
