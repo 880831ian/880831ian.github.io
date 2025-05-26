@@ -1,4 +1,462 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Google Cloud Platform</title><link>https://pin-yi.me/blog/gcp/</link><description>Recent content in Google Cloud Platform on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/gcp/index.xml" rel="self" type="application/rss+xml"/><item><title>GCS Bucket CORS 錯誤解決方法</title><link>https://pin-yi.me/blog/gcp/gcs-cors/</link><pubDate>Tue, 18 Mar 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcs-cors/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Google Cloud Platform</title><link>https://pin-yi.me/blog/gcp/</link><description>Recent content in Google Cloud Platform on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/gcp/index.xml" rel="self" type="application/rss+xml"/><item><title>GCP Load Balancer 介紹</title><link>https://pin-yi.me/blog/gcp/gcp-lb-introduce/</link><pubDate>Mon, 26 May 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-lb-introduce/</guid><description>
+&lt;p>最近公司在導入 Multi-Zone，有發現大量的跨域費用產生，主要是不同 Cluster 或是 Cluster 跟 VM 之間的跨域流量，與 Google TAM 討論，他們有提出可以嘗試用 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a> 的 Waterfall by zone，或是之後會推出的 Zone affinity，這些都會需要使用到 Load Balancer，簡單整理一下發現 GCP 的 Load Balancer 其實有很多種，因此，這篇文章就來介紹一下 GCP 的 Load Balancer。
+(如果 Service load balancing policy 測試有結果，也會再寫一篇文章來介紹)&lt;/p>
+&lt;br>
+&lt;p>GCP 的 Load Balancer 主要分為三種，分別是：&lt;/p>
+&lt;h3>Application Load Balancer (ALB) – 應用程式負載平衡器&lt;span class="hx-absolute -hx-mt-20" id="application-load-balancer-alb--應用程式負載平衡器">&lt;/span>
+&lt;a href="#application-load-balancer-alb--%e6%87%89%e7%94%a8%e7%a8%8b%e5%bc%8f%e8%b2%a0%e8%bc%89%e5%b9%b3%e8%a1%a1%e5%99%a8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>層級：第 7 層（L7）&lt;/li>
+&lt;li>支援協定：HTTP、HTTPS&lt;/li>
+&lt;li>功能：
+&lt;ol>
+&lt;li>基於內容的路由（如 URL 路徑、主機名稱）&lt;/li>
+&lt;li>SSL/TLS 終止&lt;/li>
+&lt;li>整合 Cloud CDN、Cloud Armor&lt;/li>
+&lt;li>支援全球負載平衡（Premium Tier）&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>適用場景：需要進行應用層路由、SSL 終止，以及全球流量分配的 Web 應用程式。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>Application Load Balancer 又可以再另外分為五種 (包含內、外網以及不同的 Region)：&lt;/p>
+&lt;h4>Global external Application Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="global-external-application-load-balancer">&lt;/span>
+&lt;a href="#global-external-application-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>將此負載平衡器用於具有全球分散用戶或多個區域的後端服務的外部 HTTP(S) 工作負載。 (官方建議使用)&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：全球外部應用程式負載平衡器&lt;/li>
+&lt;li>縮寫：GLB&lt;/li>
+&lt;li>內部/外部：Public facing (external)&lt;/li>
+&lt;li>區域：Global&lt;/li>
+&lt;li>Load balancing scheme：EXTERNAL_MANAGED&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 SSL：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：❌&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>與 GKE 相容，使用&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/gateway-api#gatewayclass" target="_blank" rel="noopener">閘道&lt;/a>或獨立 NEG&lt;/li>
+&lt;li>支援先進的流量管理&lt;/li>
+&lt;li>只能使用 &lt;a href="https://cloud.google.com/network-tiers?hl=zh-tw" target="_blank" rel="noopener">Premium 等級的 Network Service&lt;/a>&lt;/li>
+&lt;li>可以跨多個專案以及區域來存取後端&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/advanced-traffic-management.svg"
+alt="Global external Application Load Balancer" width="250">&lt;figcaption>
+&lt;p>Global external Application Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Classic Application Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="classic-application-load-balancer">&lt;/span>
+&lt;a href="#classic-application-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>此負載平衡器在高階層中是全球性的。在 Premium 網路服務層，此負載平衡器提供多區域負載平衡，嘗試將流量引導至具有容量的最近的健康後端，並儘可能靠近使用者終止 HTTP(S) 流量。&lt;/p>
+&lt;p>在 Standard 網路服務層中，此負載平衡器只能將流量分配到單一區域內的後端。(建議不要再使用該 LB)&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊-1">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：經典應用程式負載平衡器&lt;/li>
+&lt;li>縮寫：CLB&lt;/li>
+&lt;li>內部/外部：Public facing (external)&lt;/li>
+&lt;li>區域：Global&lt;/li>
+&lt;li>Load balancing scheme：EXTERNAL&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 SSL：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：❌&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點-1">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>與 GKE 相容，使用&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/gateway-api#gatewayclass" target="_blank" rel="noopener">閘道&lt;/a>、Ingress 或獨立 NEG&lt;/li>
+&lt;li>可以選擇 &lt;a href="https://cloud.google.com/network-tiers?hl=zh-tw" target="_blank" rel="noopener">Standard 或是 Premium 等級的 Network Service&lt;/a>&lt;/li>
+&lt;li>可以跨多個區域來存取後端 (選擇 Standrad 不能用)&lt;/li>
+&lt;li>有支援 Cloud CDN，但選擇 Standrad 則不能用&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/classic-traffic-management.svg"
+alt="Classic Application Load Balancer" width="250">&lt;figcaption>
+&lt;p>Classic Application Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Regional external Application Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="regional-external-application-load-balancer">&lt;/span>
+&lt;a href="#regional-external-application-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>此負載平衡器包含現有的經典應用程式負載平衡器， 以及先進的流量管理能力。
+如果您只想從一個地理位置提供內容，請使用此負載平衡器。&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊-2">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：區域外部應用程式負載平衡器&lt;/li>
+&lt;li>縮寫：ALB&lt;/li>
+&lt;li>內部/外部：Public facing (external)&lt;/li>
+&lt;li>區域：Regional&lt;/li>
+&lt;li>Load balancing scheme：EXTERNAL_MANAGED&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 SSL：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：❌&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點-2">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>與 GKE 相容，使用獨立 NEG&lt;/li>
+&lt;li>支援先進的流量管理&lt;/li>
+&lt;li>可以選擇 &lt;a href="https://cloud.google.com/network-tiers?hl=zh-tw" target="_blank" rel="noopener">Standard 或是 Premium 等級的 Network Service&lt;/a>&lt;/li>
+&lt;li>可以跨多個專案，但只能選擇該區域的資源 (且沒辦法接 Bucket)&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/application-external-regional.svg"
+alt="Regional external Application Load Balancer" width="250">&lt;figcaption>
+&lt;p>Regional external Application Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Cross-Region internal Application Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="cross-region-internal-application-load-balancer">&lt;/span>
+&lt;a href="#cross-region-internal-application-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這是一個多區域負載平衡器，它基於開源 &lt;a href="https://www.envoyproxy.io/" target="_blank" rel="noopener">Envoy 代理&lt;/a>實現為託管服務。跨區域模式使您能夠將流量負載平衡到全球分佈的後端服務，包括確保流量定向到最近的後端的流量管理。此負載平衡器還具有高可用性。將後端放置在多個區域有助於避免單一區域故障。如果一個區域的後端發生故障，流量可以轉移到另一個區域。&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊-3">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a-3" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：跨區域內部應用程式負載平衡器&lt;/li>
+&lt;li>縮寫：Cross-Region internal ALB&lt;/li>
+&lt;li>內部/外部：Internal&lt;/li>
+&lt;li>區域：Global&lt;/li>
+&lt;li>Load balancing scheme：INTERNAL_MANAGED&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 SSL：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：❌&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點-3">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e-3" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>始終可在全球範圍內訪問。 VPC 中任何 Google Cloud 區域的用戶端都可以將流量傳送到負載平衡器&lt;/li>
+&lt;li>負載平衡器可以將流量傳送到任何區域的後端 (可以跨多個專案)&lt;/li>
+&lt;li>自動故障轉移到同一或不同區域的健康後端&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/application-internal-cross-region.svg"
+alt="Cross-Region internal Application Load Balancer" width="250">&lt;figcaption>
+&lt;p>Cross-Region internal Application Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Regional internal Application Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="regional-internal-application-load-balancer">&lt;/span>
+&lt;a href="#regional-internal-application-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這是一個區域負載平衡器，它基於開源 &lt;a href="https://www.envoyproxy.io/" target="_blank" rel="noopener">Envoy 代理程式&lt;/a>作為託管服務實作。區域模式可確保所有用戶端和後端都來自指定區域，這在您需要區域合規性時很有幫助。此負載平衡器具備基於 HTTP(S)參數的豐富流量控制功能。負載平衡器配置完成後，它會自動指派 Envoy 代理程式來滿足您的流量需求。&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊-4">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a-4" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：區域內部應用程式負載平衡器&lt;/li>
+&lt;li>縮寫：ILB&lt;/li>
+&lt;li>內部/外部：Internal&lt;/li>
+&lt;li>區域：Regional&lt;/li>
+&lt;li>Load balancing scheme：INTERNAL_MANAGED&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 SSL：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：❌&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點-4">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e-4" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>預設無法由不同 Region 進行訪問，需要額外開啟全球訪問設定&lt;/li>
+&lt;li>負載平衡器只能將流量傳送到與負載平衡器的代理程式位於相同區域的後端 (可以跨多個專案)&lt;/li>
+&lt;li>自動故障轉移到同一區域內的健康後端&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/application-internal-regional.svg"
+alt="Regional internal Application Load Balancer" width="250">&lt;figcaption>
+&lt;p>Regional internal Application Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>Proxy Network Load Balancer (PNLB) – 代理網路負載平衡器&lt;span class="hx-absolute -hx-mt-20" id="proxy-network-load-balancer-pnlb--代理網路負載平衡器">&lt;/span>
+&lt;a href="#proxy-network-load-balancer-pnlb--%e4%bb%a3%e7%90%86%e7%b6%b2%e8%b7%af%e8%b2%a0%e8%bc%89%e5%b9%b3%e8%a1%a1%e5%99%a8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>層級：第 4 層（L4）&lt;/li>
+&lt;li>支援協定：TCP、SSL&lt;/li>
+&lt;li>功能：
+&lt;ol>
+&lt;li>作為反向代理，終止 TCP 或 SSL 連線&lt;/li>
+&lt;li>支援 SSL/TLS 終止（僅限 SSL Proxy 模式）&lt;/li>
+&lt;li>可選擇全球（Premium Tier）或區域性（Standard Tier）部署&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>適用場景：需要處理加密的 TCP 流量，並在負載平衡器層級終止 SSL 的應用程式。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>Proxy Network Load Balancer 又可以再另外分為五種 (包含內、外網以及不同的 Region)：&lt;/p>
+&lt;h4>Global external Proxy Network Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="global-external-proxy-network-load-balancer">&lt;/span>
+&lt;a href="#global-external-proxy-network-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>此負載平衡器適用於需要全球可用性和高效能的 TCP/SSL 應用程式。它支援使用 Zonal NEGs（包括 VM 和 GKE Pod）作為後端，並整合 Google Cloud Armor 進行安全防護。&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊-5">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a-5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：全球外部代理網路負載平衡器&lt;/li>
+&lt;li>縮寫：Global Proxy NLB&lt;/li>
+&lt;li>內部/外部：Public facing (external)&lt;/li>
+&lt;li>區域：Global&lt;/li>
+&lt;li>Load balancing scheme：EXTERNAL_MANAGED&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 SSL：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：✅&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點-5">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e-5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>只能使用 &lt;a href="https://cloud.google.com/network-tiers?hl=zh-tw" target="_blank" rel="noopener">Premium 等級的 Network Service&lt;/a>&lt;/li>
+&lt;li>支援 TCP 和 SSL 協定&lt;/li>
+&lt;li>支援 SSL/TLS 卸載&lt;/li>
+&lt;li>支援使用 Zonal NEGs（包括 VM 和 GKE Pod）作為後端&lt;/li>
+&lt;li>整合 Google Cloud Armor 進行 DDoS 防護&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/proxy-advanced-traffic-management.svg"
+alt="Global external Proxy Network Load Balancer" width="250">&lt;figcaption>
+&lt;p>Global external Proxy Network Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Classic Proxy Network Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="classic-proxy-network-load-balancer">&lt;/span>
+&lt;a href="#classic-proxy-network-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>此負載平衡器適用於現有使用傳統實例群組（Instance Groups）的應用程式。在 Premium 網路服務層中，它可以作為全球性的負載平衡器；在 Standard 網路服務層中，僅限於區域性部署。它支援 TCP 和 SSL 協定，並支援 SSL/TLS 卸載。&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊-6">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a-6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：經典代理網路負載平衡器&lt;/li>
+&lt;li>縮寫：Classic Proxy NLB&lt;/li>
+&lt;li>內部/外部：Public facing (external)&lt;/li>
+&lt;li>區域：Global&lt;/li>
+&lt;li>Load balancing scheme：EXTERNAL&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 SSL：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：✅&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點-6">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e-6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>可以選擇 &lt;a href="https://cloud.google.com/network-tiers?hl=zh-tw" target="_blank" rel="noopener">Standard 或是 Premium 等級的 Network Service&lt;/a>&lt;/li>
+&lt;li>支援 TCP 和 SSL 協定&lt;/li>
+&lt;li>支援 SSL/TLS 卸載&lt;/li>
+&lt;li>支援使用傳統實例群組作為後端&lt;/li>
+&lt;li>在 Premium Tier 中可作為全球性負載平衡器，在 Standard Tier 中僅限於區域性部署&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/proxy-classic-traffic-management.svg"
+alt="Classic Proxy Network Load Balancer" width="250">&lt;figcaption>
+&lt;p>Classic Proxy Network Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Regional external Proxy Network Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="regional-external-proxy-network-load-balancer">&lt;/span>
+&lt;a href="#regional-external-proxy-network-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>此負載平衡器適用於需要在單一區域內處理 TCP 流量的應用程式。它在該區域內提供外部 IP，並將進來的 TCP 流量轉發至後端服務。此負載平衡器支援 TCP 協定，並可選擇使用 Premium 或 Standard 網路服務層級。&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊-7">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a-7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：區域外部代理網路負載平衡器&lt;/li>
+&lt;li>縮寫：Regional Proxy NLB&lt;/li>
+&lt;li>內部/外部：Public facing (external)&lt;/li>
+&lt;li>區域：Regional&lt;/li>
+&lt;li>Load balancing scheme：EXTERNAL_MANAGED&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 SSL：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：✅&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點-7">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e-7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>可以選擇 &lt;a href="https://cloud.google.com/network-tiers?hl=zh-tw" target="_blank" rel="noopener">Standard 或是 Premium 等級的 Network Service&lt;/a>&lt;/li>
+&lt;li>支援 TCP 協定&lt;/li>
+&lt;li>支援使用 Compute Engine 虛擬機（VM）作為後端服務&lt;/li>
+&lt;li>相較於全球性負載平衡器，區域性負載平衡器的成本較低，適合預算有限的應用程式&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-external-regional.svg"
+alt="Regional external Proxy Network Load Balancer" width="250">&lt;figcaption>
+&lt;p>Regional external Proxy Network Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Cross-Region internal Proxy Network Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="cross-region-internal-proxy-network-load-balancer">&lt;/span>
+&lt;a href="#cross-region-internal-proxy-network-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這是一個多區域負載平衡器，它基於開源 &lt;a href="https://www.envoyproxy.io/" target="_blank" rel="noopener">Envoy 代理&lt;/a>實現為託管服務。跨區域模式可讓您將流量負載平衡到全球分佈的後端服務，包括確保流量定向到最近的後端的流量管理。此負載平衡器還具有高可用性。將後端放置在多個區域有助於避免單一區域故障。如果一個區域的後端發生故障，流量可以轉移到另一個區域。&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊-8">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a-8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：跨區域內部代理網路負載平衡器&lt;/li>
+&lt;li>縮寫：Cross-Region internal Proxy NLB&lt;/li>
+&lt;li>內部/外部：Internal&lt;/li>
+&lt;li>區域：Global&lt;/li>
+&lt;li>Load balancing scheme：INTERNAL_MANAGED&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 SSL：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：✅&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點-8">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e-8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>始終可在全球範圍內訪問。 VPC 中任何 Google Cloud 區域的用戶端都可以將流量傳送到負載平衡器&lt;/li>
+&lt;li>負載平衡器可以將流量傳送到任何區域的後端&lt;/li>
+&lt;li>自動故障轉移到同一或不同區域的健康後端&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-internal-cross-region.svg"
+alt="Cross-Region internal Proxy Network Load Balancer" width="250">&lt;figcaption>
+&lt;p>Cross-Region internal Proxy Network Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Regional internal Proxy Network Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="regional-internal-proxy-network-load-balancer">&lt;/span>
+&lt;a href="#regional-internal-proxy-network-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這是一個區域負載平衡器，它基於開源 &lt;a href="https://www.envoyproxy.io/" target="_blank" rel="noopener">Envoy 代理程式&lt;/a>作為託管服務實作。區域模式可確保所有用戶端和後端都來自指定區域，這在您需要區域合規性時很有幫助。&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊-9">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a-9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：區域內部代理網路負載平衡器&lt;/li>
+&lt;li>縮寫：Regional internal Proxy NLB&lt;/li>
+&lt;li>內部/外部：Internal&lt;/li>
+&lt;li>區域：Regional&lt;/li>
+&lt;li>Load balancing scheme：INTERNAL_MANAGED&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 SSL：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：✅&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點-9">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e-9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>預設無法由不同 Region 進行訪問，需要額外開啟全球訪問設定&lt;/li>
+&lt;li>負載平衡器只能將流量傳送到與負載平衡器的代理程式位於相同區域的後端&lt;/li>
+&lt;li>自動故障轉移到同一區域內的健康後端&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-internal-cross-region.svg"
+alt="Regional internal Proxy Network Load Balancer" width="250">&lt;figcaption>
+&lt;p>Regional internal Proxy Network Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>Passthrough Network Load Balancer (NLB) – 直通網路負載平衡器&lt;span class="hx-absolute -hx-mt-20" id="passthrough-network-load-balancer-nlb--直通網路負載平衡器">&lt;/span>
+&lt;a href="#passthrough-network-load-balancer-nlb--%e7%9b%b4%e9%80%9a%e7%b6%b2%e8%b7%af%e8%b2%a0%e8%bc%89%e5%b9%b3%e8%a1%a1%e5%99%a8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>層級：第 4 層（L4）&lt;/li>
+&lt;li>支援協定：TCP、UDP、ESP、GRE、ICMP、ICMPv6 等&lt;/li>
+&lt;li>功能：
+&lt;ol>
+&lt;li>不終止連線，將流量直接傳遞給後端&lt;/li>
+&lt;li>保留原始封包資訊（來源 IP、目的地 IP 等）&lt;/li>
+&lt;li>僅支援區域性部署&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;li>適用場景：需要低延遲、高效能，並保留原始封包資訊的內部服務，如資料庫、內部微服務通訊等。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>Passthrough Network Load Balancer 主要分為兩種 (內、外網)：&lt;/p>
+&lt;h4>External passthrough Network Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="external-passthrough-network-load-balancer">&lt;/span>
+&lt;a href="#external-passthrough-network-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這是一種區域性的第 4 層（L4）負載平衡器，將來自網際網路的流量分配至同一區域內的後端服務。它不進行代理或 SSL/TLS 卸載，並保留原始的客戶端 IP 位址。&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊-10">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a-10" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：外部直通網路負載平衡器&lt;/li>
+&lt;li>縮寫：External NLB&lt;/li>
+&lt;li>內部/外部：Public facing (external)&lt;/li>
+&lt;li>區域：Regional&lt;/li>
+&lt;li>Load balancing scheme：EXTERNAL&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：✅&lt;/li>
+&lt;li>是否支援 SSL：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：❌&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點-10">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e-10" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>支援 TCP、UDP、ESP、GRE、ICMP 和 ICMPv6 等協定&lt;/li>
+&lt;li>保留原始客戶端 IP 位址，適用於需要此資訊的應用程式&lt;/li>
+&lt;li>支援使用區域性的後端服務或目標集（Target Pool）作為後端&lt;/li>
+&lt;li>可與 Google Cloud Armor 整合，提供進階的 DDoS 防護&lt;/li>
+&lt;li>支援 IPv4 和 IPv6 流量&lt;/li>
+&lt;li>適用於需要低延遲和高效能的應用場景&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-external-passthrough.svg"
+alt="External passthrough Network Load Balancer" width="200">&lt;figcaption>
+&lt;p>External passthrough Network Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Internal passthrough Network Load Balancer&lt;span class="hx-absolute -hx-mt-20" id="internal-passthrough-network-load-balancer">&lt;/span>
+&lt;a href="#internal-passthrough-network-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這是一種區域性的第 4 層（L4）負載平衡器，將流量分配至同一 VPC 網路內的後端服務。它僅在內部網路中運作，適用於內部服務之間的通訊。&lt;/p>
+&lt;h5>資訊&lt;span class="hx-absolute -hx-mt-20" id="資訊-11">&lt;/span>
+&lt;a href="#%e8%b3%87%e8%a8%8a-11" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>中文：內部直通網路負載平衡器&lt;/li>
+&lt;li>縮寫：Internal NLB&lt;/li>
+&lt;li>內部/外部：Internal&lt;/li>
+&lt;li>區域：Regional&lt;/li>
+&lt;li>Load balancing scheme：INTERNAL&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/cdn" target="_blank" rel="noopener">Cloud CDN&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/security/products/armor" target="_blank" rel="noopener">Cloud Armor&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a>：❌&lt;/li>
+&lt;li>是否支援 SSL：❌&lt;/li>
+&lt;li>是否支援 &lt;a href="https://cloud.google.com/load-balancing/docs/tcp/setting-up-tcp#proxy-protocol" target="_blank" rel="noopener">PROXY protocol&lt;/a>：❌&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h5>特點&lt;span class="hx-absolute -hx-mt-20" id="特點-11">&lt;/span>
+&lt;a href="#%e7%89%b9%e9%bb%9e-11" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ul>
+&lt;li>支援 TCP、UDP、ICMP、ICMPv6、SCTP、ESP、AH 和 GRE 等協定&lt;/li>
+&lt;li>保留原始客戶端 IP 位址，適用於需要此資訊的內部應用程式&lt;/li>
+&lt;li>支援使用區域性的後端服務作為後端&lt;/li>
+&lt;li>可作為靜態路由的下一跳，實現更靈活的流量控制&lt;/li>
+&lt;li>支援與 Service Directory 整合，方便服務發現與管理&lt;/li>
+&lt;li>適用於需要高效能和低延遲的內部服務通訊&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;figure>&lt;img src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-internal-passthrough.svg"
+alt="Internal passthrough Network Load Balancer" width="250">&lt;figcaption>
+&lt;p>Internal passthrough Network Load Balancer&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>總結&lt;span class="hx-absolute -hx-mt-20" id="總結">&lt;/span>
+&lt;a href="#%e7%b8%bd%e7%b5%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th>負載平衡器類型&lt;/th>
+&lt;th>層級&lt;/th>
+&lt;th>協定&lt;/th>
+&lt;th>功能&lt;/th>
+&lt;th>適用場景&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td>Application Load Balancer (ALB)&lt;/td>
+&lt;td>L7&lt;/td>
+&lt;td>HTTP, HTTPS&lt;/td>
+&lt;td>基於內容的路由、SSL/TLS 終止、整合 Cloud CDN 和 Cloud Armor&lt;/td>
+&lt;td>Web 應用程式需要應用層路由和 SSL 終止&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Proxy Network Load Balancer (PNLB)&lt;/td>
+&lt;td>L4&lt;/td>
+&lt;td>TCP, SSL&lt;/td>
+&lt;td>反向代理、SSL/TLS 終止&lt;/td>
+&lt;td>處理加密的 TCP 流量，並在負載平衡器層級終止 SSL 的應用程式&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td>Passthrough Network Load Balancer (NLB)&lt;/td>
+&lt;td>L4&lt;/td>
+&lt;td>TCP, UDP, ESP, GRE, ICMP 等&lt;/td>
+&lt;td>不終止連線，保留原始封包資訊&lt;/td>
+&lt;td>低延遲、高效能的內部服務，如資料庫、內部微服務通訊等&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Network Service Tiers：&lt;a href="https://cloud.google.com/network-tiers?hl=zh-tw" target="_blank" rel="noopener">https://cloud.google.com/network-tiers?hl=zh-tw&lt;/a>&lt;/p>
+&lt;p>External Application Load Balancer：&lt;a href="https://cloud.google.com/load-balancing/docs/https" target="_blank" rel="noopener">https://cloud.google.com/load-balancing/docs/https&lt;/a>&lt;/p>
+&lt;p>Internal Application Load Balancer：&lt;a href="https://cloud.google.com/load-balancing/docs/l7-internal" target="_blank" rel="noopener">https://cloud.google.com/load-balancing/docs/l7-internal&lt;/a>&lt;/p>
+&lt;p>Proxy Network Load Balancer：&lt;a href="https://cloud.google.com/load-balancing/docs/proxy-network-load-balancer" target="_blank" rel="noopener">https://cloud.google.com/load-balancing/docs/proxy-network-load-balancer&lt;/a>&lt;/p>
+&lt;p>Internal proxy Network Load Balancer：&lt;a href="https://cloud.google.com/load-balancing/docs/tcp/internal-proxy" target="_blank" rel="noopener">https://cloud.google.com/load-balancing/docs/tcp/internal-proxy&lt;/a>&lt;/p>
+&lt;p>Passthrough Network Load Balancer：&lt;a href="https://cloud.google.com/load-balancing/docs/passthrough-network-load-balancer" target="_blank" rel="noopener">https://cloud.google.com/load-balancing/docs/passthrough-network-load-balancer&lt;/a>&lt;/p>
+&lt;p>Internal passthrough Network Load Balancer：&lt;a href="https://cloud.google.com/load-balancing/docs/internal" target="_blank" rel="noopener">https://cloud.google.com/load-balancing/docs/internal&lt;/a>&lt;/p></description></item><item><title>GCS Bucket CORS 錯誤解決方法</title><link>https://pin-yi.me/blog/gcp/gcs-cors/</link><pubDate>Tue, 18 Mar 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcs-cors/</guid><description>
 &lt;p>最近公司有需求需要透過前端去打 GCS Bucket 的檔案，但會遇到 CORS 錯誤，所以寫一篇來記錄此問題的解決方法。&lt;/p>
 &lt;br>
 &lt;p>有先簡單寫一個前端頁面，可以透過 Axios 去打後端，詳細程式可以&lt;a href="https://github.com/880831ian/gcs-cors" target="_blank" rel="noopener">點我查看&lt;/a>，我們也另外建立一個公開的 GCS Bucket，並放一個測試用的 JSON 檔案
