@@ -11,6 +11,7 @@ sidebar:
 <!--more-->
 
 {{< cards >}}
+{{< card link="gcp-lb-introduce" title="GCP Load Balancer 介紹" image="/gcp/gcp-lb-introduce/cover.webp" >}}
 {{< card link="gcs-cors" title="GCS Bucket CORS 錯誤解決方法" image="/gcp/gcs-cors/cover.webp" >}}
 {{< card link="gke-local-ephemeral-storage" title="Google Kubernetes Engine Local ephemeral storage 計算方式" image="/gcp/gke-local-ephemeral-storage/cover.webp" >}}
 {{< card link="gcp-memorystore-failover" title="GCP Memorystore HA 高可用性 failover 測試" image="/gcp/gcp-memorystore-failover/cover.webp" >}}
