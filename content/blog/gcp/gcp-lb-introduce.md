@@ -58,7 +58,7 @@ Application Load Balancer 又可以再另外分為五種 (包含內、外網以�
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/advanced-traffic-management.svg" width="250" caption="Global external Application Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/1.jpg" width="250" caption="Global external Application Load Balancer" >}}
 
 <br>
 
@@ -90,7 +90,7 @@ Application Load Balancer 又可以再另外分為五種 (包含內、外網以�
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/classic-traffic-management.svg" width="250" caption="Classic Application Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/2.jpg" width="250" caption="Classic Application Load Balancer" >}}
 
 <br>
 
@@ -121,7 +121,7 @@ Application Load Balancer 又可以再另外分為五種 (包含內、外網以�
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/application-external-regional.svg" width="250" caption="Regional external Application Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/3.jpg" width="250" caption="Regional external Application Load Balancer" >}}
 
 <br>
 
@@ -150,7 +150,7 @@ Application Load Balancer 又可以再另外分為五種 (包含內、外網以�
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/application-internal-cross-region.svg" width="250" caption="Cross-Region internal Application Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/4.jpg" width="250" caption="Cross-Region internal Application Load Balancer" >}}
 
 <br>
 
@@ -179,7 +179,7 @@ Application Load Balancer 又可以再另外分為五種 (包含內、外網以�
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/application-internal-regional.svg" width="250" caption="Regional internal Application Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/5.jpg" width="250" caption="Regional internal Application Load Balancer" >}}
 
 <br>
 
@@ -224,7 +224,7 @@ Proxy Network Load Balancer 又可以再另外分為五種 (包含內、外網�
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/proxy-advanced-traffic-management.svg" width="250" caption="Global external Proxy Network Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/6.jpg" width="250" caption="Global external Proxy Network Load Balancer" >}}
 
 <br>
 
@@ -255,7 +255,7 @@ Proxy Network Load Balancer 又可以再另外分為五種 (包含內、外網�
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/proxy-classic-traffic-management.svg" width="250" caption="Classic Proxy Network Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/7.jpg" width="250" caption="Classic Proxy Network Load Balancer" >}}
 
 <br>
 
@@ -285,7 +285,7 @@ Proxy Network Load Balancer 又可以再另外分為五種 (包含內、外網�
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-external-regional.svg" width="250" caption="Regional external Proxy Network Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/8.jpg" width="250" caption="Regional external Proxy Network Load Balancer" >}}
 
 <br>
 
@@ -314,7 +314,7 @@ Proxy Network Load Balancer 又可以再另外分為五種 (包含內、外網�
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-internal-cross-region.svg" width="250" caption="Cross-Region internal Proxy Network Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/9.jpg" width="250" caption="Cross-Region internal Proxy Network Load Balancer" >}}
 
 <br>
 
@@ -343,7 +343,7 @@ Proxy Network Load Balancer 又可以再另外分為五種 (包含內、外網�
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-internal-cross-region.svg" width="250" caption="Regional internal Proxy Network Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/10.jpg" width="250" caption="Regional internal Proxy Network Load Balancer" >}}
 
 <br>
 
@@ -389,7 +389,7 @@ Passthrough Network Load Balancer 主要分為兩種 (內、外網)：
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-external-passthrough.svg" width="200" caption="External passthrough Network Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/11.jpg" width="200" caption="External passthrough Network Load Balancer" >}}
 
 <br>
 
@@ -421,7 +421,7 @@ Passthrough Network Load Balancer 主要分為兩種 (內、外網)：
 
 <br>
 
-{{< figure src="https://www.gstatic.com/pantheon/images/net_services/lb-types/network-internal-passthrough.svg" width="250" caption="Internal passthrough Network Load Balancer" >}}
+{{< figure src="/gcp/gcp-lb-introduce/12.jpg" width="250" caption="Internal passthrough Network Load Balancer" >}}
 
 <br>
 
