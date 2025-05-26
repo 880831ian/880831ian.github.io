@@ -5,7 +5,7 @@ weight: 9988
 description: GCP Load Balancer 介紹
 images:
   - gcp/gcp-lb-introduce/og.webp
-date: 2025-05-27
+date: 2025-05-26
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
