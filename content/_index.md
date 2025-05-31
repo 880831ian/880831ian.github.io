@@ -26,6 +26,7 @@ layout: hextra-home
 {{< card link="blog/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs" title="Kubernetes 開啟 Region 後，如何減少跨 Zone 網路費用" image="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/cover.webp" >}}
 {{< card link="blog/gcp/gcs-cors" title="GCS Bucket CORS 錯誤解決方法" image="/gcp/gcs-cors/cover.webp" >}}
 {{< card link="blog/kubernetes/k8s-node-log-stdout-logrotate" title="K8s Node Log Stdout Logrotate 回收機制" image="/kubernetes/k8s-node-log-stdout-logrotate/cover.webp" >}}
+{{< card link="blog/aws/aws-cni-failed-to-assign-ip" title="AWS EKS Pod 出現 aws-cni failed to assign an IP address to container 錯誤" image="/aws/aws-cni-failed-to-assign-ip/cover.webp" >}}
 {{< card link="blog/aws/vpc-introduce" title="Amazon Virtual Private Cloud (VPC) 介紹" image="/aws/vpc-introduce/cover.webp" >}}
 {{< card link="blog/gcp/gke-local-ephemeral-storage" title="Google Kubernetes Engine Local ephemeral storage 計算方式" image="/gcp/gke-local-ephemeral-storage/cover.webp" >}}
 {{< card link="blog/gcp/gcp-memorystore-failover" title="GCP Memorystore HA 高可用性 failover 測試" image="/gcp/gcp-memorystore-failover/cover.webp">}}
