@@ -11,6 +11,7 @@ sidebar:
 <!--more-->
 
 {{< cards >}}
+{{< card link="vpc-cni" title="Amazon VPC CNI 介紹" image="/aws/vpc-cni/cover.webp" >}}
 {{< card link="aws-cni-failed-to-assign-ip" title="AWS EKS Pod 出現 aws-cni failed to assign an IP address to container 錯誤" image="/aws/aws-cni-failed-to-assign-ip/cover.webp" >}}
 {{< card link="vpc-introduce" title="Amazon Virtual Private Cloud (VPC) 介紹 (VPC) 介紹" image="/aws/vpc-introduce/cover.webp" >}}
 {{< card link="eks-introduce" title="Elastic Kubernetes Service (EKS) 介紹" image="/aws/eks-introduce/cover.webp" >}}

@@ -22,6 +22,7 @@ layout: hextra-home
 <br>
 
 {{< hextra/feature-grid cols=4 >}}
+{{< card link="blog/aws/vpc-cni" title="Amazon VPC CNI 介紹" image="/aws/vpc-cni/cover.webp" >}}
 {{< card link="blog/gcp/gcp-lb-introduce" title="GCP Load Balancer 介紹" image="/gcp/gcp-lb-introduce/cover.webp" >}}
 {{< card link="blog/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs" title="Kubernetes 開啟 Region 後，如何減少跨 Zone 網路費用" image="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/cover.webp" >}}
 {{< card link="blog/gcp/gcs-cors" title="GCS Bucket CORS 錯誤解決方法" image="/gcp/gcs-cors/cover.webp" >}}
