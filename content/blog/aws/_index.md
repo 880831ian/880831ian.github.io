@@ -11,6 +11,7 @@ sidebar:
 <!--more-->
 
 {{< cards >}}
+{{< card link="aws-ecr-permissions" title="如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account EKS 使用" image="/aws/aws-ecr-permissions/cover.webp" >}}
 {{< card link="aws-cni-failed-to-assign-ip" title="AWS EKS Pod 出現 aws-cni failed to assign an IP address to container 錯誤" image="/aws/aws-cni-failed-to-assign-ip/cover.webp" >}}
 {{< card link="vpc-introduce" title="Amazon Virtual Private Cloud (VPC) 介紹 (VPC) 介紹" image="/aws/vpc-introduce/cover.webp" >}}
 {{< card link="eks-introduce" title="Elastic Kubernetes Service (EKS) 介紹" image="/aws/eks-introduce/cover.webp" >}}
