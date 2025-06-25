@@ -1742,7 +1742,7 @@ alt="發送通知至 Telegram Bot" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>我們可能需要將機器人加入群組內，這時候需要更換一下 chat_id，先將機器人加入群組，再次到剛剛瀏覽器的網頁刷新，查看 chat 後面的 id 帶有 &lt;code>-&lt;/code>，像是 &lt;code>-540226836&lt;/code> 這樣，這個就是該群組的 ID，將 send_notify_tg.yaml 的 chat_id 修改成 &lt;code>-540226836&lt;/code> 在測試看看，他就會在群組中發送通知囉！&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>{&amp;#34;update_id&amp;#34;:606594124,&amp;#34;message&amp;#34;:{&amp;#34;message_id&amp;#34;:14,&amp;#34;from&amp;#34;:{&amp;#34;id&amp;#34;:493995679,&amp;#34;is_bot&amp;#34;:false,&amp;#34;first_name&amp;#34;:&amp;#34;\u54c1\u6bc5&amp;#34;,&amp;#34;last_name&amp;#34;:&amp;#34;Ian&amp;#34;,&amp;#34;username&amp;#34;:&amp;#34;pinyichuchu&amp;#34;,&amp;#34;language_code&amp;#34;:&amp;#34;zh-hans&amp;#34;},&amp;#34;chat&amp;#34;:{&amp;#34;id&amp;#34;:-540226836,&amp;#34;title&amp;#34;:&amp;#34;\u54c1\u6bc5 &amp;amp; AnsibleSendMessageBot&amp;#34;,&amp;#34;type&amp;#34;:&amp;#34;group&amp;#34;,&amp;#34;all_members_are_administrators&amp;#34;:true},&amp;#34;date&amp;#34;:1652696181,&amp;#34;group_chat_created&amp;#34;:true}}&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>{&amp;#34;update_id&amp;#34;:606594124,&amp;#34;message&amp;#34;:{&amp;#34;message_id&amp;#34;:14,&amp;#34;from&amp;#34;:{&amp;#34;id&amp;#34;:493995679,&amp;#34;is_bot&amp;#34;:false,&amp;#34;first_name&amp;#34;:&amp;#34;\u54c1\u6bc5&amp;#34;,&amp;#34;last_name&amp;#34;:&amp;#34;Ian&amp;#34;,&amp;#34;username&amp;#34;:&amp;#34;pinyichuchu&amp;#34;,&amp;#34;language_code&amp;#34;:&amp;#34;zh-hans&amp;#34;},&amp;#34;chat&amp;#34;:{&amp;#34;id&amp;#34;:-540226836,&amp;#34;title&amp;#34;:&amp;#34;\u54c1\u6bc5 &amp;amp; AnsibleSendMessageBot&amp;#34;,&amp;#34;type&amp;#34;:&amp;#34;group&amp;#34;,&amp;#34;all_members_are_administrators&amp;#34;:true},&amp;#34;date&amp;#34;:1652696181,&amp;#34;group_chat_created&amp;#34;:true}}&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -2544,7 +2544,7 @@ alt="安裝推薦的套件" width="800">&lt;figcaption>
 &lt;p>等待它安裝套件，安裝完後會自動跳到註冊畫面：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/install.png"
-alt="等待安裝&amp;amp;hellip;" width="800">&lt;figcaption>
+alt="等待安裝&amp;hellip;" width="800">&lt;figcaption>
 &lt;p>等待安裝&amp;hellip;&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
@@ -2877,7 +2877,7 @@ alt="GitHub Hook Log" width="1000">&lt;figcaption>
 &lt;a href="#%e5%ae%89%e8%a3%9d%e8%a8%ad%e5%ae%9a-build-timestamp" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>&lt;a href="https://plugins.jenkins.io/build-timestamp/" target="_blank" rel="noopener">Build Timestamp&lt;/a> 這個套件可以幫我們在稍後傳送通知時加上當下的時間戳，那要怎麼安裝套件呢？先到儀表板首頁，點選左側的 &lt;strong>管理 Jenkins&lt;/strong> &amp;gt; 點選 &lt;strong>管理外掛程式&lt;/strong>：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_1.png"
-alt="管理 Jenkins &amp;amp;gt; 管理外掛程式" width="1200">&lt;figcaption>
+alt="管理 Jenkins &amp;gt; 管理外掛程式" width="1200">&lt;figcaption>
 &lt;p>管理 Jenkins &amp;gt; 管理外掛程式&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
@@ -3135,36 +3135,36 @@ alt="Top 5 DevOps Automation Tools in 2020" width="800">&lt;figcaption>
 &lt;a href="#jenkins-%e8%b7%9f-ansible-%e6%af%94%e8%bc%83" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th style="text-align:center">名稱&lt;/th>
-&lt;th style="text-align:center">Jenkins&lt;/th>
-&lt;th style="text-align:center">Ansible&lt;/th>
+&lt;th style="text-align: center">名稱&lt;/th>
+&lt;th style="text-align: center">Jenkins&lt;/th>
+&lt;th style="text-align: center">Ansible&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td style="text-align:center">套件&lt;/td>
-&lt;td style="text-align:center">Jenkins 支持 1800 多種套件&lt;/td>
-&lt;td style="text-align:center">支持較少套件&lt;/td>
+&lt;td style="text-align: center">套件&lt;/td>
+&lt;td style="text-align: center">Jenkins 支持 1800 多種套件&lt;/td>
+&lt;td style="text-align: center">支持較少套件&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">語言&lt;/td>
-&lt;td style="text-align:center">支持 C、C++、Java、Perl、Python、Ruby 等&lt;/td>
-&lt;td style="text-align:center">支持 C、Python、JavaScript、Ruby 等&lt;/td>
+&lt;td style="text-align: center">語言&lt;/td>
+&lt;td style="text-align: center">支持 C、C++、Java、Perl、Python、Ruby 等&lt;/td>
+&lt;td style="text-align: center">支持 C、Python、JavaScript、Ruby 等&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">費用&lt;/td>
-&lt;td style="text-align:center">Jenkins 是免費的&lt;/td>
-&lt;td style="text-align:center">Ansible 不是免費的，但有試用版(Red hat)&lt;/td>
+&lt;td style="text-align: center">費用&lt;/td>
+&lt;td style="text-align: center">Jenkins 是免費的&lt;/td>
+&lt;td style="text-align: center">Ansible 不是免費的，但有試用版(Red hat)&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">大小&lt;/td>
-&lt;td style="text-align:center">重量級&lt;/td>
-&lt;td style="text-align:center">輕量級&lt;/td>
+&lt;td style="text-align: center">大小&lt;/td>
+&lt;td style="text-align: center">重量級&lt;/td>
+&lt;td style="text-align: center">輕量級&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">服務&lt;/td>
-&lt;td style="text-align:center">基於伺服器的工具&lt;/td>
-&lt;td style="text-align:center">基於雲上的工具&lt;/td>
+&lt;td style="text-align: center">服務&lt;/td>
+&lt;td style="text-align: center">基於伺服器的工具&lt;/td>
+&lt;td style="text-align: center">基於雲上的工具&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -3265,8 +3265,8 @@ title="Copy code"
 &lt;h4>config&lt;span class="hx-absolute -hx-mt-20" id="config">&lt;/span>
 &lt;a href="#config" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>在推送 Commit 的時候，會顯示使用者名稱以及電子郵件，所以要先在推送前設定好，這時就使用：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>$ git config --global user.name &amp;#34;your name&amp;#34;
-$ git config --global user.email &amp;#34;your email&amp;#34;&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>$ git config --global user.name &amp;#34;your name&amp;#34;
+$ git config --global user.email &amp;#34;your email&amp;#34;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -3632,24 +3632,24 @@ alt="Git fetch" width="600">&lt;figcaption>
 &lt;a href="#clonepullfetch-%e5%b7%ae%e7%95%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th style="text-align:center">差異&lt;/th>
-&lt;th style="text-align:center">clone&lt;/th>
-&lt;th style="text-align:center">fetch&lt;/th>
-&lt;th style="text-align:center">pull&lt;/th>
+&lt;th style="text-align: center">差異&lt;/th>
+&lt;th style="text-align: center">clone&lt;/th>
+&lt;th style="text-align: center">fetch&lt;/th>
+&lt;th style="text-align: center">pull&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td style="text-align:center">功能&lt;/td>
-&lt;td style="text-align:center">會把遠端整份專案都下載到本地端&lt;/td>
-&lt;td style="text-align:center">只會下載，並不會合併&lt;/td>
-&lt;td style="text-align:center">會下載且合併檔案&lt;/td>
+&lt;td style="text-align: center">功能&lt;/td>
+&lt;td style="text-align: center">會把遠端整份專案都下載到本地端&lt;/td>
+&lt;td style="text-align: center">只會下載，並不會合併&lt;/td>
+&lt;td style="text-align: center">會下載且合併檔案&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">補充說明&lt;/td>
-&lt;td style="text-align:center">適用於專案一開始時使用，如果 clone 之後要再更新，通常是執行 &lt;code>git fetch&lt;/code> or &lt;code>git pull&lt;/code>&lt;/td>
-&lt;td style="text-align:center">假設我遠端叫 &lt;code>orgin&lt;/code>，當執行時，Git 會比對本地端與遠端，會「下載 &lt;code>origin&lt;/code> 上有但本地端沒有的檔案下來」&lt;/td>
-&lt;td style="text-align:center">pull 與 fetch 做的事情差不多，多了一個進行合併的功能&lt;/td>
+&lt;td style="text-align: center">補充說明&lt;/td>
+&lt;td style="text-align: center">適用於專案一開始時使用，如果 clone 之後要再更新，通常是執行 &lt;code>git fetch&lt;/code> or &lt;code>git pull&lt;/code>&lt;/td>
+&lt;td style="text-align: center">假設我遠端叫 &lt;code>orgin&lt;/code>，當執行時，Git 會比對本地端與遠端，會「下載 &lt;code>origin&lt;/code> 上有但本地端沒有的檔案下來」&lt;/td>
+&lt;td style="text-align: center">pull 與 fetch 做的事情差不多，多了一個進行合併的功能&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -3788,24 +3788,24 @@ title="Copy code"
 &lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th style="text-align:center">模式&lt;/th>
-&lt;th style="text-align:center">mixed 模式&lt;/th>
-&lt;th style="text-align:center">soft 模式&lt;/th>
-&lt;th style="text-align:center">hard 模式&lt;/th>
+&lt;th style="text-align: center">模式&lt;/th>
+&lt;th style="text-align: center">mixed 模式&lt;/th>
+&lt;th style="text-align: center">soft 模式&lt;/th>
+&lt;th style="text-align: center">hard 模式&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td style="text-align:center">工作目錄(實體的檔案)&lt;/td>
-&lt;td style="text-align:center">不變&lt;/td>
-&lt;td style="text-align:center">不變&lt;/td>
-&lt;td style="text-align:center">丟掉&lt;/td>
+&lt;td style="text-align: center">工作目錄(實體的檔案)&lt;/td>
+&lt;td style="text-align: center">不變&lt;/td>
+&lt;td style="text-align: center">不變&lt;/td>
+&lt;td style="text-align: center">丟掉&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">暫存區&lt;/td>
-&lt;td style="text-align:center">丟掉&lt;/td>
-&lt;td style="text-align:center">不變&lt;/td>
-&lt;td style="text-align:center">丟掉&lt;/td>
+&lt;td style="text-align: center">暫存區&lt;/td>
+&lt;td style="text-align: center">丟掉&lt;/td>
+&lt;td style="text-align: center">不變&lt;/td>
+&lt;td style="text-align: center">丟掉&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -3885,21 +3885,21 @@ title="Copy code"
 &lt;a href="#reset-%e8%88%87-revert-%e5%b7%ae%e7%95%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th style="text-align:center">指令&lt;/th>
-&lt;th style="text-align:center">reset&lt;/th>
-&lt;th style="text-align:center">revert&lt;/th>
+&lt;th style="text-align: center">指令&lt;/th>
+&lt;th style="text-align: center">reset&lt;/th>
+&lt;th style="text-align: center">revert&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td style="text-align:center">改變歷史狀態&lt;/td>
-&lt;td style="text-align:center">是&lt;/td>
-&lt;td style="text-align:center">否&lt;/td>
+&lt;td style="text-align: center">改變歷史狀態&lt;/td>
+&lt;td style="text-align: center">是&lt;/td>
+&lt;td style="text-align: center">否&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">說明&lt;/td>
-&lt;td style="text-align:center">把目前狀態設定成某個指定的 Commit 狀態，通常適用於尚未推到遠端的 Commit&lt;/td>
-&lt;td style="text-align:center">新增一個 Commit 來取消另一個 Commit 的內容，原本的 Commit 依舊會保留在歷史紀錄中。通常適用於已經推到遠端的 Commit&lt;/td>
+&lt;td style="text-align: center">說明&lt;/td>
+&lt;td style="text-align: center">把目前狀態設定成某個指定的 Commit 狀態，通常適用於尚未推到遠端的 Commit&lt;/td>
+&lt;td style="text-align: center">新增一個 Commit 來取消另一個 Commit 的內容，原本的 Commit 依舊會保留在歷史紀錄中。通常適用於已經推到遠端的 Commit&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>

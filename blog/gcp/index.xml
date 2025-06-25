@@ -600,7 +600,7 @@ alt="Cloud Logging 查詢結果" width="750">&lt;figcaption>
 &lt;a href="#local-ephemeral-storage-%e8%a8%88%e7%ae%97%e6%96%b9%e5%bc%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>根據官方文件 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/plan-node-sizes#local_ephemeral_storage_reservation" target="_blank" rel="noopener">Local ephemeral storage reservation&lt;/a>，我們可以知道 GKE 會為每個 node 提供本地的臨時儲存空間，當這個儲存空間在 node 故障刪除時，資料也會被一起遺失。&lt;/p>
 &lt;p>GKE 會依照下列的方式計算本機預留的暫存空間，也就是被偷走的空間 /ᐠ .ᆺ. ᐟ\ﾉ：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -615,7 +615,7 @@ title="Copy code"
 &lt;h3>EVICTION_THRESHOLD 驅逐閥值計算&lt;span class="hx-absolute -hx-mt-20" id="eviction_threshold-驅逐閥值計算">&lt;/span>
 &lt;a href="#eviction_threshold-%e9%a9%85%e9%80%90%e9%96%a5%e5%80%bc%e8%a8%88%e7%ae%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在預設情況下，臨時儲存空間是由開機磁碟的大小來決定的，驅逐閾值是開機磁碟大小的 10%。&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * BOOT_DISK_CAPACITY&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * BOOT_DISK_CAPACITY&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -629,7 +629,7 @@ title="Copy code"
 &lt;h3>SYSTEM_RESERVATION 系統保留空間計算&lt;span class="hx-absolute -hx-mt-20" id="system_reservation-系統保留空間計算">&lt;/span>
 &lt;a href="#system_reservation-%e7%b3%bb%e7%b5%b1%e4%bf%9d%e7%95%99%e7%a9%ba%e9%96%93%e8%a8%88%e7%ae%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>系統保留空間也跟開機磁碟大小有關：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * BOOT_DISK_CAPACITY, 6GiB &amp;#43; 35% * BOOT_DISK_CAPACITY, 100 GiB)&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * BOOT_DISK_CAPACITY, 6GiB &amp;#43; 35% * BOOT_DISK_CAPACITY, 100 GiB)&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -644,7 +644,7 @@ title="Copy code"
 &lt;h3>計算可用空間&lt;span class="hx-absolute -hx-mt-20" id="計算可用空間">&lt;/span>
 &lt;a href="#%e8%a8%88%e7%ae%97%e5%8f%af%e7%94%a8%e7%a9%ba%e9%96%93" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>最後將開機磁碟大小減去 &lt;code>EVICTION_THRESHOLD&lt;/code> 與 &lt;code>SYSTEM_RESERVATION&lt;/code> 就可以得到可用空間：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>BOOT_DISK_CAPACITY - (EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION)&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>BOOT_DISK_CAPACITY - (EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION)&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -662,7 +662,7 @@ title="Copy code"
 &lt;/ol>
 &lt;p>先計算 EVICTION_THRESHOLD：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * 100GB = 10GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * 100GB = 10GB&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -674,10 +674,10 @@ title="Copy code"
 &lt;/div>
 &lt;p>再計算 SYSTEM_RESERVATION：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * 100GB, 6GiB &amp;#43; 35% * 100GB, 100 GiB)
+&lt;div>&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * 100GB, 6GiB &amp;#43; 35% * 100GB, 100 GiB)
 = Min(50GB, 6GiB &amp;#43; 35GB, 100GB)
 = Min(50GB, 41GB, 100GB)
-= 41GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+= 41GB&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -689,7 +689,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>接著將 EVICTION_THRESHOLD 與 SYSTEM_RESERVATION 相加：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION = 10GB &amp;#43; 41GB = 51GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION = 10GB &amp;#43; 41GB = 51GB&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -706,7 +706,7 @@ title="Copy code"
 &lt;/ol>
 &lt;p>先計算 EVICTION_THRESHOLD：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * 300GB = 30GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>EVICTION_THRESHOLD = 10% * 300GB = 30GB&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -718,10 +718,10 @@ title="Copy code"
 &lt;/div>
 &lt;p>再計算 SYSTEM_RESERVATION：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * 300GB, 6GiB &amp;#43; 35% * 300GB, 100 GiB)
+&lt;div>&lt;pre>&lt;code>SYSTEM_RESERVATION = Min(50% * 300GB, 6GiB &amp;#43; 35% * 300GB, 100 GiB)
 = Min(150GB, 6GiB &amp;#43; 105GB, 100GB)
 = Min(150GB, 111GB, 100GB)
-= 100GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+= 100GB&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -733,7 +733,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>接著將 EVICTION_THRESHOLD 與 SYSTEM_RESERVATION 相加：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION = 30GB &amp;#43; 100GB = 130GB&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>EVICTION_THRESHOLD &amp;#43; SYSTEM_RESERVATION = 30GB &amp;#43; 100GB = 130GB&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -1167,7 +1167,7 @@ alt="describe 畫面" width="650">&lt;figcaption>
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> fi
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> sleep 1
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> done&lt;/span> &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> done&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -1273,36 +1273,36 @@ alt="shell 畫面" width="500">&lt;figcaption>
 &lt;a href="#%e6%95%b4%e7%90%86%e6%95%85%e9%9a%9c%e8%bd%89%e7%a7%bb%e6%99%82%e9%96%93" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th style="text-align:center">測測次數&lt;/th>
-&lt;th style="text-align:center">1m1s (秒)&lt;/th>
-&lt;th style="text-align:center">1m2s (秒)&lt;/th>
+&lt;th style="text-align: center">測測次數&lt;/th>
+&lt;th style="text-align: center">1m1s (秒)&lt;/th>
+&lt;th style="text-align: center">1m2s (秒)&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td style="text-align:center">#1&lt;/td>
-&lt;td style="text-align:center">16&lt;/td>
-&lt;td style="text-align:center">13&lt;/td>
+&lt;td style="text-align: center">#1&lt;/td>
+&lt;td style="text-align: center">16&lt;/td>
+&lt;td style="text-align: center">13&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">#2&lt;/td>
-&lt;td style="text-align:center">19&lt;/td>
-&lt;td style="text-align:center">10&lt;/td>
+&lt;td style="text-align: center">#2&lt;/td>
+&lt;td style="text-align: center">19&lt;/td>
+&lt;td style="text-align: center">10&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">#3&lt;/td>
-&lt;td style="text-align:center">22&lt;/td>
-&lt;td style="text-align:center">6&lt;/td>
+&lt;td style="text-align: center">#3&lt;/td>
+&lt;td style="text-align: center">22&lt;/td>
+&lt;td style="text-align: center">6&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">#4&lt;/td>
-&lt;td style="text-align:center">20&lt;/td>
-&lt;td style="text-align:center">10&lt;/td>
+&lt;td style="text-align: center">#4&lt;/td>
+&lt;td style="text-align: center">20&lt;/td>
+&lt;td style="text-align: center">10&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">#5&lt;/td>
-&lt;td style="text-align:center">18&lt;/td>
-&lt;td style="text-align:center">9&lt;/td>
+&lt;td style="text-align: center">#5&lt;/td>
+&lt;td style="text-align: center">18&lt;/td>
+&lt;td style="text-align: center">9&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -1653,26 +1653,26 @@ alt="ADD IAM" width="1000">&lt;figcaption>
 &lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th style="text-align:center">角色名稱&lt;/th>
-&lt;th style="text-align:center">權限&lt;/th>
+&lt;th style="text-align: center">角色名稱&lt;/th>
+&lt;th style="text-align: center">權限&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td style="text-align:center">role/viewer (檢視者)&lt;/td>
-&lt;td style="text-align:center">不影響狀態的只讀操作權限，例如：查看 (但不修改) 現有資源或是資料&lt;/td>
+&lt;td style="text-align: center">role/viewer (檢視者)&lt;/td>
+&lt;td style="text-align: center">不影響狀態的只讀操作權限，例如：查看 (但不修改) 現有資源或是資料&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">role/editor (編輯者)&lt;/td>
-&lt;td style="text-align:center">所有查看者權限，以及修改狀態的操作權限，例如：更改現有資源&lt;/td>
+&lt;td style="text-align: center">role/editor (編輯者)&lt;/td>
+&lt;td style="text-align: center">所有查看者權限，以及修改狀態的操作權限，例如：更改現有資源&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">role/owner (擁有者)&lt;/td>
-&lt;td style="text-align:center">以下操作的所有編輯權限： 1. 管理項目和項目內的所有資源角色及權限 2. 為項目設置帳單&lt;/td>
+&lt;td style="text-align: center">role/owner (擁有者)&lt;/td>
+&lt;td style="text-align: center">以下操作的所有編輯權限： 1. 管理項目和項目內的所有資源角色及權限 2. 為項目設置帳單&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">role/browser (瀏覽者)&lt;/td>
-&lt;td style="text-align:center">讀取權限以及瀏覽項目的層次結構，包含資料夾、組織和 IAM 政策。但此角色不包含查看項目中資源的權限&lt;/td>
+&lt;td style="text-align: center">role/browser (瀏覽者)&lt;/td>
+&lt;td style="text-align: center">讀取權限以及瀏覽項目的層次結構，包含資料夾、組織和 IAM 政策。但此角色不包含查看項目中資源的權限&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -1887,46 +1887,46 @@ alt="新增 VM 實例" width="600">&lt;figcaption>
 &lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th style="text-align:center">標題&lt;/th>
-&lt;th style="text-align:center">設定值&lt;/th>
-&lt;th style="text-align:center">說明&lt;/th>
+&lt;th style="text-align: center">標題&lt;/th>
+&lt;th style="text-align: center">設定值&lt;/th>
+&lt;th style="text-align: center">說明&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td style="text-align:center">Name&lt;/td>
-&lt;td style="text-align:center">gcelab&lt;/td>
-&lt;td style="text-align:center">虛擬機實例的名稱&lt;/td>
+&lt;td style="text-align: center">Name&lt;/td>
+&lt;td style="text-align: center">gcelab&lt;/td>
+&lt;td style="text-align: center">虛擬機實例的名稱&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">Region&lt;/td>
-&lt;td style="text-align:center">us-central1（愛荷華州）&lt;/td>
-&lt;td style="text-align:center">有關區域的更多信息，請參閱 Compute Engine 指南 &lt;a href="https://cloud.google.com/compute/docs/regions-zones" target="_blank" rel="noopener">Regions and zones&lt;/a>&lt;/td>
+&lt;td style="text-align: center">Region&lt;/td>
+&lt;td style="text-align: center">us-central1（愛荷華州）&lt;/td>
+&lt;td style="text-align: center">有關區域的更多信息，請參閱 Compute Engine 指南 &lt;a href="https://cloud.google.com/compute/docs/regions-zones" target="_blank" rel="noopener">Regions and zones&lt;/a>&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">Zone&lt;/td>
-&lt;td style="text-align:center">us-central1-f&lt;/td>
-&lt;td style="text-align:center">&lt;/td>
+&lt;td style="text-align: center">Zone&lt;/td>
+&lt;td style="text-align: center">us-central1-f&lt;/td>
+&lt;td style="text-align: center">&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">Series&lt;/td>
-&lt;td style="text-align:center">N1&lt;/td>
-&lt;td style="text-align:center">&lt;/td>
+&lt;td style="text-align: center">Series&lt;/td>
+&lt;td style="text-align: center">N1&lt;/td>
+&lt;td style="text-align: center">&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">Machine type&lt;/td>
-&lt;td style="text-align:center">n1-standard-2&lt;/td>
-&lt;td style="text-align:center">這是一個 2 vCPU、7.5 GB RAM 實例&lt;/td>
+&lt;td style="text-align: center">Machine type&lt;/td>
+&lt;td style="text-align: center">n1-standard-2&lt;/td>
+&lt;td style="text-align: center">這是一個 2 vCPU、7.5 GB RAM 實例&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">Boot disk&lt;/td>
-&lt;td style="text-align:center">New balanced persistent disk/10 GB/Debian GNU/Linux 10&lt;/td>
+&lt;td style="text-align: center">Boot disk&lt;/td>
+&lt;td style="text-align: center">New balanced persistent disk/10 GB/Debian GNU/Linux 10&lt;/td>
 &lt;td>&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">Firewall&lt;/td>
-&lt;td style="text-align:center">Allow HTTP taffic&lt;/td>
-&lt;td style="text-align:center">&lt;/td>
+&lt;td style="text-align: center">Firewall&lt;/td>
+&lt;td style="text-align: center">Allow HTTP taffic&lt;/td>
+&lt;td style="text-align: center">&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -2460,30 +2460,30 @@ title="Copy code"
 &lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th style="text-align:center">Builder&lt;/th>
-&lt;th style="text-align:center">名稱&lt;/th>
+&lt;th style="text-align: center">Builder&lt;/th>
+&lt;th style="text-align: center">名稱&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td style="text-align:center">bazel&lt;/td>
-&lt;td style="text-align:center">gcr.io/cloud-builders/bazel&lt;/td>
+&lt;td style="text-align: center">bazel&lt;/td>
+&lt;td style="text-align: center">gcr.io/cloud-builders/bazel&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">docker&lt;/td>
-&lt;td style="text-align:center">gcr.io/cloud-builders/docker&lt;/td>
+&lt;td style="text-align: center">docker&lt;/td>
+&lt;td style="text-align: center">gcr.io/cloud-builders/docker&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">git&lt;/td>
-&lt;td style="text-align:center">gcr.io/cloud-builders/git&lt;/td>
+&lt;td style="text-align: center">git&lt;/td>
+&lt;td style="text-align: center">gcr.io/cloud-builders/git&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">gcloud&lt;/td>
-&lt;td style="text-align:center">gcr.io/cloud-builders/gcloud&lt;/td>
+&lt;td style="text-align: center">gcloud&lt;/td>
+&lt;td style="text-align: center">gcr.io/cloud-builders/gcloud&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">gke-deploy&lt;/td>
-&lt;td style="text-align:center">gcr.io/cloud-builders/gke-deploy&lt;/td>
+&lt;td style="text-align: center">gke-deploy&lt;/td>
+&lt;td style="text-align: center">gcr.io/cloud-builders/gke-deploy&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>

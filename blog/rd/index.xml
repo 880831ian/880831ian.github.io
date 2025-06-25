@@ -46,7 +46,7 @@ alt="EFK 示意圖 EFK Stack: Elasticsearch, Fluentd and Kibana on Docker" width
 &lt;br>
 &lt;h3>檔案結構&lt;span class="hx-absolute -hx-mt-20" id="檔案結構">&lt;/span>
 &lt;a href="#%e6%aa%94%e6%a1%88%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>.
+&lt;div>&lt;pre>&lt;code>.
 ├── docker-volume
 │   ├── fluentd
 │   │   └── fluent.conf
@@ -79,7 +79,7 @@ alt="EFK 示意圖 EFK Stack: Elasticsearch, Fluentd and Kibana on Docker" width
 ├── nginx_php_redis
 │   └── Docker-compose.yaml
 └── php
-└── Dockerfile&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+└── Dockerfile&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -111,7 +111,7 @@ title="Copy code"
 &lt;br>&lt;/p>
 &lt;h3>docker-volume/fluentd/fluent.conf&lt;span class="hx-absolute -hx-mt-20" id="docker-volumefluentdfluentconf">&lt;/span>
 &lt;a href="#docker-volumefluentdfluentconf" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>&amp;lt;source&amp;gt;
+&lt;div>&lt;pre>&lt;code>&amp;lt;source&amp;gt;
 @type forward
 bind 0.0.0.0
 port 24224
@@ -133,7 +133,7 @@ flush_interval 1s
 &amp;lt;store&amp;gt;
 @type stdout
 &amp;lt;/store&amp;gt;
-&amp;lt;/match&amp;gt;&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&amp;lt;/match&amp;gt;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -506,7 +506,7 @@ alt="kibana 設定" width="1000">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/log.png"
-alt="kibana Analytics &amp;amp;gt; Discover" width="1000">&lt;figcaption>
+alt="kibana Analytics &amp;gt; Discover" width="1000">&lt;figcaption>
 &lt;p>kibana Analytics &amp;gt; Discover&lt;/p>
 &lt;/figcaption>
 &lt;/figure>

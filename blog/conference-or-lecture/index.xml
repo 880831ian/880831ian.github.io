@@ -127,46 +127,46 @@ alt="Container 與 VM 的差異 圖片來源" width="700">&lt;figcaption>
 &lt;table>
 &lt;thead>
 &lt;tr>
-&lt;th style="text-align:center">比較&lt;/th>
-&lt;th style="text-align:center">容器 (Container)&lt;/th>
-&lt;th style="text-align:center">虛擬機(VM)&lt;/th>
+&lt;th style="text-align: center">比較&lt;/th>
+&lt;th style="text-align: center">容器 (Container)&lt;/th>
+&lt;th style="text-align: center">虛擬機(VM)&lt;/th>
 &lt;/tr>
 &lt;/thead>
 &lt;tbody>
 &lt;tr>
-&lt;td style="text-align:center">單位&lt;/td>
-&lt;td style="text-align:center">應用程式&lt;/td>
-&lt;td style="text-align:center">作業系統&lt;/td>
+&lt;td style="text-align: center">單位&lt;/td>
+&lt;td style="text-align: center">應用程式&lt;/td>
+&lt;td style="text-align: center">作業系統&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">適用服務&lt;/td>
-&lt;td style="text-align:center">多使用於微服務&lt;/td>
-&lt;td style="text-align:center">使用較大型的服務&lt;/td>
+&lt;td style="text-align: center">適用服務&lt;/td>
+&lt;td style="text-align: center">多使用於微服務&lt;/td>
+&lt;td style="text-align: center">使用較大型的服務&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">硬體資源&lt;/td>
-&lt;td style="text-align:center">是以程式為單位，需要的硬體資源很少&lt;/td>
-&lt;td style="text-align:center">VM 會先佔用 CPU、RAM 等等硬體資源，不管有沒有使用都會先佔用&lt;/td>
+&lt;td style="text-align: center">硬體資源&lt;/td>
+&lt;td style="text-align: center">是以程式為單位，需要的硬體資源很少&lt;/td>
+&lt;td style="text-align: center">VM 會先佔用 CPU、RAM 等等硬體資源，不管有沒有使用都會先佔用&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">造成衝突&lt;/td>
-&lt;td style="text-align:center">Container 間是彼此隔離的，因此在同一台機器可以執行不同版本的服務&lt;/td>
-&lt;td style="text-align:center">會因為版本不同造成環境衝突&lt;/td>
+&lt;td style="text-align: center">造成衝突&lt;/td>
+&lt;td style="text-align: center">Container 間是彼此隔離的，因此在同一台機器可以執行不同版本的服務&lt;/td>
+&lt;td style="text-align: center">會因為版本不同造成環境衝突&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">系統支援數量&lt;/td>
-&lt;td style="text-align:center">單機支援上千個容器&lt;/td>
-&lt;td style="text-align:center">一般最多幾十個&lt;/td>
+&lt;td style="text-align: center">系統支援數量&lt;/td>
+&lt;td style="text-align: center">單機支援上千個容器&lt;/td>
+&lt;td style="text-align: center">一般最多幾十個&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">優點&lt;/td>
-&lt;td style="text-align:center">Image 較小，通常都幾 MB&lt;br>啟動速度快，通常幾秒就可以生成一個 Container&lt;br>更新較為容易，只需要利用新的 Image 重新啟動就會更新完了&lt;/td>
-&lt;td style="text-align:center">因為硬體層以上都虛擬化，因此安全性相對較高&lt;br>系統選擇較多，在 VM 可以選擇不同的 OS&lt;br>不需要降低應用程式內服務的耦合性，不需要將程式內的服務個別拆開來部署&lt;/td>
+&lt;td style="text-align: center">優點&lt;/td>
+&lt;td style="text-align: center">Image 較小，通常都幾 MB&lt;br>啟動速度快，通常幾秒就可以生成一個 Container&lt;br>更新較為容易，只需要利用新的 Image 重新啟動就會更新完了&lt;/td>
+&lt;td style="text-align: center">因為硬體層以上都虛擬化，因此安全性相對較高&lt;br>系統選擇較多，在 VM 可以選擇不同的 OS&lt;br>不需要降低應用程式內服務的耦合性，不需要將程式內的服務個別拆開來部署&lt;/td>
 &lt;/tr>
 &lt;tr>
-&lt;td style="text-align:center">缺點&lt;/td>
-&lt;td style="text-align:center">安全性較 VM 差，因為環境與硬體都與本機共用&lt;br>在同一台機器中，每一個 Container 的 OS 都是相同的，無法一個為 Windows、一個為 Linux，還是依賴 Host OS&lt;br>Container 通常會切成微服務的方式作部署，在各元件中的網路連結會比較複雜&lt;/td>
-&lt;td style="text-align:center">Image 的大小通常 GB 以上，比 Container 大很多&lt;br>啟動速度通常要花幾分鐘，因此服務重啟速度較慢&lt;br>資源使用較多，因為不只程式本身，還要將一部分資源分給 VM 的作業系統&lt;/td>
+&lt;td style="text-align: center">缺點&lt;/td>
+&lt;td style="text-align: center">安全性較 VM 差，因為環境與硬體都與本機共用&lt;br>在同一台機器中，每一個 Container 的 OS 都是相同的，無法一個為 Windows、一個為 Linux，還是依賴 Host OS&lt;br>Container 通常會切成微服務的方式作部署，在各元件中的網路連結會比較複雜&lt;/td>
+&lt;td style="text-align: center">Image 的大小通常 GB 以上，比 Container 大很多&lt;br>啟動速度通常要花幾分鐘，因此服務重啟速度較慢&lt;br>資源使用較多，因為不只程式本身，還要將一部分資源分給 VM 的作業系統&lt;/td>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
@@ -462,7 +462,7 @@ title="Copy code"
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">Deploy&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">run&lt;/span>: |-&lt;span style="color:#e6db74">
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> kubectl rollout status deployment/$DEPLOYMENT_NAME -n $NAMESPACE
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> kubectl get services -o wide&lt;/span> &lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#e6db74"> kubectl get services -o wide&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"

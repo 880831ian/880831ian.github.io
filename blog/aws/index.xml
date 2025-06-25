@@ -53,17 +53,19 @@ alt="AWS UI 查看 Subnet 可用 IP" width="750">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;blockquote>
-&lt;p>[!NOTE] AWS Subnet 計算方式：
-假設是 /24 計算是： 32-24=8，2 的 8 次方 = 256&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-blue-200 hx-bg-blue-100 hx-text-blue-900 dark:hx-border-blue-200/30 dark:hx-bg-blue-900/30 dark:hx-text-blue-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>AWS Subnet 計算方式：&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>假設是 /24 計算是： 32-24=8，2 的 8 次方 = 256&lt;br>
 AWS 會保留 5 個 IP，如下：&lt;br>
 XX.XX.XX.0：網路位置&lt;br>
 XX.XX.XX.1：VPC 路由器位址&lt;br>
 XX.XX.XX.2：Amazon DNS 位址&lt;br>
 XX.XX.XX.3：保留給未來用途&lt;br>
 XX.XX.XX.255：廣播位址&lt;br>
-所以最多可用的 IP 數量是 256-5=251&lt;/p>
-&lt;/blockquote>
+所以最多可用的 IP 數量是 256-5=251&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
 &lt;br>
 &lt;h3>排除 Pod 數量超過 Node 的限制&lt;span class="hx-absolute -hx-mt-20" id="排除-pod-數量超過-node-的限制">&lt;/span>
 &lt;a href="#%e6%8e%92%e9%99%a4-pod-%e6%95%b8%e9%87%8f%e8%b6%85%e9%81%8e-node-%e7%9a%84%e9%99%90%e5%88%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>排除了 Subnet 用完的情況，後來搜尋了一下文件，發現 AWS 的機器規格，會限制一個 Node 上面，最多能長有幾個 Pod，這個跟 Amazon VPC CNI 插件有關，下面附上一些相關的問題連結：&lt;/p>
@@ -72,7 +74,7 @@ XX.XX.XX.255：廣播位址&lt;br>
 &lt;br>
 &lt;p>那要怎麼計算什麼機器規格，Pod 的最大限制是多少，可以用這個公式來計算&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>ENI * (# of IPv4 per ENI - 1) &amp;#43; 2&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>ENI * (# of IPv4 per ENI - 1) &amp;#43; 2&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -343,8 +345,8 @@ alt="VPC Data Flow Virtual Private Cloud" width="800">&lt;figcaption>
 &lt;/ul>
 &lt;p>Mac 安裝指令：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>brew tap weaveworks/tap
-brew install weaveworks/tap/eksctl&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>brew tap weaveworks/tap
+brew install weaveworks/tap/eksctl&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -472,7 +474,7 @@ alt="我目前公司帳號的 Policy" width="650">&lt;figcaption>
 &lt;a href="#statement" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Statement：是 Policy 的主要元素。此元素為必填。Statement 元素可包含單一陳述式，或是個別陳述式的陣列。每個個別的陳述式區塊都必須用大括號 { } 括起。針對多個陳述式，陣列必須用方括號 [ ] 括起。詳細請參考：&lt;a href="https://docs.aws.amazon.com/zh_tw/IAM/latest/UserGuide/reference_policies_elements_statement.html" target="_blank" rel="noopener">IAM JSON 政策元素：Statement&lt;/a>&lt;/p>
 &lt;p>例如：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>&amp;#34;Statement&amp;#34;: [{...},{...},{...}]&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>&amp;#34;Statement&amp;#34;: [{...},{...},{...}]&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -505,7 +507,7 @@ title="Copy code"
 &lt;li>Amazon S3 取得物件：&lt;/li>
 &lt;/ol>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;s3:GetObject&amp;#34;&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;s3:GetObject&amp;#34;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -519,7 +521,7 @@ title="Copy code"
 &lt;li>IAM 修改密碼：&lt;/li>
 &lt;/ol>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;iam:ChangePassword&amp;#34;&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;iam:ChangePassword&amp;#34;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -533,7 +535,7 @@ title="Copy code"
 &lt;li>EC2 啟動實例：&lt;/li>
 &lt;/ol>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;ec2:StartInstances&amp;#34;&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;ec2:StartInstances&amp;#34;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -558,7 +560,7 @@ alt="Elastic Kubernetes Service Action 部分清單 Amazon Elastic Kubernetes Se
 &lt;br>
 &lt;p>當然不用！我們可以使用 &lt;code>*&lt;/code> 來代表所有的動作，例如：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;eks:*&amp;#34;&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;eks:*&amp;#34;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -572,7 +574,7 @@ title="Copy code"
 &lt;br>
 &lt;p>或是只想要 eks 的 Create 相關動作，可以這樣寫：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;eks:Create*&amp;#34;&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;eks:Create*&amp;#34;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -586,7 +588,7 @@ title="Copy code"
 &lt;br>
 &lt;p>或是我們只想要有 eks 的 cluster 相關動作(不要 Addon、Nodegroup 等等)，可以這樣寫：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;eks:*Cluster*&amp;#34;&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: &amp;#34;eks:*Cluster*&amp;#34;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -606,9 +608,9 @@ title="Copy code"
 &lt;br>
 &lt;p>ARN 它的命名會將不同服務、不同 region、不同使用者帳號都考慮進去，產生一個唯一識別 AWS 資源的字串，下面是三種 ARN 格式：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>arn:&amp;lt;partition&amp;gt;:&amp;lt;service&amp;gt;:&amp;lt;region&amp;gt;:&amp;lt;account-id&amp;gt;:&amp;lt;resource-id&amp;gt;
+&lt;div>&lt;pre>&lt;code>arn:&amp;lt;partition&amp;gt;:&amp;lt;service&amp;gt;:&amp;lt;region&amp;gt;:&amp;lt;account-id&amp;gt;:&amp;lt;resource-id&amp;gt;
 arn:&amp;lt;partition&amp;gt;:&amp;lt;service&amp;gt;:&amp;lt;region&amp;gt;:&amp;lt;account-id&amp;gt;:&amp;lt;resource-type&amp;gt;/&amp;lt;resource-id&amp;gt;
-arn:&amp;lt;partition&amp;gt;:&amp;lt;service&amp;gt;:&amp;lt;region&amp;gt;:&amp;lt;account-id&amp;gt;:&amp;lt;resource-type&amp;gt;:&amp;lt;resource-id&amp;gt;&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+arn:&amp;lt;partition&amp;gt;:&amp;lt;service&amp;gt;:&amp;lt;region&amp;gt;:&amp;lt;account-id&amp;gt;:&amp;lt;resource-type&amp;gt;:&amp;lt;resource-id&amp;gt;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -649,7 +651,7 @@ alt="Amazon S3 的動作、資源和條件索引鍵" width="650">&lt;figcaption>
 &lt;li>IAM User&lt;/li>
 &lt;/ol>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>arn:aws:iam::123456789012:user/ian_zhuang&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>arn:aws:iam::123456789012:user/ian_zhuang&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -664,7 +666,7 @@ title="Copy code"
 &lt;li>VPC&lt;/li>
 &lt;/ol>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>arn:aws:ec2:us-east-1:123456789012:vpc/vpc-0e9801d129EXAMPLE&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;pre>&lt;code>arn:aws:ec2:us-east-1:123456789012:vpc/vpc-0e9801d129EXAMPLE&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -678,9 +680,9 @@ title="Copy code"
 &lt;li>S3 Bucket&lt;/li>
 &lt;/ol>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>arn:aws:s3:::*
+&lt;div>&lt;pre>&lt;code>arn:aws:s3:::*
 arn:aws:s3:::demo-bucket-a/*
-arn:aws:s3:::demo-bucket-b/downloads/*&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+arn:aws:s3:::demo-bucket-b/downloads/*&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -703,11 +705,11 @@ title="Copy code"
 &lt;p>這個功能等於是加了一個 &lt;code>if&lt;/code> 的判斷，以及 Statement 可以有很多個 Sub-Statement，每個 Sub-Statement 都可以設定 Condition，就可以設定很多種可能。&lt;/p>
 &lt;p>它的格式是：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>&amp;#34;Condition&amp;#34;: {
+&lt;div>&lt;pre>&lt;code>&amp;#34;Condition&amp;#34;: {
 &amp;#34;&amp;lt;condition-operator&amp;gt;&amp;#34;: {
 &amp;#34;&amp;lt;condition-key&amp;gt;&amp;#34;: &amp;#34;&amp;lt;condition-value&amp;gt;&amp;#34;
 }
-}&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+}&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -939,7 +941,7 @@ title="Copy code"
 &lt;br>
 &lt;h3>範例一&lt;span class="hx-absolute -hx-mt-20" id="範例一">&lt;/span>
 &lt;a href="#%e7%af%84%e4%be%8b%e4%b8%80" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>{
+&lt;div>&lt;pre>&lt;code>{
 &amp;#34;Version&amp;#34;: &amp;#34;2012-10-17&amp;#34;,
 &amp;#34;Statement&amp;#34;: [
 {
@@ -968,7 +970,7 @@ title="Copy code"
 }
 }
 ]
-}&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+}&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -988,7 +990,7 @@ title="Copy code"
 &lt;br>
 &lt;h3>範例二&lt;span class="hx-absolute -hx-mt-20" id="範例二">&lt;/span>
 &lt;a href="#%e7%af%84%e4%be%8b%e4%ba%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>{
+&lt;div>&lt;pre>&lt;code>{
 &amp;#34;Version&amp;#34;: &amp;#34;2012-10-17&amp;#34;,
 &amp;#34;Statement&amp;#34;: [
 {
@@ -1016,7 +1018,7 @@ title="Copy code"
 }
 }
 ]
-}&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+}&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -1282,14 +1284,14 @@ title="Copy code"
 &lt;h3>建立存取密鑰&lt;span class="hx-absolute -hx-mt-20" id="建立存取密鑰">&lt;/span>
 &lt;a href="#%e5%bb%ba%e7%ab%8b%e5%ad%98%e5%8f%96%e5%af%86%e9%91%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>需要先確認是否有以下的 IAM 權限：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: [
+&lt;div>&lt;pre>&lt;code>&amp;#34;Action&amp;#34;: [
 &amp;#34;iam:CreateAccessKey&amp;#34;,
 &amp;#34;iam:DeleteAccessKey&amp;#34;,
 &amp;#34;iam:GetAccessKeyLastUsed&amp;#34;,
 &amp;#34;iam:ListAccessKeys&amp;#34;,
 &amp;#34;iam:UpdateAccessKey&amp;#34;,
 &amp;#34;iam:TagUser&amp;#34;
-]&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+]&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"

@@ -28,7 +28,7 @@ alt="HAProxy 與 Reids Sentinel 示意圖 selcukusta/redis-sentinel-with-haproxy
 &lt;br>
 &lt;h3>檔案結構&lt;span class="hx-absolute -hx-mt-20" id="檔案結構">&lt;/span>
 &lt;a href="#%e6%aa%94%e6%a1%88%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>.
+&lt;div>&lt;pre>&lt;code>.
 ├── Docker-compose.yaml
 ├── docker-volume
 │   ├── haproxy
@@ -54,7 +54,7 @@ alt="HAProxy 與 Reids Sentinel 示意圖 selcukusta/redis-sentinel-with-haproxy
 ├── sentinel2
 │   └── sentinel.conf
 └── sentinel3
-└── sentinel.conf&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+└── sentinel.conf&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -255,14 +255,14 @@ title="Copy code"
 &lt;li>balance：使用負載平衡。&lt;/li>
 &lt;/ul>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>option tcp-check # redis 健康检查，確保是 master
+&lt;div>&lt;pre>&lt;code>option tcp-check # redis 健康检查，確保是 master
 tcp-check connect
 tcp-check send PING\r\n
 tcp-check expect string &amp;#43;PONG
 tcp-check send info\ replication\r\n
 tcp-check expect string role:master
 tcp-check send QUIT\r\n
-tcp-check expect string &amp;#43;OK&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+tcp-check expect string &amp;#43;OK&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -275,9 +275,9 @@ title="Copy code"
 &lt;p>上面這些是用來判斷角色是不是 master。&lt;/p>
 &lt;p>最後放我們 3 個 redis 服務：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code> server redis1 redis1:6379 check inter 2000
+&lt;div>&lt;pre>&lt;code> server redis1 redis1:6379 check inter 2000
 server redis2 redis2:6379 check inter 2000
-server redis3 redis3:6379 check inter 2000&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+server redis3 redis3:6379 check inter 2000&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -294,7 +294,7 @@ title="Copy code"
 &lt;br>
 &lt;h3>docker-volume/nginx/nginx.conf&lt;span class="hx-absolute -hx-mt-20" id="docker-volumenginxnginxconf">&lt;/span>
 &lt;a href="#docker-volumenginxnginxconf" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>server {
+&lt;div>&lt;pre>&lt;code>server {
 listen 80;
 server_name default_server;
 return 404;
@@ -315,7 +315,7 @@ fastcgi_index index.php;
 include fastcgi_params;
 fastcgi_param SCRIPT_FILENAME /var/www/html$fastcgi_script_name;
 }
-}&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+}&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -509,13 +509,13 @@ title="Copy code"
 &lt;h3>sentinel/sentine.conf&lt;span class="hx-absolute -hx-mt-20" id="sentinelsentineconf">&lt;/span>
 &lt;a href="#sentinelsentineconf" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>因為 sentine 內容都基本上相同，所以舉一個來說明：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>port 26379
+&lt;div>&lt;pre>&lt;code>port 26379
 logfile &amp;#34;/var/log/redis/redis-sentinel.log&amp;#34;
 protected-mode no
 #設定要監控的 Master，最後的 2 代表判定客觀下線所需的哨兵數
 sentinel monitor mymaster 172.20.0.11 6379 2
 #哨兵 Ping 不到 Master 超過此毫秒數會認定主觀下線
-sentinel down-after-milliseconds mymaster 5000&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+sentinel down-after-milliseconds mymaster 5000&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -734,7 +734,7 @@ alt="哨兵模式 (Sentinel)" width="550">&lt;figcaption>
 &lt;br>
 &lt;h3>檔案結構&lt;span class="hx-absolute -hx-mt-20" id="檔案結構">&lt;/span>
 &lt;a href="#%e6%aa%94%e6%a1%88%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>.
+&lt;div>&lt;pre>&lt;code>.
 ├── Docker-compose.yaml
 ├── docker-volume
 │   ├── log
@@ -755,7 +755,7 @@ alt="哨兵模式 (Sentinel)" width="550">&lt;figcaption>
 ├── Docker-compose.yaml
 ├── sentinel1.conf
 ├── sentinel2.conf
-└── sentinel3.conf&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+└── sentinel3.conf&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -849,7 +849,7 @@ title="Copy code"
 &lt;br>
 &lt;h3>docker-volume/nginx/nginx.conf&lt;span class="hx-absolute -hx-mt-20" id="docker-volumenginxnginxconf">&lt;/span>
 &lt;a href="#docker-volumenginxnginxconf" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>server {
+&lt;div>&lt;pre>&lt;code>server {
 listen 80;
 server_name default_server;
 return 404;
@@ -870,7 +870,7 @@ fastcgi_index index.php;
 include fastcgi_params;
 fastcgi_param SCRIPT_FILENAME /var/www/html$fastcgi_script_name;
 }
-}&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+}&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -905,13 +905,13 @@ title="Copy code"
 &lt;h3>sentinel/sentine.conf&lt;span class="hx-absolute -hx-mt-20" id="sentinelsentineconf">&lt;/span>
 &lt;a href="#sentinelsentineconf" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>因為 sentine 內容都基本上相同，所以舉一個來說明：&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>port 26379
+&lt;div>&lt;pre>&lt;code>port 26379
 #設定要監控的 Master，最後的 2 代表判定客觀下線所需的哨兵數
 sentinel monitor mymaster 192.168.176.4 6379 2
 #哨兵 Ping 不到 Master 超過此毫秒數會認定主觀下線
 sentinel down-after-milliseconds mymaster 5000
 #failover 超過次毫秒數即代表 failover 失敗
-sentinel failover-timeout mymaster 180000&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+sentinel failover-timeout mymaster 180000&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -1107,13 +1107,13 @@ alt="test.com:8888 測試網站" width="650">&lt;figcaption>
 &lt;br>
 &lt;p>再來修改 sentinel 內的 sentinel(1、2、3).conf 檔案&lt;/p>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;pre>&lt;code>port 26379
+&lt;div>&lt;pre>&lt;code>port 26379
 #設定要監控的 Master，最後的 2 代表判定客觀下線所需的哨兵數
 sentinel monitor mymaster 192.168.208.4 6379 2
 #哨兵 Ping 不到 Master 超過此毫秒數會認定主觀下線
 sentinel down-after-milliseconds mymaster 5000
 #failover 超過次毫秒數即代表 failover 失敗
-sentinel failover-timeout mymaster 180000&lt;/code>&lt;/pre>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+sentinel failover-timeout mymaster 180000&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
