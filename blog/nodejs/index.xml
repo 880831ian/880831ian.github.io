@@ -1,6 +1,6 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Node.js</title><link>https://pin-yi.me/blog/nodejs/</link><description>Recent content in Node.js on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/nodejs/index.xml" rel="self" type="application/rss+xml"/><item><title>用 Node.js寫一個 Repository Restful API 的留言板 (express、sequelize 套件)</title><link>https://pin-yi.me/blog/nodejs/nodejs-restful-api-repository-messageboard/</link><pubDate>Mon, 11 Apr 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/nodejs/nodejs-restful-api-repository-messageboard/</guid><description>
 &lt;p>本文章是使用 Node.js 來寫一個 Repository Restful API 的留言板，並且會使用 express 以及 sequelize (使用 Mysql)套件。&lt;/p>
-&lt;p>建議可以先觀看 &lt;a href="https://pin-yi.me/node/" target="_blank" rel="noopener">Node.js 介紹&lt;/a> 文章來簡單學習 Node 語言。&lt;/p>
+&lt;p>建議可以先觀看 &lt;a href="../nodejs-introduce/" >Node.js 介紹&lt;/a> 文章來簡單學習 Node 語言。&lt;/p>
 &lt;p>&lt;a href="https://github.com/880831ian/node-restful-api-repository-messageboard" target="_blank" rel="noopener">範例程式連結 點我 😘
 &lt;/a>&lt;/p>
 &lt;p>版本資訊&lt;/p>
