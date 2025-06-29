@@ -11,5 +11,10 @@ sidebar:
 <!--more-->
 
 {{< cards >}}
-{{< card link="20240529-devops-introduce" title="朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座 (2024/05/29)" image="/conference-or-lecture/20240529-devops-introduce/cover.webp">}}
+{{< card
+  link="20240529-devops-introduce"
+  title="朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座 (2024/05/29)"
+  subtitle="發布日期：2024-05-29"
+  image="/conference-or-lecture/20240529-devops-introduce/cover.webp"
+>}}
 {{< /cards>}}

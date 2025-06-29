@@ -7,12 +7,13 @@ toc: false
 
 <br>
 
-哈囉大家好，我叫莊品毅 (CHUANG,PIN-YI)，也可以叫我 Ian，目前是一位 System Architect (SA) 工程師，負責規劃以及測試公司的系統架構，並且協助 RD 團隊解決系統相關的問題。
-最近配合公司多雲端的需求，有開始接觸 Amazon Web Services (AWS) 相關服務，並且協助導入 Datadog ，來整合公司內分散的監控系統。
+哈囉大家好，我叫莊品毅 (CHUANG,PIN-YI)，也可以叫我 Ian，目前是一位 System Architect (SA) 工程師，負責規劃以及測試公司的系統架構，並且協助技術團隊解決系統相關的問題。
+協助公司導入災難復原 (GCP > AWS)，並且負責 AWS 服務的架構設計、導入與權限管理，確保公司基礎設施具備高擴展性與靈活性。
+以及協助導入 Datadog ，來整合公司內分散的監控系統。
 
-除此之後，也熟悉使用 Google Cloud Platform (GCP) 雲端相關服務，喜歡使用 Terraform + Terragrunt 來管理雲端大量的 IaC 資源 (GCP Module：12、AWS Module：17)，當然也會使用 Grafana、Prometheus、EFK 等監控 Log 收集工具來確保服務的穩定性以及可追蹤性。並協助 RD 建立 CICD 部署流程。
+除此之後，也熟悉使用 Google Cloud Platform (GCP) 雲端相關服務，喜歡使用 Terraform + Terragrunt 來管理雲端大量的 IaC 資源 (GCP Module：12、AWS Module：22)，當然也會使用 Grafana、Prometheus、EFK 等監控 Log 收集工具來確保服務的穩定性以及可追蹤性。並協助 RD 建立 CICD 部署流程。
 
-在下班空閒時間，我喜歡閱讀技術相關的文件、寫部落格，也會參加一些線下技術社群的活動，曾參加過：Google Next 2025、DevOpsDay 2023|2024、Cloud Summit 2024，希望能夠透過這些活動來學習更多的知識，並且與更多的技術人員交流。
+在下班空閒時間，我喜歡閱讀技術相關的文件、寫部落格，也會參加一些線下技術社群的活動，曾參加過：Google Next 2025、DevOpsDay 2023|2024、Cloud Summit 2024|2025、AWS Summit 2025，希望能夠透過這些活動來學習更多的知識，並且與更多的技術人員交流。
 
 歡迎大家使用下方 giscus 留言系統留言交流 d(`･∀･)b。
 
@@ -37,7 +38,7 @@ toc: false
 
 Amazon Web Services (AWS) 服務架構設計、導入與權限管理
 1. 設計公司多雲架構，規劃從 GCP 災難備援至 AWS，確保基礎設施具備高擴展性與靈活性。
-2. 開發 17 組 Terraform 模組，實現 IaC（基礎設施即程式碼），確保環境一致性並加速團隊上手時間與維運成本。
+2. 開發 22 組 Terraform 模組，實現 IaC（基礎設施即程式碼），確保環境一致性並加速團隊上手時間與維運成本。
 3. 撰寫 40+ 篇技術文件，涵蓋 AWS IaC 指南、AWS 與 GCP 服務比較、Graviton 遷移效能及優化成本分析等、各項測試報告。
 4. 負責多個專案的服務建置、CICD 自動化部署，確保系統能在 AWS 穩定且高效運行。
 5. 協助 RD 研究與部署 AWS macOS GitLab Runner 進行 iOS APP 打包，負責資源建立、問題排查與最佳化，確保 CI/CD 流程順暢運行。

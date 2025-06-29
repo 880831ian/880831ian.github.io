@@ -1,7 +1,7 @@
 ---
 title: "什麼是 Opentelemetry？可觀測性 (Observability) 又是什麼？"
 type: docs
-weight: 9998
+weight: 9999
 date: 2023-09-06
 authors:
   - name: Ian_zhuang

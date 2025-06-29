@@ -11,5 +11,10 @@ sidebar:
 <!--more-->
 
 {{< cards >}}
-{{< card link="jira-to-google-chat" title="串接 Jira 工單自動化通知到 Google Chat" image="/agile/jira-to-google-chat/cover.webp" >}}
+{{< card
+  link="jira-to-google-chat"
+  title="串接 Jira 工單自動化通知到 Google Chat"
+  subtitle="發布日期：2024-08-06"
+  image="/agile/jira-to-google-chat/cover.webp"
+>}}
 {{< /cards >}}

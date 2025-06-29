@@ -1,7 +1,7 @@
 ---
 title: "Google Cloud Platform (GCP) - Container Registry"
 type: docs
-weight: 9998
+weight: 9997
 date: 2022-07-01
 authors:
   - name: Ian_zhuang

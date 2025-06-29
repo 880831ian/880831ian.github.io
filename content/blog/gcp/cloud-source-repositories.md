@@ -1,7 +1,7 @@
 ---
 title: "Google Cloud Platform (GCP) - Cloud Source Repositories"
 type: docs
-weight: 9997
+weight: 9996
 date: 2022-07-03
 authors:
   - name: Ian_zhuang

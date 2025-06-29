@@ -1,7 +1,7 @@
 ---
 title: "清除 Linux 機器上的 Swap (Buff、Cache、Swap 比較)"
 type: docs
-weight: 9998
+weight: 9999
 date: 2022-06-06
 authors:
   - name: Ian_zhuang

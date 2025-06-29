@@ -1,7 +1,7 @@
 ---
 title: "找出程式碼、開源套件、容器的安全漏洞工具 - Snyk"
 type: docs
-weight: 9999
+weight: 9997
 date: 2022-09-20
 authors:
   - name: Ian_zhuang

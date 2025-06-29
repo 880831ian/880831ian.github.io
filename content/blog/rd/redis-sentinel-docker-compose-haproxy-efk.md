@@ -1,7 +1,7 @@
 ---
 title: "用 EFK 收集容器日誌 (HAProxy、Redis Sentinel、Docker-compose)"
 type: docs
-weight: 9997
+weight: 9999
 date: 2022-04-22
 authors:
   - name: Ian_zhuang

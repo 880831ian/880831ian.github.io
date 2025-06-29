@@ -1,8 +1,8 @@
 ---
 title: "Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決"
 type: docs
-weight: 9998
-date: 2022-12-08
+weight: 9997
+date: 2022-12-12
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/

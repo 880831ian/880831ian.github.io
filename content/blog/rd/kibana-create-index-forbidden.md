@@ -1,8 +1,8 @@
 ---
 title: "Kibana 新增 index 索引時一直轉圈圈以及顯示 HTTP 403 Forbidden"
 type: docs
-weight: 9999
-date: 2024-05-01
+weight: 9998
+date: 2022-12-08
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/

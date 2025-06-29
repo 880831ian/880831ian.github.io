@@ -1,7 +1,7 @@
 ---
 title: "Google Cloud Platform (GCP) - Compute Engine"
 type: docs
-weight: 9996
+weight: 9998
 date: 2022-06-29
 authors:
   - name: Ian_zhuang

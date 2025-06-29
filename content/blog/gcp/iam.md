@@ -1,7 +1,7 @@
 ---
 title: "Google Cloud Platform (GCP) - IAM 與管理"
 type: docs
-weight: 9995
+weight: 9999
 date: 2022-06-29
 authors:
   - name: Ian_zhuang

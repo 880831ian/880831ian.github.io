@@ -1,7 +1,7 @@
 ---
 title: "Bookstack 開源知識庫筆記平台安裝 (K8s + docker)"
 type: docs
-weight: 9998
+weight: 9996
 date: 2023-04-07
 authors:
   - name: Ian_zhuang

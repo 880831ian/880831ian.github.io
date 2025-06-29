@@ -1,7 +1,7 @@
 ---
 title: "Linux 常用指令"
 type: docs
-weight: 9997
+weight: 9998
 date: 2022-06-17
 authors:
   - name: Ian_zhuang
