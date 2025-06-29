@@ -396,6 +396,18 @@ layout: hextra-home
   image="/git-or-cicd/git-introduce/cover.webp"
 >}}
 {{< card
+  link="blog/nodejs/nodejs-restful-api-repository-messageboard"
+  title="用 Node.js寫一個 Repository Restful API 的留言板 (express、sequelize 套件)"
+  subtitle="發布日期：2022-04-11"
+  image="/nodejs/nodejs-restful-api-repository-messageboard/cover.webp"
+>}}
+{{< card
+  link="blog/nodejs/nodejs-introduce"
+  title="Node.js 介紹"
+  subtitle="發布日期：2022-03-30"
+  image="/nodejs/nodejs-introduce/cover.webp"
+>}}
+{{< card
   link="blog/docker/docker"
   title="Docker 介紹 (如何使用 Docker-compose 建置 PHP+MySQl+Nginx 環境"
   subtitle="發布日期：2022-03-14"
@@ -407,5 +419,4 @@ layout: hextra-home
   subtitle="發布日期：2022-03-08"
   image="/redis/redis-introduce/cover.webp"
 >}}
-
 {{< /hextra/feature-grid >}}
