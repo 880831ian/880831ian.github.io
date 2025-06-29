@@ -21,6 +21,7 @@ sidebar:
 {{< card link="gcp-k8s-hpa-php-custom-metrics" title="Kubernetes (K8s) 自定義 PHP HorizontalPodAutoscaler (HPA) 指標" image="/kubernetes/gcp-k8s-hpa-php-custom-metrics/cover.webp">}}
 {{< card link="k8s-hpa" title="Kubernetes (K8s) HorizontalPodAutoscaler (HPA) 原理與實作" image="/kubernetes/k8s-hpa/cover.webp">}}
 {{< card link="k8s-plain" title="用大型社區來介紹 Kubernetes 元件" image="/kubernetes/k8s-plain/cover.webp">}}
+{{< card link="k8s-efk" title="Kubernetes (K8s) 搭配 EFK 實作 (Deployment、StatefulSet、DaemonSet)" image="/kubernetes/k8s-efk/cover.webp">}}
 {{< card link="k8s-advanced" title="Kubernetes (K8s) 介紹 - 進階 (Service、Ingress、StatefulSet、Deployment、ReplicaSet、ConfigMap)" image="/kubernetes/k8s-advanced/cover.webp">}}
 {{< card link="k8s" title="Kubernetes (K8s) 介紹 - 基本" image="/kubernetes/k8s/cover.webp">}}
 {{< /cards >}}
