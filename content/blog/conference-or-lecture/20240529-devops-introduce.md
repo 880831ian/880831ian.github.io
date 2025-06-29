@@ -60,7 +60,7 @@ authors:
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/cloud.png" width="700" caption="如何使用雲端 [圖片來源](https://www.cloudflare.com/zh-tw/learning/cloud/what-is-the-cloud/)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/cloud.png" width="700" caption="如何使用雲端 [圖片來源](https://www.cloudflare.com/zh-tw/learning/cloud/what-is-the-cloud/)" >}}
 
 <br>
 
@@ -70,7 +70,7 @@ authors:
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/google-data-center.webp" width="700" caption="Google Data Center [圖片來源](https://www.youtube.com/watch?v=kd33UVZhnAA&ab_channel=GoogleCloudTech)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/google-data-center.webp" width="700" caption="Google Data Center [圖片來源](https://www.youtube.com/watch?v=kd33UVZhnAA&ab_channel=GoogleCloudTech)" >}}
 
 <br>
 
@@ -88,7 +88,7 @@ authors:
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/Top-10-Cloud-Service-Providers-Globally-in-2022.jpg.webp" width="600" caption="Top 10 Cloud Service Providers Globally in 2024 [圖片來源](https://dgtlinfra.com/top-cloud-service-providers/)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/Top-10-Cloud-Service-Providers-Globally-in-2022.jpg.webp" width="600" caption="Top 10 Cloud Service Providers Globally in 2024 [圖片來源](https://dgtlinfra.com/top-cloud-service-providers/)" >}}
 
 <br>
 
@@ -102,7 +102,7 @@ authors:
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/akamai-public-private-cloud.png" width="600" caption="What Is Private Cloud? [圖片來源](https://www.akamai.com/glossary/what-is-private-cloud)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/akamai-public-private-cloud.png" width="600" caption="What Is Private Cloud? [圖片來源](https://www.akamai.com/glossary/what-is-private-cloud)" >}}
 
 <br>
 
@@ -150,7 +150,7 @@ Docker 是一種軟體平台，它可以快速建立、測試和部署應用程�
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/container-vm.png" width="700" caption="Container 與 VM 的差異 [圖片來源](https://www.todaysoftmag.com/article/2576/container-based-micro-services-in-the-cloud)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/container-vm.png" width="700" caption="Container 與 VM 的差異 [圖片來源](https://www.todaysoftmag.com/article/2576/container-based-micro-services-in-the-cloud)" >}}
 
 <br>
 
@@ -201,7 +201,7 @@ Dockerfile 語法主要由 Command（命令）和 Argument （參數選擇）兩
 
 命令式語法＋選擇參數（Command + Argument）
 
-{{< figure src="/lecture/20240529-devops-introduce/dockerfile.png" width="300" caption="Dockerfile [圖片來源](https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/#Repository%EF%BC%88%E5%80%89%E5%BA%AB%EF%BC%89)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/dockerfile.png" width="300" caption="Dockerfile [圖片來源](https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/#Repository%EF%BC%88%E5%80%89%E5%BA%AB%EF%BC%89)" >}}
 
 <br>
 
@@ -215,7 +215,7 @@ Docker 映像檔是一個唯獨的模板。
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/image.png" width="450" caption="Image [圖片來源](https://ragin.medium.com/docker-what-it-is-how-images-are-structured-docker-vs-vm-and-some-tips-part-1-d9686303590f)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/image.png" width="450" caption="Image [圖片來源](https://ragin.medium.com/docker-what-it-is-how-images-are-structured-docker-vs-vm-and-some-tips-part-1-d9686303590f)" >}}
 
 <br>
 
@@ -227,7 +227,7 @@ Docker 是利用容器來執行應用程式。
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/container.png" width="600" caption="Container [圖片來源](https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/#Repository%EF%BC%88%E5%80%89%E5%BA%AB%EF%BC%89)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/container.png" width="600" caption="Container [圖片來源](https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/#Repository%EF%BC%88%E5%80%89%E5%BA%AB%EF%BC%89)" >}}
 
 <br>
 
@@ -237,7 +237,7 @@ Docker 是利用容器來執行應用程式。
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/repository.png" width="600" caption="Repository [圖片來源](https://logowik.com/docker-vector-logo-2767.html)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/repository.png" width="600" caption="Repository [圖片來源](https://logowik.com/docker-vector-logo-2767.html)" >}}
 
 <br>
 
@@ -247,7 +247,7 @@ Docker 是利用容器來執行應用程式。
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/Docker.png" width="600" caption="Docekr Logo [圖片來源](https://logowik.com/docker-vector-logo-2767.html)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/Docker.png" width="600" caption="Docekr Logo [圖片來源](https://logowik.com/docker-vector-logo-2767.html)" >}}
 
 <br>
 
@@ -289,7 +289,7 @@ Docker 是利用容器來執行應用程式。
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/run.png" width="900" caption="Docekr 運作流程 [圖片來源](https://medium.com/swlh/understand-dockerfile-dd11746ed183)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/run.png" width="900" caption="Docekr 運作流程 [圖片來源](https://medium.com/swlh/understand-dockerfile-dd11746ed183)" >}}
 
 <br>
 
@@ -299,7 +299,7 @@ Kubernetes 也可以叫 K8s，這個名稱來源希臘語，意思是舵手或�
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/k8s-logo.png" width="200" caption="K8s Logo" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/k8s-logo.png" width="200" caption="K8s Logo" >}}
 
 <br>
 
@@ -356,7 +356,7 @@ Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/k8s.jpg" width="550" caption="K8s 元件 [圖片來源](https://cwhu.medium.com/kubernetes-basic-concept-tutorial-e033e3504ec0)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/k8s.jpg" width="550" caption="K8s 元件 [圖片來源](https://cwhu.medium.com/kubernetes-basic-concept-tutorial-e033e3504ec0)" >}}
 
 <br>
 
@@ -399,7 +399,7 @@ DevOps 是一種結合軟體開發人員 (Development) 和 IT 運維技術人員
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/cicd_cycle.png" width="700" caption="CI/CD cycle" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/cicd_cycle.png" width="700" caption="CI/CD cycle" >}}
 
 <br>
 
@@ -568,7 +568,7 @@ steps:
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/20220830003861.jpg" width="450" caption="網站解析被擋 [圖片來源](https://www.chinatimes.com/realtimenews/20220830003849-260405?chdtv)" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/20220830003861.jpg" width="450" caption="網站解析被擋 [圖片來源](https://www.chinatimes.com/realtimenews/20220830003849-260405?chdtv)" >}}
 
 <br>
 
@@ -631,7 +631,7 @@ steps:
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/monitoring.png" width="1000" caption="做各種的監控" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/monitoring.png" width="1000" caption="做各種的監控" >}}
 
 <br>
 
@@ -643,7 +643,7 @@ steps:
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/log.png" width="1000" caption="查 Log" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/log.png" width="1000" caption="查 Log" >}}
 
 <br>
 
@@ -657,7 +657,7 @@ steps:
 
 <br>
 
-{{< figure src="/lecture/20240529-devops-introduce/sre.jpg" width="200" caption="Site Restart Engineer XDDD" >}}
+{{< figure src="/conference-or-lecture/20240529-devops-introduce/sre.jpg" width="200" caption="Site Restart Engineer XDDD" >}}
 
 <br>
 

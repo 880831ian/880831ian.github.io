@@ -101,7 +101,7 @@ GCP 成本優化實踐
 
     證照編號: ed519d0fcb984d428460841eb83419c8 / 發照日期： Feb 21, 2025 / 到期日：Feb 21, 2027
 
-<img src="/about/pca.png" width="550" />
+<img src="/about/pca.webp" width="550" />
 
 <br>
 
@@ -109,7 +109,7 @@ GCP 成本優化實踐
 
     證照編號: 190-008-011 / 發照日期： July 5, 2019 / 到期日：July 5, 2021
 
-<img src="/about/rhce.png" width="550" />
+<img src="/about/rhce.webp" width="550" />
 
 <br>
 
@@ -117,4 +117,4 @@ GCP 成本優化實踐
 
     證照編號: 190-008-011 / 發照日期： Jan 11, 2019 / 到期日：Jan 11, 2021
 
-<img src="/about/rhcsa.png" width="550" />
+<img src="/about/rhcsa.webp" width="550" />

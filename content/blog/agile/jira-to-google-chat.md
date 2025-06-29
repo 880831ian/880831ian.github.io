@@ -21,7 +21,7 @@ authors:
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/1.png" width="750" caption="工單看板" >}}
+{{< figure src="/agile/jira-to-google-chat/1.webp" width="750" caption="工單看板" >}}
 
 <br>
 
@@ -43,7 +43,7 @@ authors:
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/2.png" width="450" caption="建立聊天室" >}}
+{{< figure src="/agile/jira-to-google-chat/2.webp" width="450" caption="建立聊天室" >}}
 
 <br>
 
@@ -53,7 +53,7 @@ authors:
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/3.png" width="400" caption="點選應用程式與整合" >}}
+{{< figure src="/agile/jira-to-google-chat/3.webp" width="400" caption="點選應用程式與整合" >}}
 
 <br>
 
@@ -63,7 +63,7 @@ authors:
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/4.png" width="700" caption="建立 Webhook" >}}
+{{< figure src="/agile/jira-to-google-chat/4.webp" width="700" caption="建立 Webhook" >}}
 
 <br>
 
@@ -73,7 +73,7 @@ authors:
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/5.png" width="700" caption="複製 Webhook 網址" >}}
+{{< figure src="/agile/jira-to-google-chat/5.webp" width="700" caption="複製 Webhook 網址" >}}
 
 <br>
 
@@ -81,7 +81,7 @@ authors:
 
 我們可以使用 curl 來測試一下 Webhook 是否正常，可以參考以下指令：
 
-```
+```sh
 curl -X POST "<<請帶入剛剛所複製的 Google Chat Webhook 連結>>" \
      -H "Content-Type: application/json; charset=UTF-8" \
      -d '{"text": "Hello World"}'
@@ -91,7 +91,7 @@ curl -X POST "<<請帶入剛剛所複製的 Google Chat Webhook 連結>>" \
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/6.png" width="700" caption="測試 Webhook 成功" >}}
+{{< figure src="/agile/jira-to-google-chat/6.webp" width="700" caption="測試 Webhook 成功" >}}
 
 <br>
 
@@ -109,7 +109,7 @@ curl -X POST "<<請帶入剛剛所複製的 Google Chat Webhook 連結>>" \
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/7.png" width="1200" caption="範例自動化設定" >}}
+{{< figure src="/agile/jira-to-google-chat/7.webp" width="1200" caption="範例自動化設定" >}}
 
 <br>
 
@@ -119,7 +119,7 @@ curl -X POST "<<請帶入剛剛所複製的 Google Chat Webhook 連結>>" \
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/8.png" width="500" caption="動作選項" >}}
+{{< figure src="/agile/jira-to-google-chat/8.webp" width="500" caption="動作選項" >}}
 
 <br>
 
@@ -131,7 +131,7 @@ curl -X POST "<<請帶入剛剛所複製的 Google Chat Webhook 連結>>" \
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/9.png" width="800" caption="變數參考" >}}
+{{< figure src="/agile/jira-to-google-chat/9.webp" width="800" caption="變數參考" >}}
 
 <br>
 
@@ -145,7 +145,7 @@ curl -X POST "<<請帶入剛剛所複製的 Google Chat Webhook 連結>>" \
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/10.png" width="500" caption="官方 Card 範例" >}}
+{{< figure src="/agile/jira-to-google-chat/10.webp" width="500" caption="官方 Card 範例" >}}
 
 <br>
 
@@ -155,7 +155,7 @@ curl -X POST "<<請帶入剛剛所複製的 Google Chat Webhook 連結>>" \
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/11.png" width="1200" caption="UI Kit Builder 工具" >}}
+{{< figure src="/agile/jira-to-google-chat/11.webp" width="1200" caption="UI Kit Builder 工具" >}}
 
 <br>
 
@@ -163,7 +163,7 @@ curl -X POST "<<請帶入剛剛所複製的 Google Chat Webhook 連結>>" \
 
 需要再多以下的架構，才會正常運作：
 
-```
+```json
 {
   "cardsV2": [
     {
@@ -181,7 +181,7 @@ curl -X POST "<<請帶入剛剛所複製的 Google Chat Webhook 連結>>" \
 
 <br>
 
-{{< figure src="/agile/jira-to-google-chat/12.png" width="450" caption="最終成果" >}}
+{{< figure src="/agile/jira-to-google-chat/12.webp" width="450" caption="最終成果" >}}
 
 <br>
 
