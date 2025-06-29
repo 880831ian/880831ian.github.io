@@ -1,7 +1,7 @@
 ---
 title: "用 Node.js寫一個 Repository Restful API 的留言板 (express、sequelize 套件)"
 type: docs
-weight: 9999
+weight: 9998
 description: 用 Node.js寫一個 Repository Restful API 的留言板 (express、sequelize 套件)
 images:
   - nodejs/nodejs-restful-api-repository-messageboard/og.webp
@@ -13,7 +13,7 @@ authors:
 
 本文章是使用 Node.js 來寫一個 Repository Restful API 的留言板，並且會使用 express 以及 sequelize (使用 Mysql)套件。
 
-建議可以先觀看 [Node.js 介紹](https://pin-yi.me/node/) 文章來簡單學習 Node 語言。
+建議可以先觀看 [Node.js 介紹](../nodejs-introduce/) 文章來簡單學習 Node 語言。
 
 [範例程式連結 點我 😘
 ](https://github.com/880831ian/node-restful-api-repository-messageboard)

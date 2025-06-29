@@ -408,6 +408,18 @@ layout: hextra-home
   image="/nodejs/nodejs-introduce/cover.webp"
 >}}
 {{< card
+  link="blog/golang/go-restful-api-repository-messageboard"
+  title="用 Go 寫一個 Repository Restful API 的留言板 (gin、gorm 套件)"
+  subtitle="發布日期：2022-03-27"
+  image="/golang/go-restful-api-repository-messageboard/cover.webp"
+>}}
+{{< card
+  link="blog/golang/go-introduce"
+  title="Go (Golang) 介紹"
+  subtitle="發布日期：2022-03-31"
+  image="/golang/go-introduce/cover.webp"
+>}}
+{{< card
   link="blog/docker/docker"
   title="Docker 介紹 (如何使用 Docker-compose 建置 PHP+MySQl+Nginx 環境"
   subtitle="發布日期：2022-03-14"
