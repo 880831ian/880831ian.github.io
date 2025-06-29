@@ -39,7 +39,7 @@
 &lt;h3>雲端&lt;span class="hx-absolute -hx-mt-20" id="雲端">&lt;/span>
 &lt;a href="#%e9%9b%b2%e7%ab%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>「雲端」的英文是 Cloud，不需要安裝在個人電腦或公司伺服器上，而是透過網際網路存取的伺服器，以及在這些伺服器上執行的軟體或是資料庫。常見的例子有 Google 雲端硬碟、Dropbox、或是 Google Cloud、AWS、Azure 等雲端服務商。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/cloud.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/cloud.png"
 alt="如何使用雲端 圖片來源" width="700">&lt;figcaption>
 &lt;p>如何使用雲端 &lt;a href="https://www.cloudflare.com/zh-tw/learning/cloud/what-is-the-cloud/" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -48,7 +48,7 @@ alt="如何使用雲端 圖片來源" width="700">&lt;figcaption>
 &lt;p>雲端得以實現，是因為一種稱為虛擬化的技術。虛擬化允許在一台實體的電腦上建立許多模擬「虛擬」電腦，其行為如同具有自己硬體的實體電腦，這類電腦的術語稱為&lt;a href="https://www.cloudflare.com/zh-tw/learning/cloud/what-is-a-virtual-machine/" target="_blank" rel="noopener">虛擬機器&lt;/a>。虛擬主機簡單介紹到這邊，後面的 &lt;a href="#docker-%e4%bb%8b%e7%b4%b9" >Docker 介紹&lt;/a> 會在提到。&lt;/p>
 &lt;p>雲端會有很多資料中心，一個資料中心又有很多台的伺服器，一個伺服器可以執行許多虛擬「伺服器」，能夠為許多組織或是客戶提供不同的服務，即使個別伺服器故障，雲端供應商會在多個機器及多個區域備份服務。&lt;a href="https://www.youtube.com/watch?v=zDAYZU4A3w0&amp;amp;ab_channel=GoogleCloudTech" target="_blank" rel="noopener">Google Data Center 影片連結&lt;/a>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/google-data-center.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/google-data-center.webp"
 alt="Google Data Center 圖片來源" width="700">&lt;figcaption>
 &lt;p>Google Data Center &lt;a href="https://www.youtube.com/watch?v=kd33UVZhnAA&amp;amp;ab_channel=GoogleCloudTech" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -64,7 +64,7 @@ alt="Google Data Center 圖片來源" width="700">&lt;figcaption>
 &lt;/ul>
 &lt;p>除了彈性和成本效益，最重要的還有服務商安全管理和維護及 SLA 的優勢。&lt;a href="https://cloud.google.com/terms/sla" target="_blank" rel="noopener">Google Cloud Platform Service Level Agreements&lt;/a>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/Top-10-Cloud-Service-Providers-Globally-in-2022.jpg.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/Top-10-Cloud-Service-Providers-Globally-in-2022.jpg.webp"
 alt="Top 10 Cloud Service Providers Globally in 2024 圖片來源" width="600">&lt;figcaption>
 &lt;p>Top 10 Cloud Service Providers Globally in 2024 &lt;a href="https://dgtlinfra.com/top-cloud-service-providers/" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -78,7 +78,7 @@ alt="Top 10 Cloud Service Providers Globally in 2024 圖片來源" width="600">&
 &lt;li>&lt;strong>高成本&lt;/strong>：需要自行購買和維護硬體和基礎設施，初期投資和運營成本較高。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/akamai-public-private-cloud.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/akamai-public-private-cloud.png"
 alt="What Is Private Cloud? 圖片來源" width="600">&lt;figcaption>
 &lt;p>What Is Private Cloud? &lt;a href="https://www.akamai.com/glossary/what-is-private-cloud" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -116,7 +116,7 @@ alt="What Is Private Cloud? 圖片來源" width="600">&lt;figcaption>
 &lt;a href="#docker-%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Docker 是一種軟體平台，它可以快速建立、測試和部署應用程式。為什麼可以快速建立呢？因為 Docker 會將軟體封裝到名為『容器』的標準單位。其中會包含程式庫、系統工具、程式碼、執行軟體所需的所有項目。 剛剛有提到容器 (Container)，是一種虛擬化技術，它高效率虛擬化及易於遷移和擴展的特性，非常適合現代雲端的開發及佈署。&lt;/p>
 &lt;p>那 Container 與傳統的虛擬機 (VM) 有什麼差別呢？我們來看看下面這張圖&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/container-vm.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/container-vm.png"
 alt="Container 與 VM 的差異 圖片來源" width="700">&lt;figcaption>
 &lt;p>Container 與 VM 的差異 &lt;a href="https://www.todaysoftmag.com/article/2576/container-based-micro-services-in-the-cloud" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -200,7 +200,7 @@ alt="Container 與 VM 的差異 圖片來源" width="700">&lt;figcaption>
 &lt;a href="#dockerfile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>開發人員在使用 Docker 時發現，大多現成的 Docker 映像檔無法滿足他們的需求，因此需要一種能夠生成映像檔的工具。Dockerfile 是一種簡易的文件檔，裡面包含了建立新映像檔所需的指令。&lt;/p>
 &lt;p>Dockerfile 語法主要由 Command（命令）和 Argument （參數選擇）兩大元素組成。以下是一個簡易的 Dockerfile 示意圖：&lt;/p>
 &lt;p>命令式語法＋選擇參數（Command + Argument）&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/dockerfile.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/dockerfile.png"
 alt="Dockerfile 圖片來源" width="300">&lt;figcaption>
 &lt;p>Dockerfile &lt;a href="https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/#Repository%EF%BC%88%E5%80%89%E5%BA%AB%EF%BC%89" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -211,7 +211,7 @@ alt="Dockerfile 圖片來源" width="300">&lt;figcaption>
 &lt;p>例如：一個映像檔可以用一個 Ubuntu Linux 作業系統當作基底，裡面只安裝 Nginx 或使用者想用的套件等。&lt;/p>
 &lt;p>我們會使用映像檔來建立 Docker 的容器 (Container) ，Docker 也提供很簡單的機制來建立映像檔或是更新現有的映像檔，也可以去下載別人已經做好的映像檔。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/image.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/image.png"
 alt="Image 圖片來源" width="450">&lt;figcaption>
 &lt;p>Image &lt;a href="https://ragin.medium.com/docker-what-it-is-how-images-are-structured-docker-vs-vm-and-some-tips-part-1-d9686303590f" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -221,7 +221,7 @@ alt="Image 圖片來源" width="450">&lt;figcaption>
 &lt;a href="#%e5%ae%b9%e5%99%a8-container" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>Docker 是利用容器來執行應用程式。&lt;/p>
 &lt;p>每一個容器都是由映像檔所建立的的執行程式。它可以被啟動、開始、停止、刪除。且每一個容器都是相互隔離的，不會相互影響。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/container.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/container.png"
 alt="Container 圖片來源" width="600">&lt;figcaption>
 &lt;p>Container &lt;a href="https://www.omniwaresoft.com.tw/product-news/docker-news/docker-introduction/#Repository%EF%BC%88%E5%80%89%E5%BA%AB%EF%BC%89" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -230,7 +230,7 @@ alt="Container 圖片來源" width="600">&lt;figcaption>
 &lt;h4>倉庫 (Repository)&lt;span class="hx-absolute -hx-mt-20" id="倉庫-repository">&lt;/span>
 &lt;a href="#%e5%80%89%e5%ba%ab-repository" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>倉庫是集中放置映像檔的所在地，倉庫分為公開倉庫 (Public) 和 私有倉庫 (Private) 兩種形式。最大的倉庫註冊伺服器當然是 &lt;a href="https://hub.docker.com/" target="_blank" rel="noopener">Docker hub&lt;/a>，存放數量龐大的映像檔供使用者下載，使用者也可以在本地網路內建立一個私有倉庫。可以將倉庫的概念理解成跟 Git 相似。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/repository.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/repository.png"
 alt="Repository 圖片來源" width="600">&lt;figcaption>
 &lt;p>Repository &lt;a href="https://logowik.com/docker-vector-logo-2767.html" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -239,7 +239,7 @@ alt="Repository 圖片來源" width="600">&lt;figcaption>
 &lt;p>這樣講還是有點抽象，我們來看一個實際的例子：&lt;/p>
 &lt;p>首先我們先看一下 Docker 的 Logo，你們覺得這是什麼動物呢？&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/Docker.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/Docker.png"
 alt="Docekr Logo 圖片來源" width="600">&lt;figcaption>
 &lt;p>Docekr Logo &lt;a href="https://logowik.com/docker-vector-logo-2767.html" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -272,7 +272,7 @@ alt="Docekr Logo 圖片來源" width="600">&lt;figcaption>
 &lt;p>步驟二、將 Dockerfile 建立為 Image&lt;/p>
 &lt;p>步驟三、將 Image 運行為容器。透過這三個簡單的步驟，就能創建自己的 Docker 容器囉！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/run.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/run.png"
 alt="Docekr 運作流程 圖片來源" width="900">&lt;figcaption>
 &lt;p>Docekr 運作流程 &lt;a href="https://medium.com/swlh/understand-dockerfile-dd11746ed183" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -281,7 +281,7 @@ alt="Docekr 運作流程 圖片來源" width="900">&lt;figcaption>
 &lt;h3>Kubernetes 介紹&lt;span class="hx-absolute -hx-mt-20" id="kubernetes-介紹">&lt;/span>
 &lt;a href="#kubernetes-%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Kubernetes 也可以叫 K8s，這個名稱來源希臘語，意思是舵手或是飛行員，所以我們可以看到它的 logo 是一個船舵的標誌，之所以叫 K8s 是因為 Kubernetes 的 k 到 s 中間有 8 的英文字母，為了方便，大家常以這個名稱來稱呼它！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/k8s-logo.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/k8s-logo.png"
 alt="K8s Logo" width="200">&lt;figcaption>
 &lt;p>K8s Logo&lt;/p>
 &lt;/figcaption>
@@ -320,7 +320,7 @@ alt="K8s Logo" width="200">&lt;figcaption>
 &lt;h4>Cluster&lt;span class="hx-absolute -hx-mt-20" id="cluster">&lt;/span>
 &lt;a href="#cluster" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架設中我們不會只有一台機器而已，通常都是多個機器一起運行，在沒有 Kubernetes 的時候就必須要土法煉鋼的一台一台機器去更新，但有了 Kubernetes 我們就可以透過 Cluster 進行控管，只要更新 Master 旗下的機器，也會一併將更新的內容放上去，十分方便。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/k8s.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/k8s.jpg"
 alt="K8s 元件 圖片來源" width="550">&lt;figcaption>
 &lt;p>K8s 元件 &lt;a href="https://cwhu.medium.com/kubernetes-basic-concept-tutorial-e033e3504ec0" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -360,7 +360,7 @@ alt="K8s 元件 圖片來源" width="550">&lt;figcaption>
 &lt;h3>什麼是 DevOps&lt;span class="hx-absolute -hx-mt-20" id="什麼是-devops">&lt;/span>
 &lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-devops" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>DevOps 是一種結合軟體開發人員 (Development) 和 IT 運維技術人員 (Operations) 的文化，目的是縮短開發和運營之間的距離，並且提高開發和運營的效率。而 CI/CD 工具就是為了此概念產生的自動化工具，透過持續整合 (CI) 和持續部署 (CD) 的方式，在開發階段能自動協助開發人員偵測程式碼問題，並部署到 Server 上。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/cicd_cycle.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/cicd_cycle.png"
 alt="CI/CD cycle" width="700">&lt;figcaption>
 &lt;p>CI/CD cycle&lt;/p>
 &lt;/figcaption>
@@ -506,7 +506,7 @@ title="Copy code"
 &lt;h4>網站被判定成非法網站&lt;span class="hx-absolute -hx-mt-20" id="網站被判定成非法網站">&lt;/span>
 &lt;a href="#%e7%b6%b2%e7%ab%99%e8%a2%ab%e5%88%a4%e5%ae%9a%e6%88%90%e9%9d%9e%e6%b3%95%e7%b6%b2%e7%ab%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>這邊的非法網站，是指網站內容違反了法律規定，例如：色情、賭博、毒品等等，這些內容都有可能導致網站被封鎖，或是被檢舉，進而導致網站停擺。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/20220830003861.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/20220830003861.jpg"
 alt="網站解析被擋 圖片來源" width="450">&lt;figcaption>
 &lt;p>網站解析被擋 &lt;a href="https://www.chinatimes.com/realtimenews/20220830003849-260405?chdtv" target="_blank" rel="noopener">圖片來源&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -552,7 +552,7 @@ alt="網站解析被擋 圖片來源" width="450">&lt;figcaption>
 &lt;a href="#%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們需要做各種的監控，例如：網站的流量、CPU 使用率、記憶體使用率等等，這些都是我們需要監控的項目。除此以外也需要監控 RD 使用的程式語言有對應的指標，例如：PHP 的 FPM 的進程等等指標。&lt;/p>
 &lt;p>監控的目的是，讓我們服務在出現問題前，就可以提早透過告警知道有可能潛在的問題，並且提早解決。避免被使用者發現問題，進而影響使用者的體驗。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/monitoring.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/monitoring.png"
 alt="做各種的監控" width="1000">&lt;figcaption>
 &lt;p>做各種的監控&lt;/p>
 &lt;/figcaption>
@@ -562,7 +562,7 @@ alt="做各種的監控" width="1000">&lt;figcaption>
 &lt;a href="#%e6%9f%a5-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們每個服務都需要去紀錄 Log，不管是使用者的操作、系統、還是程式的錯誤，都需要去紀錄下來，這樣當網站出現問題時，我們可以透過 Log 來查找問題，並且解決問題。&lt;/p>
 &lt;p>當然 Log 也不是一個簡單的議題，Log 數量很多，在不影響效能以及費用的情況下，要怎麼只存精簡且重要的 Log，也是一個需要思考的問題。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/log.png"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/log.png"
 alt="查 Log" width="1000">&lt;figcaption>
 &lt;p>查 Log&lt;/p>
 &lt;/figcaption>
@@ -573,7 +573,7 @@ alt="查 Log" width="1000">&lt;figcaption>
 &lt;p>所以要成為一個優秀的 SRE 也是需要具備一定的程式能力，才能夠更好的協助 RD 來解決問題。&lt;/p>
 &lt;p>不要變成 Site Restart Engineer 工程師 (雖然有時候真的 restart 就好了 ( ͡° ͜ʖ ͡°))&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/lecture/20240529-devops-introduce/sre.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/conference-or-lecture/20240529-devops-introduce/sre.jpg"
 alt="Site Restart Engineer XDDD" width="200">&lt;figcaption>
 &lt;p>Site Restart Engineer XDDD&lt;/p>
 &lt;/figcaption>
