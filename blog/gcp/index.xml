@@ -2,6 +2,13 @@
 &lt;p>最近公司在導入 Multi-Zone，有發現大量的跨域費用產生，主要是不同 Cluster 或是 Cluster 跟 VM 之間的跨域流量，與 Google TAM 討論，他們有提出可以嘗試用 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a> 的 Waterfall by zone，或是之後會推出的 Zone affinity，這些都會需要使用到 Load Balancer，簡單整理一下發現 GCP 的 Load Balancer 其實有很多種，因此，這篇文章就來介紹一下 GCP 的 Load Balancer。
 (如果 Service load balancing policy 測試有結果，也會再寫一篇文章來介紹)&lt;/p>
 &lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-blue-200 hx-bg-blue-100 hx-text-blue-900 dark:hx-border-blue-200/30 dark:hx-bg-blue-900/30 dark:hx-text-blue-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>想知道自己用的 Load Balancer 是哪一種嗎？&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>由於以下會有多種的 Load Balancer 種類，且 gcloud CLI 沒辦法直接過濾相關 LB 名稱 (UI 可以，但需要每個都進去查看)，因此有特別寫了一隻腳本，可以來掃描查詢，請參考： &lt;a href="https://github.com/880831ian/gcp-load-balancer-type" target="_blank" rel="noopener">gcp-load-balancer-type&lt;/a>&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
 &lt;p>GCP 的 Load Balancer 主要分為三種，分別是：&lt;/p>
 &lt;h3>Application Load Balancer (ALB) – 應用程式負載平衡器&lt;span class="hx-absolute -hx-mt-20" id="application-load-balancer-alb--應用程式負載平衡器">&lt;/span>
 &lt;a href="#application-load-balancer-alb--%e6%87%89%e7%94%a8%e7%a8%8b%e5%bc%8f%e8%b2%a0%e8%bc%89%e5%b9%b3%e8%a1%a1%e5%99%a8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
