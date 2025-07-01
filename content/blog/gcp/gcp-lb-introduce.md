@@ -16,6 +16,11 @@ authors:
 
 <br>
 
+> [!NOTE] 想知道自己用的 Load Balancer 是哪一種嗎？
+>由於以下會有多種的 Load Balancer 種類，且 gcloud CLI 沒辦法直接過濾相關 LB 名稱 (UI 可以，但需要每個都進去查看)，因此有特別寫了一隻腳本，可以來掃描查詢，請參考： [gcp-load-balancer-type](https://github.com/880831ian/gcp-load-balancer-type)
+
+<br>
+
 GCP 的 Load Balancer 主要分為三種，分別是：
 
 ### Application Load Balancer (ALB) – 應用程式負載平衡器

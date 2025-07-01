@@ -26,7 +26,7 @@ layout: hextra-home
 {{< card
   link="blog/aws/aws-ecr-permissions"
   title="如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account EKS 使用"
-  subtitle="發布日期：2025-06-01"
+  subtitle="發布日期：2025-06-25"
   image="/aws/aws-ecr-permissions/cover.webp"
 >}}
 {{< card
