@@ -24,7 +24,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gcs-cors/1.png" width="550" caption="curl 測試" >}}
+{{< figure src="/gcp/gcs-cors/1.webp" width="550" caption="curl 測試" >}}
 
 <br>
 
@@ -42,7 +42,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gcs-cors/2.png" width="550" caption="使用程式來測試" >}}
+{{< figure src="/gcp/gcs-cors/2.webp" width="550" caption="使用程式來測試" >}}
 
 <br>
 
@@ -50,7 +50,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gcs-cors/3.png" width="550" caption="發現 CORS 錯誤" >}}
+{{< figure src="/gcp/gcs-cors/3.webp" width="550" caption="發現 CORS 錯誤" >}}
 
 <br>
 
@@ -66,7 +66,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gcs-cors/4.png" width="550" caption="gcloud 指令查看 cors 設定" >}}
+{{< figure src="/gcp/gcs-cors/4.webp" width="550" caption="gcloud 指令查看 cors 設定" >}}
 
 <br>
 
@@ -96,7 +96,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gcs-cors/5.png" width="550" caption="設定及檢查" >}}
+{{< figure src="/gcp/gcs-cors/5.webp" width="550" caption="設定及檢查" >}}
 
 <br>
 
@@ -104,7 +104,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gcs-cors/6.png" width="550" caption="再次使用前端程式測試" >}}
+{{< figure src="/gcp/gcs-cors/6.webp" width="550" caption="再次使用前端程式測試" >}}
 
 <br>
 
@@ -112,7 +112,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gcs-cors/7.png" width="550" caption="移除 CORS 設定" >}}
+{{< figure src="/gcp/gcs-cors/7.webp" width="550" caption="移除 CORS 設定" >}}
 
 <br>
 

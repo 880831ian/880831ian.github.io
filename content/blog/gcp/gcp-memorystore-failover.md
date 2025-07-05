@@ -18,7 +18,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/1.png" width="400" caption="Google Memorystore for Redis FAQ" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/1.webp" width="400" caption="Google Memorystore for Redis FAQ" >}}
 
 <br>
 
@@ -26,7 +26,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/2.png" width="700" caption="when a failover is triggered" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/2.webp" width="700" caption="when a failover is triggered" >}}
 
 <br>
 
@@ -72,7 +72,7 @@ inputs = {
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/3.png" width="850" caption="監控圖表" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/3.webp" width="850" caption="監控圖表" >}}
 
 <br>
 
@@ -90,7 +90,7 @@ gcloud redis instances describe ian-1m1s --region=asia-east1 --project={project_
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/4.png" width="650" caption="describe 畫面" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/4.webp" width="650" caption="describe 畫面" >}}
 
 <br>
 
@@ -202,7 +202,7 @@ gcloud redis instances failover ian-1m1s --data-protection-mode=limited-data-los
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/5.png" width="350" caption="memorystore UI 畫面" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/5.webp" width="350" caption="memorystore UI 畫面" >}}
 
 <br>
 
@@ -214,7 +214,7 @@ gcloud redis instances failover ian-1m1s --data-protection-mode=limited-data-los
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/6.png" width="500" caption="監控畫面" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/6.webp" width="500" caption="監控畫面" >}}
 
 <br>
 
@@ -222,7 +222,7 @@ gcloud redis instances failover ian-1m1s --data-protection-mode=limited-data-los
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/7.png" width="650" caption="describe 畫面" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/7.webp" width="650" caption="describe 畫面" >}}
 
 <br>
 
@@ -232,7 +232,7 @@ gcloud redis instances failover ian-1m1s --data-protection-mode=limited-data-los
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/8.png" width="500" caption="shell 畫面" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/8.webp" width="500" caption="shell 畫面" >}}
 
 <br>
 
@@ -244,7 +244,7 @@ gcloud redis instances failover ian-1m1s --data-protection-mode=limited-data-los
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/9.png" width="650" caption="監控畫面" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/9.webp" width="650" caption="監控畫面" >}}
 
 <br>
 
@@ -252,7 +252,7 @@ gcloud redis instances failover ian-1m1s --data-protection-mode=limited-data-los
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/10.png" width="650" caption="describe 畫面" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/10.webp" width="650" caption="describe 畫面" >}}
 
 <br>
 
@@ -261,7 +261,7 @@ gcloud redis instances failover ian-1m1s --data-protection-mode=limited-data-los
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/11.png" width="600" caption="監控畫面" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/11.webp" width="600" caption="監控畫面" >}}
 
 <br>
 
@@ -269,7 +269,7 @@ gcloud redis instances failover ian-1m1s --data-protection-mode=limited-data-los
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/12.png" width="650" caption="describe 畫面" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/12.webp" width="650" caption="describe 畫面" >}}
 
 <br>
 
@@ -277,7 +277,7 @@ gcloud redis instances failover ian-1m1s --data-protection-mode=limited-data-los
 
 <br>
 
-{{< figure src="/gcp/gcp-memorystore-failover/13.png" width="500" caption="shell 畫面" >}}
+{{< figure src="/gcp/gcp-memorystore-failover/13.webp" width="500" caption="shell 畫面" >}}
 
 <br>
 

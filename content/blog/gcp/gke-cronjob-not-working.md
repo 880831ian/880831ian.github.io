@@ -12,7 +12,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gke-cronjob-not-working/1.png" width="600" caption="(圖一) CronJob schedule 時間為每分鐘執行" >}}
+{{< figure src="/gcp/gke-cronjob-not-working/1.webp" width="600" caption="(圖一) CronJob schedule 時間為每分鐘執行" >}}
 
 <br>
 
@@ -22,7 +22,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gke-cronjob-not-working/2.png" width="700" caption="(圖二) Google Cloud Platform 記錄有短暫沒有執行" >}}
+{{< figure src="/gcp/gke-cronjob-not-working/2.webp" width="700" caption="(圖二) Google Cloud Platform 記錄有短暫沒有執行" >}}
 
 <br>
 
@@ -30,7 +30,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gke-cronjob-not-working/3.png" width="700" caption="(圖三) Google 支援單回覆" >}}
+{{< figure src="/gcp/gke-cronjob-not-working/3.webp" width="700" caption="(圖三) Google 支援單回覆" >}}
 
 <br>
 
@@ -38,9 +38,9 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gke-cronjob-not-working/4.png" width="700" caption="(圖四) 發生 master control plane 的升級" >}}
+{{< figure src="/gcp/gke-cronjob-not-working/4.webp" width="700" caption="(圖四) 發生 master control plane 的升級" >}}
 
-{{< figure src="/gcp/gke-cronjob-not-working/5.png" width="450" caption="(圖五) 有問題的叢集位置類型" >}}
+{{< figure src="/gcp/gke-cronjob-not-working/5.webp" width="450" caption="(圖五) 有問題的叢集位置類型" >}}
 
 <br>
 
@@ -67,7 +67,7 @@ Google 的建議是可以考慮使用另一個 regional cluster，讓 master nod
 
 <br>
 
-{{< figure src="/gcp/gke-cronjob-not-working/6.png" width="700" caption="(圖六) 發生 master control plane 的升級" >}}
+{{< figure src="/gcp/gke-cronjob-not-working/6.webp" width="700" caption="(圖六) 發生 master control plane 的升級" >}}
 
 <br>
 
@@ -75,9 +75,9 @@ Google 的建議是可以考慮使用另一個 regional cluster，讓 master nod
 
 <br>
 
-{{< figure src="/gcp/gke-cronjob-not-working/7.png" width="700" caption="(圖七) 叢集位置類型" >}}
+{{< figure src="/gcp/gke-cronjob-not-working/7.webp" width="700" caption="(圖七) 叢集位置類型" >}}
 
-{{< figure src="/gcp/gke-cronjob-not-working/8.png" width="450" caption="(圖八) 新叢集位置類型" >}}
+{{< figure src="/gcp/gke-cronjob-not-working/8.webp" width="450" caption="(圖八) 新叢集位置類型" >}}
 
 <br>
 

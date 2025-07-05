@@ -12,7 +12,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/1.png" width="800" caption="官方介紹 Cloud Source Repositories" >}}
+{{< figure src="/gcp/cloud-source-repositories/1.webp" width="800" caption="官方介紹 Cloud Source Repositories" >}}
 
 <br>
 
@@ -28,7 +28,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/2.png" width="800" caption="建立  GitLab Project" >}}
+{{< figure src="/gcp/cloud-source-repositories/2.webp" width="800" caption="建立  GitLab Project" >}}
 
 <br>
 
@@ -68,11 +68,11 @@ gcloud source repos create <repo name>
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/3.png" width="800" caption="開啟 Source Repositories" >}}
+{{< figure src="/gcp/cloud-source-repositories/3.webp" width="800" caption="開啟 Source Repositories" >}}
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/4.png" width="1000" caption="成功建立 Source Repositories" >}}
+{{< figure src="/gcp/cloud-source-repositories/4.webp" width="1000" caption="成功建立 Source Repositories" >}}
 
 <br>
 
@@ -82,7 +82,7 @@ gcloud source repos create <repo name>
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/5.png" width="650" caption="產生及儲存 Git 憑證" >}}
+{{< figure src="/gcp/cloud-source-repositories/5.webp" width="650" caption="產生及儲存 Git 憑證" >}}
 
 <br>
 
@@ -90,7 +90,7 @@ gcloud source repos create <repo name>
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/6.png" width="800" caption="Configure Git" >}}
+{{< figure src="/gcp/cloud-source-repositories/6.webp" width="800" caption="Configure Git" >}}
 
 <br>
 
@@ -98,7 +98,7 @@ gcloud source repos create <repo name>
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/7.png" width="800" caption="Configure Git" >}}
+{{< figure src="/gcp/cloud-source-repositories/7.webp" width="800" caption="Configure Git" >}}
 
 <br>
 
@@ -110,7 +110,7 @@ grep 'source.developers.google.com' ~/.gitcookies | tail -1 | cut -d= -f2
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/8.png" width="800" caption="生成憑證密碼" >}}
+{{< figure src="/gcp/cloud-source-repositories/8.webp" width="800" caption="生成憑證密碼" >}}
 
 <br>
 
@@ -123,7 +123,7 @@ CSR_USER=$(grep 'source.developers.google.com' ~/.gitcookies | \
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/9.png" width="800" caption="用戶名存儲在 CSR_USER 環境變量中" >}}
+{{< figure src="/gcp/cloud-source-repositories/9.webp" width="800" caption="用戶名存儲在 CSR_USER 環境變量中" >}}
 
 <br>
 
@@ -135,7 +135,7 @@ CSR_REPO=$(gcloud source repos describe <repo name> --format="value(url)")
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/10.png" width="800" caption="將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中" >}}
+{{< figure src="/gcp/cloud-source-repositories/10.webp" width="800" caption="將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中" >}}
 
 <br>
 
@@ -147,7 +147,7 @@ echo $CSR_REPO | sed "s/:\/\//:\/\/${CSR_USER}@/"
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/11.png" width="800" caption="存儲庫的 URL（包括用戶名）印到終端機上" >}}
+{{< figure src="/gcp/cloud-source-repositories/11.webp" width="800" caption="存儲庫的 URL（包括用戶名）印到終端機上" >}}
 
 <br>
 
@@ -161,7 +161,7 @@ echo $CSR_REPO | sed "s/:\/\//:\/\/${CSR_USER}@/"
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/12.png" width="800" caption="GitLab Mirror 設定鏡像" >}}
+{{< figure src="/gcp/cloud-source-repositories/12.webp" width="800" caption="GitLab Mirror 設定鏡像" >}}
 
 <br>
 
@@ -169,7 +169,7 @@ echo $CSR_REPO | sed "s/:\/\//:\/\/${CSR_USER}@/"
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/13.png" width="800" caption="GitLab Mirror 設定鏡像" >}}
+{{< figure src="/gcp/cloud-source-repositories/13.webp" width="800" caption="GitLab Mirror 設定鏡像" >}}
 
 <br>
 
@@ -177,7 +177,7 @@ echo $CSR_REPO | sed "s/:\/\//:\/\/${CSR_USER}@/"
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/14.png" width="800" caption="GitLab Mirror 檢查" >}}
+{{< figure src="/gcp/cloud-source-repositories/14.webp" width="800" caption="GitLab Mirror 檢查" >}}
 
 <br>
 
@@ -185,7 +185,7 @@ echo $CSR_REPO | sed "s/:\/\//:\/\/${CSR_USER}@/"
 
 <br>
 
-{{< figure src="/gcp/cloud-source-repositories/15.png" width="800" caption="GitLab 推程式測試" >}}
+{{< figure src="/gcp/cloud-source-repositories/15.webp" width="800" caption="GitLab 推程式測試" >}}
 
 <br>
 

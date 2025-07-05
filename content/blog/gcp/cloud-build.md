@@ -16,7 +16,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/cloud-build/1.png" width="1200" caption="流程圖" >}}
+{{< figure src="/gcp/cloud-build/1.webp" width="1200" caption="流程圖" >}}
 
 <br>
 
@@ -34,7 +34,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/cloud-build/2.png" width="900" caption="建立觸發條件 1" >}}
+{{< figure src="/gcp/cloud-build/2.webp" width="900" caption="建立觸發條件 1" >}}
 
 <br>
 
@@ -42,7 +42,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/cloud-build/3.png" width="900" caption="建立觸發條件 2" >}}
+{{< figure src="/gcp/cloud-build/3.webp" width="900" caption="建立觸發條件 2" >}}
 
 <br>
 
@@ -174,7 +174,7 @@ COPY ./index.html /usr/share/nginx/html/
 
 <br>
 
-{{< figure src="/gcp/cloud-build/4.png" width="700" caption="Cloud Source Repositories" >}}
+{{< figure src="/gcp/cloud-build/4.webp" width="700" caption="Cloud Source Repositories" >}}
 
 <br>
 
@@ -182,7 +182,7 @@ COPY ./index.html /usr/share/nginx/html/
 
 <br>
 
-{{< figure src="/gcp/cloud-build/5.png" width="1000" caption="Container Registry" >}}
+{{< figure src="/gcp/cloud-build/5.webp" width="1000" caption="Container Registry" >}}
 
 <br>
 
@@ -190,7 +190,7 @@ COPY ./index.html /usr/share/nginx/html/
 
 <br>
 
-{{< figure src="/gcp/cloud-build/6.png" width="1200" caption="Cloud Build 的觸發條件" >}}
+{{< figure src="/gcp/cloud-build/6.webp" width="1200" caption="Cloud Build 的觸發條件" >}}
 
 <br>
 
@@ -198,7 +198,7 @@ COPY ./index.html /usr/share/nginx/html/
 
 <br>
 
-{{< figure src="/gcp/cloud-build/7.png" width="1200" caption="Compute Engine" >}}
+{{< figure src="/gcp/cloud-build/7.webp" width="1200" caption="Compute Engine" >}}
 
 <br>
 
@@ -206,7 +206,7 @@ COPY ./index.html /usr/share/nginx/html/
 
 <br>
 
-{{< figure src="/gcp/cloud-build/8.png" width="700" caption="測試用 index.html" >}}
+{{< figure src="/gcp/cloud-build/8.webp" width="700" caption="測試用 index.html" >}}
 
 <br>
 

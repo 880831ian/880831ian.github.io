@@ -54,7 +54,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/container-registry/2.png" width="350" caption="Container Registry" >}}
+{{< figure src="/gcp/container-registry/2.webp" width="350" caption="Container Registry" >}}
 
 <br>
 
@@ -62,7 +62,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/container-registry/3.png" width="750" caption="Container Registry 資料夾" >}}
+{{< figure src="/gcp/container-registry/3.webp" width="750" caption="Container Registry 資料夾" >}}
 
 <br>
 
@@ -70,4 +70,4 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/container-registry/4.png" width="1000" caption="Container Registry 映像檔" >}}
+{{< figure src="/gcp/container-registry/4.webp" width="1000" caption="Container Registry 映像檔" >}}

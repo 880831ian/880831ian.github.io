@@ -14,11 +14,11 @@ Prometheus Samples Ingested 就是 Prometheus 攝取的樣本數，因為上述�
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/1.png" width="800" caption="Google 帳單 (project_1)" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/1.webp" width="800" caption="Google 帳單 (project_1)" >}}
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/2.png" width="800" caption="Google 帳單 (project_2)" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/2.webp" width="800" caption="Google 帳單 (project_2)" >}}
 
 <br>
 
@@ -28,7 +28,7 @@ Prometheus Samples Ingested 就是 Prometheus 攝取的樣本數，因為上述�
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/3.png" width="800" caption="Google Cloud Platform SKUs" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/3.webp" width="800" caption="Google Cloud Platform SKUs" >}}
 
 <br>
 
@@ -90,7 +90,7 @@ echo "費用：$cost USD"
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/4.png" width="500" caption="用腳本檢查金額是否與帳單一樣" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/4.webp" width="500" caption="用腳本檢查金額是否與帳單一樣" >}}
 
 <br>
 
@@ -102,7 +102,7 @@ echo "費用：$cost USD"
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/5.png" width="800" caption="查看 Metrics Management" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/5.webp" width="800" caption="查看 Metrics Management" >}}
 
 <br>
 
@@ -110,7 +110,7 @@ echo "費用：$cost USD"
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/6.png" width="550" caption="查看 Metrics Management" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/6.webp" width="550" caption="查看 Metrics Management" >}}
 
 <br>
 
@@ -132,7 +132,7 @@ echo "費用：$cost USD"
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/7.png" width="600" caption="phpfpm-exporter metrics" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/7.webp" width="600" caption="phpfpm-exporter metrics" >}}
 
 <br>
 
@@ -140,7 +140,7 @@ echo "費用：$cost USD"
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/8.png" width="600" caption="phpfpm-exporter metrics" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/8.webp" width="600" caption="phpfpm-exporter metrics" >}}
 
 <br>
 
@@ -148,7 +148,7 @@ echo "費用：$cost USD"
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/9.png" width="600" caption="Metrics Management phpfpm metrics" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/9.webp" width="600" caption="Metrics Management phpfpm metrics" >}}
 
 <br>
 
@@ -164,7 +164,7 @@ process 數量 * 6 (上面說的6個狀態) * Pod 數量 * PodMonitoring interva
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/10.png" width="600" caption="phpfpm status" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/10.webp" width="600" caption="phpfpm status" >}}
 
 <br>
 
@@ -172,7 +172,7 @@ process 數量 * 6 (上面說的6個狀態) * Pod 數量 * PodMonitoring interva
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/11.png" width="700" caption="phpfpm status" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/11.webp" width="700" caption="phpfpm status" >}}
 
 <br>
 
@@ -186,11 +186,11 @@ https://cloud.google.com/stackdriver/pricing?hl=zh-tw#pricing_examples_samples
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/12.png" width="700" caption="" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/12.webp" width="700" caption="" >}}
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/13.png" width="700" caption="" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/13.webp" width="700" caption="" >}}
 
 <br>
 
@@ -219,7 +219,7 @@ spec:
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/14.png" width="700" caption="過濾後，指標不見惹" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/14.webp" width="700" caption="過濾後，指標不見惹" >}}
 
 <br>
 
@@ -227,6 +227,6 @@ spec:
 
 <br>
 
-{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/15.png" width="600" caption="Metrics Management phpfpm metrics" >}}
+{{< figure src="/gcp/gcp-prometheus-sample-ingested-calculate/15.webp" width="600" caption="Metrics Management phpfpm metrics" >}}
 
 <br>

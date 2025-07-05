@@ -35,7 +35,7 @@ severity=WARNING
 
 <br>
 
-{{< figure src="/gcp/gke-local-ephemeral-storage/1.png" width="750" caption="Cloud Logging 查詢結果" >}}
+{{< figure src="/gcp/gke-local-ephemeral-storage/1.webp" width="750" caption="Cloud Logging 查詢結果" >}}
 
 <br>
 
@@ -163,7 +163,7 @@ EVICTION_THRESHOLD + SYSTEM_RESERVATION = 30GB + 100GB = 130GB
 
 <br>
 
-{{< figure src="/gcp/gke-local-ephemeral-storage/2.png" width="450" caption="GKE Node Pool 頁面" >}}
+{{< figure src="/gcp/gke-local-ephemeral-storage/2.webp" width="450" caption="GKE Node Pool 頁面" >}}
 
 <br>
 
@@ -173,7 +173,7 @@ EVICTION_THRESHOLD + SYSTEM_RESERVATION = 30GB + 100GB = 130GB
 
 <br>
 
-{{< figure src="/gcp/gke-local-ephemeral-storage/3.png" width="400" caption="kubectl describe node 頁面" >}}
+{{< figure src="/gcp/gke-local-ephemeral-storage/3.webp" width="400" caption="kubectl describe node 頁面" >}}
 
 可以看到 Capacity ephemeral-storage: 98831908Ki，換算成 GB 大約是 101.19 GB。
 
@@ -181,7 +181,7 @@ Allocatable ephemeral-storage: 47060071478，換算成 GB 大約是 47.06 GB。
 
 <br>
 
-{{< figure src="/gcp/gke-local-ephemeral-storage/4.png" width="550" caption="kubectl describe node 頁面" >}}
+{{< figure src="/gcp/gke-local-ephemeral-storage/4.webp" width="550" caption="kubectl describe node 頁面" >}}
 
 <br>
 

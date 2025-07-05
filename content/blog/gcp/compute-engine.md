@@ -56,7 +56,7 @@ GCE 包含內部與外部的網路連線能力，讓使用者可以透過自訂�
 
 <br>
 
-{{< figure src="/gcp/compute-engine/1.png" width="250" caption="測試用的帳號密碼" >}}
+{{< figure src="/gcp/compute-engine/1.webp" width="250" caption="測試用的帳號密碼" >}}
 
 <br>
 
@@ -68,7 +68,7 @@ GCE 包含內部與外部的網路連線能力，讓使用者可以透過自訂�
 
 <br>
 
-{{< figure src="/gcp/compute-engine/2.png" width="600" caption="新增 VM 實例" >}}
+{{< figure src="/gcp/compute-engine/2.webp" width="600" caption="新增 VM 實例" >}}
 
 <br>
 
@@ -86,11 +86,11 @@ GCE 包含內部與外部的網路連線能力，讓使用者可以透過自訂�
 
 <br>
 
-{{< figure src="/gcp/compute-engine/3.png" width="800" caption="VM 實例 (Name、Region、Zone、Series)" >}}
+{{< figure src="/gcp/compute-engine/3.webp" width="800" caption="VM 實例 (Name、Region、Zone、Series)" >}}
 
 <br>
 
-{{< figure src="/gcp/compute-engine/4.png" width="800" caption="VM 實例 (Machine type、Boot disk、Firewall)" >}}
+{{< figure src="/gcp/compute-engine/4.webp" width="800" caption="VM 實例 (Machine type、Boot disk、Firewall)" >}}
 
 <br>
 
@@ -98,7 +98,7 @@ GCE 包含內部與外部的網路連線能力，讓使用者可以透過自訂�
 
 <br>
 
-{{< figure src="/gcp/compute-engine/5.png" width="1000" caption="VM 實例" >}}
+{{< figure src="/gcp/compute-engine/5.webp" width="1000" caption="VM 實例" >}}
 
 <br>
 
@@ -121,7 +121,7 @@ apt-get update
 
 <br>
 
-{{< figure src="/gcp/compute-engine/6.png" width="1000" caption="更新操作系統" >}}
+{{< figure src="/gcp/compute-engine/6.webp" width="1000" caption="更新操作系統" >}}
 
 <br>
 
@@ -133,7 +133,7 @@ apt-get nginx -y
 
 <br>
 
-{{< figure src="/gcp/compute-engine/7.png" width="1000" caption="安裝 NGINX" >}}
+{{< figure src="/gcp/compute-engine/7.webp" width="1000" caption="安裝 NGINX" >}}
 
 <br>
 
@@ -145,7 +145,7 @@ ps auwx | grep nginx
 
 <br>
 
-{{< figure src="/gcp/compute-engine/8.png" width="1000" caption="確認 NGINX 是否運行" >}}
+{{< figure src="/gcp/compute-engine/8.webp" width="1000" caption="確認 NGINX 是否運行" >}}
 
 <br>
 
@@ -153,7 +153,7 @@ ps auwx | grep nginx
 
 <br>
 
-{{< figure src="/gcp/compute-engine/9.png" width="700" caption="curl 外部 IP" >}}
+{{< figure src="/gcp/compute-engine/9.webp" width="700" caption="curl 外部 IP" >}}
 
 <br>
 
@@ -161,7 +161,7 @@ ps auwx | grep nginx
 
 <br>
 
-{{< figure src="/gcp/compute-engine/10.png" width="500" caption="Check my progress" >}}
+{{< figure src="/gcp/compute-engine/10.webp" width="500" caption="Check my progress" >}}
 
 <br>
 
@@ -181,7 +181,7 @@ gcloud compute instances create gcelab2 --machine-type n1-standard-2 --zone us-c
 
 <br>
 
-{{< figure src="/gcp/compute-engine/11.png" width="1000" caption="Check my progress" >}}
+{{< figure src="/gcp/compute-engine/11.webp" width="1000" caption="Check my progress" >}}
 
 <br>
 

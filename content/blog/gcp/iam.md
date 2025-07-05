@@ -18,7 +18,7 @@ IAM 的全名是 Identity and Access Management，當我們藉由 IAM，可以�
 
 <br>
 
-{{< figure src="/gcp/iam/logo.png" width="150" caption="GCP IAM Logo" >}}
+{{< figure src="/gcp/iam/logo.webp" width="150" caption="GCP IAM Logo" >}}
 
 <br>
 
@@ -34,7 +34,7 @@ IAM 不會直接向用戶授與資源的訪問權限，而是將權限分成多�
 
 <br>
 
-{{< figure src="/gcp/iam/iam-overview-basics.png" width="800" caption="IAM 中的權限管理" >}}
+{{< figure src="/gcp/iam/iam-overview-basics.webp" width="800" caption="IAM 中的權限管理" >}}
 
 <br>
 
@@ -54,7 +54,7 @@ IAM 不會直接向用戶授與資源的訪問權限，而是將權限分成多�
 
 <br>
 
-{{< figure src="/gcp/iam/1.png" width="250" caption="測試用的帳號密碼" >}}
+{{< figure src="/gcp/iam/1.webp" width="250" caption="測試用的帳號密碼" >}}
 
 這邊會提供兩組的帳號及密碼，分別是 Username1 以及 Username2 (後面會以 Username 1 跟 2 來說明)，密碼會用共用，且會在同一個專案下。
 
@@ -68,7 +68,7 @@ IAM 不會直接向用戶授與資源的訪問權限，而是將權限分成多�
 
 <br>
 
-{{< figure src="/gcp/iam/2.png" width="1000" caption="登入 Username 1 GCP 主控台" >}}
+{{< figure src="/gcp/iam/2.webp" width="1000" caption="登入 Username 1 GCP 主控台" >}}
 
 <br>
 
@@ -87,7 +87,7 @@ IAM 不會直接向用戶授與資源的訪問權限，而是將權限分成多�
 
 <br>
 
-{{< figure src="/gcp/iam/3.png" width="1000" caption="ADD IAM" >}}
+{{< figure src="/gcp/iam/3.webp" width="1000" caption="ADD IAM" >}}
 
 此表是取 Google Cloud IAM 文章[基本角色](https://cloud.google.com/iam/docs/understanding-roles#primitive_roles)中的定義，簡單說明 4 種角色的差別：
 
@@ -114,7 +114,7 @@ Google 建議：Base 角色包含所有 Google Cloud 服務的數千個權限。
 
 <br>
 
-{{< figure src="/gcp/iam/4.png" width="1000" caption="Username1 跟 Username2 權限" >}}
+{{< figure src="/gcp/iam/4.webp" width="1000" caption="Username1 跟 Username2 權限" >}}
 
 <br>
 
@@ -122,7 +122,7 @@ Google 建議：Base 角色包含所有 Google Cloud 服務的數千個權限。
 
 <br>
 
-{{< figure src="/gcp/iam/5.png" width="500" caption="Username2 權限不足" >}}
+{{< figure src="/gcp/iam/5.webp" width="500" caption="Username2 權限不足" >}}
 
 <br>
 
@@ -135,7 +135,7 @@ Google 建議：Base 角色包含所有 Google Cloud 服務的數千個權限。
 
 <br>
 
-{{< figure src="/gcp/iam/6.png" width="1000" caption="Create a bucket" >}}
+{{< figure src="/gcp/iam/6.webp" width="1000" caption="Create a bucket" >}}
 
 <br>
 
@@ -146,7 +146,7 @@ Google 建議：Base 角色包含所有 Google Cloud 服務的數千個權限。
 
 <br>
 
-{{< figure src="/gcp/iam/7.png" width="1200" caption="Upload sample.txt fiiles" >}}
+{{< figure src="/gcp/iam/7.webp" width="1200" caption="Upload sample.txt fiiles" >}}
 
 <br>
 
@@ -165,7 +165,7 @@ Username2 被授與 "檢視者 Viewer" 角色，這個角色有不影響狀態�
 
 <br>
 
-{{< figure src="/gcp/iam/8.png" width="1200" caption="修改 Username2 權限" >}}
+{{< figure src="/gcp/iam/8.webp" width="1200" caption="修改 Username2 權限" >}}
 
 <br>
 
@@ -173,7 +173,7 @@ Username2 被授與 "檢視者 Viewer" 角色，這個角色有不影響狀態�
 
 <br>
 
-{{< figure src="/gcp/iam/9.png" width="550" caption="移除 Username2 權限" >}}
+{{< figure src="/gcp/iam/9.webp" width="550" caption="移除 Username2 權限" >}}
 
 {{< callout type=tip title="提醒" >}}
 這個動作要完成生效到所有服務上，所以會需要一點時間，詳細可以參考[點我](https://cloud.google.com/iam/docs/faq)
@@ -188,7 +188,7 @@ Username2 被授與 "檢視者 Viewer" 角色，這個角色有不影響狀態�
 
 <br>
 
-{{< figure src="/gcp/iam/10.png" width="800" caption="Username2 沒有權限" >}}
+{{< figure src="/gcp/iam/10.webp" width="800" caption="Username2 沒有權限" >}}
 
 <br>
 
@@ -198,11 +198,11 @@ Username2 被授與 "檢視者 Viewer" 角色，這個角色有不影響狀態�
 
 <br>
 
-{{< figure src="/gcp/iam/11.png" width="600" caption="新增 Username2 角色" >}}
+{{< figure src="/gcp/iam/11.webp" width="600" caption="新增 Username2 角色" >}}
 
 <br>
 
-{{< figure src="/gcp/iam/12.png" width="1000" caption="查看 Username2 權限" >}}
+{{< figure src="/gcp/iam/12.webp" width="1000" caption="查看 Username2 權限" >}}
 
 <br>
 
@@ -213,7 +213,7 @@ Username2 被授與 "檢視者 Viewer" 角色，這個角色有不影響狀態�
 
 <br>
 
-{{< figure src="/gcp/iam/13.png" width="1200" caption="開啟 Activate Cloud Shell 命令列工具" >}}
+{{< figure src="/gcp/iam/13.webp" width="1200" caption="開啟 Activate Cloud Shell 命令列工具" >}}
 
 <br>
 
@@ -229,7 +229,7 @@ gsutil ls gs://<剛剛建的 Cloud Storage 名稱>
 
 <br>
 
-{{< figure src="/gcp/iam/14.png" width="600" caption="Username2 Storage Object Viewer 權限" >}}
+{{< figure src="/gcp/iam/14.webp" width="600" caption="Username2 Storage Object Viewer 權限" >}}
 
 <br>
 
@@ -237,7 +237,7 @@ gsutil ls gs://<剛剛建的 Cloud Storage 名稱>
 
 <br>
 
-{{< figure src="/gcp/iam/15.png" width="600" caption="Check my progress" >}}
+{{< figure src="/gcp/iam/15.webp" width="600" caption="Check my progress" >}}
 
 到這邊就完成了我們在 IAM 的測試囉～我們知道 IAM 可以設定很多的角色，以及測試了查看、新增、修改、刪除角色的功能，希望大家會喜歡今天的文章 🥰
 

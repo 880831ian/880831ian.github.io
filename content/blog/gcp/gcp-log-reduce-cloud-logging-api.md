@@ -16,7 +16,7 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/overview.png" width="800" caption="Cloud Logging 基本架構" >}}
+{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/overview.webp" width="800" caption="Cloud Logging 基本架構" >}}
 
 <br>
 
@@ -83,7 +83,7 @@ Cloud Logging 會將 \_Required 儲存桶 Log 保留 400 天，無法調整該�
 
 <br>
 
-{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/1.png" width="550" caption="選擇 Log Router" >}}
+{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/1.webp" width="550" caption="選擇 Log Router" >}}
 
 <br>
 
@@ -93,7 +93,7 @@ Cloud Logging 會將 \_Required 儲存桶 Log 保留 400 天，無法調整該�
 
 <br>
 
-{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/2.png" caption="選擇 _Default 的 Log Router Sinks" >}}
+{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/2.webp" caption="選擇 _Default 的 Log Router Sinks" >}}
 
 <br>
 
@@ -103,7 +103,7 @@ Cloud Logging 會將 \_Required 儲存桶 Log 保留 400 天，無法調整該�
 
 <br>
 
-{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/3.png" caption="輸入 Sink details 說明" >}}
+{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/3.webp" caption="輸入 Sink details 說明" >}}
 
 <br>
 
@@ -113,7 +113,7 @@ Cloud Logging 會將 \_Required 儲存桶 Log 保留 400 天，無法調整該�
 
 <br>
 
-{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/4.png" caption="選擇 Logging bucket" >}}
+{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/4.webp" caption="選擇 Logging bucket" >}}
 
 <br>
 
@@ -123,7 +123,7 @@ Cloud Logging 會將 \_Required 儲存桶 Log 保留 400 天，無法調整該�
 
 <br>
 
-{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/5.png" caption="預設的 LOG 格式" >}}
+{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/5.webp" caption="預設的 LOG 格式" >}}
 
 <br>
 
@@ -133,7 +133,7 @@ Cloud Logging 會將 \_Required 儲存桶 Log 保留 400 天，無法調整該�
 
 <br>
 
-{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/6.png" caption="新增要過濾的 LOG 格式" >}}
+{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/6.webp" caption="新增要過濾的 LOG 格式" >}}
 
 <br>
 
@@ -143,7 +143,7 @@ Cloud Logging 會將 \_Required 儲存桶 Log 保留 400 天，無法調整該�
 
 <br>
 
-{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/7.png" caption="查看詳細接收器設定" >}}
+{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/7.webp" caption="查看詳細接收器設定" >}}
 
 <br>
 
@@ -153,7 +153,7 @@ Cloud Logging 會將 \_Required 儲存桶 Log 保留 400 天，無法調整該�
 
 <br>
 
-{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/8.png" caption="檢查 LOG 是否不會再出現" >}}
+{{< figure src="/gcp/gcp-log-reduce-cloud-logging-api/8.webp" caption="檢查 LOG 是否不會再出現" >}}
 
 <br>
 
