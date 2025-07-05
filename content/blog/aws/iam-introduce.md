@@ -57,7 +57,7 @@ IAM Policy 會是一個 JSON 格式的文件，可以定義了一個或多個 Ac
 
 <br>
 
-{{< figure src="/aws/iam-introduce/1.png" width="650" caption="我目前公司帳號的 Policy" >}}
+{{< figure src="/aws/iam-introduce/1.webp" width="650" caption="我目前公司帳號的 Policy" >}}
 
 <br>
 
@@ -146,7 +146,7 @@ Action：描述哪一個服務可以做哪些動作。
 
 <br>
 
-{{< figure src="/aws/iam-introduce/2.png" width="650" caption="Elastic Kubernetes Service Action 部分清單 [Amazon Elastic Kubernetes Service 定義的動作](https://docs.aws.amazon.com/zh_tw/service-authorization/latest/reference/list_amazonelastickubernetesservice.html)" >}}
+{{< figure src="/aws/iam-introduce/2.webp" width="650" caption="Elastic Kubernetes Service Action 部分清單 [Amazon Elastic Kubernetes Service 定義的動作](https://docs.aws.amazon.com/zh_tw/service-authorization/latest/reference/list_amazonelastickubernetesservice.html)" >}}
 
 <br>
 
@@ -218,7 +218,7 @@ arn:<partition>:<service>:<region>:<account-id>:<resource-type>:<resource-id>
 
 <br>
 
-{{< figure src="/aws/iam-introduce/3.png" width="650" caption="[Amazon S3 的動作、資源和條件索引鍵](https://docs.aws.amazon.com/zh_tw/service-authorization/latest/reference/list_amazons3.html)" >}}
+{{< figure src="/aws/iam-introduce/3.webp" width="650" caption="[Amazon S3 的動作、資源和條件索引鍵](https://docs.aws.amazon.com/zh_tw/service-authorization/latest/reference/list_amazons3.html)" >}}
 
 <br>
 
@@ -361,7 +361,7 @@ condition-operator：是一個比較運算子，例如：
 
 <br>
 
-{{< figure src="/aws/iam-introduce/4.png" width="950" caption="[Actions defined by Amazon Elastic Kubernetes Service](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelastickubernetesservice.html#amazonelastickubernetesservice-actions-as-permissions)" >}}
+{{< figure src="/aws/iam-introduce/4.webp" width="950" caption="[Actions defined by Amazon Elastic Kubernetes Service](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelastickubernetesservice.html#amazonelastickubernetesservice-actions-as-permissions)" >}}
 
 <br>
 
@@ -373,7 +373,7 @@ condition-operator：是一個比較運算子，例如：
 
 <br>
 
-{{< figure src="/aws/iam-introduce/5.png" width="950" caption="[Condition keys for Amazon Elastic Kubernetes Service](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelastickubernetesservice.html#amazonelastickubernetesservice-policy-keys)" >}}
+{{< figure src="/aws/iam-introduce/5.webp" width="950" caption="[Condition keys for Amazon Elastic Kubernetes Service](https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelastickubernetesservice.html#amazonelastickubernetesservice-policy-keys)" >}}
 
 <br>
 
@@ -426,7 +426,7 @@ condition-operator：是一個比較運算子，例如：
 
 官方的圖片解釋的更清楚：
 
-{{< figure src="/aws/iam-introduce/6.png" width="400" caption="" >}}
+{{< figure src="/aws/iam-introduce/6.webp" width="400" caption="" >}}
 
 <br>
 

@@ -57,7 +57,7 @@ AWS 跟 GCP 比較不一樣的是 CLI 在 Google (gcloud) 可以使用 Web 登�
 
 <br>
 
-{{< figure src="/aws/aws-cli/1.png" width="850" caption="沒有權限會噴錯" >}}
+{{< figure src="/aws/aws-cli/1.webp" width="850" caption="沒有權限會噴錯" >}}
 
 <br>
 
@@ -66,7 +66,7 @@ AWS 跟 GCP 比較不一樣的是 CLI 在 Google (gcloud) 可以使用 Web 登�
 
 <br>
 
-{{< figure src="/aws/aws-cli/2.png" width="750" caption="在 AWS 的管理控制台，選擇安全憑證" >}}
+{{< figure src="/aws/aws-cli/2.webp" width="750" caption="在 AWS 的管理控制台，選擇安全憑證" >}}
 
 <br>
 
@@ -74,7 +74,7 @@ AWS 跟 GCP 比較不一樣的是 CLI 在 Google (gcloud) 可以使用 Web 登�
 
 <br>
 
-{{< figure src="/aws/aws-cli/3.png" width="1100" caption="建立存取金鑰" >}}
+{{< figure src="/aws/aws-cli/3.webp" width="1100" caption="建立存取金鑰" >}}
 
 <br>
 
@@ -82,7 +82,7 @@ AWS 跟 GCP 比較不一樣的是 CLI 在 Google (gcloud) 可以使用 Web 登�
 
 <br>
 
-{{< figure src="/aws/aws-cli/4.png" width="900" caption="選擇命令列介面 (CLI)案例" >}}
+{{< figure src="/aws/aws-cli/4.webp" width="900" caption="選擇命令列介面 (CLI)案例" >}}
 
 <br>
 
@@ -90,7 +90,7 @@ AWS 跟 GCP 比較不一樣的是 CLI 在 Google (gcloud) 可以使用 Web 登�
 
 <br>
 
-{{< figure src="/aws/aws-cli/5.png" width="950" caption="設定描述標籤" >}}
+{{< figure src="/aws/aws-cli/5.webp" width="950" caption="設定描述標籤" >}}
 
 <br>
 
@@ -98,7 +98,7 @@ AWS 跟 GCP 比較不一樣的是 CLI 在 Google (gcloud) 可以使用 Web 登�
 
 <br>
 
-{{< figure src="/aws/aws-cli/6.png" width="1100" caption="產生完金鑰" >}}
+{{< figure src="/aws/aws-cli/6.webp" width="1100" caption="產生完金鑰" >}}
 
 <br>
 

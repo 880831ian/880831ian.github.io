@@ -1,7 +1,7 @@
 ---
 title: Amazon Web Services
 type: docs
-weight: 3
+weight: 2
 sidebar:
   open: true
 ---

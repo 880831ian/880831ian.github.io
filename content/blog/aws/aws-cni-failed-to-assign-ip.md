@@ -17,7 +17,7 @@ authors:
 
 <br>
 
-{{< figure src="/aws/aws-cni-failed-to-assign-ip/1.png" width="650" caption="Auto Scaling Groups 設定" >}}
+{{< figure src="/aws/aws-cni-failed-to-assign-ip/1.webp" width="650" caption="Auto Scaling Groups 設定" >}}
 
 <br>
 
@@ -45,7 +45,7 @@ aws ec2 describe-subnets \
 
 <br>
 
-{{< figure src="/aws/aws-cni-failed-to-assign-ip/2.png" width="550" caption="（輸出範例，非當下 Subnet）" >}}
+{{< figure src="/aws/aws-cni-failed-to-assign-ip/2.webp" width="550" caption="（輸出範例，非當下 Subnet）" >}}
 
 <br>
 
@@ -53,7 +53,7 @@ aws ec2 describe-subnets \
 
 <br>
 
-{{< figure src="/aws/aws-cni-failed-to-assign-ip/3.png" width="750" caption="AWS UI 查看 Subnet 可用 IP" >}}
+{{< figure src="/aws/aws-cni-failed-to-assign-ip/3.webp" width="750" caption="AWS UI 查看 Subnet 可用 IP" >}}
 
 <br>
 
@@ -103,7 +103,7 @@ aws ec2 describe-instance-types \
 
 <br>
 
-{{< figure src="/aws/aws-cni-failed-to-assign-ip/4.png" width="400" caption="每個機器規格對應的 IP 以及 MaxENI" >}}
+{{< figure src="/aws/aws-cni-failed-to-assign-ip/4.webp" width="400" caption="每個機器規格對應的 IP 以及 MaxENI" >}}
 
 <br>
 
@@ -118,7 +118,7 @@ aws ec2 describe-instance-types \
 
 <br>
 
-{{< figure src="/aws/aws-cni-failed-to-assign-ip/5.png" width="650" caption="使用腳本計算不同 CNI version 以及機器的可用 Pod 數量" >}}
+{{< figure src="/aws/aws-cni-failed-to-assign-ip/5.webp" width="650" caption="使用腳本計算不同 CNI version 以及機器的可用 Pod 數量" >}}
 
 <br>
 
@@ -126,7 +126,7 @@ aws ec2 describe-instance-types \
 
 <br>
 
-{{< figure src="/aws/aws-cni-failed-to-assign-ip/6.png" width="650" caption="無法調度的範例錯誤" >}}
+{{< figure src="/aws/aws-cni-failed-to-assign-ip/6.webp" width="650" caption="無法調度的範例錯誤" >}}
 
 <br>
 
@@ -150,7 +150,7 @@ kubectl get nodes -o custom-columns="HOSTNAME:.metadata.name,INSTANCE-TYPE:.meta
 
 <br>
 
-{{< figure src="/aws/aws-cni-failed-to-assign-ip/7.png" width="700" caption="有問題的 Node Allocatable-Pods" >}}
+{{< figure src="/aws/aws-cni-failed-to-assign-ip/7.webp" width="700" caption="有問題的 Node Allocatable-Pods" >}}
 
 <br>
 
@@ -158,7 +158,7 @@ kubectl get nodes -o custom-columns="HOSTNAME:.metadata.name,INSTANCE-TYPE:.meta
 
 <br>
 
-{{< figure src="/aws/aws-cni-failed-to-assign-ip/8.png" width="700" caption="正常的 Node Allocatable-Pods" >}}
+{{< figure src="/aws/aws-cni-failed-to-assign-ip/8.webp" width="700" caption="正常的 Node Allocatable-Pods" >}}
 
 <br>
 

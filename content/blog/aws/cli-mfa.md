@@ -12,7 +12,7 @@ authors:
 
 <br>
 
-{{< figure src="/aws/cli-mfa/1.png" width="850" caption="沒有權限噴錯QQ" >}}
+{{< figure src="/aws/cli-mfa/1.webp" width="850" caption="沒有權限噴錯QQ" >}}
 
 <br>
 
@@ -24,7 +24,7 @@ authors:
 
 <br>
 
-{{< figure src="/aws/cli-mfa/2.png" width="650" caption="default-policy" >}}
+{{< figure src="/aws/cli-mfa/2.webp" width="650" caption="default-policy" >}}
 
 <br>
 
@@ -32,7 +32,7 @@ authors:
 
 <br>
 
-{{< figure src="/aws/cli-mfa/3.png" width="650" caption="poc-general-policy" >}}
+{{< figure src="/aws/cli-mfa/3.webp" width="650" caption="poc-general-policy" >}}
 
 <br>
 
@@ -40,7 +40,7 @@ authors:
 
 <br>
 
-{{< figure src="/aws/cli-mfa/4.png" width="650" caption="ReadOnlyAccess" >}}
+{{< figure src="/aws/cli-mfa/4.webp" width="650" caption="ReadOnlyAccess" >}}
 
 <br>
 
@@ -60,7 +60,7 @@ aws iam list-mfa-devices --user-name {USER_NAME}
 
 <br>
 
-{{< figure src="/aws/cli-mfa/5.png" width="650" caption="顯示 mfa 裝置" >}}
+{{< figure src="/aws/cli-mfa/5.webp" width="650" caption="顯示 mfa 裝置" >}}
 
 <br>
 
@@ -116,7 +116,7 @@ aws_session_token = FwoGZXIvYXdzEXXXXXXXXXXXXX
 
 <br>
 
-{{< figure src="/aws/cli-mfa/6.png" width="850" caption="就可以用 poc-general-policy 的 action 囉～" >}}
+{{< figure src="/aws/cli-mfa/6.webp" width="850" caption="就可以用 poc-general-policy 的 action 囉～" >}}
 
 <br>
 
@@ -190,7 +190,7 @@ fi
 
 <br>
 
-{{< figure src="/aws/cli-mfa/7.png" width="700" caption="執行腳本" >}}
+{{< figure src="/aws/cli-mfa/7.webp" width="700" caption="執行腳本" >}}
 
 <br>
 

@@ -42,7 +42,7 @@ authors:
 
 <br>
 
-{{< figure src="/aws/eks-introduce/1.png" width="750" caption="在雲端中執行 Amazon EKS 的基本流程" >}}
+{{< figure src="/aws/eks-introduce/1.webp" width="750" caption="在雲端中執行 Amazon EKS 的基本流程" >}}
 
 <br>
 
@@ -77,7 +77,7 @@ eksctl create cluster --name ian-test --region us-east-1
 ( CloudFormation 是將基礎設施視為程式碼的服務，可以對 AWS 和第三方資源進行建模、佈建和管理，詳細一樣請參考後續文章 [AWS CloudFormation 介紹](../cloudformation-introduce)。)
 <br>
 
-{{< figure src="/aws/eks-introduce/2.png" width="850" caption="使用 eksctl 建立 EKS 缺少 CloudFormation 權限" >}}
+{{< figure src="/aws/eks-introduce/2.webp" width="850" caption="使用 eksctl 建立 EKS 缺少 CloudFormation 權限" >}}
 
 <br>
 

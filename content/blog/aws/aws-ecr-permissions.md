@@ -25,7 +25,7 @@ authors:
 
 <br>
 
-{{< figure src="/aws/aws-ecr-permissions/1.png" width="650" caption="A 帳號 ECR" >}}
+{{< figure src="/aws/aws-ecr-permissions/1.webp" width="650" caption="A 帳號 ECR" >}}
 
 <br>
 
@@ -53,7 +53,7 @@ spec:
 
 <br>
 
-{{< figure src="/aws/aws-ecr-permissions/2.png" width="1200" caption="Pod ErrImagePull 錯誤" >}}
+{{< figure src="/aws/aws-ecr-permissions/2.webp" width="1200" caption="Pod ErrImagePull 錯誤" >}}
 
 <br>
 
@@ -111,7 +111,7 @@ kubectl apply -f cicd-runner.yaml
 
 就可以發現 Pod 成功啟動了，並且可以正常拉取 A 帳號的 ECR Image。
 
-{{< figure src="/aws/aws-ecr-permissions/3.png" width="1200" caption="Pod 成功啟動" >}}
+{{< figure src="/aws/aws-ecr-permissions/3.webp" width="1200" caption="Pod 成功啟動" >}}
 
 <br>
 

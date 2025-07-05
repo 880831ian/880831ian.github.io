@@ -33,7 +33,7 @@ VPC 的全名是 Virtual Private Cloud，可以在 AWS 雲端內配置邏輯上�
 
 <br>
 
-{{< figure src="/aws/vpc-introduce/1.png" width="550" caption="VPC 架構 [什麼是 Amazon VPC](https://docs.aws.amazon.com/zh_tw/vpc/latest/userguide/what-is-amazon-vpc.html)" >}}
+{{< figure src="/aws/vpc-introduce/1.webp" width="550" caption="VPC 架構 [什麼是 Amazon VPC](https://docs.aws.amazon.com/zh_tw/vpc/latest/userguide/what-is-amazon-vpc.html)" >}}
 
 <br>
 
@@ -51,7 +51,7 @@ VPC 的全名是 Virtual Private Cloud，可以在 AWS 雲端內配置邏輯上�
 
 <br>
 
-{{< figure src="/aws/vpc-introduce/2.jpg" width="800" caption="VPC Data Flow [Virtual Private Cloud](https://salmankhalid85.wordpress.com/aws/virtual-private-cloud/)" >}}
+{{< figure src="/aws/vpc-introduce/2.webp" width="800" caption="VPC Data Flow [Virtual Private Cloud](https://salmankhalid85.wordpress.com/aws/virtual-private-cloud/)" >}}
 
 <br>
 
