@@ -50,7 +50,7 @@
 &lt;li>可以跨多個專案以及區域來存取後端&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/1.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/1.webp"
 alt="Global external Application Load Balancer" width="250">&lt;figcaption>
 &lt;p>Global external Application Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -81,7 +81,7 @@ alt="Global external Application Load Balancer" width="250">&lt;figcaption>
 &lt;li>有支援 Cloud CDN，但選擇 Standrad 則不能用&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/2.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/2.webp"
 alt="Classic Application Load Balancer" width="250">&lt;figcaption>
 &lt;p>Classic Application Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -112,7 +112,7 @@ alt="Classic Application Load Balancer" width="250">&lt;figcaption>
 &lt;li>可以跨多個專案，但只能選擇該區域的資源 (且沒辦法接 Bucket)&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/3.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/3.webp"
 alt="Regional external Application Load Balancer" width="250">&lt;figcaption>
 &lt;p>Regional external Application Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -141,7 +141,7 @@ alt="Regional external Application Load Balancer" width="250">&lt;figcaption>
 &lt;li>自動故障轉移到同一或不同區域的健康後端&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/4.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/4.webp"
 alt="Cross-Region internal Application Load Balancer" width="250">&lt;figcaption>
 &lt;p>Cross-Region internal Application Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -170,7 +170,7 @@ alt="Cross-Region internal Application Load Balancer" width="250">&lt;figcaption
 &lt;li>自動故障轉移到同一區域內的健康後端&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/5.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/5.webp"
 alt="Regional internal Application Load Balancer" width="250">&lt;figcaption>
 &lt;p>Regional internal Application Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -216,7 +216,7 @@ alt="Regional internal Application Load Balancer" width="250">&lt;figcaption>
 &lt;li>整合 Google Cloud Armor 進行 DDoS 防護&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/6.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/6.webp"
 alt="Global external Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Global external Proxy Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -247,7 +247,7 @@ alt="Global external Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;li>在 Premium Tier 中可作為全球性負載平衡器，在 Standard Tier 中僅限於區域性部署&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/7.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/7.webp"
 alt="Classic Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Classic Proxy Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -277,7 +277,7 @@ alt="Classic Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;li>相較於全球性負載平衡器，區域性負載平衡器的成本較低，適合預算有限的應用程式&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/8.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/8.webp"
 alt="Regional external Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Regional external Proxy Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -306,7 +306,7 @@ alt="Regional external Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;li>自動故障轉移到同一或不同區域的健康後端&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/9.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/9.webp"
 alt="Cross-Region internal Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Cross-Region internal Proxy Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -335,7 +335,7 @@ alt="Cross-Region internal Proxy Network Load Balancer" width="250">&lt;figcapti
 &lt;li>自動故障轉移到同一區域內的健康後端&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/10.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/10.webp"
 alt="Regional internal Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Regional internal Proxy Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -382,7 +382,7 @@ alt="Regional internal Proxy Network Load Balancer" width="250">&lt;figcaption>
 &lt;li>適用於需要低延遲和高效能的應用場景&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/11.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/11.webp"
 alt="External passthrough Network Load Balancer" width="200">&lt;figcaption>
 &lt;p>External passthrough Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -414,7 +414,7 @@ alt="External passthrough Network Load Balancer" width="200">&lt;figcaption>
 &lt;li>適用於需要高效能和低延遲的內部服務通訊&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/12.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-lb-introduce/12.webp"
 alt="Internal passthrough Network Load Balancer" width="250">&lt;figcaption>
 &lt;p>Internal passthrough Network Load Balancer&lt;/p>
 &lt;/figcaption>
@@ -473,7 +473,7 @@ alt="Internal passthrough Network Load Balancer" width="250">&lt;figcaption>
 &lt;li>公開的 GCS Bucket URL 及內容 (bucket 會用 ian-test-demo 來示範，請自行修改成自己的 bucket 名稱)&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/1.webp"
 alt="curl 測試" width="550">&lt;figcaption>
 &lt;p>curl 測試&lt;/p>
 &lt;/figcaption>
@@ -494,7 +494,7 @@ alt="curl 測試" width="550">&lt;figcaption>
 &lt;br>
 &lt;p>開啟後，我們輸入剛剛公開 GCS Bucket URL 到輸入欄位，開啟 F12 Network，並按下測試&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/2.webp"
 alt="使用程式來測試" width="550">&lt;figcaption>
 &lt;p>使用程式來測試&lt;/p>
 &lt;/figcaption>
@@ -502,7 +502,7 @@ alt="使用程式來測試" width="550">&lt;figcaption>
 &lt;br>
 &lt;p>就會發現，出現 CORS error 錯誤，我們可以查看下方的錯誤說明&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/3.webp"
 alt="發現 CORS 錯誤" width="550">&lt;figcaption>
 &lt;p>發現 CORS 錯誤&lt;/p>
 &lt;/figcaption>
@@ -514,7 +514,7 @@ alt="發現 CORS 錯誤" width="550">&lt;figcaption>
 &lt;br>
 &lt;p>我們可以先下此指令來查看該 bucket 是否有設定 cors： &lt;code>gcloud storage buckets describe gs://ian-test-demo --format=&amp;quot;default(cors_config)&amp;quot;&lt;/code>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/4.webp"
 alt="gcloud 指令查看 cors 設定" width="550">&lt;figcaption>
 &lt;p>gcloud 指令查看 cors 設定&lt;/p>
 &lt;/figcaption>
@@ -546,7 +546,7 @@ title="Copy code"
 &lt;p>寫完後，我們需要設定到 Bucket 上面，可以用此指令將 cors.json 設定到指定的 Bucket 上：&lt;code>gcloud storage buckets update gs://ian-test-demo --cors-file=cors.json&lt;/code>&lt;/p>
 &lt;p>下完指令後，我們可以在用 describe 來確認是否設定完成，正常會如下顯示：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/5.webp"
 alt="設定及檢查" width="550">&lt;figcaption>
 &lt;p>設定及檢查&lt;/p>
 &lt;/figcaption>
@@ -554,7 +554,7 @@ alt="設定及檢查" width="550">&lt;figcaption>
 &lt;br>
 &lt;p>接著我們就可以來測試看看是否還會碰到 CORS error 的問題了&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/6.webp"
 alt="再次使用前端程式測試" width="550">&lt;figcaption>
 &lt;p>再次使用前端程式測試&lt;/p>
 &lt;/figcaption>
@@ -562,7 +562,7 @@ alt="再次使用前端程式測試" width="550">&lt;figcaption>
 &lt;br>
 &lt;p>另外，如果不需要設定 CORS 時，可以用以下指令移除該 Bucket 的 CORS 設定：&lt;code>gcloud storage buckets update gs://ian-test-demo --clear-cors&lt;/code>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcs-cors/7.webp"
 alt="移除 CORS 設定" width="550">&lt;figcaption>
 &lt;p>移除 CORS 設定&lt;/p>
 &lt;/figcaption>
@@ -593,7 +593,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-local-ephemeral-storage/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-local-ephemeral-storage/1.webp"
 alt="Cloud Logging 查詢結果" width="750">&lt;figcaption>
 &lt;p>Cloud Logging 查詢結果&lt;/p>
 &lt;/figcaption>
@@ -760,7 +760,7 @@ title="Copy code"
 &lt;li>可以從 GKE 的 Node Pool UI 介面查看：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-local-ephemeral-storage/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-local-ephemeral-storage/2.webp"
 alt="GKE Node Pool 頁面" width="450">&lt;figcaption>
 &lt;p>GKE Node Pool 頁面&lt;/p>
 &lt;/figcaption>
@@ -771,7 +771,7 @@ alt="GKE Node Pool 頁面" width="450">&lt;figcaption>
 &lt;li>可以透過 &lt;code>kubectl describe node&lt;/code> 來查看：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-local-ephemeral-storage/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-local-ephemeral-storage/3.webp"
 alt="kubectl describe node 頁面" width="400">&lt;figcaption>
 &lt;p>kubectl describe node 頁面&lt;/p>
 &lt;/figcaption>
@@ -779,7 +779,7 @@ alt="kubectl describe node 頁面" width="400">&lt;figcaption>
 &lt;p>可以看到 Capacity ephemeral-storage: 98831908Ki，換算成 GB 大約是 101.19 GB。&lt;/p>
 &lt;p>Allocatable ephemeral-storage: 47060071478，換算成 GB 大約是 47.06 GB。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-local-ephemeral-storage/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-local-ephemeral-storage/4.webp"
 alt="kubectl describe node 頁面" width="550">&lt;figcaption>
 &lt;p>kubectl describe node 頁面&lt;/p>
 &lt;/figcaption>
@@ -792,13 +792,13 @@ alt="kubectl describe node 頁面" width="550">&lt;figcaption>
 &lt;p>最近在優化公司帳單費用，發現公司有幾個 project 裡面的 Prometheus Samples Ingested 費用很高，此文章會針對費用如何計算以及如何去減少費用來做說明。&lt;/p>
 &lt;p>Prometheus Samples Ingested 就是 Prometheus 攝取的樣本數，因為上述幾個專案，我們都是使用 &lt;a href="https://cloud.google.com/stackdriver/docs/managed-prometheus" target="_blank" rel="noopener">Google Managed Prometheus (GMP)&lt;/a> 的方式來接 Metrics，所以可以先推測是 Metrics 導致此費用增加。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/1.webp"
 alt="Google 帳單 (project_1)" width="800">&lt;figcaption>
 &lt;p>Google 帳單 (project_1)&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/2.webp"
 alt="Google 帳單 (project_2)" width="800">&lt;figcaption>
 &lt;p>Google 帳單 (project_2)&lt;/p>
 &lt;/figcaption>
@@ -807,7 +807,7 @@ alt="Google 帳單 (project_2)" width="800">&lt;figcaption>
 &lt;h2>費用計算說明&lt;span class="hx-absolute -hx-mt-20" id="費用計算說明">&lt;/span>
 &lt;a href="#%e8%b2%bb%e7%94%a8%e8%a8%88%e7%ae%97%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們先來計算一下費用是不是正確，Prometheus Samples Ingested 的 SKU 是 A4E4-DF03-CDB6，可以透過&lt;a href="https://cloud.google.com/skus/?currency=USD&amp;amp;filter=A4E4-DF03-CDB6&amp;amp;hl=en" target="_blank" rel="noopener">這個頁面&lt;/a>來查詢：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/3.webp"
 alt="Google Cloud Platform SKUs" width="800">&lt;figcaption>
 &lt;p>Google Cloud Platform SKUs&lt;/p>
 &lt;/figcaption>
@@ -875,7 +875,7 @@ title="Copy code"
 &lt;br>
 &lt;p>我們分別帶入 project_1 (106,676,274,756) 以及 project_2 (66,631,967,760) 的 Samples 來計算看看金額是否正確。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/4.webp"
 alt="用腳本檢查金額是否與帳單一樣" width="500">&lt;figcaption>
 &lt;p>用腳本檢查金額是否與帳單一樣&lt;/p>
 &lt;/figcaption>
@@ -885,7 +885,7 @@ alt="用腳本檢查金額是否與帳單一樣" width="500">&lt;figcaption>
 &lt;p>以下以 project_1 為例：&lt;/p>
 &lt;p>打開 &lt;a href="https://console.cloud.google.com/monitoring/metrics-management" target="_blank" rel="noopener">Metrics Management&lt;/a> 後，將時間選擇前 30 天(30d)，與上面帳單選擇一樣，接著可以看到 Billable samples ingested 這邊，這裡就是指我們 30 天總共收了多少筆的 samples，也可以把他理解收了多少筆的 Metrics。也可以看到底下表格的 Samples billable volume 可以透過排序知道是誰使用最多。這邊的 B 代表 10 億，也就是 1000000000，所以我們上個月收了 1066 多億筆的 samples。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/5.webp"
 alt="查看 Metrics Management" width="800">&lt;figcaption>
 &lt;p>查看 Metrics Management&lt;/p>
 &lt;/figcaption>
@@ -893,7 +893,7 @@ alt="查看 Metrics Management" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>可以使用剛剛的腳本來計算 (沒錯，它也支援數字單位的轉換 xD)，計算如下：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/6.webp"
 alt="查看 Metrics Management" width="550">&lt;figcaption>
 &lt;p>查看 Metrics Management&lt;/p>
 &lt;/figcaption>
@@ -907,7 +907,7 @@ alt="查看 Metrics Management" width="550">&lt;figcaption>
 &lt;p>首先我們可以從 metric 名稱知道它是 phpfpm 的 process 狀態。我們有開啟 Cluster 的 Managed Service for Prometheus，來使用 Google 管理的 Prometheus (GMP)， 並在服務上面設定 &lt;code>phpfpm-exporter&lt;/code>，並使用 PodMonitoring 來將 Pod 上的 metrics 接到 GMP 上。&lt;/p>
 &lt;p>所以我們可以先到有 phpfpm-exporter 的 Pod 隨意的 Container 去看看這個 metrics，下 &lt;code>curl -s 127.0.0.1:9253/metrics&lt;/code> 指令來查看 (請依照設定 port 去查看，這邊不詳細列出)，可以看到會有很多 phpfpm-exporter 的 metrics。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/7.webp"
 alt="phpfpm-exporter metrics" width="600">&lt;figcaption>
 &lt;p>phpfpm-exporter metrics&lt;/p>
 &lt;/figcaption>
@@ -915,7 +915,7 @@ alt="phpfpm-exporter metrics" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>其中我們也可以找到 &lt;code>phpfpm_process_state&lt;/code> 這個 metrics，這邊我們發現一個比較特別的事情，一般的 metrics 都只有一筆，但 &lt;code>phpfpm_process_state&lt;/code> 它有 6 個狀態。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/8.webp"
 alt="phpfpm-exporter metrics" width="600">&lt;figcaption>
 &lt;p>phpfpm-exporter metrics&lt;/p>
 &lt;/figcaption>
@@ -923,7 +923,7 @@ alt="phpfpm-exporter metrics" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>所以代表送到 GMP 的 metrics 也會比其他 phpfpm 相關的 metrics 還多 6 倍，這也可以解釋為什麼他是所有 metrics 裡面費用最高的，以及 &lt;code>phpfpm_process_state&lt;/code> 費用是其他 phpfpm 像是：&lt;code>phpfpm_process_request_duration&lt;/code> 的 6 倍了。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/9.webp"
 alt="Metrics Management phpfpm metrics" width="600">&lt;figcaption>
 &lt;p>Metrics Management phpfpm metrics&lt;/p>
 &lt;/figcaption>
@@ -935,7 +935,7 @@ alt="Metrics Management phpfpm metrics" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>可以先看下圖，我們這個的 api 有 30 的 process，乘 6 個狀態，可以看到每次的搜集就會收集 180 筆的 &lt;code>phpfpm_process_state&lt;/code>。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/10.webp"
 alt="phpfpm status" width="600">&lt;figcaption>
 &lt;p>phpfpm status&lt;/p>
 &lt;/figcaption>
@@ -943,7 +943,7 @@ alt="phpfpm status" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>我們也可以透過 GCP 的 Metrics explorer 查詢到對應的數值。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/11.webp"
 alt="phpfpm status" width="700">&lt;figcaption>
 &lt;p>phpfpm status&lt;/p>
 &lt;/figcaption>
@@ -954,10 +954,10 @@ alt="phpfpm status" width="700">&lt;figcaption>
 &lt;p>因此，我們可以得知費用會跟 process (範例的 metrics)、裡面的 metrics 有幾個、Pod 數量、 PodMonitoring 間隔時間有關，跟 Google 的文件說明也是一樣的&lt;/p>
 &lt;p>&lt;a href="https://cloud.google.com/stackdriver/pricing?hl=zh-tw#pricing_examples_samples" target="_blank" rel="noopener">https://cloud.google.com/stackdriver/pricing?hl=zh-tw#pricing_examples_samples&lt;/a>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/12.png" width="700">
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/12.webp" width="700">
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/13.png" width="700">
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/13.webp" width="700">
 &lt;/figure>
 &lt;br>
 &lt;p>所以要減少費用，可以調整上述影響 metrics 數量的變因，另一種方式就是，針對需要收集哪些 metrics 來做過濾，可以參考此文件：&lt;a href="https://cloud.google.com/stackdriver/docs/managed-prometheus/setup-managed" target="_blank" rel="noopener">Get started with managed collection&lt;/a>，過濾不要的 metrics ，避免送到 GMP 上，而有多餘的費用，我們可以在 PodMonitoring 上去來過濾要送出 metrics，如下：&lt;/p>
@@ -989,7 +989,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>透過 &lt;code>metricRelabeling&lt;/code> 使用 drop 方式，搭配正規表示法來過濾 name 是 &lt;code>phpfpm_process_state&lt;/code> 的 metrics，另外也可以使用 keep 的方式，決定要送什麼到 GMP 上。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/14.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/14.webp"
 alt="過濾後，指標不見惹" width="700">&lt;figcaption>
 &lt;p>過濾後，指標不見惹&lt;/p>
 &lt;/figcaption>
@@ -997,7 +997,7 @@ alt="過濾後，指標不見惹" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>上圖就是在 &lt;code>PodMonitoring&lt;/code> 上新增 drop 來過濾 &lt;code>phpfpm_process_state&lt;/code>，也可以看 Samples billable volume 變成 0 Sample，就代表我們把這個 metrics 給過濾掉拉～～～ 也就可以省錢囉xDD&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/15.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/15.webp"
 alt="Metrics Management phpfpm metrics" width="600">&lt;figcaption>
 &lt;p>Metrics Management phpfpm metrics&lt;/p>
 &lt;/figcaption>
@@ -1008,7 +1008,7 @@ alt="Metrics Management phpfpm metrics" width="600">&lt;figcaption>
 &lt;h2>文件說明&lt;span class="hx-absolute -hx-mt-20" id="文件說明">&lt;/span>
 &lt;a href="#%e6%96%87%e4%bb%b6%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們可以先閱讀 &lt;a href="https://cloud.google.com/memorystore/docs/redis/faq" target="_blank" rel="noopener">Google Memorystore for Redis FAQ&lt;/a> 文章，可以得知 Standard Tier 在 failover 轉移，大約會花 30 秒左右。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/1.webp"
 alt="Google Memorystore for Redis FAQ" width="400">&lt;figcaption>
 &lt;p>Google Memorystore for Redis FAQ&lt;/p>
 &lt;/figcaption>
@@ -1016,7 +1016,7 @@ alt="Google Memorystore for Redis FAQ" width="400">&lt;figcaption>
 &lt;br>
 &lt;p>我們也可以從 &lt;a href="https://cloud.google.com/memorystore/docs/redis/high-availability-for-memorystore-for-redis#when_a_failover_is_triggered" target="_blank" rel="noopener">High availability for Memorystore for Redis&lt;/a> 文章中知道，當 Primary 資料庫發生故障時，就會發生故障轉移。在轉移期間，Primary Endpoint 和 Read Endpoint 會自動重新導向新的 Primary 資料庫 和 Replica。&lt;b>這時候 Primary Endpoint 和 Read Endpoint 連線都會被刪除&lt;/b>。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/2.webp"
 alt="when a failover is triggered" width="700">&lt;figcaption>
 &lt;p>when a failover is triggered&lt;/p>
 &lt;/figcaption>
@@ -1061,7 +1061,7 @@ title="Copy code"
 &lt;h3>設定監控&lt;span class="hx-absolute -hx-mt-20" id="設定監控">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>建立完成後，我們也先把監控給拉出來，設定可以參考 &lt;a href="https://cloud.google.com/memorystore/docs/redis/about-manual-failover#stackdriver_verification" target="_blank" rel="noopener">About manual failover&lt;/a>，主要是選擇 &lt;b>Cloud Memorystore Redis &amp;gt; replication &amp;gt; Node role&lt;/b>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/3.webp"
 alt="監控圖表" width="850">&lt;figcaption>
 &lt;p>監控圖表&lt;/p>
 &lt;/figcaption>
@@ -1083,7 +1083,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/4.webp"
 alt="describe 畫面" width="650">&lt;figcaption>
 &lt;p>describe 畫面&lt;/p>
 &lt;/figcaption>
@@ -1200,7 +1200,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>可以看到目前 ian-1m1s 就開始 Failing over 了～&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/5.webp"
 alt="memorystore UI 畫面" width="350">&lt;figcaption>
 &lt;p>memorystore UI 畫面&lt;/p>
 &lt;/figcaption>
@@ -1210,7 +1210,7 @@ alt="memorystore UI 畫面" width="350">&lt;figcaption>
 &lt;a href="#%e5%be%8c%e7%ba%8c%e8%a7%80%e5%af%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>查看監控&lt;span class="hx-absolute -hx-mt-20" id="查看監控">&lt;/span>
 &lt;a href="#%e6%9f%a5%e7%9c%8b%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>首先我們先看監控部分，可以看到原本的 node-1 是 Primary 後來掉下來的同時，由 node-2 變成 Primary 最後完成故障轉移。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/6.webp"
 alt="監控畫面" width="500">&lt;figcaption>
 &lt;p>監控畫面&lt;/p>
 &lt;/figcaption>
@@ -1218,7 +1218,7 @@ alt="監控畫面" width="500">&lt;figcaption>
 &lt;br>
 &lt;p>再來看 describe 的部分，可以發現原本的 &lt;b>currentLocationId&lt;/b> 從 Primary (node-0) asia-east1-a 變成(node-1) asia-east1-b，完成故障轉移，因此更換區域。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/7.webp"
 alt="describe 畫面" width="650">&lt;figcaption>
 &lt;p>describe 畫面&lt;/p>
 &lt;/figcaption>
@@ -1227,7 +1227,7 @@ alt="describe 畫面" width="650">&lt;figcaption>
 &lt;h3>查看腳本&lt;span class="hx-absolute -hx-mt-20" id="查看腳本">&lt;/span>
 &lt;a href="#%e6%9f%a5%e7%9c%8b%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>最後，查看一下腳本的執行紀錄可以發現：在 18:12:58， 出現第一筆 Primary PING 不到的錯誤，到 18:13:18 才恢復，代表故障轉移時間約 20 左右 (最後面會測試 5 次來取平均)，其流程是 Primary 會先連不到，接著變成 Primary 跟 Replica 都連不到，最後剩下 Replica，到都正常。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/8.webp"
 alt="shell 畫面" width="500">&lt;figcaption>
 &lt;p>shell 畫面&lt;/p>
 &lt;/figcaption>
@@ -1237,7 +1237,7 @@ alt="shell 畫面" width="500">&lt;figcaption>
 &lt;a href="#%e5%af%a6%e4%bd%9c%e6%b8%ac%e8%a9%a6-1m2s" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>由於設定都差不多，所以上述 1m1s 設定這邊就不重複說明，記得把 IaC 的 replica_count 改成 2，以及 shell 的 IP 跟 Password 要記得換！&lt;/p>
 &lt;p>直接看監控部分：可以看到現在 node-2 是 1，代表 node-2 是 Primary，其他 node-1、node-0 都是 Replica。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/9.webp"
 alt="監控畫面" width="650">&lt;figcaption>
 &lt;p>監控畫面&lt;/p>
 &lt;/figcaption>
@@ -1245,7 +1245,7 @@ alt="監控畫面" width="650">&lt;figcaption>
 &lt;br>
 &lt;p>接著看 describe：&lt;b>currentLocationId&lt;/b> 是 asia-east1-c，也就是 node-2 (Primary)。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/10.webp"
 alt="describe 畫面" width="650">&lt;figcaption>
 &lt;p>describe 畫面&lt;/p>
 &lt;/figcaption>
@@ -1254,7 +1254,7 @@ alt="describe 畫面" width="650">&lt;figcaption>
 &lt;p>一樣下指令來跑 shell，並觀察監控、describe 來有 shell：
 變成 node-0 變成 Primary，node-2 變成 Replica，node-1 一樣是 Replica。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/11.webp"
 alt="監控畫面" width="600">&lt;figcaption>
 &lt;p>監控畫面&lt;/p>
 &lt;/figcaption>
@@ -1262,7 +1262,7 @@ alt="監控畫面" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>&lt;b>currentLocationId&lt;/b> 變成是 asia-east1-a，Primary 從 node-2 變成 node-0。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/12.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/12.webp"
 alt="describe 畫面" width="650">&lt;figcaption>
 &lt;p>describe 畫面&lt;/p>
 &lt;/figcaption>
@@ -1270,7 +1270,7 @@ alt="describe 畫面" width="650">&lt;figcaption>
 &lt;br>
 &lt;p>觀察 shell 發現，有出現 FAILED 都是 Primary，Replica 都正常。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/13.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-memorystore-failover/13.webp"
 alt="shell 畫面" width="500">&lt;figcaption>
 &lt;p>shell 畫面&lt;/p>
 &lt;/figcaption>
@@ -1354,7 +1354,7 @@ alt="shell 畫面" width="500">&lt;figcaption>
 &lt;h2>介紹 Cloud Logging&lt;span class="hx-absolute -hx-mt-20" id="介紹-cloud-logging">&lt;/span>
 &lt;a href="#%e4%bb%8b%e7%b4%b9-cloud-logging" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先來簡單說一下 Cloud Logging 這項服務的基本架構，請看圖：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/overview.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/overview.webp"
 alt="Cloud Logging 基本架構" width="800">&lt;figcaption>
 &lt;p>Cloud Logging 基本架構&lt;/p>
 &lt;/figcaption>
@@ -1426,7 +1426,7 @@ alt="Cloud Logging 基本架構" width="800">&lt;figcaption>
 &lt;div class="steps hx-ml-4 hx-mb-12 ltr:hx-border-l rtl:hx-border-r hx-border-gray-200 ltr:hx-pl-6 rtl:hx-pr-6 dark:hx-border-neutral-800 [counter-reset:step]">
 &lt;h3>選擇 Log Router&lt;span class="hx-absolute -hx-mt-20" id="選擇-log-router">&lt;/span>
 &lt;a href="#%e9%81%b8%e6%93%87-log-router" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/1.webp"
 alt="選擇 Log Router" width="550">&lt;figcaption>
 &lt;p>選擇 Log Router&lt;/p>
 &lt;/figcaption>
@@ -1435,7 +1435,7 @@ alt="選擇 Log Router" width="550">&lt;figcaption>
 &lt;h3>選擇 Log Router Sinks&lt;span class="hx-absolute -hx-mt-20" id="選擇-log-router-sinks">&lt;/span>
 &lt;a href="#%e9%81%b8%e6%93%87-log-router-sinks" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>選擇 _Default 的 Log Router Sinks，點選右邊按鈕的 Edit Sink&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/2.webp"
 alt="選擇 _Default 的 Log Router Sinks">&lt;figcaption>
 &lt;p>選擇 _Default 的 Log Router Sinks&lt;/p>
 &lt;/figcaption>
@@ -1444,7 +1444,7 @@ alt="選擇 _Default 的 Log Router Sinks">&lt;figcaption>
 &lt;h3>設定 Sink details&lt;span class="hx-absolute -hx-mt-20" id="設定-sink-details">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a-sink-details" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>第一個是 details，可以輸入說明，這邊輸入：google 有 bug 會噴大量的意外 LOG，怕費用飆高，先用官方建議的來過濾 LOG，詳細可以看： &lt;a href="https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE" target="_blank" rel="noopener">https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE&lt;/a>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/3.webp"
 alt="輸入 Sink details 說明">&lt;figcaption>
 &lt;p>輸入 Sink details 說明&lt;/p>
 &lt;/figcaption>
@@ -1453,7 +1453,7 @@ alt="輸入 Sink details 說明">&lt;figcaption>
 &lt;h3>選擇 Sink Service 跟 Bucket&lt;span class="hx-absolute -hx-mt-20" id="選擇-sink-service-跟-bucket">&lt;/span>
 &lt;a href="#%e9%81%b8%e6%93%87-sink-service-%e8%b7%9f-bucket" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接著 sink 服務選擇 Logging bucket，以及對應儲存的 log bucket (這邊基本上都是預設)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/4.webp"
 alt="選擇 Logging bucket">&lt;figcaption>
 &lt;p>選擇 Logging bucket&lt;/p>
 &lt;/figcaption>
@@ -1462,7 +1462,7 @@ alt="選擇 Logging bucket">&lt;figcaption>
 &lt;h3>設定 include Log&lt;span class="hx-absolute -hx-mt-20" id="設定-include-log">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a-include-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>選擇那些可以被 include 到 sink 接收器的 LOG 格式 (這邊基本上都是預設)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/5.webp"
 alt="預設的 LOG 格式">&lt;figcaption>
 &lt;p>預設的 LOG 格式&lt;/p>
 &lt;/figcaption>
@@ -1471,7 +1471,7 @@ alt="預設的 LOG 格式">&lt;figcaption>
 &lt;h3>設定 filter Log&lt;span class="hx-absolute -hx-mt-20" id="設定-filter-log">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a-filter-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>這邊就是我們要輸入過濾的地方，先點擊 ADD EXCLUSION，輸入過濾的名稱，以及過濾的內容格式，我們輸入 google 在 Service Health 所提供的格式，最後按下 UPDATE SINK&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/6.webp"
 alt="新增要過濾的 LOG 格式">&lt;figcaption>
 &lt;p>新增要過濾的 LOG 格式&lt;/p>
 &lt;/figcaption>
@@ -1480,7 +1480,7 @@ alt="新增要過濾的 LOG 格式">&lt;figcaption>
 &lt;h3>設定完成&lt;span class="hx-absolute -hx-mt-20" id="設定完成">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a%e5%ae%8c%e6%88%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>等待更新完成，就可以看到我們已經在接收器上設定好過濾條件囉～&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/7.webp"
 alt="查看詳細接收器設定">&lt;figcaption>
 &lt;p>查看詳細接收器設定&lt;/p>
 &lt;/figcaption>
@@ -1489,7 +1489,7 @@ alt="查看詳細接收器設定">&lt;figcaption>
 &lt;h3>檢查 Log 是否過濾成功&lt;span class="hx-absolute -hx-mt-20" id="檢查-log-是否過濾成功">&lt;/span>
 &lt;a href="#%e6%aa%a2%e6%9f%a5-log-%e6%98%af%e5%90%a6%e9%81%8e%e6%bf%be%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>最後再檢查一下 Log 是不是沒有收到該錯誤的 Log 內容&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/8.webp"
 alt="檢查 LOG 是否不會再出現">&lt;figcaption>
 &lt;p>檢查 LOG 是否不會再出現&lt;/p>
 &lt;/figcaption>
@@ -1500,7 +1500,7 @@ alt="檢查 LOG 是否不會再出現">&lt;figcaption>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Routing and storage overview &lt;a href="https://cloud.google.com/logging/docs/routing/overview" target="_blank" rel="noopener">https://cloud.google.com/logging/docs/routing/overview&lt;/a>&lt;/p></description></item><item><title>Google Kubernetes Engine CronJob 會有短暫時間沒有執行 Job</title><link>https://pin-yi.me/blog/gcp/gke-cronjob-not-working/</link><pubDate>Fri, 10 Feb 2023 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-cronjob-not-working/</guid><description>
 &lt;p>前陣子公司建立在 Google Kubernetes Engine 叢集上的 CronJob 服務會有短暫時間沒有執行 Job。先前情提要一下，此 CronJob 的設定是每分鐘都會執行 (圖一)，所以理當來說 Log 應該要可以看到每分鐘都有此 CronJob 的紀錄，但有時候會發生 CronJob 短暫時間都沒有執行的狀況，找了一陣子都沒有找到原因，最後開支援單請 Google 那邊協助查看，終於找到原因拉 😍。那就跟我一起看一下發生的過程，以及 Google 幫我們找到的原因，以及要如何解決等等～&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/1.webp"
 alt="(圖一) CronJob schedule 時間為每分鐘執行" width="600">&lt;figcaption>
 &lt;p>(圖一) CronJob schedule 時間為每分鐘執行&lt;/p>
 &lt;/figcaption>
@@ -1509,7 +1509,7 @@ alt="(圖一) CronJob schedule 時間為每分鐘執行" width="600">&lt;figcapt
 &lt;h2>問題發生以及問題原因&lt;span class="hx-absolute -hx-mt-20" id="問題發生以及問題原因">&lt;/span>
 &lt;a href="#%e5%95%8f%e9%a1%8c%e7%99%bc%e7%94%9f%e4%bb%a5%e5%8f%8a%e5%95%8f%e9%a1%8c%e5%8e%9f%e5%9b%a0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們使用 Google Cloud Platform 裡面的記錄功能，可以看到 (圖二)，在每分鐘執行的 Log 中，有短暫時間沒有執行 Job，但這個時間除了 CronJob 以外，其他的服務都是好的。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/2.webp"
 alt="(圖二) Google Cloud Platform 記錄有短暫沒有執行" width="700">&lt;figcaption>
 &lt;p>(圖二) Google Cloud Platform 記錄有短暫沒有執行&lt;/p>
 &lt;/figcaption>
@@ -1517,7 +1517,7 @@ alt="(圖二) Google Cloud Platform 記錄有短暫沒有執行" width="700">&lt
 &lt;br>
 &lt;p>找了一陣子都沒有找到原因，於是我們開支援單請 Google 那邊協助查看，Google 那邊找了一陣子後終於找到原因拉！！！我們一起來看看吧 (圖三)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/3.webp"
 alt="(圖三) Google 支援單回覆" width="700">&lt;figcaption>
 &lt;p>(圖三) Google 支援單回覆&lt;/p>
 &lt;/figcaption>
@@ -1525,12 +1525,12 @@ alt="(圖三) Google 支援單回覆" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>就如同 Google 所說，使用提供的指令參數來查詢，叢集在該時段有發生 master control plane 的升級，如 (圖四)，再加上我們建的這個 cluster 是使用 zonal cluster (圖五)，所以叢集只有一個 control plane，當 control plane 在更新時，會無法部署新的 workload，導致該 CronJob 沒有執行 Job。參考資料 [1]&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/4.webp"
 alt="(圖四) 發生 master control plane 的升級" width="700">&lt;figcaption>
 &lt;p>(圖四) 發生 master control plane 的升級&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/5.webp"
 alt="(圖五) 有問題的叢集位置類型" width="450">&lt;figcaption>
 &lt;p>(圖五) 有問題的叢集位置類型&lt;/p>
 &lt;/figcaption>
@@ -1558,7 +1558,7 @@ alt="(圖五) 有問題的叢集位置類型" width="450">&lt;figcaption>
 &lt;br>
 &lt;p>新叢集使用 regional cluster 來建立，在 2/1 也有 master control plane 的升級。 (圖六)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/6.webp"
 alt="(圖六) 發生 master control plane 的升級" width="700">&lt;figcaption>
 &lt;p>(圖六) 發生 master control plane 的升級&lt;/p>
 &lt;/figcaption>
@@ -1566,12 +1566,12 @@ alt="(圖六) 發生 master control plane 的升級" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>查看 CronJob 執行的紀錄可以發現並沒有 Job 沒有執行的情況發生。 (圖七)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/7.webp"
 alt="(圖七) 叢集位置類型" width="700">&lt;figcaption>
 &lt;p>(圖七) 叢集位置類型&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/8.webp"
 alt="(圖八) 新叢集位置類型" width="450">&lt;figcaption>
 &lt;p>(圖八) 新叢集位置類型&lt;/p>
 &lt;/figcaption>
@@ -1584,7 +1584,7 @@ alt="(圖八) 新叢集位置類型" width="450">&lt;figcaption>
 &lt;br>
 &lt;p>我們今天文章，需要使用前幾天提到的 &lt;a href="https://pin-yi.me/blog/gcp/cloud-source-repositories/" >Cloud Source Repositories&lt;/a> 、&lt;a href="https://pin-yi.me/blog/gcp/compute-engine/" >Compute Engine&lt;/a>、&lt;a href="https://pin-yi.me/blog/gcp/container-registry/" >Container Registry&lt;/a>，我們需要先透過 GitLab 將程式鏡像到 Cloud Source Repositories，再透過 Cloud Build 觸發將 GitLab 上面的 Dockerfile 建置到 Container Registry 中，再部署到 Compute Engine VM 上。大家可以參考流程圖，會更清楚今天的流程！那我們就開始囉 🥸&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/1.webp"
 alt="流程圖" width="1200">&lt;figcaption>
 &lt;p>流程圖&lt;/p>
 &lt;/figcaption>
@@ -1601,7 +1601,7 @@ alt="流程圖" width="1200">&lt;figcaption>
 &lt;li>輸入觸發條件的名稱，事件可以設定我們要怎麼進行觸發，我們這邊先選擇 &lt;strong>推送至分支的版本&lt;/strong> 來觸發，在來源選擇上上篇建立好的 Cloud Source Repositories 存放區，分支版本我們先使用預設的 master，也就是推程式到 master 他會就觸發 Cloud Build：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/2.webp"
 alt="建立觸發條件 1" width="900">&lt;figcaption>
 &lt;p>建立觸發條件 1&lt;/p>
 &lt;/figcaption>
@@ -1611,7 +1611,7 @@ alt="建立觸發條件 1" width="900">&lt;figcaption>
 &lt;li>設定類型我們選擇 Cloud Build 設定檔，他也是 Cloud Build 專用的設定檔，後面會帶大家寫一份 Cloud Build，位置當然是使用我們 Cloud Source Repositories 存放區，以及可以依照專案來修改 cloudbuild.yaml 放在專案的哪裡，最後都沒問題，就按下建立：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/3.webp"
 alt="建立觸發條件 2" width="900">&lt;figcaption>
 &lt;p>建立觸發條件 2&lt;/p>
 &lt;/figcaption>
@@ -1771,7 +1771,7 @@ title="Copy code"
 &lt;li>當我們推送後，我們先檢查 Cloud Source Repositories 是否有成功從 GitLab 鏡像過來：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/4.webp"
 alt="Cloud Source Repositories" width="700">&lt;figcaption>
 &lt;p>Cloud Source Repositories&lt;/p>
 &lt;/figcaption>
@@ -1781,7 +1781,7 @@ alt="Cloud Source Repositories" width="700">&lt;figcaption>
 &lt;li>檢查看看 Container Registry 是否多了名為 &lt;code>ian-test&lt;/code> 的資料夾，且裡面有一個 tag 為 &lt;code>ian-nginx-test&lt;/code> 的映像檔：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/5.webp"
 alt="Container Registry" width="1000">&lt;figcaption>
 &lt;p>Container Registry&lt;/p>
 &lt;/figcaption>
@@ -1791,7 +1791,7 @@ alt="Container Registry" width="1000">&lt;figcaption>
 &lt;li>檢查一下 Cloud Build 的觸發條件是不是在運作，最後成功可以看到類似下方圖片內容：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/6.webp"
 alt="Cloud Build 的觸發條件" width="1200">&lt;figcaption>
 &lt;p>Cloud Build 的觸發條件&lt;/p>
 &lt;/figcaption>
@@ -1801,7 +1801,7 @@ alt="Cloud Build 的觸發條件" width="1200">&lt;figcaption>
 &lt;li>檢查 Compute Engine 的 VM 是否有成功被建立：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/7.webp"
 alt="Compute Engine" width="1200">&lt;figcaption>
 &lt;p>Compute Engine&lt;/p>
 &lt;/figcaption>
@@ -1811,7 +1811,7 @@ alt="Compute Engine" width="1200">&lt;figcaption>
 &lt;li>最後就是測試這個映像檔案，是不是我們所 Build 的，測試方法很簡單，我們剛剛在 Dockerfile 有複製我們自己寫的 index.html 檔案，去蓋掉原本 nginx 的預設檔，所以我們可以瀏覽上面圖片的外部 IP，就可以看到我們所改的頁面囉！&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/8.webp"
 alt="測試用 index.html" width="700">&lt;figcaption>
 &lt;p>測試用 index.html&lt;/p>
 &lt;/figcaption>
@@ -1822,7 +1822,7 @@ alt="測試用 index.html" width="700">&lt;figcaption>
 &lt;p>Day27 - 用 Cloud Build 實作 CI 部分：&lt;a href="https://ithelp.ithome.com.tw/articles/10224727" target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10224727&lt;/a>&lt;/p></description></item><item><title>Google Cloud Platform (GCP) - Cloud Source Repositories</title><link>https://pin-yi.me/blog/gcp/cloud-source-repositories/</link><pubDate>Sun, 03 Jul 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/cloud-source-repositories/</guid><description>
 &lt;p>跟大家介紹一下今天的主題 Cloud Source Repositories，聽到 Source Repositories 是不是感覺跟什麼東西很像呀，沒錯，就跟我們的 GitHub or GitLab 一樣，可以用來存放我們的程式碼的儲存庫，我們來看看官方怎麼介紹他吧：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/1.webp"
 alt="官方介紹 Cloud Source Repositories" width="800">&lt;figcaption>
 &lt;p>官方介紹 Cloud Source Repositories&lt;/p>
 &lt;/figcaption>
@@ -1834,7 +1834,7 @@ alt="官方介紹 Cloud Source Repositories" width="800">&lt;figcaption>
 &lt;a href="#cloud-source-repositories-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>建立 GitLab Project&lt;span class="hx-absolute -hx-mt-20" id="建立-gitlab-project">&lt;/span>
 &lt;a href="#%e5%bb%ba%e7%ab%8b-gitlab-project" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>首先，我們用 GitLab 來當示範，如何透過鏡像 (mirror) 到 Cloud Source Repositories 上面，我們先在 GitLab 上建立一個 Project：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/2.webp"
 alt="建立 GitLab Project" width="800">&lt;figcaption>
 &lt;p>建立 GitLab Project&lt;/p>
 &lt;/figcaption>
@@ -1902,13 +1902,13 @@ title="Copy code"
 &lt;li>完成後，開啟 GCP 檢查一下是否有建立成功～點擊左側 menu &amp;gt; &lt;strong>Source Repositories&lt;/strong>，&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/3.webp"
 alt="開啟 Source Repositories" width="800">&lt;figcaption>
 &lt;p>開啟 Source Repositories&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/4.webp"
 alt="成功建立 Source Repositories" width="1000">&lt;figcaption>
 &lt;p>成功建立 Source Repositories&lt;/p>
 &lt;/figcaption>
@@ -1919,7 +1919,7 @@ alt="成功建立 Source Repositories" width="1000">&lt;figcaption>
 &lt;li>我們要在這一步來設定鏡像 (mirror)，首先我們看剛剛上面建立好的 Source Repositories，其中有一個&lt;strong>手動產生的憑證&lt;/strong>，點選 &lt;strong>產生及儲存 Git 憑證&lt;/strong>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/5.webp"
 alt="產生及儲存 Git 憑證" width="650">&lt;figcaption>
 &lt;p>產生及儲存 Git 憑證&lt;/p>
 &lt;/figcaption>
@@ -1929,7 +1929,7 @@ alt="產生及儲存 Git 憑證" width="650">&lt;figcaption>
 &lt;li>點完後會需要先登入你的 GCP 帳號，登入完後會出現以下內容：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/6.webp"
 alt="Configure Git" width="800">&lt;figcaption>
 &lt;p>Configure Git&lt;/p>
 &lt;/figcaption>
@@ -1939,7 +1939,7 @@ alt="Configure Git" width="800">&lt;figcaption>
 &lt;li>接著把藍色框框內的輸入到終端機內&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/7.webp"
 alt="Configure Git" width="800">&lt;figcaption>
 &lt;p>Configure Git&lt;/p>
 &lt;/figcaption>
@@ -1960,7 +1960,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/8.webp"
 alt="生成憑證密碼" width="800">&lt;figcaption>
 &lt;p>生成憑證密碼&lt;/p>
 &lt;/figcaption>
@@ -1982,7 +1982,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/9.webp"
 alt="用戶名存儲在 CSR_USER 環境變量中" width="800">&lt;figcaption>
 &lt;p>用戶名存儲在 CSR_USER 環境變量中&lt;/p>
 &lt;/figcaption>
@@ -2003,7 +2003,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/10.webp"
 alt="將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中" width="800">&lt;figcaption>
 &lt;p>將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中&lt;/p>
 &lt;/figcaption>
@@ -2024,7 +2024,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/11.webp"
 alt="存儲庫的 URL（包括用戶名）印到終端機上" width="800">&lt;figcaption>
 &lt;p>存儲庫的 URL（包括用戶名）印到終端機上&lt;/p>
 &lt;/figcaption>
@@ -2037,7 +2037,7 @@ alt="存儲庫的 URL（包括用戶名）印到終端機上" width="800">&lt;fi
 &lt;li>先從右側 muen &amp;gt; 選擇 &lt;strong>Settings&lt;/strong> &amp;gt; 點選 &lt;strong>Repository&lt;/strong>，找到 &lt;strong>Mirroring repositories&lt;/strong>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/12.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/12.webp"
 alt="GitLab Mirror 設定鏡像" width="800">&lt;figcaption>
 &lt;p>GitLab Mirror 設定鏡像&lt;/p>
 &lt;/figcaption>
@@ -2047,7 +2047,7 @@ alt="GitLab Mirror 設定鏡像" width="800">&lt;figcaption>
 &lt;li>將剛剛拿到的 URL 以及密碼各別輸入 Git repository URL 以及 Password，記得要選擇 Mirror direction，因為我們是要將 gitlab 的鏡像到 GCP 的 Cloud Source Repositories，所以我們要選擇 &lt;strong>PUSH&lt;/strong>，最後按下 &lt;strong>Mirror repository&lt;/strong>：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/13.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/13.webp"
 alt="GitLab Mirror 設定鏡像" width="800">&lt;figcaption>
 &lt;p>GitLab Mirror 設定鏡像&lt;/p>
 &lt;/figcaption>
@@ -2055,7 +2055,7 @@ alt="GitLab Mirror 設定鏡像" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>如果沒有跳出錯誤，基本上是沒有問題了！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/14.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/14.webp"
 alt="GitLab Mirror 檢查" width="800">&lt;figcaption>
 &lt;p>GitLab Mirror 檢查&lt;/p>
 &lt;/figcaption>
@@ -2065,7 +2065,7 @@ alt="GitLab Mirror 檢查" width="800">&lt;figcaption>
 &lt;li>就可以試著在 gitlab 上面推程式，看看有沒有跑到 Cloud Source Repositories 上面囉！&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/15.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/15.webp"
 alt="GitLab 推程式測試" width="800">&lt;figcaption>
 &lt;p>GitLab 推程式測試&lt;/p>
 &lt;/figcaption>
@@ -2114,7 +2114,7 @@ alt="Container Registry 掃描流程圖" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>我們就簡單說明要怎麼查看我們的 Container Registry，點選則左側的 menu &amp;gt; 選擇 &lt;strong>Container Registry&lt;/strong> &amp;gt; 點擊 &lt;strong>映像檔&lt;/strong>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/2.webp"
 alt="Container Registry" width="350">&lt;figcaption>
 &lt;p>Container Registry&lt;/p>
 &lt;/figcaption>
@@ -2122,7 +2122,7 @@ alt="Container Registry" width="350">&lt;figcaption>
 &lt;br>
 &lt;p>一開始可能沒有任何的資料夾，之後當我們 Build 時，可以新增特定的資料夾來放我們的映像檔，可以參考下方圖片：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/3.webp"
 alt="Container Registry 資料夾" width="750">&lt;figcaption>
 &lt;p>Container Registry 資料夾&lt;/p>
 &lt;/figcaption>
@@ -2130,7 +2130,7 @@ alt="Container Registry 資料夾" width="750">&lt;figcaption>
 &lt;br>
 &lt;p>進入該資料夾後，就可以看到裡面的映像檔案：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/4.webp"
 alt="Container Registry 映像檔" width="1000">&lt;figcaption>
 &lt;p>Container Registry 映像檔&lt;/p>
 &lt;/figcaption>
@@ -2159,7 +2159,7 @@ alt="Container Registry 映像檔" width="1000">&lt;figcaption>
 &lt;h2>Google Compute Engine 測試&lt;span class="hx-absolute -hx-mt-20" id="google-compute-engine-測試">&lt;/span>
 &lt;a href="#google-compute-engine-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們使用 cloudskillsboost 提供的 &lt;a href="https://www.cloudskillsboost.google/focuses/3563?locale=zh_TW&amp;amp;parent=catalog" target="_blank" rel="noopener">Creating a Virtual Machine &lt;/a> 來做練習，打開後，請先登入自己的 Google 帳號，接著點選左上角的 &lt;strong>Start Lab&lt;/strong>，會跳出與下面圖片類似的內容：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/1.webp"
 alt="測試用的帳號密碼" width="250">&lt;figcaption>
 &lt;p>測試用的帳號密碼&lt;/p>
 &lt;/figcaption>
@@ -2172,7 +2172,7 @@ alt="測試用的帳號密碼" width="250">&lt;figcaption>
 &lt;li>登入成功會進入 GCP 主控台，點選左側的 menu &amp;gt; &lt;strong>Compute Engine&lt;/strong> &amp;gt; &lt;strong>VM Instances&lt;/strong>，可以參考下方圖片&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/2.webp"
 alt="新增 VM 實例" width="600">&lt;figcaption>
 &lt;p>新增 VM 實例&lt;/p>
 &lt;/figcaption>
@@ -2228,13 +2228,13 @@ alt="新增 VM 實例" width="600">&lt;figcaption>
 &lt;/tbody>
 &lt;/table>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/3.webp"
 alt="VM 實例 (Name、Region、Zone、Series)" width="800">&lt;figcaption>
 &lt;p>VM 實例 (Name、Region、Zone、Series)&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/4.webp"
 alt="VM 實例 (Machine type、Boot disk、Firewall)" width="800">&lt;figcaption>
 &lt;p>VM 實例 (Machine type、Boot disk、Firewall)&lt;/p>
 &lt;/figcaption>
@@ -2244,7 +2244,7 @@ alt="VM 實例 (Machine type、Boot disk、Firewall)" width="800">&lt;figcaption
 &lt;li>新增完後，大約需要等待一分鐘，新的虛擬機就會列在 &lt;strong>VM Instances&lt;/strong> 頁面上。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/5.webp"
 alt="VM 實例" width="1000">&lt;figcaption>
 &lt;p>VM 實例&lt;/p>
 &lt;/figcaption>
@@ -2282,7 +2282,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/6.webp"
 alt="更新操作系統" width="1000">&lt;figcaption>
 &lt;p>更新操作系統&lt;/p>
 &lt;/figcaption>
@@ -2303,7 +2303,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/7.webp"
 alt="安裝 NGINX" width="1000">&lt;figcaption>
 &lt;p>安裝 NGINX&lt;/p>
 &lt;/figcaption>
@@ -2324,7 +2324,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/8.webp"
 alt="確認 NGINX 是否運行" width="1000">&lt;figcaption>
 &lt;p>確認 NGINX 是否運行&lt;/p>
 &lt;/figcaption>
@@ -2334,7 +2334,7 @@ alt="確認 NGINX 是否運行" width="1000">&lt;figcaption>
 &lt;li>可以打開瀏覽器瀏覽 &lt;code>http://外部 IP/&lt;/code> 或是使用 &lt;code>curl 外部IP&lt;/code>，外部 IP 會在跟剛剛 VM 實例的 External IP 欄位呦～&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/9.webp"
 alt="curl 外部 IP" width="700">&lt;figcaption>
 &lt;p>curl 外部 IP&lt;/p>
 &lt;/figcaption>
@@ -2344,7 +2344,7 @@ alt="curl 外部 IP" width="700">&lt;figcaption>
 &lt;li>完成後，記得可以點選 &lt;strong>Check my progress&lt;/strong> 來檢查進度吧！&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/10.webp"
 alt="Check my progress" width="500">&lt;figcaption>
 &lt;p>Check my progress&lt;/p>
 &lt;/figcaption>
@@ -2369,7 +2369,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>就會跳出以下圖片的內容，過一陣子去查看 VM Instances 也可以看到我們所新增的虛擬機實例歐～&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/compute-engine/11.webp"
 alt="Check my progress" width="1000">&lt;figcaption>
 &lt;p>Check my progress&lt;/p>
 &lt;/figcaption>
@@ -2385,7 +2385,7 @@ alt="Check my progress" width="1000">&lt;figcaption>
 &lt;h2>IAM 的工作原理&lt;span class="hx-absolute -hx-mt-20" id="iam-的工作原理">&lt;/span>
 &lt;a href="#iam-%e7%9a%84%e5%b7%a5%e4%bd%9c%e5%8e%9f%e7%90%86" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們先來了解一下 IAM 的工作原理，藉由 IAM，我們可以定義誰 (哪一個身份) 對哪些資源有哪種的訪問權限 (角色) 來管理訪問權限控制。什麼是資源？例如， Compute Engine 虛擬機 (GCE)、Google Kubernetes Engine (GKE) 集群和 Cloud Storage 存儲分區都是 Google Cloud 資源，我們用於整理資源的組織或資料夾、項目等也都是資源&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/logo.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/logo.webp"
 alt="GCP IAM Logo" width="150">&lt;figcaption>
 &lt;p>GCP IAM Logo&lt;/p>
 &lt;/figcaption>
@@ -2401,7 +2401,7 @@ alt="GCP IAM Logo" width="150">&lt;figcaption>
 &lt;br>
 &lt;p>IAM 不會直接向用戶授與資源的訪問權限，而是將權限分成多個角色，然後將這些角色授與經過身份驗證的主帳號。(以前 IAM 會將主帳號稱為成員，目前部分 API 仍然使用此術語。)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/iam-overview-basics.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/iam-overview-basics.webp"
 alt="IAM 中的權限管理" width="800">&lt;figcaption>
 &lt;p>IAM 中的權限管理&lt;/p>
 &lt;/figcaption>
@@ -2418,7 +2418,7 @@ alt="IAM 中的權限管理" width="800">&lt;figcaption>
 &lt;a href="#iam-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>接下來，我們來測試看看 IAM 實際設定以及用途吧！ 我們會使用 GCP 所以提供的 &lt;a href="https://www.cloudskillsboost.google/focuses/551?parent=catalog" target="_blank" rel="noopener">[Qwiklabs] Cloud IAM：Qwik Start&lt;/a> 來進行測試，之後的步驟會跟 Cloud IAM：Qwik Start 內容一樣，所以大家可以邊操作邊參考呦！那我們開始囉 🙃&lt;/p>
 &lt;p>進入網頁後，請先登入自己的 Google 帳號，接著點選左上角的 &lt;strong>Start Lab&lt;/strong>，會跳出與下面圖片類似的內容：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/1.webp"
 alt="測試用的帳號密碼" width="250">&lt;figcaption>
 &lt;p>測試用的帳號密碼&lt;/p>
 &lt;/figcaption>
@@ -2432,7 +2432,7 @@ alt="測試用的帳號密碼" width="250">&lt;figcaption>
 &lt;li>登入成功會進入 GCP 主控台，會跳出下方圖片內容，國家選擇台灣，點選同意 &lt;strong>Terms of Service&lt;/strong>，最後按 &lt;strong>AGREE AND CONTINUE&lt;/strong>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/2.webp"
 alt="登入 Username 1 GCP 主控台" width="1000">&lt;figcaption>
 &lt;p>登入 Username 1 GCP 主控台&lt;/p>
 &lt;/figcaption>
@@ -2451,7 +2451,7 @@ alt="登入 Username 1 GCP 主控台" width="1000">&lt;figcaption>
 &lt;li>我們選擇 &lt;strong>Base&lt;/strong>，右側有 4 種角色，分別是瀏覽者 (Browser)、編輯者 (Editor)、所有者 (Owner)、檢視者 (Viewer)，詳細區別請看下面 👇👇&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/3.webp"
 alt="ADD IAM" width="1000">&lt;figcaption>
 &lt;p>ADD IAM&lt;/p>
 &lt;/figcaption>
@@ -2495,7 +2495,7 @@ alt="ADD IAM" width="1000">&lt;figcaption>
 &lt;h3>切換到 Username2 IAM 主控台&lt;span class="hx-absolute -hx-mt-20" id="切換到-username2-iam-主控台">&lt;/span>
 &lt;a href="#%e5%88%87%e6%8f%9b%e5%88%b0-username2-iam-%e4%b8%bb%e6%8e%a7%e5%8f%b0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們可以在表格裡面收尋 Username1 跟 Username2 的帳號，可以看一下他們授與的角色是否與上面說的一致，大概可以參考以下圖片：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/4.webp"
 alt="Username1 跟 Username2 權限" width="1000">&lt;figcaption>
 &lt;p>Username1 跟 Username2 權限&lt;/p>
 &lt;/figcaption>
@@ -2503,7 +2503,7 @@ alt="Username1 跟 Username2 權限" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>在 Username2 因為是 Viewer 權限，所以點擊上面的 &lt;strong>+ ADD&lt;/strong>，不會反應，會跳出以下照片內容：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/5.webp"
 alt="Username2 權限不足" width="500">&lt;figcaption>
 &lt;p>Username2 權限不足&lt;/p>
 &lt;/figcaption>
@@ -2517,7 +2517,7 @@ alt="Username2 權限不足" width="500">&lt;figcaption>
 &lt;li>最後點選 &lt;strong>CREATE&lt;/strong>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/6.webp"
 alt="Create a bucket" width="1000">&lt;figcaption>
 &lt;p>Create a bucket&lt;/p>
 &lt;/figcaption>
@@ -2529,7 +2529,7 @@ alt="Create a bucket" width="1000">&lt;figcaption>
 &lt;li>上傳一個 txt 檔案，可以先取名為 &lt;code>sample.txt&lt;/code>，或是上傳後使用最後三個小點圖案內的 Rename 來修改名稱&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/7.webp"
 alt="Upload sample.txt fiiles" width="1200">&lt;figcaption>
 &lt;p>Upload sample.txt fiiles&lt;/p>
 &lt;/figcaption>
@@ -2547,7 +2547,7 @@ alt="Upload sample.txt fiiles" width="1200">&lt;figcaption>
 &lt;li>我們再次切回 Username 主控台，選擇 menu &amp;gt; &lt;strong>IAM 與管理&lt;/strong> ，找到 Username2 旁邊的鉛筆圖案&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/8.webp"
 alt="修改 Username2 權限" width="1200">&lt;figcaption>
 &lt;p>修改 Username2 權限&lt;/p>
 &lt;/figcaption>
@@ -2557,7 +2557,7 @@ alt="修改 Username2 權限" width="1200">&lt;figcaption>
 &lt;li>點擊角色名稱的垃圾桶來移除 Username2 的檢視者權限，點擊 &lt;strong>Save&lt;/strong>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/9.webp"
 alt="移除 Username2 權限" width="550">&lt;figcaption>
 &lt;p>移除 Username2 權限&lt;/p>
 &lt;/figcaption>
@@ -2575,7 +2575,7 @@ alt="移除 Username2 權限" width="550">&lt;figcaption>
 &lt;li>會發現出現以下的錯誤訊息，代表我們移除權限成功&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/10.webp"
 alt="Username2 沒有權限" width="800">&lt;figcaption>
 &lt;p>Username2 沒有權限&lt;/p>
 &lt;/figcaption>
@@ -2586,13 +2586,13 @@ alt="Username2 沒有權限" width="800">&lt;figcaption>
 &lt;li>我們再次切換到 Username1 主控版，選擇 menu &amp;gt; &amp;gt; &lt;strong>IAM 與管理&lt;/strong>，點選上方 &lt;strong>+ ADD&lt;/strong>，在 New principals 上貼上 Username2 的帳號，Role 選擇 &lt;strong>Storage Object Viewer&lt;/strong>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/11.webp"
 alt="新增 Username2 角色" width="600">&lt;figcaption>
 &lt;p>新增 Username2 角色&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/12.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/12.webp"
 alt="查看 Username2 權限" width="1000">&lt;figcaption>
 &lt;p>查看 Username2 權限&lt;/p>
 &lt;/figcaption>
@@ -2604,7 +2604,7 @@ alt="查看 Username2 權限" width="1000">&lt;figcaption>
 &lt;li>打開右上角的 Activate Cloud Shell 命令列工具 ，如下圖：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/13.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/13.webp"
 alt="開啟 Activate Cloud Shell 命令列工具" width="1200">&lt;figcaption>
 &lt;p>開啟 Activate Cloud Shell 命令列工具&lt;/p>
 &lt;/figcaption>
@@ -2627,7 +2627,7 @@ title="Copy code"
 &lt;br>
 &lt;p>如果出現跟下方圖片一樣，就代表我們設定成功囉！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/14.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/14.webp"
 alt="Username2 Storage Object Viewer 權限" width="600">&lt;figcaption>
 &lt;p>Username2 Storage Object Viewer 權限&lt;/p>
 &lt;/figcaption>
@@ -2635,7 +2635,7 @@ alt="Username2 Storage Object Viewer 權限" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>最後的最後，如果有跟我們一步一步來的朋友，在 &lt;a href="https://www.cloudskillsboost.google/focuses/551?parent=catalog" target="_blank" rel="noopener">[Qwiklabs] Cloud IAM：Qwik Start&lt;/a> 頁面中，應該會看到一個叫 Check my progress 的按鈕，做完每一步驟，都可以點一下，他會自動去判斷你是否有完成這項動作歐！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/15.png"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/iam/15.webp"
 alt="Check my progress" width="600">&lt;figcaption>
 &lt;p>Check my progress&lt;/p>
 &lt;/figcaption>
