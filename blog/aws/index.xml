@@ -11,7 +11,7 @@
 &lt;br>
 &lt;p>那我們就直接來看要如何設定，首先我先在 632xxxxx1762 (後面簡稱 A 帳號) 放了一個 ECR，名稱是：&lt;code>audit/sa/cicd-runner&lt;/code>，Tag 是 &lt;code>latest&lt;/code>，它會是我之後想要共享給其他 AWS Account 使用的 ECR。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ecr-permissions/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ecr-permissions/1.webp"
 alt="A 帳號 ECR" width="650">&lt;figcaption>
 &lt;p>A 帳號 ECR&lt;/p>
 &lt;/figcaption>
@@ -44,7 +44,7 @@ title="Copy code"
 &lt;br>
 &lt;p>觀察一下 Pod 的狀態，會發現 Pod 會出現 &lt;code>ErrImagePull&lt;/code> 的錯誤，這是因為 B 帳號沒有權限去拉取 A 帳號的 ECR Image。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ecr-permissions/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ecr-permissions/2.webp"
 alt="Pod ErrImagePull 錯誤" width="1200">&lt;figcaption>
 &lt;p>Pod ErrImagePull 錯誤&lt;/p>
 &lt;/figcaption>
@@ -109,7 +109,7 @@ title="Copy code"
 &lt;/div>
 &lt;br>
 &lt;p>就可以發現 Pod 成功啟動了，並且可以正常拉取 A 帳號的 ECR Image。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ecr-permissions/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ecr-permissions/3.webp"
 alt="Pod 成功啟動" width="1200">&lt;figcaption>
 &lt;p>Pod 成功啟動&lt;/p>
 &lt;/figcaption>
@@ -119,7 +119,7 @@ alt="Pod 成功啟動" width="1200">&lt;figcaption>
 &lt;p>此文章是我在公司擔任架構師，在負責稽核資源使用時，有發現有同仁的 AWS EKS node_group 資源開太大 (開發環境使用 2xlarge 機器規格)，所以先手動從 UI 去調整 Node 的機器規格 (RD 未提供建立時的 Terraform 版控)，從 m7g.2xlarge 先改成 m7g.large。&lt;/p>
 &lt;p>但由於同仁是用 Terraform 來建置整座 EKS + node_group，有 Launch Templates 以及 Auto Scaling Groups 等元件，能調整機器規格的只能從 Launch Templates 以及 Auto Scaling Groups，但 Launch Templates 沒辦法編輯 (只能新增、刪除)，當時為了想要先快速的減少花費，因此先直接調整 Auto Scaling Groups 的 Node 機器規格。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/1.webp"
 alt="Auto Scaling Groups 設定" width="650">&lt;figcaption>
 &lt;p>Auto Scaling Groups 設定&lt;/p>
 &lt;/figcaption>
@@ -156,7 +156,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/2.webp"
 alt="（輸出範例，非當下 Subnet）" width="550">&lt;figcaption>
 &lt;p>（輸出範例，非當下 Subnet）&lt;/p>
 &lt;/figcaption>
@@ -164,7 +164,7 @@ alt="（輸出範例，非當下 Subnet）" width="550">&lt;figcaption>
 &lt;br>
 &lt;p>也可以從 UI 去看每一個 Subnet 的可用 IP 是多少：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/3.webp"
 alt="AWS UI 查看 Subnet 可用 IP" width="750">&lt;figcaption>
 &lt;p>AWS UI 查看 Subnet 可用 IP&lt;/p>
 &lt;/figcaption>
@@ -222,7 +222,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>&lt;a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/AvailableIpPerENI.html" target="_blank" rel="noopener">Maximum IP addresses per network interface&lt;/a>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/4.webp"
 alt="每個機器規格對應的 IP 以及 MaxENI" width="400">&lt;figcaption>
 &lt;p>每個機器規格對應的 IP 以及 MaxENI&lt;/p>
 &lt;/figcaption>
@@ -237,7 +237,7 @@ alt="每個機器規格對應的 IP 以及 MaxENI" width="400">&lt;figcaption>
 (但這個計算最高只會顯示 110，詳細可以看文件)&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/5.webp"
 alt="使用腳本計算不同 CNI version 以及機器的可用 Pod 數量" width="650">&lt;figcaption>
 &lt;p>使用腳本計算不同 CNI version 以及機器的可用 Pod 數量&lt;/p>
 &lt;/figcaption>
@@ -245,7 +245,7 @@ alt="使用腳本計算不同 CNI version 以及機器的可用 Pod 數量" widt
 &lt;br>
 &lt;p>但是，如果是超過 Node 的 Pod 最高限制，應該也會是顯示以下的無法調度錯誤，而不是 &lt;code>aws-cni failed to assign an IP address to container&lt;/code> 錯誤：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/6.webp"
 alt="無法調度的範例錯誤" width="650">&lt;figcaption>
 &lt;p>無法調度的範例錯誤&lt;/p>
 &lt;/figcaption>
@@ -274,7 +274,7 @@ title="Copy code"
 &lt;li>有問題的 Node&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/7.webp"
 alt="有問題的 Node Allocatable-Pods" width="700">&lt;figcaption>
 &lt;p>有問題的 Node Allocatable-Pods&lt;/p>
 &lt;/figcaption>
@@ -284,7 +284,7 @@ alt="有問題的 Node Allocatable-Pods" width="700">&lt;figcaption>
 &lt;li>正常的 Node&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cni-failed-to-assign-ip/8.webp"
 alt="正常的 Node Allocatable-Pods" width="700">&lt;figcaption>
 &lt;p>正常的 Node Allocatable-Pods&lt;/p>
 &lt;/figcaption>
@@ -310,7 +310,7 @@ alt="正常的 Node Allocatable-Pods" width="700">&lt;figcaption>
 &lt;p>建立額外的 VPC 還有很多優勢，例如：可以按照部門或業務隔離工作負載，可以設定更多的安全性控制 (Network ACL &amp;amp; Security Group)，可以設定更多詳細的網路設定。&lt;/p>
 &lt;p>還可以幫 VPC 建立 VPN 連線，將地端網路與 AWS VPC 連接起來，變成一個 Hybrid Cloud 架構。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/vpc-introduce/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/vpc-introduce/1.webp"
 alt="VPC 架構 什麼是 Amazon VPC" width="550">&lt;figcaption>
 &lt;p>VPC 架構 &lt;a href="https://docs.aws.amazon.com/zh_tw/vpc/latest/userguide/what-is-amazon-vpc.html" target="_blank" rel="noopener">什麼是 Amazon VPC&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -326,7 +326,7 @@ alt="VPC 架構 什麼是 Amazon VPC" width="550">&lt;figcaption>
 &lt;h2>VPC 元件&lt;span class="hx-absolute -hx-mt-20" id="vpc-元件">&lt;/span>
 &lt;a href="#vpc-%e5%85%83%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>從上面可以簡單知道 VPC 架構，那我們來詳細看一下每個組成的元件是什麼，先看細圖：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/vpc-introduce/2.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/vpc-introduce/2.webp"
 alt="VPC Data Flow Virtual Private Cloud" width="800">&lt;figcaption>
 &lt;p>VPC Data Flow &lt;a href="https://salmankhalid85.wordpress.com/aws/virtual-private-cloud/" target="_blank" rel="noopener">Virtual Private Cloud&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -449,7 +449,7 @@ alt="VPC Data Flow Virtual Private Cloud" width="800">&lt;figcaption>
 &lt;p>【技術分享】Internet Gateway 和 NAT Gateway 的區別在哪? 功能分別是什麼?：&lt;a href="https://medium.com/@awseducate.cloudambassador/%E6%8A%80%E8%A1%93%E5%88%86%E4%BA%AB-internet-gateway-%E5%92%8C-nat-gateway-%E7%9A%84%E5%8D%80%E5%88%A5%E5%9C%A8%E5%93%AA-%E5%8A%9F%E8%83%BD%E5%88%86%E5%88%A5%E6%98%AF%E4%BB%80%E9%BA%BC-b676f62b1d31" target="_blank" rel="noopener">https://medium.com/@awseducate.cloudambassador/%E6%8A%80%E8%A1%93%E5%88%86%E4%BA%AB-internet-gateway-%E5%92%8C-nat-gateway-%E7%9A%84%E5%8D%80%E5%88%A5%E5%9C%A8%E5%93%AA-%E5%8A%9F%E8%83%BD%E5%88%86%E5%88%A5%E6%98%AF%E4%BB%80%E9%BA%BC-b676f62b1d31&lt;/a>&lt;/p></description></item><item><title>如何使用 MFA Token 驗證 AWS CLI</title><link>https://pin-yi.me/blog/aws/cli-mfa/</link><pubDate>Thu, 01 Aug 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/cli-mfa/</guid><description>
 &lt;p>會有這一篇文章也是跟 &lt;a href="../iam-introduce" >Identity and Access Management (IAM) 介紹&lt;/a> 一樣，在測試 eksctl 建立 EKS 時，發現一直噴錯，說我沒有權限，但我去看我的 IAM Policy 也有加上對應 action 以及 resource，但還是不行，後來發現 &lt;code>cloudformation:*&lt;/code> 這個 action 所在的 Policy 有加上 Condition MFA 驗證的條件，所以就來寫一篇如何使用 MFA Token 驗證 AWS CLI 的文章。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/1.webp"
 alt="沒有權限噴錯QQ" width="850">&lt;figcaption>
 &lt;p>沒有權限噴錯QQ&lt;/p>
 &lt;/figcaption>
@@ -461,7 +461,7 @@ alt="沒有權限噴錯QQ" width="850">&lt;figcaption>
 &lt;li>default-policy：放一些個人基本的 IAM 權限&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/2.webp"
 alt="default-policy" width="650">&lt;figcaption>
 &lt;p>default-policy&lt;/p>
 &lt;/figcaption>
@@ -471,7 +471,7 @@ alt="default-policy" width="650">&lt;figcaption>
 &lt;li>poc-general-policy：放一些我在測試的 PoC 的 IAM 權限，&lt;b>但是仔細看這邊有 Condition MFA 驗證的條件&lt;/b>。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/3.webp"
 alt="poc-general-policy" width="650">&lt;figcaption>
 &lt;p>poc-general-policy&lt;/p>
 &lt;/figcaption>
@@ -481,7 +481,7 @@ alt="poc-general-policy" width="650">&lt;figcaption>
 &lt;li>ReadOnlyAccess：預設的 ReadOnlyAccess 權限。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/4.webp"
 alt="ReadOnlyAccess" width="650">&lt;figcaption>
 &lt;p>ReadOnlyAccess&lt;/p>
 &lt;/figcaption>
@@ -504,7 +504,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>將 &lt;code>{USER_NAME}&lt;/code> 換成自己的使用者名稱，如果有設定 MFA，就會顯示出來，如下：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/5.webp"
 alt="顯示 mfa 裝置" width="650">&lt;figcaption>
 &lt;p>顯示 mfa 裝置&lt;/p>
 &lt;/figcaption>
@@ -569,7 +569,7 @@ title="Copy code"
 &lt;br>
 &lt;p>所以當你要使用 MFA Token 的時候，只要在指令後面加上 &lt;code>--profile mfa&lt;/code> 就可以了。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/6.webp"
 alt="就可以用 poc-general-policy 的 action 囉～" width="850">&lt;figcaption>
 &lt;p>就可以用 poc-general-policy 的 action 囉～&lt;/p>
 &lt;/figcaption>
@@ -648,7 +648,7 @@ title="Copy code"
 &lt;br>
 &lt;p>只需要執行 &lt;code>./aws_mfa.sh {USER_NAME} {MFA_CODE}&lt;/code> 就可以了，程式會自動幫你取得 Token 並寫入 &lt;code>~/.aws/credentials&lt;/code> 檔案中。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/cli-mfa/7.webp"
 alt="執行腳本" width="700">&lt;figcaption>
 &lt;p>執行腳本&lt;/p>
 &lt;/figcaption>
@@ -701,7 +701,7 @@ title="Copy code"
 &lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/eks-introduce/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/eks-introduce/1.webp"
 alt="在雲端中執行 Amazon EKS 的基本流程" width="750">&lt;figcaption>
 &lt;p>在雲端中執行 Amazon EKS 的基本流程&lt;/p>
 &lt;/figcaption>
@@ -733,7 +733,7 @@ title="Copy code"
 &lt;p>提醒：使用這個指令建置，會需要有 CloudFormation 的相關權限，如果缺少權限，會顯示以下錯誤：&lt;/p>
 &lt;p>( CloudFormation 是將基礎設施視為程式碼的服務，可以對 AWS 和第三方資源進行建模、佈建和管理，詳細一樣請參考後續文章 &lt;a href="../cloudformation-introduce" >AWS CloudFormation 介紹&lt;/a>。)
 &lt;br>&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/eks-introduce/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/eks-introduce/2.webp"
 alt="使用 eksctl 建立 EKS 缺少 CloudFormation 權限" width="850">&lt;figcaption>
 &lt;p>使用 eksctl 建立 EKS 缺少 CloudFormation 權限&lt;/p>
 &lt;/figcaption>
@@ -780,7 +780,7 @@ alt="使用 eksctl 建立 EKS 缺少 CloudFormation 權限" width="850">&lt;figc
 &lt;h2>Policy 結構&lt;span class="hx-absolute -hx-mt-20" id="policy-結構">&lt;/span>
 &lt;a href="#policy-%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>IAM Policy 會是一個 JSON 格式的文件，可以定義了一個或多個 Action，這個 Policy 會告訴 AWS 這個身份可以對哪些資源 (Resource) 進行哪些操作 (Action)。而這個 Policy 會被附加到一個身份上，這個身份可以是一個 IAM User、IAM Group 或 IAM Role。然後一個 User、Group 或 Role 可以有多個 Policy。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/1.webp"
 alt="我目前公司帳號的 Policy" width="650">&lt;figcaption>
 &lt;p>我目前公司帳號的 Policy&lt;/p>
 &lt;/figcaption>
@@ -879,7 +879,7 @@ title="Copy code"
 &lt;h4>如何方便的撰寫 Action？&lt;span class="hx-absolute -hx-mt-20" id="如何方便的撰寫-action">&lt;/span>
 &lt;a href="#%e5%a6%82%e4%bd%95%e6%96%b9%e4%be%bf%e7%9a%84%e6%92%b0%e5%af%ab-action" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果，我們需要新增服務很多的 Action，我們只能一個一個輸入嗎？像下面這張圖片，我們可以看到 Elastic Kubernetes Service (EKS) 的 Action 部分清單，假如我們要這些全部的動作，需要把每個都寫出來嗎？&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/2.webp"
 alt="Elastic Kubernetes Service Action 部分清單 Amazon Elastic Kubernetes Service 定義的動作" width="650">&lt;figcaption>
 &lt;p>Elastic Kubernetes Service Action 部分清單 &lt;a href="https://docs.aws.amazon.com/zh_tw/service-authorization/latest/reference/list_amazonelastickubernetesservice.html" target="_blank" rel="noopener">Amazon Elastic Kubernetes Service 定義的動作&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -956,7 +956,7 @@ title="Copy code"
 &lt;h4>service (服務)&lt;span class="hx-absolute -hx-mt-20" id="service-服務">&lt;/span>
 &lt;a href="#service-%e6%9c%8d%e5%8b%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>它是 AWS 的服務名稱字首，例如：s3、iam、ec2、eks 等等。不清楚每個服務的字首可以參考 &lt;a href="https://docs.aws.amazon.com/zh_tw/service-authorization/latest/reference/reference_policies_actions-resources-contextkeys.html" target="_blank" rel="noopener">AWS 服務的動作、資源和條件索引鍵&lt;/a>，假設我們點進去看到 Amazon S3 的服務名稱字首是 &lt;code>s3&lt;/code>。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/3.webp"
 alt="Amazon S3 的動作、資源和條件索引鍵" width="650">&lt;figcaption>
 &lt;p>&lt;a href="https://docs.aws.amazon.com/zh_tw/service-authorization/latest/reference/list_amazons3.html" target="_blank" rel="noopener">Amazon S3 的動作、資源和條件索引鍵&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -1137,7 +1137,7 @@ title="Copy code"
 &lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/4.webp"
 alt="Actions defined by Amazon Elastic Kubernetes Service" width="950">&lt;figcaption>
 &lt;p>&lt;a href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelastickubernetesservice.html#amazonelastickubernetesservice-actions-as-permissions" target="_blank" rel="noopener">Actions defined by Amazon Elastic Kubernetes Service&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -1147,7 +1147,7 @@ alt="Actions defined by Amazon Elastic Kubernetes Service" width="950">&lt;figca
 &lt;br>
 &lt;p>另外，想要知道 Condition Key 對應到哪個資料類型，也可以參考 Condition keys for Amazon Elastic Kubernetes Service，後面會告訴你哪個 Condition Key 的資料類型，方便找到對應的 Condition Operator。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/5.webp"
 alt="Condition keys for Amazon Elastic Kubernetes Service" width="950">&lt;figcaption>
 &lt;p>&lt;a href="https://docs.aws.amazon.com/service-authorization/latest/reference/list_amazonelastickubernetesservice.html#amazonelastickubernetesservice-policy-keys" target="_blank" rel="noopener">Condition keys for Amazon Elastic Kubernetes Service&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -1212,7 +1212,7 @@ title="Copy code"
 &lt;/div>
 &lt;br>
 &lt;p>官方的圖片解釋的更清楚：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/6.png" width="400">
+&lt;figure>&lt;img src="https://pin-yi.me/aws/iam-introduce/6.webp" width="400">
 &lt;/figure>
 &lt;br>
 &lt;ol start="3">
@@ -1422,7 +1422,7 @@ title="Copy code"
 &lt;li>TagUser：是用來幫金鑰加上標籤值，方便管理。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/1.webp"
 alt="沒有權限會噴錯" width="850">&lt;figcaption>
 &lt;p>沒有權限會噴錯&lt;/p>
 &lt;/figcaption>
@@ -1433,7 +1433,7 @@ alt="沒有權限會噴錯" width="850">&lt;figcaption>
 &lt;li>點擊右上角的 AWS 使用者名稱，並點選「安全憑證」。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/2.webp"
 alt="在 AWS 的管理控制台，選擇安全憑證" width="750">&lt;figcaption>
 &lt;p>在 AWS 的管理控制台，選擇安全憑證&lt;/p>
 &lt;/figcaption>
@@ -1443,7 +1443,7 @@ alt="在 AWS 的管理控制台，選擇安全憑證" width="750">&lt;figcaption
 &lt;li>找到存取金鑰，並點選「建立存取金鑰」，如果有建立過，也會顯示在這邊。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/3.webp"
 alt="建立存取金鑰" width="1100">&lt;figcaption>
 &lt;p>建立存取金鑰&lt;/p>
 &lt;/figcaption>
@@ -1453,7 +1453,7 @@ alt="建立存取金鑰" width="1100">&lt;figcaption>
 &lt;li>點選「命令列介面 (CLI)」，下方要勾選一個確認建議的選項，最後按下一步。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/4.webp"
 alt="選擇命令列介面 (CLI)案例" width="900">&lt;figcaption>
 &lt;p>選擇命令列介面 (CLI)案例&lt;/p>
 &lt;/figcaption>
@@ -1463,7 +1463,7 @@ alt="選擇命令列介面 (CLI)案例" width="900">&lt;figcaption>
 &lt;li>可以選擇是否要建立標籤，如果要建立，需要前面提到的 &lt;code>iam:TagUser&lt;/code> IAM 權限。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/5.webp"
 alt="設定描述標籤" width="950">&lt;figcaption>
 &lt;p>設定描述標籤&lt;/p>
 &lt;/figcaption>
@@ -1473,7 +1473,7 @@ alt="設定描述標籤" width="950">&lt;figcaption>
 &lt;li>就可以拿到存取金鑰 (Access Key ID) 以及私密存取金鑰 (Secret Access Key)，&lt;b>要記住私密存取金鑰，只有這個畫面可以拿到，如果沒有儲存，就需要重新建立一個新的金鑰&lt;/b>。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cli/6.webp"
 alt="產生完金鑰" width="1100">&lt;figcaption>
 &lt;p>產生完金鑰&lt;/p>
 &lt;/figcaption>
