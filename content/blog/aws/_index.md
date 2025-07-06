@@ -12,6 +12,18 @@ sidebar:
 
 {{< cards >}}
 {{< card
+  link="aws-assuming-roles-tool-introduce"
+  title="手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！"
+  subtitle="發布日期：2025-07-06"
+  image="/aws/aws-assuming-roles-tool-introduce/cover.webp"
+>}}
+{{< card
+  link="aws-sso-profile-introduce"
+  title="AWS SSO Profile 設定介紹"
+  subtitle="發布日期：2025-07-06"
+  image="/aws/aws-sso-profile-introduce/cover.webp"
+>}}
+{{< card
   link="aws-ecr-permissions"
   title="如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account EKS 使用"
   subtitle="發布日期：2025-06-25"
