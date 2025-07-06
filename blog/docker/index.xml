@@ -3,7 +3,7 @@
 身為一個 SRE 除了收集日誌外，還需要監控每個系統或是服務的運行狀況，並在警急情況即時通知相關人員作為應對處理。所以透過好的 Monitoring/Alert System 了解目前 Server 硬體系統狀況和整個 Service 的網路狀況是一件非常重要的一件事情。&lt;/p>
 &lt;p>在眾多的 Monitor 工具中，&lt;a href="https://prometheus.io/" target="_blank" rel="noopener">Prometheus&lt;/a> 是一個很方便且完善的監控預警框架 TSDB (Time Series Database) 時間序列資料庫，可以快速且容易的建立不同維度的指標 (Metrics) 和整合不同的 Alert Tool 以及資訊視覺化圖表的監控工具並提供自帶的 &lt;a href="https://prometheus.io/docs/prometheus/latest/querying/basics/" target="_blank" rel="noopener">PromQL&lt;/a> 進行 query 查詢。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/prometheus.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/prometheus.webp"
 alt="Prometheus Logo" width="400">&lt;figcaption>
 &lt;p>Prometheus Logo&lt;/p>
 &lt;/figcaption>
@@ -11,7 +11,7 @@ alt="Prometheus Logo" width="400">&lt;figcaption>
 &lt;br>
 &lt;p>我們先來看看 Prometheus 的架構圖，可以更了解 Prometheus 整體的定位：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/prometheus-architecture.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/prometheus-architecture.webp"
 alt="Prometheus 架構圖 (圖片來源：使用 Prometheus 和 Grafana 打造 Flask Web App 監控預警系統)" width="800">&lt;figcaption>
 &lt;p>Prometheus 架構圖 (圖片來源：&lt;a href="https://blog.techbridge.cc/2019/08/26/how-to-use-prometheus-grafana-in-flask-app/" target="_blank" rel="noopener">使用 Prometheus 和 Grafana 打造 Flask Web App 監控預警系統&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -37,7 +37,7 @@ alt="Prometheus 架構圖 (圖片來源：使用 Prometheus 和 Grafana 打造 F
 &lt;br>
 &lt;p>Prometheus 可能在儲存擴展上比不上其他 Time Series Database，但在整合各種第三方的 Data Source 上十分方便，且在支援雲端服務和 Container 容器相關工具也十分友好。但在圖片的表現上就相較於單薄，所以會搭配我們接下來要介紹的 Grafanac 精美儀表板工具來進行資訊視覺化和圖表的呈現。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/grafana.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/grafana.webp"
 alt="Grafana Logo" width="400">&lt;figcaption>
 &lt;p>Grafana Logo&lt;/p>
 &lt;/figcaption>
@@ -253,7 +253,7 @@ title="Copy code"
 &lt;h3>執行/測試&lt;span class="hx-absolute -hx-mt-20" id="執行測試">&lt;/span>
 &lt;a href="#%e5%9f%b7%e8%a1%8c%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當我們都寫好設定檔後，在專案目錄下，也就是有 Docker-compose 路徑下，使用 &lt;code>docker-compose up -d&lt;/code> 來啟動容器：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_1.webp"
 alt="啟動容器" width="600">&lt;figcaption>
 &lt;p>啟動容器&lt;/p>
 &lt;/figcaption>
@@ -261,7 +261,7 @@ alt="啟動容器" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>接下來我們依序檢查容器是否都有正常運作，開啟瀏覽器瀏覽 &lt;code>http://localhost:9113/metrics&lt;/code> 查看是否有出現跟下面圖片差不多的內容：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_2.webp"
 alt="檢查 Nginx 以及 nginx-prometheus-exporter 的設定" width="800">&lt;figcaption>
 &lt;p>檢查 Nginx 以及 nginx-prometheus-exporter 的設定&lt;/p>
 &lt;/figcaption>
@@ -271,7 +271,7 @@ alt="檢查 Nginx 以及 nginx-prometheus-exporter 的設定" width="800">&lt;fi
 &lt;h4>Prometheus&lt;span class="hx-absolute -hx-mt-20" id="prometheus">&lt;/span>
 &lt;a href="#prometheus" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>接著我們瀏覽 &lt;code>http://localhost:9090/targets&lt;/code>，看看我們的 Prometheus 有沒有設定正確，抓到我們設定好的 targets：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_3.webp"
 alt="檢查 Prometheus targets" width="1200">&lt;figcaption>
 &lt;p>檢查 Prometheus targets&lt;/p>
 &lt;/figcaption>
@@ -280,7 +280,7 @@ alt="檢查 Prometheus targets" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>那要怎麼測試才知道有抓到資料呢？我們可以先用 Prometheus 內建的圖形化介面來檢查，在瀏覽器瀏覽 &lt;code>http://localhost:9090/graph&lt;/code> 就可以看到下面的畫面：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_4.webp"
 alt="Prometheus 內建的圖形化介面" width="800">&lt;figcaption>
 &lt;p>Prometheus 內建的圖形化介面&lt;/p>
 &lt;/figcaption>
@@ -288,7 +288,7 @@ alt="Prometheus 內建的圖形化介面" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>我們選擇 &lt;code>Graph&lt;/code>，並在上面的搜尋欄，打上 &lt;code>nginx_connections_accepted&lt;/code> 按下右邊的 Execute 就會產生一張圖表，圖表裡面只有一條綠色的線，那這個線是什麼呢？它就是我們剛剛在 &lt;code>http://localhost:9113/metrics&lt;/code> 其中一個指標 (Metrics)，它代表 Nginx 接受用戶端連接總數量：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_5.webp"
 alt="Prometheus 內建的圖形化介面" width="1200">&lt;figcaption>
 &lt;p>Prometheus 內建的圖形化介面&lt;/p>
 &lt;/figcaption>
@@ -297,7 +297,7 @@ alt="Prometheus 內建的圖形化介面" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>為了更明顯的看出變化，這時候就要使用我所寫好的 &lt;code>test.sh&lt;/code> 腳本，使用 &lt;code>sh test.sh&lt;/code> 來執行，再回來觀察圖型是否變化：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_6.webp"
 alt="經過測試顯示的 nginx_connections_accepted 圖形" width="800">&lt;figcaption>
 &lt;p>經過測試顯示的 nginx_connections_accepted 圖形&lt;/p>
 &lt;/figcaption>
@@ -307,7 +307,7 @@ alt="經過測試顯示的 nginx_connections_accepted 圖形" width="800">&lt;fi
 &lt;h4>Grafana&lt;span class="hx-absolute -hx-mt-20" id="grafana">&lt;/span>
 &lt;a href="#grafana" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們的儀表板，瀏覽器瀏覽 &lt;code>http://localhost:3000/&lt;/code> ，可以看到一個登入頁面：帳號是 &lt;code>admin&lt;/code>，密碼是我們在環境變數中所設定的 &lt;code>pass&lt;/code>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_7.webp"
 alt="Grafana 登入頁面" width="1000">&lt;figcaption>
 &lt;p>Grafana 登入頁面&lt;/p>
 &lt;/figcaption>
@@ -315,7 +315,7 @@ alt="Grafana 登入頁面" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>登入後我們看到首頁，選擇 &lt;strong>Add your first data source&lt;/strong> 來新增資料來源：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_8.webp"
 alt="Grafana 新增資料來源" width="1000">&lt;figcaption>
 &lt;p>Grafana 新增資料來源&lt;/p>
 &lt;/figcaption>
@@ -323,7 +323,7 @@ alt="Grafana 新增資料來源" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>選擇第一個 &lt;strong>Prometheus&lt;/strong>，我們到 HTTP 的 URL 設定 &lt;code>http://prometheus:9090&lt;/code> 其他設定在我們測試環境中，不需要去調整，滑到最下面按下 &lt;strong>Save &amp;amp; test&lt;/strong>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_9.webp"
 alt="Grafana 新增資料來源" width="1000">&lt;figcaption>
 &lt;p>Grafana 新增資料來源&lt;/p>
 &lt;/figcaption>
@@ -334,7 +334,7 @@ alt="Grafana 新增資料來源" width="1000">&lt;figcaption>
 &lt;p>我們要使用的儀表板是別人已經做好的 &lt;a href="https://grafana.com/grafana/dashboards/12708" target="_blank" rel="noopener">NGINX exporter&lt;/a>，它的 ID 是 &lt;code>12708&lt;/code>，把 ID 貼入後，按下 &lt;strong>Load&lt;/strong>，就會有 NGINX exporter 的基本資訊，我們在最下面的 Prometheus 選擇我們要使用的 data source，就是我們剛剛先設定好的
 &lt;strong>Prometheus&lt;/strong>，最後按下 &lt;strong>Import&lt;/strong>，就完成拉。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_10.webp"
 alt="Grafana 載入別人做好的儀表板" width="800">&lt;figcaption>
 &lt;p>Grafana 載入別人做好的儀表板&lt;/p>
 &lt;/figcaption>
@@ -342,7 +342,7 @@ alt="Grafana 載入別人做好的儀表板" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>如果設定都沒有錯誤的話，應該可以看到下面這個畫面，最上面是監測 Nginx 服務的狀態，以及下方有不同的指標在顯示：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_11.webp"
 alt="Grafana 儀表板" width="1000">&lt;figcaption>
 &lt;p>Grafana 儀表板&lt;/p>
 &lt;/figcaption>
@@ -350,7 +350,7 @@ alt="Grafana 儀表板" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>接下來我們一次用 &lt;code>test.sh&lt;/code> 來測試一下是否有成功抓到資料：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_12.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_12.webp"
 alt="測試 Grafana 是否成功抓到資料" width="1000">&lt;figcaption>
 &lt;p>測試 Grafana 是否成功抓到資料&lt;/p>
 &lt;/figcaption>
@@ -359,7 +359,7 @@ alt="測試 Grafana 是否成功抓到資料" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>此外也可以將 Nginx 服務暫停，看看儀表板上方的 NGINX Status 狀態是否改變：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_13.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_13.webp"
 alt="測試暫停 Nginx 查看 Grafana 儀表板 NGINX Status" width="1000">&lt;figcaption>
 &lt;p>測試暫停 Nginx 查看 Grafana 儀表板 NGINX Status&lt;/p>
 &lt;/figcaption>
@@ -375,13 +375,13 @@ alt="測試暫停 Nginx 查看 Grafana 儀表板 NGINX Status" width="1000">&lt;
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_1.webp"
 alt="Alerting 設定" width="1000">&lt;figcaption>
 &lt;p>Alerting 設定&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_2.webp"
 alt="Alerting 測試結果" width="600">&lt;figcaption>
 &lt;p>Alerting 測試結果&lt;/p>
 &lt;/figcaption>
@@ -390,7 +390,7 @@ alt="Alerting 測試結果" width="600">&lt;figcaption>
 &lt;p>接著我們來設計一個屬於我們的控制板 (Panel)，順便幫他加上 Alerting，稍後也用 &lt;code>test.sh&lt;/code>，看看他會不會自動發出提醒到 Telegram Bot 😬&lt;/p>
 &lt;p>首先點選左側欄位的 &lt;strong>＋&lt;/strong> 符號 &amp;gt; 裡面的 Create，在選擇 &lt;strong>Add an empty panel&lt;/strong>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_3.webp"
 alt="Create Panel" width="800">&lt;figcaption>
 &lt;p>Create Panel&lt;/p>
 &lt;/figcaption>
@@ -398,7 +398,7 @@ alt="Create Panel" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>再 Query 的 &lt;strong>A&lt;/strong> Metrics browser 輸入 &lt;code>nginx_connections_accepted&lt;/code> 一樣來取得 Nginx 接受用戶端連接總數量的圖表，到右上角選擇 &lt;strong>Last 5 minutes&lt;/strong>，旁邊的圖型我們選擇 &lt;em>Graph (old)&lt;/em>，下面的 Title 可以修改一下這個圖表的名稱，最後按下 &lt;strong>Save&lt;/strong>，就可以看到我們建好一個控制板囉 🥳&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_4.webp"
 alt="設定 Panel" width="1200">&lt;figcaption>
 &lt;p>設定 Panel&lt;/p>
 &lt;/figcaption>
@@ -406,7 +406,7 @@ alt="設定 Panel" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>接著我們來設定 Alert，可以看到剛剛在 &lt;strong>Query&lt;/strong> 旁邊有一個 Alert，點進去後按 &lt;strong>Create Alert&lt;/strong>，我們先修改 Evaluate every 後面的 For 改為 &lt;code>1m&lt;/code> (代表當數值超過我們所設定的閥值後，狀態會從 OK 變成 Pending，這時候還不會發送警報，會等待我們現在設定的 &lt;code>1m&lt;/code> 分鐘後，情況還是沒有好轉，才會發送通知)，再 Conditions 後面欄位加入 10 (我們所設定的閥值，代表 &lt;code>nginx_connections_accepted&lt;/code> 超過 10 就會進入 Pending 狀態)，往下滑 Notifications 的 &lt;strong>Send to&lt;/strong> 選擇我們上面所建立的 channels 名稱，按下 &lt;strong>Save&lt;/strong>。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_5.webp"
 alt="設定好 Alert 的控制板" width="800">&lt;figcaption>
 &lt;p>設定好 Alert 的控制板&lt;/p>
 &lt;/figcaption>
@@ -414,7 +414,7 @@ alt="設定好 Alert 的控制板" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>接著執行 &lt;code>test.sh&lt;/code> 兩次，讓 &lt;code>nginx_connections_accepted&lt;/code> 超過我們所設定的閥值，可以看到控制板超過 10 以上變成紅色：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_6.webp"
 alt="超過閥值，控制板變成紅色" width="800">&lt;figcaption>
 &lt;p>超過閥值，控制板變成紅色&lt;/p>
 &lt;/figcaption>
@@ -422,7 +422,7 @@ alt="超過閥值，控制板變成紅色" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>接著等待幾分鐘後，狀態會從 OK 綠色變成黃色的 Pending，最後轉成紅色的 Alert，這時候 Telegram 就會收到通知囉 ❌&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_7.webp"
 alt="自動發送通知到 Telegram Bot，並附上控制板圖片" width="500">&lt;figcaption>
 &lt;p>自動發送通知到 Telegram Bot，並附上控制板圖片&lt;/p>
 &lt;/figcaption>
@@ -490,7 +490,7 @@ alt="自動發送通知到 Telegram Bot，並附上控制板圖片" width="500">
 &lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-docker-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Docker 是一種軟體平台，它可以快速建立、測試和部署應用程式。為什麼可以快速建立呢？因為 Docker 會將軟體封裝到名為『容器』的標準單位。其中會包含程式庫、系統工具、程式碼、執行軟體所需的所有項目。
 剛剛有提到容器 (Container)，是一種虛擬化技術，它高效率虛擬化及易於遷移和擴展的特性，非常適合現代雲端的開發及佈署。那 Container 與傳統的虛擬機有什麼差別呢？我們來看看下面這張圖&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container-vm.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container-vm.webp"
 alt="Container 與 VM 的差異" width="700">&lt;figcaption>
 &lt;p>Container 與 VM 的差異&lt;/p>
 &lt;/figcaption>
@@ -619,7 +619,7 @@ title="Copy code"
 &lt;br>
 &lt;p>如果有標記 &lt;code>Official Image&lt;/code> 就代表是官方釋出的映像檔 ~ 在穩定性以及安全上更有保障，所以大家可以優先下載歐！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/docker-image.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/docker-image.webp"
 alt="Docker hub 下載 Image" width="900">&lt;figcaption>
 &lt;p>Docker hub 下載 Image&lt;/p>
 &lt;/figcaption>
@@ -860,7 +860,7 @@ title="Copy code"
 &lt;br>
 &lt;h3>容器 (Container)&lt;span class="hx-absolute -hx-mt-20" id="容器-container-1">&lt;/span>
 &lt;a href="#%e5%ae%b9%e5%99%a8-container-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們在介紹指令前，先來了解一下 Dockerfile、Docker Image、Docker Container 這三個的關係，可以先參考以下圖片&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container.webp"
 alt="容器 Container 組成" width="300">&lt;figcaption>
 &lt;p>容器 Container 組成&lt;/p>
 &lt;/figcaption>
@@ -962,7 +962,7 @@ title="Copy code"
 &lt;br>
 &lt;p>接著我們測試是否有把桌面 data 資料夾掛到容器的路徑，我們先在 data 新增一個 hello.html ，裡面隨意輸入，瀏覽一下 &lt;code>http://127.0.0.1:7777/hello.html&lt;/code> ，看看是否成功。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container-v.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container-v.webp"
 alt="容器 Container -volume 測試" width="700">&lt;figcaption>
 &lt;p>容器 Container -volume 測試&lt;/p>
 &lt;/figcaption>
@@ -1170,7 +1170,7 @@ title="Copy code"
 &lt;br>
 &lt;p>我們也登入 Docker hub 看一下，是不是真的上傳成功了～&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/repository.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/repository.webp"
 alt="repository" width="1000">&lt;figcaption>
 &lt;p>repository&lt;/p>
 &lt;/figcaption>
@@ -1528,7 +1528,7 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/host.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/host.webp"
 alt="host 網路模式" width="500">&lt;figcaption>
 &lt;p>host 網路模式&lt;/p>
 &lt;/figcaption>
@@ -1549,7 +1549,7 @@ title="Copy code"
 &lt;/div>
 &lt;br>
 &lt;p>docker 會新增一個虛擬網卡作為容器網路對外的出口，預設名稱為 &lt;code>docker0&lt;/code>，docker0 會跟本機的對外網卡(圖中的 &lt;code>eth0&lt;/code> )相連，藉此取得對外連線的能力，也因為每一個容器都會使用一個 veth device 與 docker0 相連，所以也具備對外連線的能力。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/host.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/host.webp"
 alt="bridge 網路模式" width="600">&lt;figcaption>
 &lt;p>bridge 網路模式&lt;/p>
 &lt;/figcaption>
@@ -1557,7 +1557,7 @@ alt="bridge 網路模式" width="600">&lt;figcaption>
 &lt;br>
 &lt;h4>overlay&lt;span class="hx-absolute -hx-mt-20" id="overlay">&lt;/span>
 &lt;a href="#overlay" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>下圖是說明 Host1 實體主機裡面有 Container1，然後 Host2 實體主機裡面有 Container2，可以透過 Docker overlay 模式將 Container1 和 Container2 連接做溝通。另外還需要一個 Consol 來存連線的資料庫，在使用 overlay 時要先在 Docker 做設定，這樣才能存放 overlay 網路模式的連線資訊。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/overlay.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/overlay.webp"
 alt="overlay 網路模式" width="550">&lt;figcaption>
 &lt;p>overlay 網路模式&lt;/p>
 &lt;/figcaption>
@@ -1565,7 +1565,7 @@ alt="overlay 網路模式" width="550">&lt;figcaption>
 &lt;br>
 &lt;h4>macvlan&lt;span class="hx-absolute -hx-mt-20" id="macvlan">&lt;/span>
 &lt;a href="#macvlan" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>macvlan 的原理就是在本機的網卡上虛擬出很多個子網卡，通過不同的 MAC 位置在數據鏈路層進行網路資料的轉發。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/macvlan.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/macvlan.webp"
 alt="macvlan 網路模式" width="450">&lt;figcaption>
 &lt;p>macvlan 網路模式&lt;/p>
 &lt;/figcaption>
@@ -1736,7 +1736,7 @@ title="Copy code"
 &lt;p>最後的環境變數，設定 root 帳號的登入密碼，以及要使用的資料庫、使用者的帳號、使用者的密碼。&lt;/p>
 &lt;br>
 &lt;p>最後在上面的 (&lt;a href="https://github.com/880831ian/docker-compose-php-mysql-nginx" target="_blank" rel="noopener">這邊有放已經寫好的檔案歐&lt;/a>) 裡面還有多一個 docker-volume/html 的資料夾，就是我們剛剛映射到本地端的資料夾，資料夾內已經放有連線測試的檔案，輸入網址 &lt;code>http://127.0.0.1:7777/index.php&lt;/code>，如果開啟後有顯示下方畫面，就代表我們成功用 docker-compose 將 PHP MySQL Nginx 整合再一起囉！&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/localhost-7777.png"
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/localhost-7777.webp"
 alt="測試是否成功用 docker-compose 整合 PHP MySQL Nginx" width="450">&lt;figcaption>
 &lt;p>測試是否成功用 docker-compose 整合 PHP MySQL Nginx&lt;/p>
 &lt;/figcaption>

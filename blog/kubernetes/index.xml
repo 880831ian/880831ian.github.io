@@ -1,7 +1,7 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Kubernetes</title><link>https://pin-yi.me/blog/kubernetes/</link><description>Recent content in Kubernetes on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/kubernetes/index.xml" rel="self" type="application/rss+xml"/><item><title>Kubernetes 開啟 Region 後，如何減少跨 Zone 網路費用</title><link>https://pin-yi.me/blog/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/</link><pubDate>Thu, 15 May 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/</guid><description>
 &lt;p>由於最近公司開始導入 Multi Zone 架構，這時候會出現一個問題，就是明明我是同一個 GKE，但因為有多個 Zone，導致開始會有一些跨 Zone 的網路傳輸費用產生 (每 Gib 會收 0.01 美元)，可以參考下方圖片：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/1.webp"
 alt="跨域費用說明" width="1000">&lt;figcaption>
 &lt;p>跨域費用說明&lt;/p>
 &lt;/figcaption>
@@ -160,7 +160,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/2.webp"
 alt="Pod 所在 Node 以及 Zone" width="850">&lt;figcaption>
 &lt;p>Pod 所在 Node 以及 Zone&lt;/p>
 &lt;/figcaption>
@@ -182,7 +182,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/3.webp"
 alt="Pod 所在 Node 以及 Zone" width="550">&lt;figcaption>
 &lt;p>Pod 所在 Node 以及 Zone&lt;/p>
 &lt;/figcaption>
@@ -223,7 +223,7 @@ alt="Pod 所在 Node 以及 Zone" width="550">&lt;figcaption>
 &lt;p>在 K8s 1.27 以前叫作 Topology Aware Hints，所以縮寫才會是 TAH，邏輯是需要在 Service 的 annotation 加上 &lt;code>service.kubernetes.io/topology-mode: Auto&lt;/code> （1.27 Version），以前版本設定方式會不同。&lt;/p>
 &lt;p>它可以幫助網路流量盡可能的保持在同一個 Zone 裡面，Pod 之前優先使用同 Zone 流量來提高可靠性、性能以及減少成本。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/4.webp"
 alt="設定完成後，會顯示來至 endpoint-slice-controller" width="750">&lt;figcaption>
 &lt;p>設定完成後，會顯示來至 endpoint-slice-controller&lt;/p>
 &lt;/figcaption>
@@ -252,7 +252,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/5.webp"
 alt="測試結果" width="850">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
@@ -274,7 +274,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/6.webp"
 alt="Pod 所在 Node 以及 Zone" width="550">&lt;figcaption>
 &lt;p>Pod 所在 Node 以及 Zone&lt;/p>
 &lt;/figcaption>
@@ -317,7 +317,7 @@ alt="Pod 所在 Node 以及 Zone" width="550">&lt;figcaption>
 &lt;br>
 &lt;p>另外，我們也來測試看看，如果打的過程中，將 nginx-b Zone A nginx-b-795d6c85b8-2q7m2 Pod 給移除，那觀察流量會不會自動轉到 Zone B 呢？！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/7.webp"
 alt="Pod 所在 Node 以及 Zone" width="850">&lt;figcaption>
 &lt;p>Pod 所在 Node 以及 Zone&lt;/p>
 &lt;/figcaption>
@@ -349,7 +349,7 @@ alt="Pod 所在 Node 以及 Zone" width="850">&lt;figcaption>
 &lt;h2>疑問&lt;span class="hx-absolute -hx-mt-20" id="疑問">&lt;/span>
 &lt;a href="#%e7%96%91%e5%95%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我之前ㄧ直以為 Container Log Stdout 不會寫實體檔，後來發現，其實它還是會寫，但當 Node 重啟，或是 Pod 被刪除時，才會移除，要怎麼查看，我們可以進到 GKE or EKS 的 node 機器上，到 &lt;code>/var/log/pods/&lt;/code> 路徑底下，就可以看到運作在該 node 上的 pod，資料夾名稱會是以 &lt;code>{namespace}_{pod name}_xxx&lt;/code> 來命名。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/1.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/1.webp"
 alt="How nodes handle container logs 圖片：Logging Architecture" width="550">&lt;figcaption>
 &lt;p>How nodes handle container logs 圖片：&lt;a href="https://kubernetes.io/docs/concepts/cluster-administration/logging/#how-nodes-handle-container-logs" target="_blank" rel="noopener">Logging Architecture&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -364,7 +364,7 @@ alt="How nodes handle container logs 圖片：Logging Architecture" width="550">
 &lt;/ul>
 &lt;p>首先，我們先連線到 GKE Node 上，進到 &lt;code>/etc/logrotate.d&lt;/code> 底下，可以看到以下圖片的設定，在 GKE 裡面只有一個 Logrotate 設定檔，他會針對整個 &lt;code>/var/log&lt;/code> 底下的 log 檔案做處理。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/2.webp"
 alt="GKE /etc/logrotate.d 底下檔案設定" width="550">&lt;figcaption>
 &lt;p>GKE /etc/logrotate.d 底下檔案設定&lt;/p>
 &lt;/figcaption>
@@ -375,7 +375,7 @@ alt="GKE /etc/logrotate.d 底下檔案設定" width="550">&lt;figcaption>
 &lt;/ul>
 &lt;p>一樣的步驟，進到 &lt;code>/etc/logrotate.d&lt;/code> 底下，可以看到以下圖片的設定，EKS 會有多個 Logrotate 設定檔，但卻沒有對 &lt;code>/var/log/pods&lt;/code> 底下的 log 檔案做處理，所以 EKS 需要額外去寫 DameonSet 來處理 &lt;code>/var/log/pods&lt;/code> 底下的 log 檔案回收嗎？&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/3.webp"
 alt="EKS /etc/logrotate.d 底下檔案設定" width="500">&lt;figcaption>
 &lt;p>EKS /etc/logrotate.d 底下檔案設定&lt;/p>
 &lt;/figcaption>
@@ -398,7 +398,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>就可以看到底下兩個設定值：（圖片上面是 EKS，下面是 GKE）&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/4.webp"
 alt="查看 containerLogMaxSize 跟 containerLogMaxFiles 當前設定值" width="750">&lt;figcaption>
 &lt;p>查看 containerLogMaxSize 跟 containerLogMaxFiles 當前設定值&lt;/p>
 &lt;/figcaption>
@@ -408,7 +408,7 @@ alt="查看 containerLogMaxSize 跟 containerLogMaxFiles 當前設定值" width=
 &lt;br>
 &lt;p>那我們也直接進到 &lt;code>/var/log/pods&lt;/code> 底下，來查看是否是依照這個規律去運作。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/5.webp"
 alt="進入 /var/log/pods" width="650">&lt;figcaption>
 &lt;p>進入 /var/log/pods&lt;/p>
 &lt;/figcaption>
@@ -420,13 +420,13 @@ alt="進入 /var/log/pods" width="650">&lt;figcaption>
 &lt;li>GKE&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/6.png" width="650">
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/6.webp" width="650">
 &lt;/figure>
 &lt;br>
 &lt;ul>
 &lt;li>EKS&lt;/li>
 &lt;/ul>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/7.png" width="650">
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-node-log-stdout-logrotate/7.webp" width="650">
 &lt;/figure>
 &lt;br>
 &lt;p>可以看到，GKE 跟 EKS 檔案數量都是 5 個，且每個都是小於 10Mi (因為計算誤差，所以有些會顯示 11、12)，所以可以確定是依照 &lt;code>containerLogMaxSize&lt;/code> 跟 &lt;code>containerLogMaxFiles&lt;/code> 在運作的。&lt;/p>
@@ -450,7 +450,7 @@ alt="進入 /var/log/pods" width="650">&lt;figcaption>
 &lt;li>Kubelet 會將 kube-dns svc 的叢集 IP 指派給每個新 Pod 的 &lt;code>/etc/resolv.conf&lt;/code> 名稱伺服器檔案內，以及適當的搜尋設定以允許更短的主機名稱，如下：。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/1.webp"
 alt="可以看到 /etc/resolv.conf 與 kube-dns 的 cluster IP ㄧ致" width="900">&lt;figcaption>
 &lt;p>可以看到 /etc/resolv.conf 與 kube-dns 的 cluster IP ㄧ致&lt;/p>
 &lt;/figcaption>
@@ -490,7 +490,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>pod cluster IP 這邊要將 IP 從 . 的分隔符號換成 -，例如：&lt;code>10-166-65-136.default.pod.cluster.local&lt;/code>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/2.webp"
 alt="可以看到 curl 的 pod cluster IP 與 svc 的 endpoint ㄧ致" width="750">&lt;figcaption>
 &lt;p>可以看到 curl 的 pod cluster IP 與 svc 的 endpoint ㄧ致&lt;/p>
 &lt;/figcaption>
@@ -524,7 +524,7 @@ title="Copy code"
 &lt;br>
 &lt;h2>應用程式 DNS 查詢流程&lt;span class="hx-absolute -hx-mt-20" id="應用程式-dns-查詢流程">&lt;/span>
 &lt;a href="#%e6%87%89%e7%94%a8%e7%a8%8b%e5%bc%8f-dns-%e6%9f%a5%e8%a9%a2%e6%b5%81%e7%a8%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/3.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/3.webp"
 alt="應用程式 DNS 查詢流程 圖片：Connecting the Dots: Understanding How Pods Talk in Kubernetes Networks" width="700">&lt;figcaption>
 &lt;p>應用程式 DNS 查詢流程 圖片：&lt;a href="https://medium.com/@seifeddinerajhi/connecting-the-dots-understanding-how-pods-talk-in-kubernetes-networks-992fa69fbbeb" target="_blank" rel="noopener">Connecting the Dots: Understanding How Pods Talk in Kubernetes Networks&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -541,13 +541,13 @@ alt="應用程式 DNS 查詢流程 圖片：Connecting the Dots: Understanding H
 &lt;h2>概論 (kube-dns)&lt;span class="hx-absolute -hx-mt-20" id="概論-kube-dns">&lt;/span>
 &lt;a href="#%e6%a6%82%e8%ab%96-kube-dns" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>這邊就來說一下目前 GKE 在使用的 kube-dns 架構，主要由這三個 container 組成：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/4.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/4.webp"
 alt="kube-dns 架構 圖片：DNS" width="600">&lt;figcaption>
 &lt;p>kube-dns 架構 圖片：&lt;a href="https://feisky.gitbooks.io/kubernetes/content/components/kube-dns.html" target="_blank" rel="noopener">DNS&lt;/a>&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/5.webp"
 alt="目前 GKE 1.29 kube-dns" width="750">&lt;figcaption>
 &lt;p>目前 GKE 1.29 kube-dns&lt;/p>
 &lt;/figcaption>
@@ -562,7 +562,7 @@ alt="目前 GKE 1.29 kube-dns" width="750">&lt;figcaption>
 &lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/6.webp"
 alt="SkyDNS Metrics Port 以及監聽 10053 Port" width="750">&lt;figcaption>
 &lt;p>SkyDNS Metrics Port 以及監聽 10053 Port&lt;/p>
 &lt;/figcaption>
@@ -580,7 +580,7 @@ alt="SkyDNS Metrics Port 以及監聽 10053 Port" width="750">&lt;figcaption>
 &lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/7.webp"
 alt="sidecar 健康檢查以及監聽 10054 Port" width="750">&lt;figcaption>
 &lt;p>sidecar 健康檢查以及監聽 10054 Port&lt;/p>
 &lt;/figcaption>
@@ -613,7 +613,7 @@ alt="sidecar 健康檢查以及監聽 10054 Port" width="750">&lt;figcaption>
 &lt;li>errors：對 DNS 查詢錯誤進行日誌記錄&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/kube-dns-vs-core-dns/8.webp"
 alt="CoreDNS 使用的 Plugins/架構 圖片：A Brief Look at CoreDNS" width="750">&lt;figcaption>
 &lt;p>CoreDNS 使用的 Plugins/架構 圖片：&lt;a href="https://livewyer.io/blog/2018/05/31/a-brief-look-at-coredns/" target="_blank" rel="noopener">A Brief Look at CoreDNS&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -661,7 +661,7 @@ alt="CoreDNS 使用的 Plugins/架構 圖片：A Brief Look at CoreDNS" width="7
 &lt;a href="#%e8%87%aa%e8%a1%8c%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在等待 Google Support 回覆同時，也先在網路上搜尋出現 &lt;code>cURL error 6: Could not resolve host&lt;/code> 的相關錯誤，主要都是因為 DNS 導致，因此我們也先檢查了一下目前 DNS 的設定。&lt;/p>
 &lt;p>參考了 Google 的 kube-dns 文件後 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache#scaling_up_kube-dns" target="_blank" rel="noopener">Setting up NodeLocal DNSCache/Scaling up kube-dns&lt;/a>，我們嘗試調整 kube-dns-autoscaler configmap 的設定：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/pod-curl-error-6-could-not-resolve-host/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/pod-curl-error-6-could-not-resolve-host/1.webp"
 alt="kube-dns-autoscaler configmap" width="800">&lt;figcaption>
 &lt;p>kube-dns-autoscaler configmap&lt;/p>
 &lt;/figcaption>
@@ -671,7 +671,7 @@ alt="kube-dns-autoscaler configmap" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>Kube-dns 的 Pod 是由 kube-dns-autoscaler 的 configmap 來控制 Pod 數量，如圖：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/pod-curl-error-6-could-not-resolve-host/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/pod-curl-error-6-could-not-resolve-host/2.webp"
 alt="kube-dns-autoscaler configmap" width="700">&lt;figcaption>
 &lt;p>kube-dns-autoscaler configmap&lt;/p>
 &lt;/figcaption>
@@ -863,7 +863,7 @@ title="Copy code"
 &lt;li>當下的 StatefulSet 設定：&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/1.webp"
 alt="StatefulSet 設定" width="800">&lt;figcaption>
 &lt;p>StatefulSet 設定&lt;/p>
 &lt;/figcaption>
@@ -872,7 +872,7 @@ alt="StatefulSet 設定" width="800">&lt;figcaption>
 &lt;li>Pod 狀態：&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/2.webp"
 alt="Pod 狀態" width="800">&lt;figcaption>
 &lt;p>Pod 狀態&lt;/p>
 &lt;/figcaption>
@@ -894,7 +894,7 @@ title="Copy code"
 &lt;br>
 &lt;p>我們先看 StatefulSet 的 yaml 可以看到 Pod replicas 已經改變，也可以看 generation 有更新，代表 StatefulSet 本身有接收到調整設定的請求。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/3.webp"
 alt="下指令調整後的 StatefulSet 設定" width="800">&lt;figcaption>
 &lt;p>下指令調整後的 StatefulSet 設定&lt;/p>
 &lt;/figcaption>
@@ -902,7 +902,7 @@ alt="下指令調整後的 StatefulSet 設定" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>看了一下 Pod 數量，也是一樣卡住，且 Pod 數量也沒有變化。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/4.webp"
 alt="下指令調整後的 Pod 狀態" width="800">&lt;figcaption>
 &lt;p>下指令調整後的 Pod 狀態&lt;/p>
 &lt;/figcaption>
@@ -912,7 +912,7 @@ alt="下指令調整後的 Pod 狀態" width="800">&lt;figcaption>
 &lt;a href="#%e4%bd%bf%e7%94%a8-yaml-%e8%aa%bf%e6%95%b4-pod-%e6%95%b8%e9%87%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們直接調整 StatefulSet yaml 的 Pod 數量，看看會發生什麼事：&lt;/p>
 &lt;p>一樣我們先看 StatefulSet 的 yaml 可以看到 Pod replicas 已經改變(這裡應該切別的 Pod 數量，切回 3 個好像沒有意義 xD)，也可以看 generation 有更新。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/5.webp"
 alt="使用 yaml 調整後的 StatefulSet 設定" width="800">&lt;figcaption>
 &lt;p>使用 yaml 調整後的 StatefulSet 設定&lt;/p>
 &lt;/figcaption>
@@ -920,7 +920,7 @@ alt="使用 yaml 調整後的 StatefulSet 設定" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>看了一下 Pod 數量，也是一樣卡住，且 Pod 數量也沒有變化。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/6.webp"
 alt="使用 yaml 調整後的 Pod 狀態" width="800">&lt;figcaption>
 &lt;p>使用 yaml 調整後的 Pod 狀態&lt;/p>
 &lt;/figcaption>
@@ -934,7 +934,7 @@ alt="使用 yaml 調整後的 Pod 狀態" width="800">&lt;figcaption>
 &lt;li>當下的 StatefulSet 設定：&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/7.webp"
 alt="StatefulSet 設定" width="800">&lt;figcaption>
 &lt;p>StatefulSet 設定&lt;/p>
 &lt;/figcaption>
@@ -943,7 +943,7 @@ alt="StatefulSet 設定" width="800">&lt;figcaption>
 &lt;li>Pod 狀態：&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/8.webp"
 alt="Pod 狀態" width="800">&lt;figcaption>
 &lt;p>Pod 狀態&lt;/p>
 &lt;/figcaption>
@@ -965,7 +965,7 @@ title="Copy code"
 &lt;br>
 &lt;p>我們先看 StatefulSet 的 yaml 可以看到 Pod replicas 已經改變，也可以看 generation 有更新，代表 StatefulSet 本身有接收到調整設定的請求。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/9.webp"
 alt="下指令調整後的 StatefulSet 設定" width="800">&lt;figcaption>
 &lt;p>下指令調整後的 StatefulSet 設定&lt;/p>
 &lt;/figcaption>
@@ -973,7 +973,7 @@ alt="下指令調整後的 StatefulSet 設定" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>看了一下 Pod 數量，就算 my-statefulset-2 卡住，還是可以擴到 5 個 Pod。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/10.webp"
 alt="下指令調整後的 Pod 狀態" width="800">&lt;figcaption>
 &lt;p>下指令調整後的 Pod 狀態&lt;/p>
 &lt;/figcaption>
@@ -983,7 +983,7 @@ alt="下指令調整後的 Pod 狀態" width="800">&lt;figcaption>
 &lt;a href="#%e4%bd%bf%e7%94%a8-yaml-%e8%aa%bf%e6%95%b4-pod-%e6%95%b8%e9%87%8f-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們直接調整 StatefulSet yaml 的 Pod 數量，看看會發生什麼事：&lt;/p>
 &lt;p>一樣我們先看 StatefulSet 的 yaml 可以看到 Pod replicas 已經改變，也可以看 generation 有更新。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/11.webp"
 alt="使用 yaml 調整後的 StatefulSet 設定" width="800">&lt;figcaption>
 &lt;p>使用 yaml 調整後的 StatefulSet 設定&lt;/p>
 &lt;/figcaption>
@@ -991,7 +991,7 @@ alt="使用 yaml 調整後的 StatefulSet 設定" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>看了一下 Pod 數量，也不會管其他 Pod 是否 Ready，一樣可以縮小成 2 個 Pod。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/12.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/12.webp"
 alt="使用 yaml 調整後的 Pod 狀態" width="800">&lt;figcaption>
 &lt;p>使用 yaml 調整後的 Pod 狀態&lt;/p>
 &lt;/figcaption>
@@ -1002,7 +1002,7 @@ alt="使用 yaml 調整後的 Pod 狀態" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>另外，如果想要從 OrderedReady 模式切成 Parallel 模式 (反正過來也是)，必須先將原本的 StatefulSet 給刪除，才可以調整：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/13.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-statefulset-podmanagementpolicy/13.webp"
 alt="OrderedReady 模式切成 Parallel 模式" width="800">&lt;figcaption>
 &lt;p>OrderedReady 模式切成 Parallel 模式&lt;/p>
 &lt;/figcaption>
@@ -1080,7 +1080,7 @@ title="Copy code"
 &lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/pod-veth-name-provided-eth0-already-exists/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/pod-veth-name-provided-eth0-already-exists/1.webp"
 alt="Google Support 回覆" width="800">&lt;figcaption>
 &lt;p>Google Support 回覆&lt;/p>
 &lt;/figcaption>
@@ -1096,7 +1096,7 @@ alt="Google Support 回覆" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>這時候我們就必須使用自定義指標，我們一樣來說說他的工作原理吧：HorizontalPodAutoscaler 是怎麼取得自定義指標，以及是跟誰拿到指標的呢？我們從下圖得知：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/1.webp"
 alt="Kubernetes HPA : ExternalMetrics&amp;#43;Prometheus" width="400">&lt;figcaption>
 &lt;p>&lt;a href="https://blog.kloia.com/kubernetes-hpa-externalmetrics-prometheus-acb1d8a4ed50" target="_blank" rel="noopener">Kubernetes HPA : ExternalMetrics+Prometheus&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -1233,7 +1233,7 @@ title="Copy code"
 &lt;p>我來簡單說明一下，這是一個 Deployment，我們在每一個 Pod 裡面都放 4 個 Container，分別是 &lt;code>php-fpm&lt;/code>、&lt;code>nginx&lt;/code>、&lt;code>phpfpm-exporter&lt;/code>、&lt;code>prometheus-to-sd&lt;/code>&lt;/p>
 &lt;p>php-fpm 就是我們要使用的 php，nginx 會提供 9000 Port 讓 phpfpm-exporter 去抓到目前的 Process 數值，最後丟給 prometheus-to-sd，讓他去通知我們剛剛所安裝的 Adapter，就可以透過 API 讓 HPA 知道！聽不太懂嗎？沒關係，幫大家畫了一張圖，請參考下方圖片：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/2.webp"
 alt="架構圖" width="1200">&lt;figcaption>
 &lt;p>架構圖&lt;/p>
 &lt;/figcaption>
@@ -1363,7 +1363,7 @@ title="Copy code"
 &lt;br>
 &lt;p>我們依序把 Deployment &amp;gt; ConfigMap &amp;gt; HorizontalPodAutoscaler 的 yaml 檔案給 Apply，可以觀察一下 Pod 是否都有正常啟動：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/3.webp"
 alt="Pod 是否正常啟動" width="1200">&lt;figcaption>
 &lt;p>Pod 是否正常啟動&lt;/p>
 &lt;/figcaption>
@@ -1371,7 +1371,7 @@ alt="Pod 是否正常啟動" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>我們到 HorizontalPodAutoscaler 查看我們所設定的 metrics 是否都有抓到目前的值：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/4.webp"
 alt="metrics 是否都有抓到目前的值" width="550">&lt;figcaption>
 &lt;p>metrics 是否都有抓到目前的值&lt;/p>
 &lt;/figcaption>
@@ -1379,7 +1379,7 @@ alt="metrics 是否都有抓到目前的值" width="550">&lt;figcaption>
 &lt;br>
 &lt;p>我們也可以用 Google Cloud Platform 的監控來查看：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/gcp-k8s-hpa-php-custom-metrics/5.webp"
 alt="Google Cloud Platform 的監控" width="1200">&lt;figcaption>
 &lt;p>Google Cloud Platform 的監控&lt;/p>
 &lt;/figcaption>
@@ -1401,7 +1401,7 @@ alt="Google Cloud Platform 的監控" width="1200">&lt;figcaption>
 &lt;br>
 &lt;h3>HPA 是如何工作呢？&lt;span class="hx-absolute -hx-mt-20" id="hpa-是如何工作呢">&lt;/span>
 &lt;a href="#hpa-%e6%98%af%e5%a6%82%e4%bd%95%e5%b7%a5%e4%bd%9c%e5%91%a2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/1.webp"
 alt="HorizontalPodAutoscaler 工作流程圖" width="650">&lt;figcaption>
 &lt;p>HorizontalPodAutoscaler 工作流程圖&lt;/p>
 &lt;/figcaption>
@@ -1444,7 +1444,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/2.webp"
 alt="啟動 Minikube" width="800">&lt;figcaption>
 &lt;p>啟動 Minikube&lt;/p>
 &lt;/figcaption>
@@ -1461,7 +1461,7 @@ alt="啟動 Minikube" width="800">&lt;figcaption>
 &lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/3.webp"
 alt="修改 components.yaml" width="1200">&lt;figcaption>
 &lt;p>修改 components.yaml&lt;/p>
 &lt;/figcaption>
@@ -1471,7 +1471,7 @@ alt="修改 components.yaml" width="1200">&lt;figcaption>
 &lt;li>接著 apply 這個 yaml 檔案：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/4.webp"
 alt="apply components.yaml" width="800">&lt;figcaption>
 &lt;p>apply components.yaml&lt;/p>
 &lt;/figcaption>
@@ -1479,7 +1479,7 @@ alt="apply components.yaml" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>可以檢查一下 deployment.apps/metrics-server 是否有成功建立或是 Pod 是否有問題：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/5.webp"
 alt="檢查 metrics-server 是否有問題" width="1200">&lt;figcaption>
 &lt;p>檢查 metrics-server 是否有問題&lt;/p>
 &lt;/figcaption>
@@ -1490,7 +1490,7 @@ alt="檢查 metrics-server 是否有問題" width="1200">&lt;figcaption>
 &lt;li>接著我們就依照官方的 &lt;a href="https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale-walkthrough/" target="_blank" rel="noopener">HorizontalPodAutoscaler Walkthrough&lt;/a> 的文章開始囉！首先先寫一個 index.php，這個檔案是用於後續測試 HPA 負載使用量的程式：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/6.webp"
 alt="index.php" width="500">&lt;figcaption>
 &lt;p>index.php&lt;/p>
 &lt;/figcaption>
@@ -1500,7 +1500,7 @@ alt="index.php" width="500">&lt;figcaption>
 &lt;li>新增 Dockerfile，我們使用 php:5-apache 的 image，並複製剛剛寫的 index.php 到容器內：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/7.webp"
 alt="Dockerfile" width="500">&lt;figcaption>
 &lt;p>Dockerfile&lt;/p>
 &lt;/figcaption>
@@ -1562,7 +1562,7 @@ title="Copy code"
 &lt;li>最後將 Deployment.yaml 給 apply，檢查一下是否有正常啟動：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/8.webp"
 alt="k8slens 檢查是否正常" width="1200">&lt;figcaption>
 &lt;p>k8slens 檢查是否正常&lt;/p>
 &lt;/figcaption>
@@ -1594,7 +1594,7 @@ title="Copy code"
 &lt;li>查看目前 HPA 使用量，因為我們這個 php-apache 還沒有任何的訪問，所以是 0% / 50% (承上面所說，所以這邊的值是 0 / 100 milli-cores)，後面也可以看到我們所設定最高跟最低的 Pod，以及目前的副本數。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/9.webp"
 alt="查看目前 HPA 使用量" width="700">&lt;figcaption>
 &lt;p>查看目前 HPA 使用量&lt;/p>
 &lt;/figcaption>
@@ -1679,7 +1679,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/10.webp"
 alt="模擬增加負載" width="800">&lt;figcaption>
 &lt;p>模擬增加負載&lt;/p>
 &lt;/figcaption>
@@ -1689,7 +1689,7 @@ alt="模擬增加負載" width="800">&lt;figcaption>
 &lt;li>我們使用 k8slens 觀察，會發現當負載使用量超過我們前面所設定的 50%，也就是 100 milli-cores 時，他就會自動長新的 Pod 出來：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/11.webp"
 alt="HPA 自動長 Pod" width="1100">&lt;figcaption>
 &lt;p>HPA 自動長 Pod&lt;/p>
 &lt;/figcaption>
@@ -1699,7 +1699,7 @@ alt="HPA 自動長 Pod" width="1100">&lt;figcaption>
 &lt;li>我們切回去看觀察 HPA 指令 &lt;code>kubectl get hpa php-apache --watch&lt;/code>：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/12.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/12.webp"
 alt="觀察 HPA" width="800">&lt;figcaption>
 &lt;p>觀察 HPA&lt;/p>
 &lt;/figcaption>
@@ -1718,7 +1718,7 @@ alt="觀察 HPA" width="800">&lt;figcaption>
 &lt;li>根據我們計算出來的副本數，他就會依照計算結果，幫我們自動生成該數量的 Pod，來減緩同一個 Pod 的負載量，接著我們先中斷測試指令，再繼續觀察 HPA ：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/13.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/13.webp"
 alt="觀察 HPA" width="700">&lt;figcaption>
 &lt;p>觀察 HPA&lt;/p>
 &lt;/figcaption>
@@ -1726,7 +1726,7 @@ alt="觀察 HPA" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>可以發現因為我們將測試指令中斷後，負載使用量會慢慢降低，但負載降低後，副本數不會馬上變回去，因為怕如果又有大量的使用量會導致 Pod 來不及長出來，所以預設是 &lt;code>5 分鐘 (--horizontal-pod-autoscaler-downscale-stabilization)&lt;/code> 才會減至原來的 Pod 數量&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/14.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-hpa/14.webp"
 alt="Pod 自動減少" width="1100">&lt;figcaption>
 &lt;p>Pod 自動減少&lt;/p>
 &lt;/figcaption>
@@ -1749,7 +1749,7 @@ alt="Pod 自動減少" width="1100">&lt;figcaption>
 &lt;br>
 &lt;h2>Kubernetes 元件白話文&lt;span class="hx-absolute -hx-mt-20" id="kubernetes-元件白話文">&lt;/span>
 &lt;a href="#kubernetes-%e5%85%83%e4%bb%b6%e7%99%bd%e8%a9%b1%e6%96%87" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-plain/1.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-plain/1.webp"
 alt="大型社區示意圖 (圖片來源：蘋果地產)" width="550">&lt;figcaption>
 &lt;p>大型社區示意圖 (圖片來源：&lt;a href="https://tw.feature.appledaily.com/house/news/article/205878" target="_blank" rel="noopener">蘋果地產&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -1982,7 +1982,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>我們這次直接查看 minikube dashboard：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/service.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/service.webp"
 alt="elasticsearch service" width="1200">&lt;figcaption>
 &lt;p>elasticsearch service&lt;/p>
 &lt;/figcaption>
@@ -2153,7 +2153,7 @@ title="Copy code"
 &lt;br>
 &lt;p>我們可以查看 minikube dashboard：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/statefulset.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/statefulset.webp"
 alt="elasticsearch statefulset" width="1200">&lt;figcaption>
 &lt;p>elasticsearch statefulset&lt;/p>
 &lt;/figcaption>
@@ -2267,7 +2267,7 @@ title="Copy code"
 &lt;br>
 &lt;p>一樣我們用 minikube dashboard 來查看是否部署成功：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/kibana-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/kibana-1.webp"
 alt="kibana Deployments" width="1200">&lt;figcaption>
 &lt;p>kibana Deployments&lt;/p>
 &lt;/figcaption>
@@ -2292,7 +2292,7 @@ title="Copy code"
 &lt;br>
 &lt;p>開啟瀏覽器瀏覽 &lt;code>http://localhost:5601&lt;/code>，如果可以進入 Kibana，就代表成功將 Kibana 部署到 Kubernetes 叢集中：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/kibana-2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/kibana-2.webp"
 alt="kibana Deployments" width="1200">&lt;figcaption>
 &lt;p>kibana Deployments&lt;/p>
 &lt;/figcaption>
@@ -2500,7 +2500,7 @@ title="Copy code"
 &lt;br>
 &lt;p>一樣我們用 minikube dashboard 來查看是否部署成功：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/Daemonset.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/Daemonset.webp"
 alt="fluentd DaemonSet" width="1200">&lt;figcaption>
 &lt;p>fluentd DaemonSet&lt;/p>
 &lt;/figcaption>
@@ -2525,7 +2525,7 @@ title="Copy code"
 &lt;br>
 &lt;p>開啟瀏覽器瀏覽 &lt;code>http://localhost:5601&lt;/code>，點選 Management &amp;gt; Stack Management：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/fluentd-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/fluentd-1.webp"
 alt="fluentd 設定" width="1200">&lt;figcaption>
 &lt;p>fluentd 設定&lt;/p>
 &lt;/figcaption>
@@ -2533,7 +2533,7 @@ alt="fluentd 設定" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>點選 Kibana &amp;gt; Data Views，會看到跳出一個視窗，有一個按鈕寫 Create data view：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/fluentd-2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/fluentd-2.webp"
 alt="fluentd 設定" width="1200">&lt;figcaption>
 &lt;p>fluentd 設定&lt;/p>
 &lt;/figcaption>
@@ -2541,7 +2541,7 @@ alt="fluentd 設定" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>Name 輸入 &lt;code>logstash*&lt;/code> ，並選擇 &lt;code>@timestamp&lt;/code> 來用時間過濾日誌，最後按下 Create date view：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/fluentd-3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/fluentd-3.webp"
 alt="fluentd 設定" width="1200">&lt;figcaption>
 &lt;p>fluentd 設定&lt;/p>
 &lt;/figcaption>
@@ -2549,7 +2549,7 @@ alt="fluentd 設定" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>設定好 logstash* 的 Data views，再點選左邊欄位的 Discover：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/fluentd-4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/fluentd-4.webp"
 alt="fluentd 設定" width="1200">&lt;figcaption>
 &lt;p>fluentd 設定&lt;/p>
 &lt;/figcaption>
@@ -2557,7 +2557,7 @@ alt="fluentd 設定" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>就可以看到顯示容器的 log 日誌拉！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/log.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-efk/log.webp"
 alt="顯示容器 log" width="1200">&lt;figcaption>
 &lt;p>顯示容器 log&lt;/p>
 &lt;/figcaption>
@@ -2612,7 +2612,7 @@ title="Copy code"
 &lt;h3>LoadBalancer&lt;span class="hx-absolute -hx-mt-20" id="loadbalancer">&lt;/span>
 &lt;a href="#loadbalancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>這個屬性是強化版的 NodePort，除了 NodePort 可以讓外部連線的優點以外，同時也建立負載平衡的機制來分散流量，很可惜 LoadBalaner 只提供雲端服務，例如：GCP、AWS 等等都有支援，目前 minikube 要使用 LoadBalancer 需要先啟動 &lt;code>tunnel&lt;/code> 才能做使用。&lt;code>tunnel&lt;/code> 是什麼呢？我們後面會說明！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service.webp"
 alt="k8s service 流程圖 Kubernetes 那些事 — Service 篇" width="300">&lt;figcaption>
 &lt;p>k8s service 流程圖 &lt;a href="https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-service-%E7%AF%87-d19d4c6e945f" target="_blank" rel="noopener">Kubernetes 那些事 — Service 篇&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -2674,7 +2674,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-4.webp"
 alt="k8s 建立 service (NodePort)" width="1300">&lt;figcaption>
 &lt;p>k8s 建立 service (NodePort)&lt;/p>
 &lt;/figcaption>
@@ -2697,7 +2697,7 @@ title="Copy code"
 &lt;br>
 &lt;p>打開瀏覽器搜尋 &lt;code>192.168.64.11:30001&lt;/code> 就可以看到我們可愛的柴犬囉 &amp;gt;&amp;lt;&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-1.webp"
 alt="成功顯示柴犬" width="1000">&lt;figcaption>
 &lt;p>成功顯示柴犬&lt;/p>
 &lt;/figcaption>
@@ -2757,14 +2757,14 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-1.webp"
 alt="k8s 建立 service (LoadBalancer)" width="1300">&lt;figcaption>
 &lt;p>k8s 建立 service (LoadBalancer)&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;p>可以看到 dashboard 有我們剛剛啟動的 Service，但是啟動後前面的燈是黃色的，是因為 minikube LoadBalancer 需要透過 &lt;code>tunnel&lt;/code> 才可以使用，可以參考 minikube 官網說明：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-2.webp"
 alt="minikube 官網 說明 LoadBalancer minikube tunnel" width="800">&lt;figcaption>
 &lt;p>&lt;a href="https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-tunnel" target="_blank" rel="noopener">minikube 官網&lt;/a> 說明 LoadBalancer minikube tunnel&lt;/p>
 &lt;/figcaption>
@@ -2791,7 +2791,7 @@ title="Copy code"
 &lt;br>
 &lt;p>就可以看到燈號已經變成綠燈，在外部 Endpoints 多一個連結，可以直接點開&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/service-3.webp"
 alt="k8s service" width="1300">&lt;figcaption>
 &lt;p>k8s service&lt;/p>
 &lt;/figcaption>
@@ -2799,7 +2799,7 @@ alt="k8s service" width="1300">&lt;figcaption>
 &lt;br>
 &lt;p>就可以看到我們可愛的柴犬囉 &amp;gt;&amp;lt;&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu.webp"
 alt="成功顯示柴犬" width="1000">&lt;figcaption>
 &lt;p>成功顯示柴犬&lt;/p>
 &lt;/figcaption>
@@ -2810,7 +2810,7 @@ alt="成功顯示柴犬" width="1000">&lt;figcaption>
 &lt;p>Ingress 可以幫助我們統一對外的 port number，並根據 hostname 或是 pathname 來決定請求要轉發到哪一個 Service 上，之後就可以利用該 Service 連接到 Pod 來處理服務。&lt;/p>
 &lt;p>我們先來看一下一般的 Service ：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/describe-service.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/describe-service.webp"
 alt="Service 圖片來源：[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller" width="800">&lt;figcaption>
 &lt;p>Service 圖片來源：&lt;a href="https://ithelp.ithome.com.tw/articles/10196261" target="_blank" rel="noopener">[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -2818,7 +2818,7 @@ alt="Service 圖片來源：[Day 19] 在 Kubernetes 中實現負載平衡 - Ingr
 &lt;p>可以看到當多個 Service 同時運行時，Node 都需要有對應的 port number 去對應每個 Server 的 port number。像是 GCP 這種雲端服務，每台機器都會配置屬於自己的防火牆。這也代表，不論新增、刪除 Service 物件，都必須要額外多調整防火牆的設定，Port 的管理也想對複雜。&lt;/p>
 &lt;br>
 &lt;p>若是使用 Ingress，我們只需要開放一個對外的 port numer，Ingree 可以在設定檔中設定不同的路徑，決定要將使用者的請求傳送到哪一個 Service 物件上：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/describe-ingress.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/describe-ingress.webp"
 alt="Ingress 圖片來源：[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller" width="900">&lt;figcaption>
 &lt;p>Ingress 圖片來源：&lt;a href="https://ithelp.ithome.com.tw/articles/10196261" target="_blank" rel="noopener">[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -2844,7 +2844,7 @@ alt="Ingress 圖片來源：[Day 19] 在 Kubernetes 中實現負載平衡 - Ingr
 &lt;h3>minikube 啟動 Ingress&lt;span class="hx-absolute -hx-mt-20" id="minikube-啟動-ingress">&lt;/span>
 &lt;a href="#minikube-%e5%95%9f%e5%8b%95-ingress" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>由於 minikube 預設沒有啟動 Ingress 功能，因此需要額外使用 &lt;code>minikube addons enable ingress&lt;/code> 讓 minikube 啟動 Ingress (Ingress 也需要先安裝 Hyperfix)：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/ingress.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/ingress.webp"
 alt="Ingress 圖片來源：[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller" width="900">&lt;figcaption>
 &lt;p>Ingress 圖片來源：&lt;a href="https://ithelp.ithome.com.tw/articles/10196261" target="_blank" rel="noopener">[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -3032,7 +3032,7 @@ title="Copy code"
 &lt;ul>
 &lt;li>&lt;code>test.tw&lt;/code>&lt;/li>
 &lt;/ul>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-3.webp"
 alt="成功顯示柴犬" width="1000">&lt;figcaption>
 &lt;p>成功顯示柴犬&lt;/p>
 &lt;/figcaption>
@@ -3041,7 +3041,7 @@ alt="成功顯示柴犬" width="1000">&lt;figcaption>
 &lt;ul>
 &lt;li>&lt;code>test-test.tw &lt;/code>&lt;/li>
 &lt;/ul>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-4.webp"
 alt="顯示 404" width="800">&lt;figcaption>
 &lt;p>顯示 404&lt;/p>
 &lt;/figcaption>
@@ -3085,7 +3085,7 @@ title="Copy code"
 &lt;ul>
 &lt;li>&lt;code>test.tw&lt;/code>&lt;/li>
 &lt;/ul>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-3.webp"
 alt="成功顯示柴犬" width="1000">&lt;figcaption>
 &lt;p>成功顯示柴犬&lt;/p>
 &lt;/figcaption>
@@ -3094,7 +3094,7 @@ alt="成功顯示柴犬" width="1000">&lt;figcaption>
 &lt;ul>
 &lt;li>&lt;code>test-test.tw &lt;/code>&lt;/li>
 &lt;/ul>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-5.webp"
 alt="顯示 404" width="1000">&lt;figcaption>
 &lt;p>顯示 404&lt;/p>
 &lt;/figcaption>
@@ -3106,7 +3106,7 @@ alt="顯示 404" width="1000">&lt;figcaption>
 &lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-replication-controller-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>大家看到 Controller 就知道 Replication Controller 也是一種 Controller 負責控制 Replication，而 Replication 翻成中文是複製的意思，在 Kubernetes 中 Replication 代表同一種 Pod 的複製品。&lt;/p>
 &lt;p>這邊要帶給大家認識一個重要的設定：&lt;code>replica&lt;/code>，&lt;code>replica&lt;/code> 就是複製品的意思，透過這個設定我們就可以快速產生一樣內容的 Pod，舉例來說：今天設定了 &lt;code>replica: 3&lt;/code> 就代表會產生兩個內容一樣的 Pod 出來。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/ReplicationController.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/ReplicationController.webp"
 alt="Kubernetes StatefulSet 架構" width="700">&lt;figcaption>
 &lt;p>Kubernetes StatefulSet 架構&lt;/p>
 &lt;/figcaption>
@@ -3203,21 +3203,21 @@ title="Copy code"
 &lt;br>
 &lt;p>接下來我們用 &lt;code>minikube dashboard&lt;/code> 來測試一下，是否刪除其中一個 Pod 後，Replication Controller 會自動建立新的：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rc-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rc-1.webp"
 alt="刪除隨機一個 Pod" width="1200">&lt;figcaption>
 &lt;p>刪除隨機一個 Pod&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;p>當我們隨機刪除一個 Pod 時，被刪除的 Pod 會 Terminating 準備刪除，且啟動一個新的 Pod ContainerCreating：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rc-2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rc-2.webp"
 alt="Pod 服務" width="1200">&lt;figcaption>
 &lt;p>Pod 服務&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;p>當新的 Pod 啟動成功後，舊的 Pod 才會被刪除，所以可以確保我們的服務穩定度。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rc-3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rc-3.webp"
 alt="Pod 服務" width="1200">&lt;figcaption>
 &lt;p>Pod 服務&lt;/p>
 &lt;/figcaption>
@@ -3289,7 +3289,7 @@ title="Copy code"
 &lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-deployment-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Deployment 是一種負責管理 &lt;code>ReplicaSet&lt;/code> 以及控制 Pod 更新的物件，在先前的文章都沒有提到 Pod 的更新，是因為 Pod 無法直接做更新，必須砍掉重建才會是新的內容，有了 Deployment 之後我們就可以很方便的進行 Pod 的更新了！&lt;/p>
 &lt;p>由於 &lt;code>ReplicaSet&lt;/code> 本身也會控制 Pod，所以整個看起來會像是 Deployment 控制 Pod，但其實真正控制 Pod 的是 &lt;code>ReplicaSet&lt;/code> ~&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/deployment.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/deployment.webp"
 alt="Deployment 與 ReplicaSet 架構圖" width="500">&lt;figcaption>
 &lt;p>Deployment 與 ReplicaSet 架構圖&lt;/p>
 &lt;/figcaption>
@@ -3434,7 +3434,7 @@ title="Copy code"
 &lt;br>
 &lt;p>那我們用 &lt;code>minikube dashboard&lt;/code> 來查看一下：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/DeploymentReplicaSet.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/DeploymentReplicaSet.webp"
 alt="minikube dashboard 查看 Deployment 與 ReplicaSet" width="1200">&lt;figcaption>
 &lt;p>minikube dashboard 查看 Deployment 與 ReplicaSet&lt;/p>
 &lt;/figcaption>
@@ -3444,7 +3444,7 @@ alt="minikube dashboard 查看 Deployment 與 ReplicaSet" width="1200">&lt;figca
 &lt;h3>如何更新 Deployment 內部的 Pod&lt;span class="hx-absolute -hx-mt-20" id="如何更新-deployment-內部的-pod">&lt;/span>
 &lt;a href="#%e5%a6%82%e4%bd%95%e6%9b%b4%e6%96%b0-deployment-%e5%85%a7%e9%83%a8%e7%9a%84-pod" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>大家都知道 Pod 是 Kubernetes 最小的運行單位，所以更新 Pod 的意思就是把內部運行的 container 進行更新，也就是說我們只要更新 Pod 的 image 就可以順利的讓 Pod 運行最新的內容，Deployment 就是運用這個原理才進行 Pod 的內容更新，方法也很簡單只要利用 &lt;code>Set&lt;/code> 這個參數就可以了，可以使用 &lt;code>kubectl set -h&lt;/code> 可以看 &lt;code>set&lt;/code> 這個參數真正的用法。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set.webp"
 alt="kubectl set" width="800">&lt;figcaption>
 &lt;p>kubectl set&lt;/p>
 &lt;/figcaption>
@@ -3468,14 +3468,14 @@ title="Copy code"
 &lt;p>使用 set 來更新 Pod，格式是 &lt;code>kubectl set image deployment/&amp;lt;deployment name&amp;gt; &amp;lt;pod name&amp;gt;=&amp;lt;要更新的 image&amp;gt;&lt;/code>，後面加上 &lt;code>--record&lt;/code> 參數，這樣會紀錄每次更新的時候到底更新哪些內容，這樣日後要進行 rollback 也會比較容易知道要 rollback 回哪個 revision，由於要顯示差異，所以在 &lt;a href="https://hub.docker.com/repository/docker/880831ian/kubernetes-demo" target="_blank" rel="noopener">dockerhub&lt;/a> 上又多推一個版本 &lt;code>v1&lt;/code>，將原本柴犬的圖片改成 kubernetes logo，等於我們更新是從 &lt;code>kubernetes-demo:latest&lt;/code> 更新至 &lt;code>kubernetes-demo:v1&lt;/code>，我們來看看它的變化吧！&lt;/p>
 &lt;br>
 &lt;p>這是還沒更新 Pod 前的 Deployment 與 ReplicaSet：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/DeploymentReplicaSet.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/DeploymentReplicaSet.webp"
 alt="Deployment 與 ReplicaSet" width="1200">&lt;figcaption>
 &lt;p>Deployment 與 ReplicaSet&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;p>我們用 set 下完更新指令後，可以查看 ReplicaSet 以及 Pod 在更新過程中的變化：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-1.webp"
 alt="ReplicaSet 以及 Pod 在更新過程中的變化" width="1200">&lt;figcaption>
 &lt;p>ReplicaSet 以及 Pod 在更新過程中的變化&lt;/p>
 &lt;/figcaption>
@@ -3483,7 +3483,7 @@ alt="ReplicaSet 以及 Pod 在更新過程中的變化" width="1200">&lt;figcapt
 &lt;br>
 &lt;p>可以發現 strategy 為 RollingUpdate 的時候並不會把舊有的 Pod 移除反而會讓新舊 Pod 同時上線，以達到無停機服務的作用，但這樣在網頁中就有可能會同時出現新舊內容。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-2.webp"
 alt="因為 strategy 為 RollingUpdate，所以會同時出現新舊內容" width="1200">&lt;figcaption>
 &lt;p>因為 strategy 為 RollingUpdate，所以會同時出現新舊內容&lt;/p>
 &lt;/figcaption>
@@ -3491,7 +3491,7 @@ alt="因為 strategy 為 RollingUpdate，所以會同時出現新舊內容" widt
 &lt;br>
 &lt;p>最後等到新的 Pod 已經建立完成，且正常運作，ReplicaSet 就會把舊的 Pod 給移掉：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-3.webp"
 alt="新的 Pod 建立成功，並刪除舊 Pod" width="1200">&lt;figcaption>
 &lt;p>新的 Pod 建立成功，並刪除舊 Pod&lt;/p>
 &lt;/figcaption>
@@ -3499,7 +3499,7 @@ alt="新的 Pod 建立成功，並刪除舊 Pod" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>再次瀏覽就可以發現已經變成新的內容了！代表我們完成更新動作～&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/set-4.webp"
 alt="更新至 kubernetes-demo:v1" width="600">&lt;figcaption>
 &lt;p>更新至 kubernetes-demo:v1&lt;/p>
 &lt;/figcaption>
@@ -3508,7 +3508,7 @@ alt="更新至 kubernetes-demo:v1" width="600">&lt;figcaption>
 &lt;h3>Deployment 回朔版本&lt;span class="hx-absolute -hx-mt-20" id="deployment-回朔版本">&lt;/span>
 &lt;a href="#deployment-%e5%9b%9e%e6%9c%94%e7%89%88%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們講完更新後，接著要講如何 rollback 回以前的版本，首先我們必須使用 &lt;code>rollout&lt;/code> 這個參數，一樣使用 &lt;code>kubectl rollout -h&lt;/code> 可以查看 rollout 的用法，跟 &lt;code>set&lt;/code> 十分相似。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rollout.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/rollout.webp"
 alt="更新至 kubernetes-demo:v1" width="800">&lt;figcaption>
 &lt;p>更新至 kubernetes-demo:v1&lt;/p>
 &lt;/figcaption>
@@ -3532,7 +3532,7 @@ title="Copy code"
 &lt;br>
 &lt;p>就可以看到又回復成以前的柴犬囉 &amp;gt;&amp;lt;&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/Shiba-Inu-3.webp"
 alt="成功還原柴犬" width="1000">&lt;figcaption>
 &lt;p>成功還原柴犬&lt;/p>
 &lt;/figcaption>
@@ -3551,7 +3551,7 @@ alt="成功還原柴犬" width="1000">&lt;figcaption>
 &lt;a href="#stateful" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Stateful 就是 Stateless 的相反，也就是每次的 Request 都會被記錄下來，日後都可以進行存取，Stateful 最常見的例子是資料庫，所以我們可以理解成 Stateful 背後一定會有一個負責更新內容的儲存空間。&lt;/p>
 &lt;p>幾個例子來說：今天我們想要查看 Google 雲端硬碟的內容，我們必須先登入自己的帳號才可以查看內容，這種有操作先後順序才會有結果的就是一種 Stateful 的表現。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/stateless_ful.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/stateless_ful.webp"
 alt="Stateless vs Stateful" width="700">&lt;figcaption>
 &lt;p>Stateless vs Stateful&lt;/p>
 &lt;/figcaption>
@@ -3582,7 +3582,7 @@ alt="Stateless vs Stateful" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>我們一直強調說 Kubernetes 最小的單位是 Pod，即便是 StatefulSet 也會有 Pod，只是這個 Pod 會歸 StatefulSet 管理，綜合上面所述可以知道一個 StatefulSet 裡面除了執行的 Pod 外還會有負責跟 Persistent Volume 連接的 Persistent Volume Claim，整體的 StatefulSet 架構會長得像這樣：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/StatefulSet.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/StatefulSet.webp"
 alt="Kubernetes StatefulSet 架構" width="300">&lt;figcaption>
 &lt;p>Kubernetes StatefulSet 架構&lt;/p>
 &lt;/figcaption>
@@ -3905,7 +3905,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/configmap.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/configmap.webp"
 alt="建立 ConfigMap" width="1000">&lt;figcaption>
 &lt;p>建立 ConfigMap&lt;/p>
 &lt;/figcaption>
@@ -3913,7 +3913,7 @@ alt="建立 ConfigMap" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>建立完成使用 &lt;code>get&lt;/code> 來查詢是否正確建立 ConfigMap：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/configmap_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/configmap_1.webp"
 alt="使用 get 查詢是否正確 ConfigMap" width="700">&lt;figcaption>
 &lt;p>使用 get 查詢是否正確 ConfigMap&lt;/p>
 &lt;/figcaption>
@@ -3921,7 +3921,7 @@ alt="使用 get 查詢是否正確 ConfigMap" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>最後可以下 &lt;code>describe&lt;/code> 這個參數來查看 ConfigMap 的內容，會發現裡面就是我們設定檔的完整內容：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/configmap_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/configmap_2.webp"
 alt="使用 describe 查看 ConfigMap 的內容" width="800">&lt;figcaption>
 &lt;p>使用 describe 查看 ConfigMap 的內容&lt;/p>
 &lt;/figcaption>
@@ -3947,7 +3947,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/secret.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/secret.webp"
 alt="建立 Secrets" width="800">&lt;figcaption>
 &lt;p>建立 Secrets&lt;/p>
 &lt;/figcaption>
@@ -3955,7 +3955,7 @@ alt="建立 Secrets" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>建立完成使用 &lt;code>get&lt;/code> 來查詢是否正確建立 Secrets：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/secret_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/secret_1.webp"
 alt="使用 get 查詢是否正確 Secrets" width="700">&lt;figcaption>
 &lt;p>使用 get 查詢是否正確 Secrets&lt;/p>
 &lt;/figcaption>
@@ -3963,7 +3963,7 @@ alt="使用 get 查詢是否正確 Secrets" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>最後一樣可以下 &lt;code>describe&lt;/code> 這個參數來查看 Secrets 的內容，但因為加密所以不會顯示原本內容，只會看到的確有兩個檔案：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/secret_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s-advanced/secret_2.webp"
 alt="使用 describe 查看 Secrets 的內容" width="700">&lt;figcaption>
 &lt;p>使用 describe 查看 Secrets 的內容&lt;/p>
 &lt;/figcaption>
@@ -3984,7 +3984,7 @@ alt="使用 describe 查看 Secrets 的內容" width="700">&lt;figcaption>
 &lt;h2>什麼是 Kubernetes (K8s)?&lt;span class="hx-absolute -hx-mt-20" id="什麼是-kubernetes-k8s">&lt;/span>
 &lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-kubernetes-k8s" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Kubernetes 也可以叫 K8s，這個名稱來源希臘語，意思是舵手或是飛行員，所以我們可以看到它的 logo 是一個船舵的標誌，之所以叫 K8s 是因為 Kubernetes 的 k 到 s 中間有 8 的英文字母，為了方便，大家常以這個名稱來稱呼他！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/logo.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/logo.webp"
 alt="kubernetes logo" width="200">&lt;figcaption>
 &lt;p>kubernetes logo&lt;/p>
 &lt;/figcaption>
@@ -4001,7 +4001,7 @@ alt="kubernetes logo" width="200">&lt;figcaption>
 &lt;li>機密和配置管理：Kubernetes 允許儲存和管理敏感訊息，例如密碼、OAuth token 和 SSH 金鑰。可以部署和更新機密的應用程序配置。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/flower.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/flower.webp"
 alt="kubernetes 官網" width="600">&lt;figcaption>
 &lt;p>&lt;a href="https://kubernetes.io/" target="_blank" rel="noopener">kubernetes 官網&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -4098,7 +4098,7 @@ alt="kubernetes 官網" width="600">&lt;figcaption>
 &lt;a href="#cluster" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架設中我們不會只有一台機器而已，通常都是多個機器一起運行同一種內容，在沒有 Kubernetes 的時候就必須要土法煉鋼的一台一台機器去更新，但有了 Kubernetes 我們就可以透過 Cluster 進行控管，只要更新 Master 旗下的機器，也會一併將更新的內容放上去，十分方便。在 Kubernetes 中多個 Worker Node 與 Master Node 的集合。&lt;/p>
 &lt;br>
 &lt;h2>基本運作&lt;span class="hx-absolute -hx-mt-20" id="基本運作">&lt;/span>
-&lt;a href="#%e5%9f%ba%e6%9c%ac%e9%81%8b%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/k8s.jpg"
+&lt;a href="#%e5%9f%ba%e6%9c%ac%e9%81%8b%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/k8s.webp"
 alt="kubernetes 組件 Kubernetes 基礎教學（一）原理介紹" width="600">&lt;figcaption>
 &lt;p>kubernetes 組件 &lt;a href="https://cwhu.medium.com/kubernetes-basic-concept-tutorial-e033e3504ec0" target="_blank" rel="noopener">Kubernetes 基礎教學（一）原理介紹&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -4117,7 +4117,7 @@ alt="kubernetes 組件 Kubernetes 基礎教學（一）原理介紹" width="600"
 &lt;/ul>
 &lt;p>一個 Google 發佈的輕量級工具，讓開發者可以輕鬆體驗一個 Kubernetes Cluster。&lt;font color='red'>(僅限開發測試環境)&lt;/font>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/minikube.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/minikube.webp"
 alt="安裝 minikube" width="900">&lt;figcaption>
 &lt;p>安裝 minikube&lt;/p>
 &lt;/figcaption>
@@ -4128,7 +4128,7 @@ alt="安裝 minikube" width="900">&lt;figcaption>
 &lt;/ul>
 &lt;p>Hyperkit 是 MacOS 系統細部設定的驅動程式。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/hyperkit.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/hyperkit.webp"
 alt="安裝 hyperkit" width="900">&lt;figcaption>
 &lt;p>安裝 hyperkit&lt;/p>
 &lt;/figcaption>
@@ -4139,7 +4139,7 @@ alt="安裝 hyperkit" width="900">&lt;figcaption>
 &lt;/ul>
 &lt;p>Kubectl 是 Kubernetes 的 Command Line 工具，我們之後會透過 Kubectl 去操作我們的 Kubernetes Cluster。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/kubectl.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/kubectl.webp"
 alt="安裝 kubectl" width="800">&lt;figcaption>
 &lt;p>安裝 kubectl&lt;/p>
 &lt;/figcaption>
@@ -4316,7 +4316,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/minikube-k8s.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/minikube-k8s.webp"
 alt="minikube dashboard" width="1000">&lt;figcaption>
 &lt;p>minikube dashboard&lt;/p>
 &lt;/figcaption>
@@ -4341,7 +4341,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>我們在此瀏覽 &lt;code>localhost:3000&lt;/code>，就會看到可愛的柴犬囉！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/Shiba-Inu.png"
+&lt;figure>&lt;img src="https://pin-yi.me/kubernetes/k8s/Shiba-Inu.webp"
 alt="成功顯示柴犬" width="900">&lt;figcaption>
 &lt;p>成功顯示柴犬&lt;/p>
 &lt;/figcaption>

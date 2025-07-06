@@ -544,63 +544,63 @@ title="Copy code"
 &lt;br>
 &lt;h2>Postman 測試&lt;span class="hx-absolute -hx-mt-20" id="postman-測試">&lt;/span>
 &lt;a href="#postman-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>查詢全部留言 - 成功(無資料)&lt;span class="hx-absolute -hx-mt-20" id="查詢全部留言---成功無資料">&lt;/span>
-&lt;a href="#%e6%9f%a5%e8%a9%a2%e5%85%a8%e9%83%a8%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f%e7%84%a1%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/get-success-1.png"
+&lt;a href="#%e6%9f%a5%e8%a9%a2%e5%85%a8%e9%83%a8%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f%e7%84%a1%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/get-success-1.webp"
 alt="查詢留言 成功(無資料)" width="700">&lt;figcaption>
 &lt;p>查詢留言 成功(無資料)&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;h3>查詢全部留言 - 成功(有資料)&lt;span class="hx-absolute -hx-mt-20" id="查詢全部留言---成功有資料">&lt;/span>
-&lt;a href="#%e6%9f%a5%e8%a9%a2%e5%85%a8%e9%83%a8%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f%e6%9c%89%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/get-success-2.png"
+&lt;a href="#%e6%9f%a5%e8%a9%a2%e5%85%a8%e9%83%a8%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f%e6%9c%89%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/get-success-2.webp"
 alt="查詢留言 成功(有資料)" width="700">&lt;figcaption>
 &lt;p>查詢留言 成功(有資料)&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;h3>查詢{id}留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="查詢id留言---成功">&lt;/span>
-&lt;a href="#%e6%9f%a5%e8%a9%a2id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/get-id-succes.png"
+&lt;a href="#%e6%9f%a5%e8%a9%a2id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/get-id-succes.webp"
 alt="查詢{id}留言 成功" width="700">&lt;figcaption>
 &lt;p>查詢{id}留言 成功&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;h3>查詢{id}留言 - 失敗&lt;span class="hx-absolute -hx-mt-20" id="查詢id留言---失敗">&lt;/span>
-&lt;a href="#%e6%9f%a5%e8%a9%a2id%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/get-error.png"
+&lt;a href="#%e6%9f%a5%e8%a9%a2id%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/get-error.webp"
 alt="查詢{id}留言 失敗" width="700">&lt;figcaption>
 &lt;p>查詢{id}留言 失敗&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;h3>新增留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="新增留言---成功">&lt;/span>
-&lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/create.png"
+&lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/create.webp"
 alt="新增留言 成功" width="700">&lt;figcaption>
 &lt;p>新增留言 成功&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;h3>修改{id}留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="修改id留言---成功">&lt;/span>
-&lt;a href="#%e4%bf%ae%e6%94%b9id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/patch-success.png"
+&lt;a href="#%e4%bf%ae%e6%94%b9id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/patch-success.webp"
 alt="修改 {id}留言 成功" width="700">&lt;figcaption>
 &lt;p>修改 {id}留言 成功&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;h3>修改{id}留言 - 失敗&lt;span class="hx-absolute -hx-mt-20" id="修改id留言---失敗">&lt;/span>
-&lt;a href="#%e4%bf%ae%e6%94%b9id%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/patch-error.png"
+&lt;a href="#%e4%bf%ae%e6%94%b9id%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/patch-error.webp"
 alt="修改 {id}留言 失敗" width="700">&lt;figcaption>
 &lt;p>修改 {id}留言 失敗&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;h3>刪除{id}留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="刪除id留言---成功">&lt;/span>
-&lt;a href="#%e5%88%aa%e9%99%a4id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/delete.png"
+&lt;a href="#%e5%88%aa%e9%99%a4id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/delete.webp"
 alt="刪除 {id}留言 成功" width="700">&lt;figcaption>
 &lt;p>刪除 {id}留言 成功&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;h3>執行結果&lt;span class="hx-absolute -hx-mt-20" id="執行結果">&lt;/span>
-&lt;a href="#%e5%9f%b7%e8%a1%8c%e7%b5%90%e6%9e%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/gin-cli.png"
+&lt;a href="#%e5%9f%b7%e8%a1%8c%e7%b5%90%e6%9e%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/golang/go-restful-api-repository-messageboard/gin-cli.webp"
 alt="執行結果" width="700">&lt;figcaption>
 &lt;p>執行結果&lt;/p>
 &lt;/figcaption>
@@ -673,7 +673,7 @@ title="Copy code"
 &lt;a href="#%e5%ae%89%e8%a3%9d-go" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>本次作業系統為 macOS，所以後續都以 macOS 為主，如果是使用其他的作業系統，可以直接到&lt;a href="https://go.dev/doc/install" target="_blank" rel="noopener">官網來下載&lt;/a>。&lt;/p>
 &lt;p>macOS 可以用 brew 等工具來下載，但這次我使用官網直接下載 pkg 來安裝。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/download.png"
+&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/download.webp"
 alt="Go 官網下載位置" width="700">&lt;figcaption>
 &lt;p>Go 官網下載位置&lt;/p>
 &lt;/figcaption>
@@ -1107,7 +1107,7 @@ title="Copy code"
 &lt;h2>變數&lt;span class="hx-absolute -hx-mt-20" id="變數">&lt;/span>
 &lt;a href="#%e8%ae%8a%e6%95%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>在使用變數做宣告時，要注意以下幾個 Go 保留字，不能拿來當變數名稱，其 Go 有三種宣告的方式：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/variable.png"
+&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/variable.webp"
 alt="Go 保留字，不能拿來當變數名稱" width="700">&lt;figcaption>
 &lt;p>Go 保留字，不能拿來當變數名稱&lt;/p>
 &lt;/figcaption>
@@ -2439,7 +2439,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>在單執行緒下，每行程式碼都會依照順序執行。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/single-thread.png"
+&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/single-thread.webp"
 alt="單執行緒 (Go 的並發：Goroutine 與 Channel 介紹)" width="400">&lt;figcaption>
 &lt;p>單執行緒 (&lt;a href="https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html" target="_blank" rel="noopener">Go 的並發：Goroutine 與 Channel 介紹&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -2485,7 +2485,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>如此一來, &lt;code>say(&amp;quot;world&amp;quot;)&lt;/code> 會跑在另一個執行緒(Goroutine)上，使其並行執行。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/multi-thread.png"
+&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/multi-thread.webp"
 alt="多執行緒 (Go 的並發：Goroutine 與 Channel 介紹)" width="300">&lt;figcaption>
 &lt;p>多執行緒 (&lt;a href="https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html" target="_blank" rel="noopener">Go 的並發：Goroutine 與 Channel 介紹&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -2540,7 +2540,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>缺點：休息指定時間可能會比 Goroutine 需要執行的時間長或短，太長會耗費多餘的時間，太短會使其他 Goroutine 無法完成。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/timesleep.png"
+&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/timesleep.webp"
 alt="time.sleep (Go 的並發：Goroutine 與 Channel 介紹)" width="300">&lt;figcaption>
 &lt;p>time.sleep (&lt;a href="https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html" target="_blank" rel="noopener">Go 的並發：Goroutine 與 Channel 介紹&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -2596,7 +2596,7 @@ title="Copy code"
 &lt;li>缺點：需要手動配置對應的數量&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/wait-group.png"
+&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/wait-group.webp"
 alt="sync.WaitGroup (Go 的並發：Goroutine 與 Channel 介紹)" width="400">&lt;figcaption>
 &lt;p>sync.WaitGroup (&lt;a href="https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html" target="_blank" rel="noopener">Go 的並發：Goroutine 與 Channel 介紹&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -2651,7 +2651,7 @@ title="Copy code"
 &lt;li>優點：避免時間預估的錯誤、語法簡潔&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/channel-wait.png"
+&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/channel-wait.webp"
 alt="Channel 阻塞 (Go 的並發：Goroutine 與 Channel 介紹)" width="400">&lt;figcaption>
 &lt;p>Channel 阻塞 (&lt;a href="https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html" target="_blank" rel="noopener">Go 的並發：Goroutine 與 Channel 介紹&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -2715,7 +2715,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>為什麼會明明是用for 跑 1000 累加，但最後只有 900 多呢？我們來看一下下面的例子&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/total-error.png"
+&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/total-error.webp"
 alt="多執行緒下的共享變數 - 錯誤 (Go 的並發：Goroutine 與 Channel 介紹)" width="500">&lt;figcaption>
 &lt;p>多執行緒下的共享變數 - 錯誤 (&lt;a href="https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html" target="_blank" rel="noopener">Go 的並發：Goroutine 與 Channel 介紹&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -2767,7 +2767,7 @@ title="Copy code"
 &lt;p>goroutine1 計算完成後，將 total 推入 Channel&lt;/p>
 &lt;p>goroutine2 等到 Channel 中有資料，拉出後結束等待，繼續做運算&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/total-channel.png"
+&lt;figure>&lt;img src="https://pin-yi.me/golang/go-introduce/total-channel.webp"
 alt="多執行緒下的共享變數 - Channel (Go 的並發：Goroutine 與 Channel 介紹)" width="500">&lt;figcaption>
 &lt;p>多執行緒下的共享變數 - Channel (&lt;a href="https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html" target="_blank" rel="noopener">Go 的並發：Goroutine 與 Channel 介紹&lt;/a>)&lt;/p>
 &lt;/figcaption>

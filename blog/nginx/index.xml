@@ -90,7 +90,7 @@ title="Copy code"
 &lt;br>
 &lt;p>因爲 &lt;code>proxy_set_header&lt;/code> 是一個全域設定，它可以寫在 &lt;code>http&lt;/code>、&lt;code>server&lt;/code>、&lt;code>location&lt;/code> block 中，所以如果有多台 server 都需要帶同樣的 header，可以寫在 &lt;code>http&lt;/code> block 中。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/proxy-set-header/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/proxy-set-header/1.webp"
 alt="官方文件介紹 proxy_set_header" width="800">&lt;figcaption>
 &lt;p>官方文件介紹 proxy_set_header&lt;/p>
 &lt;/figcaption>
@@ -220,7 +220,7 @@ title="Copy code"
 &lt;br>
 &lt;p>可以看到我們希望 Nginx 收到 request 是 &lt;code>/upstream_server&lt;/code> 時，將 request 轉發到 &lt;code>http://upstream_server&lt;/code>，而 &lt;code>upstream_server&lt;/code> 後面有兩個 server，並且在 proxy 時，帶入兩個不同的 host header。但如果真的這樣寫，可以達到我們想要得效果嗎？我們實際跑看看程式 (範例可以使用 nginx-old.conf)：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/nginx-upstream-set-host-header/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/nginx-upstream-set-host-header/1.webp"
 alt="nginx 原本寫法" width="800">&lt;figcaption>
 &lt;p>nginx 原本寫法&lt;/p>
 &lt;/figcaption>
@@ -286,7 +286,7 @@ title="Copy code"
 &lt;br>
 &lt;p>最後我們來看一下實際執行的結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/nginx-upstream-set-host-header/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/nginx-upstream-set-host-header/2.webp"
 alt="使用多層的 nginx proxy 處理" width="800">&lt;figcaption>
 &lt;p>使用多層的 nginx proxy 處理&lt;/p>
 &lt;/figcaption>
@@ -296,7 +296,7 @@ alt="使用多層的 nginx proxy 處理" width="800">&lt;figcaption>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Make nginx to pass hostname of the upstream when reverseproxying：&lt;a href="https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying" target="_blank" rel="noopener">https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying&lt;/a>&lt;/p></description></item><item><title>Soketi WebSocket Server LOG 不定時出現 502 error 以及 connect() failed (111: Connection refused)</title><link>https://pin-yi.me/blog/nginx/soketi-log-502-error/</link><pubDate>Wed, 20 Sep 2023 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/nginx/soketi-log-502-error/</guid><description>
 &lt;p>此文章要來記錄一下 RD 同仁前陣子有反應使用 Soketi 這個 WebSocket Server 會不定時在 LOG 出現 502 error 錯誤訊息以及 connect() failed (111: Connection refused) while connecting to upstream，雖然說服務使用上不會影響很大，但還是希望我們可以協助找出 502 的原因。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/1.webp"
 alt="出錯的 LOG" width="1200">&lt;figcaption>
 &lt;p>出錯的 LOG&lt;/p>
 &lt;/figcaption>
@@ -309,7 +309,7 @@ alt="出錯的 LOG" width="1200">&lt;figcaption>
 &lt;a href="#%e8%a7%a3%e6%b1%ba%e9%81%8e%e7%a8%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們可以看到上方錯誤 LOG 中，發現有出現 502 error 以及 connect() failed (111: Connection refused) while connecting to upstream，這兩個錯誤都是由 Nginx 所產生的，那我們先來理解一下，Nginx 與 Soketi 之間的關係。&lt;/p>
 &lt;p>在使用上，RD 的程式會打 Soketi 專用的 Subdomain 來使用這個 WebSocket 服務，而在我們的架構上，這個 Subdomain 會經過用 nginx proxy server，來轉發到 Soketi WebSocket Server (走 k8s svc)，設定檔如下圖：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/2.webp"
 alt="入口 nginx 設定" width="800">&lt;figcaption>
 &lt;p>入口 nginx 設定&lt;/p>
 &lt;/figcaption>
@@ -435,7 +435,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/3.webp"
 alt="Pod 終止的過程" width="800">&lt;figcaption>
 &lt;p>Pod 終止的過程&lt;/p>
 &lt;/figcaption>
@@ -489,7 +489,7 @@ title="Copy code"
 &lt;br>
 &lt;p>執行 &lt;code>k6 run websocket.js&lt;/code> 後，就會開始壓測，可以看到會開始執行剛剛在上面提到 default 的動作：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/4.webp"
 alt="k6 壓測過程" width="800">&lt;figcaption>
 &lt;p>k6 壓測過程&lt;/p>
 &lt;/figcaption>
@@ -497,7 +497,7 @@ alt="k6 壓測過程" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>等到跑完，就會告訴你 1000 筆裡面有多少的 http 101，這邊顯示 status is 101，就代表都是 101，代表都有連線成功，沒有出現 502 error 或是 &lt;code>connect() failed (111: Connection refused)&lt;/code> 的錯誤，這樣就代表我們的問題解決了。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/5.webp"
 alt="k6 壓測結果" width="800">&lt;figcaption>
 &lt;p>k6 壓測結果&lt;/p>
 &lt;/figcaption>

@@ -1102,7 +1102,7 @@ title="Copy code"
 &lt;a href="#postman-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>那我們一樣來看一下 Postman 的測試，這邊只顯示需要登入才能使用的 API。&lt;/p>
 &lt;h4>登入&lt;span class="hx-absolute -hx-mt-20" id="登入">&lt;/span>
 &lt;a href="#%e7%99%bb%e5%85%a5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/login.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/login.webp"
 alt="新增留言 成功" width="600">&lt;figcaption>
 &lt;p>新增留言 成功&lt;/p>
 &lt;/figcaption>
@@ -1112,7 +1112,7 @@ alt="新增留言 成功" width="600">&lt;figcaption>
 &lt;br>
 &lt;h4>新增留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="新增留言---成功">&lt;/span>
 &lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/post-api-success.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/post-api-success.webp"
 alt="新增留言 成功" width="600">&lt;figcaption>
 &lt;p>新增留言 成功&lt;/p>
 &lt;/figcaption>
@@ -1122,7 +1122,7 @@ alt="新增留言 成功" width="600">&lt;figcaption>
 &lt;br>
 &lt;h4>新增留言 - 失敗&lt;span class="hx-absolute -hx-mt-20" id="新增留言---失敗">&lt;/span>
 &lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/post-api-error.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/post-api-error.webp"
 alt="新增留言 失敗" width="600">&lt;figcaption>
 &lt;p>新增留言 失敗&lt;/p>
 &lt;/figcaption>
@@ -1131,7 +1131,7 @@ alt="新增留言 失敗" width="600">&lt;figcaption>
 &lt;p>新增留言失敗，因為 &lt;strong>&lt;font color='red'>沒有登入，無法從 Cookie 裡面的 laravel_session 來驗證是否登入&lt;/font>&lt;/strong> ，所以會顯示用戶需要認證以及回應 401 Unauthorized&lt;/p>
 &lt;br>
 &lt;h4>修改留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="修改留言---成功">&lt;/span>
-&lt;a href="#%e4%bf%ae%e6%94%b9%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/put-api-success.png"
+&lt;a href="#%e4%bf%ae%e6%94%b9%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/put-api-success.webp"
 alt="修改留言 成功" width="600">&lt;figcaption>
 &lt;p>修改留言 成功&lt;/p>
 &lt;/figcaption>
@@ -1140,7 +1140,7 @@ alt="修改留言 成功" width="600">&lt;figcaption>
 &lt;p>修改留言成功，因為 &lt;strong>&lt;font color='blue'>有登入，所以可以從 Cookie 裡面的 laravel_session 來驗證是否登入&lt;/font>&lt;/strong> ，會顯示修改成功以及回應 200 OK&lt;/p>
 &lt;br>
 &lt;h4>修改留言 - 失敗 - 沒有登入&lt;span class="hx-absolute -hx-mt-20" id="修改留言---失敗---沒有登入">&lt;/span>
-&lt;a href="#%e4%bf%ae%e6%94%b9%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97---%e6%b2%92%e6%9c%89%e7%99%bb%e5%85%a5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/put-api-error-1.png"
+&lt;a href="#%e4%bf%ae%e6%94%b9%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97---%e6%b2%92%e6%9c%89%e7%99%bb%e5%85%a5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/put-api-error-1.webp"
 alt="修改留言 失敗" width="600">&lt;figcaption>
 &lt;p>修改留言 失敗&lt;/p>
 &lt;/figcaption>
@@ -1149,7 +1149,7 @@ alt="修改留言 失敗" width="600">&lt;figcaption>
 &lt;p>修改留言失敗，因為 &lt;strong>&lt;font color='red'>沒有登入，無法從 Cookie 裡面的 laravel_session 來驗證是否登入&lt;/font>&lt;/strong> ，會顯示用戶需要認證以及回應 401 Unauthorized&lt;/p>
 &lt;br>
 &lt;h4>修改留言 - 失敗 - 權限不足&lt;span class="hx-absolute -hx-mt-20" id="修改留言---失敗---權限不足">&lt;/span>
-&lt;a href="#%e4%bf%ae%e6%94%b9%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97---%e6%ac%8a%e9%99%90%e4%b8%8d%e8%b6%b3" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/put-api-error-2.png"
+&lt;a href="#%e4%bf%ae%e6%94%b9%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97---%e6%ac%8a%e9%99%90%e4%b8%8d%e8%b6%b3" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/put-api-error-2.webp"
 alt="修改留言 失敗" width="600">&lt;figcaption>
 &lt;p>修改留言 失敗&lt;/p>
 &lt;/figcaption>
@@ -1158,7 +1158,7 @@ alt="修改留言 失敗" width="600">&lt;figcaption>
 &lt;p>修改留言失敗，雖然 &lt;strong>&lt;font color='red'>有登入，但存在 Cookie 裡面的 laravel_session 不是當初的留言者&lt;/font>&lt;/strong> ，會顯示權限不正確以及回應 403 Forbidden&lt;/p>
 &lt;br>
 &lt;h4>按讚留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="按讚留言---成功">&lt;/span>
-&lt;a href="#%e6%8c%89%e8%ae%9a%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/patch-api-success.png"
+&lt;a href="#%e6%8c%89%e8%ae%9a%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/patch-api-success.webp"
 alt="修改留言 成功" width="600">&lt;figcaption>
 &lt;p>修改留言 成功&lt;/p>
 &lt;/figcaption>
@@ -1167,7 +1167,7 @@ alt="修改留言 成功" width="600">&lt;figcaption>
 &lt;p>按讚留言成功，因為 &lt;strong>&lt;font color='blue'>有登入，所以可以從 Cookie 裡面的 laravel_session 來驗證是否登入&lt;/font>&lt;/strong> ，會顯示按讚成功以及回應 200 OK&lt;/p>
 &lt;br>
 &lt;h4>按讚留言 - 失敗 - 沒有登入&lt;span class="hx-absolute -hx-mt-20" id="按讚留言---失敗---沒有登入">&lt;/span>
-&lt;a href="#%e6%8c%89%e8%ae%9a%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97---%e6%b2%92%e6%9c%89%e7%99%bb%e5%85%a5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/patch-api-error.png"
+&lt;a href="#%e6%8c%89%e8%ae%9a%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97---%e6%b2%92%e6%9c%89%e7%99%bb%e5%85%a5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/patch-api-error.webp"
 alt="修改留言 失敗" width="600">&lt;figcaption>
 &lt;p>修改留言 失敗&lt;/p>
 &lt;/figcaption>
@@ -1176,7 +1176,7 @@ alt="修改留言 失敗" width="600">&lt;figcaption>
 &lt;p>按讚留言失敗，因為 &lt;strong>&lt;font color='red'>沒有登入，無法從 Cookie 裡面的 laravel_session 來驗證是否登入&lt;/font>&lt;/strong> ，會顯示用戶需要認證以及回應 401 Unauthorized&lt;/p>
 &lt;br>
 &lt;h4>刪除留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="刪除留言---成功">&lt;/span>
-&lt;a href="#%e5%88%aa%e9%99%a4%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/delete-api-success.png"
+&lt;a href="#%e5%88%aa%e9%99%a4%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/delete-api-success.webp"
 alt="刪除留言 成功" width="600">&lt;figcaption>
 &lt;p>刪除留言 成功&lt;/p>
 &lt;/figcaption>
@@ -1186,7 +1186,7 @@ alt="刪除留言 成功" width="600">&lt;figcaption>
 &lt;br>
 &lt;h4>刪除留言 - 失敗 - 沒有登入&lt;span class="hx-absolute -hx-mt-20" id="刪除留言---失敗---沒有登入">&lt;/span>
 &lt;a href="#%e5%88%aa%e9%99%a4%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97---%e6%b2%92%e6%9c%89%e7%99%bb%e5%85%a5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/delete-api-error-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/delete-api-error-1.webp"
 alt="刪除留言 失敗" width="600">&lt;figcaption>
 &lt;p>刪除留言 失敗&lt;/p>
 &lt;/figcaption>
@@ -1196,7 +1196,7 @@ alt="刪除留言 失敗" width="600">&lt;figcaption>
 &lt;br>
 &lt;h4>刪除留言 - 失敗 - 權限不足&lt;span class="hx-absolute -hx-mt-20" id="刪除留言---失敗---權限不足">&lt;/span>
 &lt;a href="#%e5%88%aa%e9%99%a4%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97---%e6%ac%8a%e9%99%90%e4%b8%8d%e8%b6%b3" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/delete-api-error-2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel-advanced/delete-api-error-2.webp"
 alt="刪除留言 失敗" width="600">&lt;figcaption>
 &lt;p>刪除留言 失敗&lt;/p>
 &lt;/figcaption>
@@ -1227,7 +1227,7 @@ alt="刪除留言 失敗" width="600">&lt;figcaption>
 &lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mvc.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mvc.webp"
 alt="MVC 架構 一起走向MVC(上)" width="700">&lt;figcaption>
 &lt;p>MVC 架構 &lt;a href="https://bak.infolight.com/new/ShareDetail.aspx?DocumentID=NDUz" target="_blank" rel="noopener">一起走向MVC(上)&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -1667,7 +1667,7 @@ title="Copy code"
 &lt;br>
 還可以設定一些參數， --message 是用來顯示或紀錄客製化訊息， --retry 用來當作HTTP head 的 Retry-After 的值
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/error503.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/error503.webp"
 alt="Laravel 維護模式顯示頁面" width="700">&lt;figcaption>
 &lt;p>Laravel 維護模式顯示頁面&lt;/p>
 &lt;/figcaption>
@@ -1703,7 +1703,7 @@ title="Copy code"
 &lt;h5>web.php&lt;span class="hx-absolute -hx-mt-20" id="webphp">&lt;/span>
 &lt;a href="#webphp" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>那我們就先來針對 web.php 來做介紹，我們剛剛使用指令開啟的伺服器網址是 &lt;code>http://127.0.0.1:8000&lt;/code>，使用瀏覽器進入後，可以看到下面這個 Laravel 預設的頁面(此為 Laravel 5.4版本，新版的好像不太一樣)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/laravel_welcome.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/laravel_welcome.webp"
 alt="Laravel 預設首頁" width="700">&lt;figcaption>
 &lt;p>Laravel 預設首頁&lt;/p>
 &lt;/figcaption>
@@ -1822,7 +1822,7 @@ title="Copy code"
 &lt;a href="#layout" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>我們在設計網頁時，通常都會使用樣板，讓網頁相同的地方只做一次就可以顯示，不需要每一個頁面都重複寫相同的程式碼，只需要在想要顯示的地方來顯示各自的內容就好&lt;/p>
 &lt;p>如果聽不太懂，我以我的 Blog 來舉例，紅色框框，在每一頁都會顯示，我們可以把他寫成一個檔案，就不需要每頁都重複去寫，藍色框框，會依照每一頁的內容來做顯示。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/layout.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/layout.webp"
 alt="PinYi 小天地" width="700">&lt;figcaption>
 &lt;p>PinYi 小天地&lt;/p>
 &lt;/figcaption>
@@ -1898,7 +1898,7 @@ title="Copy code"
 &lt;br>
 &lt;p>我們在去瀏覽 &lt;code>http://127.0.0.1:8000/test&lt;/code> ，就可以看到成品囉！這代表我們成功將 &lt;code>layouts/header.blade.php&lt;/code> 的模板放到 &lt;code>test.blade.php&lt;/code> 裡面囉。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/layout_show.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/layout_show.webp"
 alt="PinYi 小天地" width="500">&lt;figcaption>
 &lt;p>PinYi 小天地&lt;/p>
 &lt;/figcaption>
@@ -1938,7 +1938,7 @@ title="Copy code"
 &lt;br>
 &lt;p>就可以看到我們可以輸入 &lt;code>http://127.0.0.1:8000/test/pinyi&lt;/code> ，網頁前端就會顯示&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/layout_show_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/layout_show_2.webp"
 alt="PinYi 小天地" width="500">&lt;figcaption>
 &lt;p>PinYi 小天地&lt;/p>
 &lt;/figcaption>
@@ -1981,7 +1981,7 @@ title="Copy code"
 &lt;br>
 &lt;p>Laravel 會自動產生一個 &lt;code>TriviaController.php&lt;/code> 的檔案，位置在 &lt;code>app/Http/Controllers&lt;/code> 底下&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/controller.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/controller.webp"
 alt="Controller 產生檔案位置" width="300">&lt;figcaption>
 &lt;p>Controller 產生檔案位置&lt;/p>
 &lt;/figcaption>
@@ -2079,7 +2079,7 @@ title="Copy code"
 &lt;p>記得要 &lt;code>use App\Services\TriviaService; &lt;/code> ，下面才可以 Call &lt;code>TriviaService()&lt;/code> 。&lt;/p>
 &lt;p>這時候我們再去測試一下，就可以發現，網頁會依照我們所輸入的 &lt;code>id&lt;/code>，而顯示不同的冷知識。 &lt;font color='red'>這時候如果輸入非數字或是超過陣列的值，就會出現錯誤！&lt;/font>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/trivia.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/trivia.webp"
 alt="依照輸入不同的 id 顯示的冷知識" width="700">&lt;figcaption>
 &lt;p>依照輸入不同的 &lt;code>id&lt;/code> 顯示的冷知識&lt;/p>
 &lt;/figcaption>
@@ -2128,7 +2128,7 @@ title="Copy code"
 &lt;br>
 &lt;p>執行後發現 &amp;hellip;. 竟然有錯誤&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_1.webp"
 alt="MySQL 8.x 版本導致錯誤" width="800">&lt;figcaption>
 &lt;p>MySQL 8.x 版本導致錯誤&lt;/p>
 &lt;/figcaption>
@@ -2174,13 +2174,13 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_2.webp"
 alt="加入 modes 修復成功" width="800">&lt;figcaption>
 &lt;p>加入 modes 修復成功&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/migration.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/migration.webp"
 alt="使用 migration 後的資料庫" width="800">&lt;figcaption>
 &lt;p>使用 migration 後的資料庫&lt;/p>
 &lt;/figcaption>
@@ -2308,7 +2308,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_fields.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_fields.webp"
 alt="messages 欄位" width="800">&lt;figcaption>
 &lt;p>messages 欄位&lt;/p>
 &lt;/figcaption>
@@ -2318,7 +2318,7 @@ alt="messages 欄位" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>阿對了，也可以使用 &lt;code>$ php artisan migrate:status&lt;/code> 來查詢目前的檔案的執行狀態，檢查一下是否運作中。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_status_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_status_1.webp"
 alt="Migration 是否運作中" width="800">&lt;figcaption>
 &lt;p>Migration 是否運作中&lt;/p>
 &lt;/figcaption>
@@ -2341,7 +2341,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>這邊就是回溯來刪除資料表，那接著我們來看一下目前資料表的狀態吧！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_status_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_status_2.webp"
 alt="Migration 是否運作中" width="800">&lt;figcaption>
 &lt;p>Migration 是否運作中&lt;/p>
 &lt;/figcaption>
@@ -2397,7 +2397,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>成功後，我們一樣來檢查一下，是否與我們設定的 Schema 相同。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_fields_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/mysql_fields_1.webp"
 alt="修改後 message_board 欄位" width="800">&lt;figcaption>
 &lt;p>修改後 message_board 欄位&lt;/p>
 &lt;/figcaption>
@@ -2781,7 +2781,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>記得要 &lt;code>use App\Message;&lt;/code> ，加入後，使用 &lt;code>php artisan db:seed --class=MessageTableSeeder&lt;/code> 指令，檢查是否自動新增成功&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/seeder.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/seeder.webp"
 alt="messages 資料" width="800">&lt;figcaption>
 &lt;p>messages 資料&lt;/p>
 &lt;/figcaption>
@@ -2985,7 +2985,7 @@ title="Copy code"
 &lt;h4>Postman 測試&lt;span class="hx-absolute -hx-mt-20" id="postman-測試">&lt;/span>
 &lt;a href="#postman-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;h5>查詢全部留言 - 無資料&lt;span class="hx-absolute -hx-mt-20" id="查詢全部留言---無資料">&lt;/span>
 &lt;a href="#%e6%9f%a5%e8%a9%a2%e5%85%a8%e9%83%a8%e7%95%99%e8%a8%80---%e7%84%a1%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restful-get-null.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restful-get-null.webp"
 alt="查詢全部留言 無資料" width="600">&lt;figcaption>
 &lt;p>查詢全部留言 無資料&lt;/p>
 &lt;/figcaption>
@@ -2995,7 +2995,7 @@ alt="查詢全部留言 無資料" width="600">&lt;figcaption>
 &lt;br>
 &lt;h5>查詢全部留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="查詢全部留言---成功">&lt;/span>
 &lt;a href="#%e6%9f%a5%e8%a9%a2%e5%85%a8%e9%83%a8%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restful-get-all.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restful-get-all.webp"
 alt="查詢全部留言 成功" width="600">&lt;figcaption>
 &lt;p>查詢全部留言 成功&lt;/p>
 &lt;/figcaption>
@@ -3005,7 +3005,7 @@ alt="查詢全部留言 成功" width="600">&lt;figcaption>
 &lt;br>
 &lt;h5>查詢{id}留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="查詢id留言---成功">&lt;/span>
 &lt;a href="#%e6%9f%a5%e8%a9%a2id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restful-get-id.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restful-get-id.webp"
 alt="查詢{id}留言 成功" width="600">&lt;figcaption>
 &lt;p>查詢{id}留言 成功&lt;/p>
 &lt;/figcaption>
@@ -3014,7 +3014,7 @@ alt="查詢{id}留言 成功" width="600">&lt;figcaption>
 &lt;p>查詢{id}留言成功，會顯示{id}資料以及回應 200 OK&lt;/p>
 &lt;br>
 &lt;h5>新增留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="新增留言---成功">&lt;/span>
-&lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restful-post-success.png"
+&lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restful-post-success.webp"
 alt="新增留言 成功" width="600">&lt;figcaption>
 &lt;p>新增留言 成功&lt;/p>
 &lt;/figcaption>
@@ -3023,7 +3023,7 @@ alt="新增留言 成功" width="600">&lt;figcaption>
 &lt;p>新增留言成功，會顯示新增紀錄成功以及回應 201 Created&lt;/p>
 &lt;br>
 &lt;h5>新增留言 - 失敗&lt;span class="hx-absolute -hx-mt-20" id="新增留言---失敗">&lt;/span>
-&lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restful-post-error.png"
+&lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restful-post-error.webp"
 alt="新增留言 失敗" width="600">&lt;figcaption>
 &lt;p>新增留言 失敗&lt;/p>
 &lt;/figcaption>
@@ -3032,7 +3032,7 @@ alt="新增留言 失敗" width="600">&lt;figcaption>
 &lt;p>新增留言失敗，因為超出20個字元，所以會顯示內容長度超過20個字元以及回應 400 Bad Request&lt;/p>
 &lt;br>
 &lt;h5>修改留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="修改留言---成功">&lt;/span>
-&lt;a href="#%e4%bf%ae%e6%94%b9%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restufl-put-success.png"
+&lt;a href="#%e4%bf%ae%e6%94%b9%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restufl-put-success.webp"
 alt="修改留言 成功" width="600">&lt;figcaption>
 &lt;p>修改留言 成功&lt;/p>
 &lt;/figcaption>
@@ -3041,7 +3041,7 @@ alt="修改留言 成功" width="600">&lt;figcaption>
 &lt;p>修改留言成功，會顯示修改成功以及回應 200 OK&lt;/p>
 &lt;br>
 &lt;h5>修改留言 - 失敗&lt;span class="hx-absolute -hx-mt-20" id="修改留言---失敗">&lt;/span>
-&lt;a href="#%e4%bf%ae%e6%94%b9%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restufl-put-error.png"
+&lt;a href="#%e4%bf%ae%e6%94%b9%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restufl-put-error.webp"
 alt="修改留言 失敗" width="600">&lt;figcaption>
 &lt;p>修改留言 失敗&lt;/p>
 &lt;/figcaption>
@@ -3051,7 +3051,7 @@ alt="修改留言 失敗" width="600">&lt;figcaption>
 &lt;br>
 &lt;h5>刪除留言 - 成功&lt;span class="hx-absolute -hx-mt-20" id="刪除留言---成功">&lt;/span>
 &lt;a href="#%e5%88%aa%e9%99%a4%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restufl-delete-success.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restufl-delete-success.webp"
 alt="刪除留言 成功" width="600">&lt;figcaption>
 &lt;p>刪除留言 成功&lt;/p>
 &lt;/figcaption>
@@ -3061,7 +3061,7 @@ alt="刪除留言 成功" width="600">&lt;figcaption>
 &lt;br>
 &lt;h5>刪除留言 - 失敗&lt;span class="hx-absolute -hx-mt-20" id="刪除留言---失敗">&lt;/span>
 &lt;a href="#%e5%88%aa%e9%99%a4%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restufl-delete-error.png"
+&lt;figure>&lt;img src="https://pin-yi.me/php-laravel/laravel/restufl-delete-error.webp"
 alt="刪除留言 失敗" width="600">&lt;figcaption>
 &lt;p>刪除留言 失敗&lt;/p>
 &lt;/figcaption>

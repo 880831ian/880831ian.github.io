@@ -8,7 +8,7 @@
 &lt;p>為了可以擴充服務，負載平衡成為主流的技術，這幾年雖然雲端與分散式儲存運算技術火紅，除非有特別的使用需求，不然在技術上負載均衡算是比較容易達成與掌握的技術。&lt;/p>
 &lt;p>負載平衡除了分流能力之外，有另一個很大的好處就是可以提供 High Availability，也就是傳說中的 HA 架構，好讓你一台機器掛了其他伺服器可以繼續服務，降低斷線率。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy.webp"
 alt="HAProxy 與 Reids Sentinel 示意圖 selcukusta/redis-sentinel-with-haproxy" width="700">&lt;figcaption>
 &lt;p>HAProxy 與 Reids Sentinel 示意圖 &lt;a href="https://github.com/selcukusta/redis-sentinel-with-haproxy" target="_blank" rel="noopener">selcukusta/redis-sentinel-with-haproxy&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -529,12 +529,12 @@ title="Copy code"
 &lt;br>
 &lt;h2>測試&lt;span class="hx-absolute -hx-mt-20" id="測試">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們先用 docker-compose up 來啟動 Docker-compose.yaml，接著再啟動 sentinel/Docker-compose.yaml：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/yaml.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/yaml.webp"
 alt="啟動 Docker-compose.yaml" width="700">&lt;figcaption>
 &lt;p>啟動 Docker-compose.yaml&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/sentinel-yaml.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/sentinel-yaml.webp"
 alt="啟動 sentinel/Docker-compose.yaml" width="700">&lt;figcaption>
 &lt;p>啟動 sentinel/Docker-compose.yaml&lt;/p>
 &lt;/figcaption>
@@ -546,7 +546,7 @@ alt="啟動 sentinel/Docker-compose.yaml" width="700">&lt;figcaption>
 &lt;li>&lt;code>test.com:8404/redis&lt;/code>：HAProxy 監看平台(只取片段)。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404.webp"
 alt="HAProxy 監控平台" width="1200">&lt;figcaption>
 &lt;p>HAProxy 監控平台&lt;/p>
 &lt;/figcaption>
@@ -556,7 +556,7 @@ alt="HAProxy 監控平台" width="1200">&lt;figcaption>
 &lt;li>&lt;code>test.com:8888/rw.php&lt;/code>：只會顯示 master，並且可讀可寫。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/rw.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/rw.webp"
 alt="master (redis1)" width="600">&lt;figcaption>
 &lt;p>master (redis1)&lt;/p>
 &lt;/figcaption>
@@ -566,17 +566,17 @@ alt="master (redis1)" width="600">&lt;figcaption>
 &lt;li>&lt;code>test.com:8888/r.php&lt;/code>：會顯示 master、slave，且可讀。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r1.webp"
 alt="master (redis1)" width="600">&lt;figcaption>
 &lt;p>master (redis1)&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r3.webp"
 alt="slave (redis2)" width="600">&lt;figcaption>
 &lt;p>slave (redis2)&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r2.webp"
 alt="slave (redis3)" width="600">&lt;figcaption>
 &lt;p>slave (redis3)&lt;/p>
 &lt;/figcaption>
@@ -633,7 +633,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>可以看到 &lt;code>test.com:8404/redis&lt;/code> 原本綠色的 redis1 開始變成黃色，最後變成紅色：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-1.webp"
 alt="模擬中斷服務 HAProxy 監控平台" width="1200">&lt;figcaption>
 &lt;p>模擬中斷服務 HAProxy 監控平台&lt;/p>
 &lt;/figcaption>
@@ -641,7 +641,7 @@ alt="模擬中斷服務 HAProxy 監控平台" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>最後可以看到 Redis Sentinel 作動，將 master 轉移到 redis3：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-2.webp"
 alt="模擬中斷服務 HAProxy 監控平台" width="1200">&lt;figcaption>
 &lt;p>模擬中斷服務 HAProxy 監控平台&lt;/p>
 &lt;/figcaption>
@@ -649,7 +649,7 @@ alt="模擬中斷服務 HAProxy 監控平台" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>這時候我們再去看 &lt;code>test.com:8888/rw.php&lt;/code> ，就會發現與剛剛的 master 不太一樣囉，因為已經變成 redis2 了！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/rw-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/rw-1.webp"
 alt="master (redis2)" width="600">&lt;figcaption>
 &lt;p>master (redis2)&lt;/p>
 &lt;/figcaption>
@@ -658,12 +658,12 @@ alt="master (redis2)" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>我們再去看 &lt;code>test.com:8888/r.php&lt;/code> ，就可以發現剩下 redis2 以及 redis 3 了，因為 redis1 被我們給暫停服務了，而且 redis2 變成 master！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r4.webp"
 alt="master (redis2)" width="600">&lt;figcaption>
 &lt;p>master (redis2)&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r2.webp"
 alt="slave (redis3)" width="600">&lt;figcaption>
 &lt;p>slave (redis3)&lt;/p>
 &lt;/figcaption>
@@ -688,7 +688,7 @@ alt="slave (redis3)" width="600">&lt;figcaption>
 &lt;p>我們這邊主要介紹哨兵模式 (Sentinel)，但主要也是由主從複製模式 (Master-Slave Replication) 修改而來：&lt;/p>
 &lt;p>哨兵模式就是用來監視 Redis 系統，哨兵會監控 Master 是否正常運作。如果遇到 Master 出現故障或是離線時，哨兵之間會開始判斷，直到我們所設定需達到的判斷數量後，哨兵會將其所屬的 Slave 變成 Master，並再將其他的 Slave 指向新的 Master。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal.webp"
 alt="哨兵模式 (Sentinel)" width="550">&lt;figcaption>
 &lt;p>哨兵模式 (Sentinel)&lt;/p>
 &lt;/figcaption>
@@ -1054,13 +1054,13 @@ title="Copy code"
 &lt;h2>測試&lt;span class="hx-absolute -hx-mt-20" id="測試">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們先用 docker-compose up 來啟動 Docker-compose.yaml ，接著下 sh redis.sh 指令來查看各服務的 IP 位置以及目前角色：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/docker-compose-up-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/docker-compose-up-1.webp"
 alt="啟動 Docker-compose.yaml" width="650">&lt;figcaption>
 &lt;p>啟動 Docker-compose.yaml&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-1.webp"
 alt="使用 redis.sh 檢查目前 IP 及角色" width="650">&lt;figcaption>
 &lt;p>使用 redis.sh 檢查目前 IP 及角色&lt;/p>
 &lt;/figcaption>
@@ -1099,7 +1099,7 @@ title="Copy code"
 &lt;br>
 &lt;p>可以瀏覽 &lt;code>test.com:8888&lt;/code> 是否有正常抓到 redis 的 master&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-1.webp"
 alt="test.com:8888 測試網站" width="650">&lt;figcaption>
 &lt;p>test.com:8888 測試網站&lt;/p>
 &lt;/figcaption>
@@ -1127,7 +1127,7 @@ title="Copy code"
 &lt;br>
 &lt;p>再啟動 sentinel/Docker-compose.yaml&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/docker-compose-up-2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/docker-compose-up-2.webp"
 alt="啟動 Docker-compose.yaml" width="700">&lt;figcaption>
 &lt;p>啟動 Docker-compose.yaml&lt;/p>
 &lt;/figcaption>
@@ -1148,7 +1148,7 @@ title="Copy code"
 &lt;br>
 &lt;p>下完指令後，再使用 &lt;code>sh redis.sh&lt;/code> 來看看目前的 role 狀態：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-2.webp"
 alt="使用 redis.sh 檢查目前 IP 及角色" width="700">&lt;figcaption>
 &lt;p>使用 redis.sh 檢查目前 IP 及角色&lt;/p>
 &lt;/figcaption>
@@ -1158,7 +1158,7 @@ alt="使用 redis.sh 檢查目前 IP 及角色" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>等待一下子後，重新下 &lt;code>sh redis.sh&lt;/code> 來看目前的 role 狀態：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-3.webp"
 alt="使用 redis.sh 檢查目前 IP 及角色" width="700">&lt;figcaption>
 &lt;p>使用 redis.sh 檢查目前 IP 及角色&lt;/p>
 &lt;/figcaption>
@@ -1168,7 +1168,7 @@ alt="使用 redis.sh 檢查目前 IP 及角色" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>那我們來看一下 sentinel 在背後做了哪些事情：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-1.webp"
 alt="判斷是否主觀下線及客觀下線，並發起投票" width="1200">&lt;figcaption>
 &lt;p>判斷是否主觀下線及客觀下線，並發起投票&lt;/p>
 &lt;/figcaption>
@@ -1176,7 +1176,7 @@ alt="判斷是否主觀下線及客觀下線，並發起投票" width="1200">&lt
 &lt;br>
 &lt;p>可以看到三個哨兵都認為 master 為 主觀下線 (sdown)，這時 sentinel-2 就認定為 客觀下線 (odown)，並發起投票要求成為領頭哨兵。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-2.webp"
 alt="進行透票，確認誰當選" width="1200">&lt;figcaption>
 &lt;p>進行透票，確認誰當選&lt;/p>
 &lt;/figcaption>
@@ -1184,7 +1184,7 @@ alt="進行透票，確認誰當選" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>我們可以看到 Sentinel2 和 Sentinel3 都投給 Sentinel2，所以最後 Sentinel2 當選。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-3.webp"
 alt="領頭哨兵選定新 master" width="1200">&lt;figcaption>
 &lt;p>領頭哨兵選定新 master&lt;/p>
 &lt;/figcaption>
@@ -1192,7 +1192,7 @@ alt="領頭哨兵選定新 master" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>接著 sentinel2 選出 redis-slave1 (192.168.208.5:6379) 作為 Master ，並且使用 &lt;code>failover-state-send-slaveof-noone&lt;/code> 來將 redis-slave1 解除 Slave 狀態變成獨立的 master，隨後將 redis-slave1 升成 master。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-4.webp"
 alt="設定 master 並修改原 master 變成 slave" width="1200">&lt;figcaption>
 &lt;p>設定 master 並修改原 master 變成 slave&lt;/p>
 &lt;/figcaption>
@@ -1202,7 +1202,7 @@ alt="設定 master 並修改原 master 變成 slave" width="1200">&lt;figcaption
 &lt;br>
 &lt;p>最後我們來看一下我們用 PHP 連線的測試：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-2.webp"
 alt="連線 master" width="700">&lt;figcaption>
 &lt;p>連線 master&lt;/p>
 &lt;/figcaption>
@@ -1212,7 +1212,7 @@ alt="連線 master" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>那我們最後把原本的 master 恢復，看看會發生什麼事情：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-3.webp"
 alt="連線 master" width="700">&lt;figcaption>
 &lt;p>連線 master&lt;/p>
 &lt;/figcaption>
@@ -1225,7 +1225,7 @@ alt="連線 master" width="700">&lt;figcaption>
 &lt;/ul>
 &lt;p>在學習的時候，有發現啟動 sentinel 的時候，會跳出 &lt;code>WARNING: Sentinel was not able to save the new configuration on disk!!!: Permission denied&lt;/code> 錯誤訊息，後來再去翻 redis github 的 issus 才發現作者也有發現這個問題，且已經修復了，主要是權限的問題，以及要掛載目錄而非 conf 檔案。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/bug.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/bug.webp"
 alt="redis WARNING 錯誤訊息 github issus" width="700">&lt;figcaption>
 &lt;p>redis WARNING 錯誤訊息 &lt;a href="https://github.com/redis/redis/issues/8172" target="_blank" rel="noopener">github issus&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -1454,7 +1454,7 @@ title="Copy code"
 &lt;h5>字串型態適合場景&lt;span class="hx-absolute -hx-mt-20" id="字串型態適合場景">&lt;/span>
 &lt;a href="#%e5%ad%97%e4%b8%b2%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>字串(strings) 型態適合用於圖片快取 （使用binary）、累計次數、觀看累計次數&lt;/strong>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/string.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/string.webp"
 alt="String 適用場景圖" width="550">&lt;figcaption>
 &lt;p>String 適用場景圖&lt;/p>
 &lt;/figcaption>
@@ -1463,7 +1463,7 @@ alt="String 適用場景圖" width="550">&lt;figcaption>
 &lt;h4>哈希 (Hashes)&lt;span class="hx-absolute -hx-mt-20" id="哈希-hashes">&lt;/span>
 &lt;a href="#%e5%93%88%e5%b8%8c-hashes" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>可以把他想像成二維陣列，應該會比較好理解，我網路上找了一張圖，應該會比較清楚！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/hash.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/hash.webp"
 alt="Hashes 示意圖 (Redis 基本資料形態)" width="500">&lt;figcaption>
 &lt;p>Hashes 示意圖 (&lt;a href="https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/" target="_blank" rel="noopener">Redis 基本資料形態&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -1615,7 +1615,7 @@ title="Copy code"
 &lt;h5>哈希型態適合場景&lt;span class="hx-absolute -hx-mt-20" id="哈希型態適合場景">&lt;/span>
 &lt;a href="#%e5%93%88%e5%b8%8c%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>哈希(Hashes) 型態適合用於每次只需要取用一部分的資料&lt;/strong>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/hash-template.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/hash-template.webp"
 alt="Hashes 適用場景圖" width="550">&lt;figcaption>
 &lt;p>Hashes 適用場景圖&lt;/p>
 &lt;/figcaption>
@@ -1713,7 +1713,7 @@ title="Copy code"
 &lt;h5>列表型態適合場景&lt;span class="hx-absolute -hx-mt-20" id="列表型態適合場景">&lt;/span>
 &lt;a href="#%e5%88%97%e8%a1%a8%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>列表(Lists) 型態適合用於文章列表或者資料分頁展示的應用&lt;/strong>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/list.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/list.webp"
 alt="Lists 適用場景圖" width="600">&lt;figcaption>
 &lt;p>Lists 適用場景圖&lt;/p>
 &lt;/figcaption>
@@ -1825,7 +1825,7 @@ title="Copy code"
 &lt;h5>集合型態適合場景&lt;span class="hx-absolute -hx-mt-20" id="集合型態適合場景">&lt;/span>
 &lt;a href="#%e9%9b%86%e5%90%88%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>集合(Sets) 型態適合用於文章中的Tag標籤、或是要排除相同資料&lt;/strong>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/set.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/set.webp"
 alt="Sets 適用場景圖" width="700">&lt;figcaption>
 &lt;p>Sets 適用場景圖&lt;/p>
 &lt;/figcaption>
@@ -1934,7 +1934,7 @@ title="Copy code"
 &lt;h5>有序集合型態適合場景&lt;span class="hx-absolute -hx-mt-20" id="有序集合型態適合場景">&lt;/span>
 &lt;a href="#%e6%9c%89%e5%ba%8f%e9%9b%86%e5%90%88%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>有序集合(Zset) 型態適合用於需要有序排列的資料&lt;/strong>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/zset.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/zset.webp"
 alt="Zset 適用場景圖" width="550">&lt;figcaption>
 &lt;p>Zset 適用場景圖&lt;/p>
 &lt;/figcaption>
@@ -1945,7 +1945,7 @@ alt="Zset 適用場景圖" width="550">&lt;figcaption>
 &lt;p>Redis 客戶端可以使用 &lt;code>subscribe&lt;/code> 來訂閱任意數量的頻道。&lt;/p>
 &lt;p>下面這張圖是頻道1，以及訂閱這個頻道的三個用戶端分別是客戶端2、客戶端7、客戶端5&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/channel.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/channel.webp"
 alt="Subscribe 示意圖" width="550">&lt;figcaption>
 &lt;p>Subscribe 示意圖&lt;/p>
 &lt;/figcaption>
@@ -1953,7 +1953,7 @@ alt="Subscribe 示意圖" width="550">&lt;figcaption>
 &lt;br>
 &lt;p>當我們有新消息通過 &lt;code>publish&lt;/code> 指令發送給頻道1 ，這個消息就會被發送給有訂閱頻道1的三個客戶端。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/message.png"
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/message.webp"
 alt="Publish 示意圖" width="550">&lt;figcaption>
 &lt;p>Publish 示意圖&lt;/p>
 &lt;/figcaption>

@@ -263,7 +263,7 @@
 &lt;br>
 &lt;p>這邊的範例是以不同專案來分，再分區不同的服務，每個服務裡面都會有 &lt;code>backend.tf&lt;/code>、&lt;code>main.tf&lt;/code>、&lt;code>provider.tf&lt;/code> 檔案所組成，我們可以來比較一下 gcp-1234 的 aaa 服務以及 gcp-2345 的 aaa 服務差異：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terragrunt/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terragrunt/1.webp"
 alt="檔案差異" width="800">&lt;figcaption>
 &lt;p>檔案差異&lt;/p>
 &lt;/figcaption>
@@ -776,7 +776,7 @@ title="Copy code"
 &lt;br>
 &lt;p>此時的執行指令是在 gke 目錄下，使用 &lt;code>terragrunt run-all [參數]&lt;/code> 來跑整個相依的 module，我們這邊就建立一個名為 tf-test 的 cluster，並且有一個名為 test 的 node_pool ，其他設定請參考上面程式：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terragrunt/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terragrunt/2.webp"
 alt="測試 terragrunt run-all" width="700">&lt;figcaption>
 &lt;p>測試 terragrunt run-all&lt;/p>
 &lt;/figcaption>
@@ -784,7 +784,7 @@ alt="測試 terragrunt run-all" width="700">&lt;figcaption>
 &lt;p>(黃色的 WARN 是因為 gcs 上還沒有存過該狀態檔案，所以會跳出提示)&lt;/p>
 &lt;br>
 &lt;p>等到 cluster 建立完成後，會將 cluster 的資訊帶入 node_pool，才開始建立 node_pool 的資源：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terragrunt/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terragrunt/3.webp"
 alt="測試 terragrunt run-all" width="700">&lt;figcaption>
 &lt;p>測試 terragrunt run-all&lt;/p>
 &lt;/figcaption>
@@ -805,7 +805,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>( 這個 dot 指令是另外的套件，會將關係圖程式碼轉成圖檔，請先安裝 &lt;code>brew install graphviz&lt;/code> )&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terragrunt/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terragrunt/4.webp"
 alt="關聯圖" width="100">&lt;figcaption>
 &lt;p>關聯圖&lt;/p>
 &lt;/figcaption>
@@ -1443,12 +1443,12 @@ title="Copy code"
 &lt;h3>init&lt;span class="hx-absolute -hx-mt-20" id="init">&lt;/span>
 &lt;a href="#init" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們使用 &lt;code>terraform init&lt;/code> 來看看原本 init 與使用模組 init 後差在哪裡：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/1.webp"
 alt="原先 terraform init 結果" width="700">&lt;figcaption>
 &lt;p>原先 terraform init 結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/2.webp"
 alt="使用 module init 結果" width="700">&lt;figcaption>
 &lt;p>使用 module init 結果&lt;/p>
 &lt;/figcaption>
@@ -1456,7 +1456,7 @@ alt="使用 module init 結果" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>可以看到有使用 module 在初始化的時候，會連同 module 也一併初始化，接著我們進到 .terraform 資料夾內，可以看到有 moduels 資料夾。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/3.webp"
 alt=".terraform 檔案差異" width="700">&lt;figcaption>
 &lt;p>.terraform 檔案差異&lt;/p>
 &lt;/figcaption>
@@ -1464,7 +1464,7 @@ alt=".terraform 檔案差異" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>在進去看會看有一個 modules.json 檔案，會紀錄 module 使用的路徑，因此當我們使用的 module 有改變時，要記得重新 init 才可以確保使用的 module 是正確的。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/4.webp"
 alt="使用 module 會多一個 modules.json 檔案" width="700">&lt;figcaption>
 &lt;p>使用 module 會多一個 modules.json 檔案&lt;/p>
 &lt;/figcaption>
@@ -1473,12 +1473,12 @@ alt="使用 module 會多一個 modules.json 檔案" width="700">&lt;figcaption>
 &lt;h3>plan&lt;span class="hx-absolute -hx-mt-20" id="plan">&lt;/span>
 &lt;a href="#plan" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們一樣下 &lt;code>terraform plan&lt;/code> 指令，來看看兩者顯示的差異：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/5.webp"
 alt="原先 terraform plan 結果" width="700">&lt;figcaption>
 &lt;p>原先 terraform plan 結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/6.webp"
 alt="使用 module plan 結果" width="700">&lt;figcaption>
 &lt;p>使用 module plan 結果&lt;/p>
 &lt;/figcaption>
@@ -1489,12 +1489,12 @@ alt="使用 module plan 結果" width="700">&lt;figcaption>
 &lt;h3>apply&lt;span class="hx-absolute -hx-mt-20" id="apply">&lt;/span>
 &lt;a href="#apply" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>使用 &lt;code>terraform apply&lt;/code> 來看建立資源後的結果有什麼不同：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/7.webp"
 alt="原先 terraform apply 結果" width="700">&lt;figcaption>
 &lt;p>原先 terraform apply 結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/8.webp"
 alt="使用 module apply 結果" width="700">&lt;figcaption>
 &lt;p>使用 module apply 結果&lt;/p>
 &lt;/figcaption>
@@ -1502,12 +1502,12 @@ alt="使用 module apply 結果" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>apply 看到的與 plan 顯示的一樣，使用 module 建立的資料格式會不太一樣，所以我們來看看兩者 tfstate 檔案的差異：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/9.webp"
 alt="原先 terraform 建立的 tfstate 檔案" width="800">&lt;figcaption>
 &lt;p>原先 terraform 建立的 tfstate 檔案&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/10.webp"
 alt="使用 module 建立的 tfstate 檔案" width="800">&lt;figcaption>
 &lt;p>使用 module 建立的 tfstate 檔案&lt;/p>
 &lt;/figcaption>
@@ -1532,7 +1532,7 @@ title="Copy code"
 &lt;br>
 &lt;p>再使用 &lt;code>terraform import google_compute_instance.instance 專案ID/機器地區/機器名稱&lt;/code> 來匯入雲上服務的狀態到後端存到 tfstate 的位子。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/11.webp"
 alt="原先 terraform import 線上服務" width="700">&lt;figcaption>
 &lt;p>原先 terraform import 線上服務&lt;/p>
 &lt;/figcaption>
@@ -1574,7 +1574,7 @@ title="Copy code"
 &lt;br>
 &lt;p>再使用 &lt;code>terraform import module.ian-test.google_compute_instance.instance 專案ID/機器地區/機器名稱&lt;/code> 來匯入狀態檔案。(這邊要記得依照你 module 設定的名稱帶入)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/12.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-module/12.webp"
 alt="使用 module import 線上服務" width="700">&lt;figcaption>
 &lt;p>使用 module import 線上服務&lt;/p>
 &lt;/figcaption>
@@ -1676,7 +1676,7 @@ title="Copy code"
 &lt;br>
 &lt;p>當我們新增好後，就跟之前步驟一樣，先 init &amp;gt; plan &amp;gt; apply 來做測試，在 init 時會發現，與之前不太一樣的是，在 Initializing the backend 的下方有多了綠色的成功設定後端字樣，代表他也會將後端的相關資訊存進 .terraform 資料夾中，所以有變更後端儲存位置，要記得重新 init 歐&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/1.webp"
 alt="init 初始化後，會將後端資訊也存到 .terraform 資料夾" width="700">&lt;figcaption>
 &lt;p>init 初始化後，會將後端資訊也存到 .terraform 資料夾&lt;/p>
 &lt;/figcaption>
@@ -1684,7 +1684,7 @@ alt="init 初始化後，會將後端資訊也存到 .terraform 資料夾" width
 &lt;br>
 &lt;p>當我們 plan &amp;gt; apply 完成後，可以觀察一下，發現原本會產生的 terraform.tfstate 檔案沒有出現在該目錄下：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/2.webp"
 alt="apply 完，沒有在本地產生 .tfstate 檔案" width="700">&lt;figcaption>
 &lt;p>apply 完，沒有在本地產生 .tfstate 檔案&lt;/p>
 &lt;/figcaption>
@@ -1692,7 +1692,7 @@ alt="apply 完，沒有在本地產生 .tfstate 檔案" width="700">&lt;figcapti
 &lt;br>
 &lt;p>這時候，我們可以到剛剛在上面設定的專案 ID 內的有一個 Infrastructure / Terraform，裡面就會存放 Terraform state 檔案，如下：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/3.webp"
 alt="gitlab/Infrastructure/Terraform" width="500">&lt;figcaption>
 &lt;p>gitlab/Infrastructure/Terraform&lt;/p>
 &lt;/figcaption>
@@ -1700,7 +1700,7 @@ alt="gitlab/Infrastructure/Terraform" width="500">&lt;figcaption>
 &lt;br>
 &lt;p>會顯示狀態名稱、更新資訊、以及 Actions 等欄位：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/4.webp"
 alt="gitlab terraform tfstate 網頁" width="1000">&lt;figcaption>
 &lt;p>gitlab terraform tfstate 網頁&lt;/p>
 &lt;/figcaption>
@@ -1708,7 +1708,7 @@ alt="gitlab terraform tfstate 網頁" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>功能部分可以看後面的 Actions 欄位底下有三個點點，可以下載對應的 tfstate 檔案、Lock 讓其他人不能對此進行 apply，或是刪除此 tfstate 檔案等&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/5.webp"
 alt="gitlab terraform tfstate 功能說明" width="500">&lt;figcaption>
 &lt;p>gitlab terraform tfstate 功能說明&lt;/p>
 &lt;/figcaption>
@@ -1720,7 +1720,7 @@ alt="gitlab terraform tfstate 功能說明" width="500">&lt;figcaption>
 &lt;a href="#lock" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>那當我們已經有了共同儲存的地方，也溝通好，不會使用 WEB UI 去調整，但如果有兩個人同時去下 apply 的話，第一個人的 apply 還在執行，後面那個人的 apply 是不是就會蓋掉前一個人的設定呢？&lt;/p>
 &lt;p>所以 Terraform 在 0.14 版本推出了 Lock 功能，當有人在 plan or apply 的時候，我們去查看 gitlab Terraform state，會看到我們的 tfstate 檔案會被 Lock 起來&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/6.webp"
 alt="GitLab Lock 鎖住" width="1000">&lt;figcaption>
 &lt;p>GitLab Lock 鎖住&lt;/p>
 &lt;/figcaption>
@@ -1728,7 +1728,7 @@ alt="GitLab Lock 鎖住" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>此時除了第一個操作者，其他人再去 plan or apply 就會出現錯誤，可以看到是誰正在使用，以及操作的動作是 plan or apply&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/7.webp"
 alt="在 Lock 下，其他人沒辦法去 plan or apply" width="700">&lt;figcaption>
 &lt;p>在 Lock 下，其他人沒辦法去 plan or apply&lt;/p>
 &lt;/figcaption>
@@ -1763,7 +1763,7 @@ title="Copy code"
 &lt;br>
 &lt;p>接著我們重新刪除剛剛 gitlab 已產生的 .terraform/ 跟 .terraform.lock.hcl 檔案，重新下 init，就可以到 gcs 對應資料夾下，新增了 defaulte.tfstate 檔案。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/8.webp"
 alt="產生 defaulte.tfstate" width="700">&lt;figcaption>
 &lt;p>產生 defaulte.tfstate&lt;/p>
 &lt;/figcaption>
@@ -1772,7 +1772,7 @@ alt="產生 defaulte.tfstate" width="700">&lt;figcaption>
 &lt;h3>Lock&lt;span class="hx-absolute -hx-mt-20" id="lock-1">&lt;/span>
 &lt;a href="#lock-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們一樣來看一下 gcs 的 lock 會長什麼樣子，gcs lock 會產生一個 default.tflock 檔案，由他去判斷現在是否是 Lock 狀態&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/9.webp"
 alt="gcs Lock 會出現 .tflock 檔案" width="700">&lt;figcaption>
 &lt;p>gcs Lock 會出現 .tflock 檔案&lt;/p>
 &lt;/figcaption>
@@ -1780,7 +1780,7 @@ alt="gcs Lock 會出現 .tflock 檔案" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>當有其他人也執行 plan or apply 後，就會顯示以下：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-tfstate/10.webp"
 alt="gcs Lock 其他人不能操作" width="700">&lt;figcaption>
 &lt;p>gcs Lock 其他人不能操作&lt;/p>
 &lt;/figcaption>
@@ -2159,7 +2159,7 @@ title="Copy code"
 &lt;h2>建立 Google Compute Engine&lt;span class="hx-absolute -hx-mt-20" id="建立-google-compute-engine">&lt;/span>
 &lt;a href="#%e5%bb%ba%e7%ab%8b-google-compute-engine" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當我們寫好 Google Compute Engine tf 檔案後，我們接著把他建立，建立前要先使用 &lt;code>terraform init&lt;/code> 來做初始化&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/1.webp"
 alt="terraform init" width="700">&lt;figcaption>
 &lt;p>terraform init&lt;/p>
 &lt;/figcaption>
@@ -2167,7 +2167,7 @@ alt="terraform init" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>接著可以先使用 &lt;code>terraform plan&lt;/code> 來查看我們的設定是否是我們想要的，或是直接用 &lt;code>terraform apply&lt;/code> 來建立 Google Compute Engine&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/2.webp"
 alt="terraform apply" width="700">&lt;figcaption>
 &lt;p>terraform apply&lt;/p>
 &lt;/figcaption>
@@ -2175,7 +2175,7 @@ alt="terraform apply" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>可以看到成功建立我們的 test Google Compute Engine（也可以看到因為我們有開 nat_ip 所以有外部 IP）&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/3.webp"
 alt="GCP Google Compute Engine" width="700">&lt;figcaption>
 &lt;p>GCP Google Compute Engine&lt;/p>
 &lt;/figcaption>
@@ -2185,7 +2185,7 @@ alt="GCP Google Compute Engine" width="700">&lt;figcaption>
 &lt;a href="#%e4%bf%ae%e6%94%b9-google-compute-engine" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當我們發現我們建立的 Google Compute Engine 參數有錯，想要修改時，我們只需要修改程式碼部分，並重新下一次 &lt;code>terraform apply&lt;/code> 來修改 Google Compute Engine，就會看到以下畫面 (有些設定檔是不能修改的，若修改他會重新創建一個新的機器，像是 name 之類的，使用時要小心一點 😉)&lt;/p>
 &lt;p>我們拿剛剛提到的 nat_ip，我們先把它註解掉，再下 &lt;code>terraform apply&lt;/code> 看看機器有什麼變化～&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/4.webp"
 alt="terraform changed" width="700">&lt;figcaption>
 &lt;p>terraform changed&lt;/p>
 &lt;/figcaption>
@@ -2193,7 +2193,7 @@ alt="terraform changed" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>可以看到他會提示說，他會改變 network_interface，也移除 access_config 的設定，執行後的 Resources 也會從剛剛的 added 變成 changed，我們看一下 GCP 有沒有改變：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/5.webp"
 alt="terraform changed" width="700">&lt;figcaption>
 &lt;p>terraform changed&lt;/p>
 &lt;/figcaption>
@@ -2205,7 +2205,7 @@ alt="terraform changed" width="700">&lt;figcaption>
 &lt;a href="#%e5%88%aa%e9%99%a4-google-compute-engine" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>最後假如我們要刪除 Google Compute Engine，也可以使用 terraform 的指令來刪除，我們順便來測試一下上面有設定的 deletion_protection 刪除保護機制是不是正常～&lt;/p>
 &lt;p>目前 deletion_protection 還是 &lt;code>true&lt;/code>，我們直接下 &lt;code>terraform destroy&lt;/code>，看看是否可以刪除 Google Compute Engine&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/6.webp"
 alt="terraform destroy" width="900">&lt;figcaption>
 &lt;p>terraform destroy&lt;/p>
 &lt;/figcaption>
@@ -2213,7 +2213,7 @@ alt="terraform destroy" width="900">&lt;figcaption>
 &lt;br>
 &lt;p>可以看到他會提醒你說 Deletion Protection is enabled，必須先把他改成 &lt;code>false&lt;/code> terraform apply 後才可以刪除～&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/7.webp"
 alt="改成 false 在下 terraform apply" width="900">&lt;figcaption>
 &lt;p>改成 false 在下 terraform apply&lt;/p>
 &lt;/figcaption>
@@ -2221,13 +2221,13 @@ alt="改成 false 在下 terraform apply" width="900">&lt;figcaption>
 &lt;br>
 &lt;p>現在 deletion_protection 是 &lt;code>false&lt;/code>，我們就可以下 &lt;code>terraform destroy&lt;/code> 來刪除 Google Compute Engine 🔪&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/8.webp"
 alt="terraform destroy" width="700">&lt;figcaption>
 &lt;p>terraform destroy&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform-gce/9.webp"
 alt="Google Compute Engine 刪除中&amp;hellip;" width="500">&lt;figcaption>
 &lt;p>Google Compute Engine 刪除中&amp;hellip;&lt;/p>
 &lt;/figcaption>
@@ -2252,7 +2252,7 @@ alt="Google Compute Engine 刪除中&amp;hellip;" width="500">&lt;figcaption>
 &lt;br>
 &lt;p>(以上 IaC 說明來自 &lt;a href="https://blog.wu-boy.com/2021/02/introduction-to-infrastructure-as-code-terraform-vs-pulumi/" target="_blank" rel="noopener">小惡魔 - 初探 Infrastructure as Code 工具 Terraform vs Pulumi &lt;/a>文章，寫得真的很好，推推)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/iac.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/iac.webp"
 alt="Infrastructure as Code 初心企服行研07：认识「基础设施即代码」(Infrastructure as Code) — 初心内参" width="800">&lt;figcaption>
 &lt;p>Infrastructure as Code &lt;a href="https://www.36dianping.com/info/15473.html" target="_blank" rel="noopener">初心企服行研07：认识「基础设施即代码」(Infrastructure as Code) — 初心内参&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -2273,7 +2273,7 @@ alt="Infrastructure as Code 初心企服行研07：认识「基础设施即代�
 &lt;h3>標準化部署工作流程&lt;span class="hx-absolute -hx-mt-20" id="標準化部署工作流程">&lt;/span>
 &lt;a href="#%e6%a8%99%e6%ba%96%e5%8c%96%e9%83%a8%e7%bd%b2%e5%b7%a5%e4%bd%9c%e6%b5%81%e7%a8%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>提供商會將基礎設施的每個單元 (例如建立 VM 或是 VPC) 定義為資源。你可以將來自不同提供者的資源組合，變成模組，讓我們可以用一致的語言和工作流程去管理他們。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/terraform.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/terraform.webp"
 alt="Terraform 什麼是 Terraform 的基礎設施即代碼？" width="800">&lt;figcaption>
 &lt;p>Terraform &lt;a href="https://learn.hashicorp.com/tutorials/terraform/infrastructure-as-code?in=terraform/aws-get-started" target="_blank" rel="noopener">什麼是 Terraform 的基礎設施即代碼？&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -2316,7 +2316,7 @@ title="Copy code"
 &lt;h3>如何驗證是否安裝成功&lt;span class="hx-absolute -hx-mt-20" id="如何驗證是否安裝成功">&lt;/span>
 &lt;a href="#%e5%a6%82%e4%bd%95%e9%a9%97%e8%ad%89%e6%98%af%e5%90%a6%e5%ae%89%e8%a3%9d%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>打開一個新的 Terminal，使用 &lt;code>terraform -help&lt;/code> 檢查是否有安裝成功，也可以在 &lt;code>-help&lt;/code> 後面加入參數來查看該參數的功能與更多訊息&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/1.webp"
 alt="驗證 Terraform 安裝成功 Install Terraform" width="800">&lt;figcaption>
 &lt;p>驗證 Terraform 安裝成功 &lt;a href="https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started#install-terraform" target="_blank" rel="noopener">Install Terraform&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -2349,7 +2349,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/8.webp"
 alt="放上成果圖片" width="800">&lt;figcaption>
 &lt;p>放上成果圖片&lt;/p>
 &lt;/figcaption>
@@ -2461,7 +2461,7 @@ title="Copy code"
 &lt;br>
 &lt;p>小提醒，如果不知道要怎麼寫 provider 供應商設定，可以打開 &lt;a href="https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/container" target="_blank" rel="noopener">terraform 官網找到該供應商&lt;/a>，點選右邊的 USE PROVIDER&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/11.webp"
 alt="官方教學" width="400">&lt;figcaption>
 &lt;p>官方教學&lt;/p>
 &lt;/figcaption>
@@ -2504,7 +2504,7 @@ title="Copy code"
 &lt;li>首先到該 &lt;code>main.tf&lt;/code> 檔案目錄下，先使用 &lt;code>terraform apply&lt;/code> 來測試看看：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/2.webp"
 alt="無法直接執行 apply" width="900">&lt;figcaption>
 &lt;p>無法直接執行 apply&lt;/p>
 &lt;/figcaption>
@@ -2517,14 +2517,14 @@ alt="無法直接執行 apply" width="900">&lt;figcaption>
 &lt;li>我們先執行 &lt;code>terraform init&lt;/code>，可以看到他會下載 tf 檔案中所需要的外掛套件 (docker)&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/3.webp"
 alt="terraform init" width="800">&lt;figcaption>
 &lt;p>terraform init&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;p>當我們初始化後，資料夾會多一個檔案 (.terraform.lock.hcl) 以及資料夾 (.terraform)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/9.webp"
 alt="init 前後檔案差異" width="650">&lt;figcaption>
 &lt;p>init 前後檔案差異&lt;/p>
 &lt;/figcaption>
@@ -2538,7 +2538,7 @@ alt="init 前後檔案差異" width="650">&lt;figcaption>
 &lt;li>接著我們使用 &lt;code>terraform plan&lt;/code> 來查看我們的計劃，可以看到他會列出我們所寫的 tf 裡面有用到的 resource，除了我們有設定的屬性，其他的屬性也會顯示出來，可以更方便地讓我們知道這個 resource 有哪些屬性可以設定&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/4.webp"
 alt="terraform plan" width="600">&lt;figcaption>
 &lt;p>terraform plan&lt;/p>
 &lt;/figcaption>
@@ -2549,12 +2549,12 @@ alt="terraform plan" width="600">&lt;figcaption>
 &lt;li>最後我們檢查都沒有問題，就可以使用 &lt;code>terraform apply&lt;/code> 來建置，apply 其實跟 plan 一樣都會先讓我們看一下計劃，但會跳出詢問是否要執行，除非你輸入 &lt;code>yes&lt;/code>，否則就跟 plan 單純顯示計劃內容，最後我們就可以看到他成功在 docker 上面建立 nginx 服務&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/5.webp"
 alt="terraform apply" width="800">&lt;figcaption>
 &lt;p>terraform apply&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/6.webp"
 alt="查看 docker nginx 以及檢查其服務" width="800">&lt;figcaption>
 &lt;p>查看 docker nginx 以及檢查其服務&lt;/p>
 &lt;/figcaption>
@@ -2562,7 +2562,7 @@ alt="查看 docker nginx 以及檢查其服務" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>當我們 apply 完，服務也建立後，查看一下資料夾後會發現，又多了一個檔案 &lt;code>terraform.tfstate&lt;/code>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/10.webp"
 alt="多了一個檔案 terraform.tfstate" width="800">&lt;figcaption>
 &lt;p>多了一個檔案 terraform.tfstate&lt;/p>
 &lt;/figcaption>
@@ -2575,7 +2575,7 @@ alt="多了一個檔案 terraform.tfstate" width="800">&lt;figcaption>
 &lt;li>另外，當你想要移除服務時，可以使用 &lt;code>terraform destroy&lt;/code> 來將服務給移除&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/7.webp"
 alt="terraform destroy" width="700">&lt;figcaption>
 &lt;p>terraform destroy&lt;/p>
 &lt;/figcaption>
@@ -2588,7 +2588,7 @@ alt="terraform destroy" width="700">&lt;figcaption>
 &lt;p>跟我們剛剛說的 &lt;code>terraform.tfstate&lt;/code> 檔案有關，他會儲存我們 IaC 的狀態，所以我們才可以透過他知道現在是對資源做新增、修改、刪除哪個操作&lt;/p>
 &lt;p>那當這個檔案不見時，如果再重新下 &lt;code>terraform apply&lt;/code>，他會認為你是新增狀態，但實際上 docker 服務還是啟動的狀態，所以就會錯誤，會跟你說他已經存在。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/12.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/12.webp"
 alt="測試沒有 terraform.tfstate 直接下 terraform apply" width="700">&lt;figcaption>
 &lt;p>測試沒有 terraform.tfstate 直接下 terraform apply&lt;/p>
 &lt;/figcaption>
@@ -2630,7 +2630,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>import 後面會加上 main.tf resource 名稱 docker_container，以及我們取名的 nginx，最後帶 container id (&lt;code>docker ps&lt;/code> 查詢)，就可以匯出 terraform.tfstate 檔案囉，詳細的 import 可以參考&lt;a href="https://registry.terraform.io/providers/kreuzwerker/docker/latest/docs/resources/container#import" target="_blank" rel="noopener">每個供應商資源的網頁(這邊以 docker 為例)&lt;/a>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/13.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/13.webp"
 alt="terraform import 匯出 terraform.tfstate" width="700">&lt;figcaption>
 &lt;p>terraform import 匯出 terraform.tfstate&lt;/p>
 &lt;/figcaption>
@@ -2639,7 +2639,7 @@ alt="terraform import 匯出 terraform.tfstate" width="700">&lt;figcaption>
 &lt;h5>terraform show&lt;span class="hx-absolute -hx-mt-20" id="terraform-show">&lt;/span>
 &lt;a href="#terraform-show" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>當我們匯出後，可以看一下 terraform.tfstate，它會是一個 json 格式，如果要轉成 tf 格式，還需要使用 &lt;code>terraform show&lt;/code> 來將 terraform.tfstate 檔案轉成 tf 格式，如下：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/14.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/14.webp"
 alt="terraform show 將 terraform.tfstate 轉成 tf" width="700">&lt;figcaption>
 &lt;p>terraform show 將 terraform.tfstate 轉成 tf&lt;/p>
 &lt;/figcaption>
@@ -2647,7 +2647,7 @@ alt="terraform show 將 terraform.tfstate 轉成 tf" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>如果透過上述的方式來轉成 tf，會發現在重新 apply 時，會出現錯誤，這邊以 gce 的當範例，轉完的 tf 設定，有些是 tf 不支援的參數，只會顯示在 tfstate，所以還需要手動刪除。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/15.png"
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terraform/15.webp"
 alt="轉換後還需將不用的設定給移除" width="700">&lt;figcaption>
 &lt;p>轉換後還需將不用的設定給移除&lt;/p>
 &lt;/figcaption>

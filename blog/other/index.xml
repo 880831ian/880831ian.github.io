@@ -4,19 +4,19 @@
 &lt;h2>Bookstack 介紹&lt;span class="hx-absolute -hx-mt-20" id="bookstack-介紹">&lt;/span>
 &lt;a href="#bookstack-%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>介紹部分主要參考 &lt;a href="https://docs.ossii.com.tw/books/bookstack/page/bookstack" target="_blank" rel="noopener">Bookstack 簡介&lt;/a>，以下列出會選擇它的三個特色：&lt;/p>
 &lt;h3>簡潔的書本列表模式&lt;span class="hx-absolute -hx-mt-20" id="簡潔的書本列表模式">&lt;/span>
-&lt;a href="#%e7%b0%a1%e6%bd%94%e7%9a%84%e6%9b%b8%e6%9c%ac%e5%88%97%e8%a1%a8%e6%a8%a1%e5%bc%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/1.png"
+&lt;a href="#%e7%b0%a1%e6%bd%94%e7%9a%84%e6%9b%b8%e6%9c%ac%e5%88%97%e8%a1%a8%e6%a8%a1%e5%bc%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/1.webp"
 alt="書架分類" width="850">&lt;figcaption>
 &lt;p>書架分類&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/2.webp"
 alt="書本分類" width="850">&lt;figcaption>
 &lt;p>書本分類&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/3.webp"
 alt="頁面章節分類" width="850">&lt;figcaption>
 &lt;p>頁面章節分類&lt;/p>
 &lt;/figcaption>
@@ -26,7 +26,7 @@ alt="頁面章節分類" width="850">&lt;figcaption>
 &lt;br>
 &lt;h3>強大的搜尋功能&lt;span class="hx-absolute -hx-mt-20" id="強大的搜尋功能">&lt;/span>
 &lt;a href="#%e5%bc%b7%e5%a4%a7%e7%9a%84%e6%90%9c%e5%b0%8b%e5%8a%9f%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/4.webp"
 alt="搜尋功能" width="850">&lt;figcaption>
 &lt;p>搜尋功能&lt;/p>
 &lt;/figcaption>
@@ -246,7 +246,7 @@ title="Copy code"
 &lt;br>
 &lt;p>架設好 Bookstack 就可以開始寫部門或是組織內的筆記拉～ 如果有開放外網連線，要記得修改預設的管理員帳號，以及用管理員帳號登入，到功能與安全的公開存取給取消，這樣就必須要登入才可以瀏覽筆記了！那就交給大家自己去玩這個好用的筆記工具囉～～ 😍&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/6.webp"
 alt="功能與安全設定" width="850">&lt;figcaption>
 &lt;p>功能與安全設定&lt;/p>
 &lt;/figcaption>
@@ -257,7 +257,7 @@ alt="功能與安全設定" width="850">&lt;figcaption>
 &lt;p>BookStack Installation：&lt;a href="https://www.bookstackapp.com/docs/admin/installation/" target="_blank" rel="noopener">https://www.bookstackapp.com/docs/admin/installation/&lt;/a>&lt;/p></description></item><item><title>找出程式碼、開源套件、容器的安全漏洞工具 - Snyk</title><link>https://pin-yi.me/blog/other/snyk/</link><pubDate>Tue, 20 Sep 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/other/snyk/</guid><description>
 &lt;p>前幾天有機會可以去參加 DevOpsDays Taipei 2022 活動，聽到了一門有關於如何將 Security 加入 DevOps - GitLab CI/CD with Snyk 的講座，覺得蠻有趣的，想說順便紀錄一下這幾天去聽的內容，文章底下有附上本次大會的共筆以及該講者於自己部落格所發的文章，歡迎大家先行查看歐 😆&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/devops.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/devops.webp"
 alt="DevOps 圖片 (醫院 DevOps 如何落地(1) ─ DevOps 與醫院)" width="500">&lt;figcaption>
 &lt;p>DevOps 圖片 &lt;a href="https://www.cio.com.tw/how-hospital-devops-landed-1-devops-and-hospitals/" target="_blank" rel="noopener">(醫院 DevOps 如何落地(1) ─ DevOps 與醫院&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -271,7 +271,7 @@ alt="DevOps 圖片 (醫院 DevOps 如何落地(1) ─ DevOps 與醫院)" width="
 &lt;br>
 &lt;p>所以單純的自動化整合與部署已經不能滿足需求，就像下圖一樣，開始有了 DevSecOps 這個詞產生，在 DevOps 的 CI/CD 流程中加入資安解決方案，藉由資安解決方案來減少開發人員去檢查程式漏洞的時間，也讓 DevOps 快速迭代更加的完整。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/devsecops.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/devsecops.webp"
 alt="DevSecOps 圖片 (Apps Built Better: Why DevSecOps is Your Security Team’s Silver Bullet)" width="450">&lt;figcaption>
 &lt;p>DevSecOps 圖片 (&lt;a href="https://threatpost.com/apps-built-better-devsecops-security-silver-bullet/167793/" target="_blank" rel="noopener">Apps Built Better: Why DevSecOps is Your Security Team’s Silver Bullet&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -304,7 +304,7 @@ alt="DevSecOps 圖片 (Apps Built Better: Why DevSecOps is Your Security Team’
 &lt;li>首先先開啟左側的 Marketplace，搜尋 &lt;code>Snyk&lt;/code>，&lt;del>選擇下載量最高的準沒錯&lt;/del>，選擇 Snyk Security - Code and Open Source Dependencies。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/ide.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/ide.webp"
 alt="VS Code Marketplace 安裝 Snyk" width="1000">&lt;figcaption>
 &lt;p>VS Code Marketplace 安裝 Snyk&lt;/p>
 &lt;/figcaption>
@@ -314,7 +314,7 @@ alt="VS Code Marketplace 安裝 Snyk" width="1000">&lt;figcaption>
 &lt;li>安裝完後，在左側欄位應該就會看到 Snyk 的狗狗 Logo，如果沒有登入過，會先要求你登入 Snyk 並授權給 Plugins 使用。最後當你開啟專案時，會開始掃描程式碼，並且會依照開源套件安全性、程式碼安全性來分類，會顯示套件遇到什麼漏洞需要升級以及程式碼哪一段會有安全性的問題，能夠讓開發人員在第一時間就修復安全問題。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/ide2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/ide2.webp"
 alt="IDE Plugins 掃描" width="1000">&lt;figcaption>
 &lt;p>IDE Plugins 掃描&lt;/p>
 &lt;/figcaption>
@@ -323,12 +323,12 @@ alt="IDE Plugins 掃描" width="1000">&lt;figcaption>
 &lt;h4>Web&lt;span class="hx-absolute -hx-mt-20" id="web">&lt;/span>
 &lt;a href="#web" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>登入 Snyk 網站，直接加入對應的 Project，會直接於網頁上掃描漏洞，並提示錯誤內容。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/web.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/web.webp"
 alt="選擇加入 project" width="500">&lt;figcaption>
 &lt;p>選擇加入 project&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/web1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/web1.webp"
 alt="掃描漏洞並顯示錯誤內容" width="800">&lt;figcaption>
 &lt;p>掃描漏洞並顯示錯誤內容&lt;/p>
 &lt;/figcaption>
@@ -352,7 +352,7 @@ title="Copy code"
 &lt;br>
 &lt;p>可以直接使用以下指令才進行測試 &lt;code>sync test&lt;/code>，還有其他 CLI 指令，詳細可以參考 &lt;a href="https://docs.snyk.io/snyk-cli" target="_blank" rel="noopener">Snyk CLI&lt;/a>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/cli.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/cli.webp"
 alt="CLI 掃描 (官網)" width="800">&lt;figcaption>
 &lt;p>CLI 掃描 (&lt;a href="https://docs.snyk.io/snyk-cli" target="_blank" rel="noopener">官網&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -361,7 +361,7 @@ alt="CLI 掃描 (官網)" width="800">&lt;figcaption>
 &lt;h3>Open Source&lt;span class="hx-absolute -hx-mt-20" id="open-source">&lt;/span>
 &lt;a href="#open-source" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>能夠掃描目前開發的 Project 中有沒有使用到有漏洞的 library，目前支援以下圖片語言，詳細可以參考 &lt;a href="https://docs.snyk.io/products/snyk-open-source/language-and-package-manager-support" target="_blank" rel="noopener">Open Source - Supported languages and package managers&lt;/a>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/open.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/open.webp"
 alt="Open Source library 掃描 (官網)" width="600">&lt;figcaption>
 &lt;p>Open Source library 掃描 (&lt;a href="https://docs.snyk.io/products/snyk-open-source/language-and-package-manager-support" target="_blank" rel="noopener">官網&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -371,7 +371,7 @@ alt="Open Source library 掃描 (官網)" width="600">&lt;figcaption>
 &lt;a href="#container" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在 Container image 中會存放著不同的 base image ，在 base image 中又會使用不同的 library。所以這些 container 的安全性也是需要被關注的。&lt;/p>
 &lt;p>可以直接使用 web 來選擇相對的 Container 倉庫去做掃描，如果有安裝上面說的 Snyk CLI，也可以使用該指令執行 &lt;code>snyk container test &amp;lt;container image&amp;gt;&lt;/code>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/container.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/container.webp"
 alt="Container 掃描" width="800">&lt;figcaption>
 &lt;p>Container 掃描&lt;/p>
 &lt;/figcaption>
@@ -794,7 +794,7 @@ title="Copy code"
 &lt;h2>清除 Swap&lt;span class="hx-absolute -hx-mt-20" id="清除-swap">&lt;/span>
 &lt;a href="#%e6%b8%85%e9%99%a4-swap" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先第一步我們先使用 &lt;code>free&lt;/code> 來查看目前的 Swap 使用狀態：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/linux-clear-swap/before.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/linux-clear-swap/before.webp"
 alt="Swap 使用 (尚未清除)" width="800">&lt;figcaption>
 &lt;p>Swap 使用 (尚未清除)&lt;/p>
 &lt;/figcaption>
@@ -834,7 +834,7 @@ title="Copy code"
 &lt;br>
 &lt;p>確認都沒問題後，我們就使用 &lt;code>free&lt;/code> 來重新查看記憶體狀態：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/linux-clear-swap/after.png"
+&lt;figure>&lt;img src="https://pin-yi.me/other/linux-clear-swap/after.webp"
 alt="Swap 使用 (已清除)" width="800">&lt;figcaption>
 &lt;p>Swap 使用 (已清除)&lt;/p>
 &lt;/figcaption>

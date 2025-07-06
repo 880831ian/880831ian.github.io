@@ -94,7 +94,7 @@ title="Copy code"
 &lt;h2>先查看尚未重啟的 GitLab Package&lt;span class="hx-absolute -hx-mt-20" id="先查看尚未重啟的-gitlab-package">&lt;/span>
 &lt;a href="#%e5%85%88%e6%9f%a5%e7%9c%8b%e5%b0%9a%e6%9c%aa%e9%87%8d%e5%95%9f%e7%9a%84-gitlab-package" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>由於公司 GitLab 預設有先開啟 packages_enabled，所以我就拿同事用 Helm 寫的 CI，來做測試。當更新 value.yaml 後會自動打包 Package 放到 Package Registry 中，我們直接進入到預設 Package Registry 的儲存位置，是在 &lt;code>/var/opt/gitlab/gitlab-rails/shared/packages/&lt;/code>，用指令發現打包的 Package 的確存放於此 ，如下：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-package-registry-to-gcs/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-package-registry-to-gcs/1.webp"
 alt="檢查是否還有 Package 在預設儲存位置 (尚未遷移)" width="800">&lt;figcaption>
 &lt;p>檢查是否還有 Package 在預設儲存位置 (尚未遷移)&lt;/p>
 &lt;/figcaption>
@@ -103,7 +103,7 @@ alt="檢查是否還有 Package 在預設儲存位置 (尚未遷移)" width="800
 &lt;h2>重啟設定後再次檢查 GitLab Package&lt;span class="hx-absolute -hx-mt-20" id="重啟設定後再次檢查-gitlab-package">&lt;/span>
 &lt;a href="#%e9%87%8d%e5%95%9f%e8%a8%ad%e5%ae%9a%e5%be%8c%e5%86%8d%e6%ac%a1%e6%aa%a2%e6%9f%a5-gitlab-package" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當我們重啟設定後，也有建立好可供我們權限 SA 的 GCS 後，會發現原本存在預設 &lt;code>/var/opt/gitlab/gitlab-rails/shared/packages/&lt;/code> 沒有自動跑到 GCS 上，是因為我們還需要手動下指令將他遷移過去，指令是 &lt;code>gitlab-rake &amp;quot;gitlab:packages:migrate&amp;quot;&lt;/code>，最後等他跑完我們在檢查一下預設儲存位置就發現已經沒有 Package 了&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-package-registry-to-gcs/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-package-registry-to-gcs/2.webp"
 alt="檢查是否還有 Package 在預設儲存位置 (已遷移)" width="800">&lt;figcaption>
 &lt;p>檢查是否還有 Package 在預設儲存位置 (已遷移)&lt;/p>
 &lt;/figcaption>
@@ -111,7 +111,7 @@ alt="檢查是否還有 Package 在預設儲存位置 (已遷移)" width="800">&
 &lt;br>
 &lt;p>開 GCS 網站來看會發現原先在預設儲存位置的 Package 都可以跑到 GCS 上：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-package-registry-to-gcs/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-package-registry-to-gcs/3.webp"
 alt="查看已遷移到 Google Cloud Storage 的 Package" width="800">&lt;figcaption>
 &lt;p>查看已遷移到 Google Cloud Storage 的 Package&lt;/p>
 &lt;/figcaption>
@@ -122,7 +122,7 @@ alt="查看已遷移到 Google Cloud Storage 的 Package" width="800">&lt;figcap
 &lt;p>當我們在使用 Git 時，常常修改完內容後，會推 commit 到 github or gitlab，在一個分支上開發久了， commit 會累積很多，很雜且很亂，所以我們可以試著將 commit 給合併。&lt;/p>
 &lt;br>
 &lt;p>大家可以使用這個檔案來做練習：&lt;a href="https://github.com/880831ian/git-merge-multiple-commit" target="_blank" rel="noopener">點我 GoGo&lt;/a> 😉&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/1.webp"
 alt="git commit" width="400">&lt;figcaption>
 &lt;p>git commit&lt;/p>
 &lt;/figcaption>
@@ -143,7 +143,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/2.webp"
 alt="git log 查看 commit 的 SHA-1" width="600">&lt;figcaption>
 &lt;p>git log 查看 commit 的 SHA-1&lt;/p>
 &lt;/figcaption>
@@ -162,7 +162,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/3.webp"
 alt="git rebase" width="600">&lt;figcaption>
 &lt;p>git rebase&lt;/p>
 &lt;/figcaption>
@@ -191,7 +191,7 @@ title="Copy code"
 &lt;p>也就是將 3eb0ef4 這個版本的 commit 合併到 f8e5882 的 commit，對應我們的例子，將 add 3.txt 合併到 add 2.txt 這個 commit。&lt;/p>
 &lt;p>儲存離開後，會跳出以下的畫面，他會告訴你原本兩個的 commit message 分別是 add 2.txt 以及 add 3.txt，這時候我們要輸入新的 commit message，也就是 add txt，建議可以把原本的訊息註解掉。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/4.webp"
 alt="輸入新的 commit" width="600">&lt;figcaption>
 &lt;p>輸入新的 commit&lt;/p>
 &lt;/figcaption>
@@ -199,7 +199,7 @@ alt="輸入新的 commit" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>儲存後，我們查看 &lt;code>git log&lt;/code>，就可以看到我們將 add 2.txt 跟 add 3.txt 合併成 add txt 😝&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/5.webp"
 alt="查看目前合併狀態的 git log" width="600">&lt;figcaption>
 &lt;p>查看目前合併狀態的 git log&lt;/p>
 &lt;/figcaption>
@@ -208,7 +208,7 @@ alt="查看目前合併狀態的 git log" width="600">&lt;figcaption>
 &lt;h2>合併遠端 commit&lt;span class="hx-absolute -hx-mt-20" id="合併遠端-commit">&lt;/span>
 &lt;a href="#%e5%90%88%e4%bd%b5%e9%81%a0%e7%ab%af-commit" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以看到下方是我們已經將本機端的 commit 給合併，但遠端還是一樣有 3 個 commit，如果我們就這樣直接推上去，只會多一次的 commit，所以我們該怎辦呢 ?&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/6.webp"
 alt="遠端與本地端的 commit 不同" width="450">&lt;figcaption>
 &lt;p>遠端與本地端的 commit 不同&lt;/p>
 &lt;/figcaption>
@@ -228,7 +228,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>強制覆蓋掉分支上的內容，但&lt;strong>切記切記&lt;/strong>，這個只適用於自己的分支上歐～不然會直接大爆炸 💣&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-merge-multiple-commit/7.webp"
 alt="使用 git push -f 後的 commit" width="450">&lt;figcaption>
 &lt;p>使用 git push -f 後的 commit&lt;/p>
 &lt;/figcaption>
@@ -259,7 +259,7 @@ alt="使用 git push -f 後的 commit" width="450">&lt;figcaption>
 &lt;h2>建立 Laravel 專案&lt;span class="hx-absolute -hx-mt-20" id="建立-laravel-專案">&lt;/span>
 &lt;a href="#%e5%bb%ba%e7%ab%8b-laravel-%e5%b0%88%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>請大家依照 Laravel 官方文件來建立 Laravel 環境，也可以看小弟我的文章拉 👆👆👆，請記得要先安裝好 php 以及 composer，接著按照以下步驟來建立。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/create.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/create.webp"
 alt="新建一個 Laravel 新專案" width="900">&lt;figcaption>
 &lt;p>新建一個 Laravel 新專案&lt;/p>
 &lt;/figcaption>
@@ -267,7 +267,7 @@ alt="新建一個 Laravel 新專案" width="900">&lt;figcaption>
 &lt;br>
 &lt;p>這時候瀏覽 &lt;code>http://127.0.0.1:8000&lt;/code>，如果都正確，應該會看到 Laravel 的首頁&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/laravel.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/laravel.webp"
 alt="Laravel 首頁" width="900">&lt;figcaption>
 &lt;p>Laravel 首頁&lt;/p>
 &lt;/figcaption>
@@ -276,7 +276,7 @@ alt="Laravel 首頁" width="900">&lt;figcaption>
 &lt;h2>測試本地 Unit Test&lt;span class="hx-absolute -hx-mt-20" id="測試本地-unit-test">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e6%9c%ac%e5%9c%b0-unit-test" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>接著我們剛剛有提到選用 Laravel 的原因是 Laravel 有 PHPUnit 單元測試可以使用，所以我們現在先在本地端來測試 Unit Test，專案預設有放一個單元測試在 &lt;code>tests/Unit/ExampleTest.php&lt;/code>。我們先再次確認環境是否有安裝好，再來執行單元測試。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/unittest.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/unittest.webp"
 alt="在本地端執行單元測試" width="900">&lt;figcaption>
 &lt;p>在本地端執行單元測試&lt;/p>
 &lt;/figcaption>
@@ -284,7 +284,7 @@ alt="在本地端執行單元測試" width="900">&lt;figcaption>
 &lt;br>
 &lt;p>執行後，應該都會是通過的畫面，如下圖：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/demo_test.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/demo_test.webp"
 alt="執行單元測試結果" width="900">&lt;figcaption>
 &lt;p>執行單元測試結果&lt;/p>
 &lt;/figcaption>
@@ -298,7 +298,7 @@ alt="執行單元測試結果" width="900">&lt;figcaption>
 &lt;li>輸入專案名稱可以選擇 Project deployment target 為 &lt;strong>Heroko&lt;/strong>，選擇 Public，最後按下 &lt;strong>Create project&lt;/strong>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab.webp"
 alt="在 GitLab 上建立新專案" width="800">&lt;figcaption>
 &lt;p>在 GitLab 上建立新專案&lt;/p>
 &lt;/figcaption>
@@ -308,7 +308,7 @@ alt="在 GitLab 上建立新專案" width="800">&lt;figcaption>
 &lt;li>於專案資料夾下加入 remote 遠端 GitLab，並 Push 將專案推上去。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_push.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_push.webp"
 alt="將 Laravel 專案推到 GitLab 上" width="800">&lt;figcaption>
 &lt;p>將 Laravel 專案推到 GitLab 上&lt;/p>
 &lt;/figcaption>
@@ -316,7 +316,7 @@ alt="將 Laravel 專案推到 GitLab 上" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>成功推上去，可以到 GitLab 上，看到我們剛剛的專案！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_show.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_show.webp"
 alt="成功推到 GitLab 上" width="800">&lt;figcaption>
 &lt;p>成功推到 GitLab 上&lt;/p>
 &lt;/figcaption>
@@ -325,7 +325,7 @@ alt="成功推到 GitLab 上" width="800">&lt;figcaption>
 &lt;h3>在 GitLab 上執行單元測試&lt;span class="hx-absolute -hx-mt-20" id="在-gitlab-上執行單元測試">&lt;/span>
 &lt;a href="#%e5%9c%a8-gitlab-%e4%b8%8a%e5%9f%b7%e8%a1%8c%e5%96%ae%e5%85%83%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>要在 GitLab 上執行 CI/CD 就需要有 Runner，這次我們選擇使用 &lt;a href="https://gitlab.com" target="_blank" rel="noopener">gitlab.com&lt;/a> 的 Shared runners，想要使用 Specific runners，可以查看上一篇 &lt;a href="../../git-or-cicd/gitlab-cicd/#%E8%87%AA%E6%9E%B6-runner-specific-runners" >如何從頭打造專屬的 GitLab CI/CD&lt;/a> 文章&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/runner.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/runner.webp"
 alt="本次使用 Share runners" width="800">&lt;figcaption>
 &lt;p>本次使用 Share runners&lt;/p>
 &lt;/figcaption>
@@ -359,19 +359,19 @@ title="Copy code"
 &lt;h3>上傳 .gitlab-ci.yml&lt;span class="hx-absolute -hx-mt-20" id="上傳-gitlab-ciyml">&lt;/span>
 &lt;a href="#%e4%b8%8a%e5%82%b3-gitlab-ciyml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接著我們使用以下指令將含有 &lt;code>.gitlab-ci.yml&lt;/code> 的專案上傳到 GitLab，並回到 GitLab 選擇 CI/CD，可以查看目前的 Pipelines，會有我們剛剛所新增的 Runner。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab-ci.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab-ci.webp"
 alt="將 .gitlab-ci.yml 推到 GitLab" width="600">&lt;figcaption>
 &lt;p>將 &lt;code>.gitlab-ci.yml&lt;/code> 推到 GitLab&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/pipeline.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/pipeline.webp"
 alt="查看 Runner 已經進行執行單元測試檢測" width="700">&lt;figcaption>
 &lt;p>查看 Runner 已經進行執行單元測試檢測&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/runner-cicd.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/runner-cicd.webp"
 alt="可以看到 Runner 先安裝我們的環境，再執行單元測試的腳本" width="700">&lt;figcaption>
 &lt;p>可以看到 Runner 先安裝我們的環境，再執行單元測試的腳本&lt;/p>
 &lt;/figcaption>
@@ -381,7 +381,7 @@ alt="可以看到 Runner 先安裝我們的環境，再執行單元測試的腳�
 &lt;a href="#%e8%a8%ad%e7%bd%ae%e9%a0%88%e9%80%9a%e9%81%8e%e6%b8%ac%e8%a9%a6%e6%89%8d%e5%8f%af%e4%bb%a5%e5%90%88%e4%bd%b5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當我們有了測試還不夠，要怎麼確保每隻要上線 (合併到主分支) 的程式都有經過測試才上線呢？&lt;/p>
 &lt;p>接下來我們可以在 GitLab 裡面做這些設定，先到專案的 Setting → General → Merge requests → Merge checks 點選 &lt;strong>Pipelines must succeed&lt;/strong>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/mergechecks.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/mergechecks.webp"
 alt="點選 Pipelines must succeed 來確保程式合併前都必須經過測試" width="700">&lt;figcaption>
 &lt;p>點選 &lt;strong>Pipelines must succeed&lt;/strong> 來確保程式合併前都必須經過測試&lt;/p>
 &lt;/figcaption>
@@ -403,7 +403,7 @@ title="Copy code"
 &lt;br>
 &lt;p>接著修改單元測試，故意新增錯誤的測試，開啟專案的 &lt;code>tests/Unit/ExampleTest.php&lt;/code>，最下面加上紅色框框程式碼：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/exampletest.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/exampletest.webp"
 alt="新增錯誤測試，還模擬看看是否能成功擋住" width="500">&lt;figcaption>
 &lt;p>新增錯誤測試，還模擬看看是否能成功擋住&lt;/p>
 &lt;/figcaption>
@@ -412,13 +412,13 @@ alt="新增錯誤測試，還模擬看看是否能成功擋住" width="500">&lt;
 &lt;br>
 &lt;p>並將它上傳到 GitLab，並發出 Merge Request 看看會有什麼結果！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab-test.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab-test.webp"
 alt="將新增錯誤的 ExampleTest 加入暫存，推到 GitLab" width="600">&lt;figcaption>
 &lt;p>將新增錯誤的 ExampleTest 加入暫存，推到 GitLab&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/mergerequest.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/mergerequest.webp"
 alt="並將 new 分支透過 Merge Request 來合併到 master" width="1000">&lt;figcaption>
 &lt;p>並將 new 分支透過 Merge Request 來合併到 master&lt;/p>
 &lt;/figcaption>
@@ -426,7 +426,7 @@ alt="並將 new 分支透過 Merge Request 來合併到 master" width="1000">&lt
 &lt;br>
 &lt;p>可以看到我們合併在 Pipeline 測試時，因為 new 沒有通過測試，所以也沒有辦法進行合併！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/mergeerror.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/mergeerror.webp"
 alt="分支 new 沒有通過測試，所以沒有進行 Merge" width="700">&lt;figcaption>
 &lt;p>分支 new 沒有通過測試，所以沒有進行 Merge&lt;/p>
 &lt;/figcaption>
@@ -435,7 +435,7 @@ alt="分支 new 沒有通過測試，所以沒有進行 Merge" width="700">&lt;f
 &lt;h2>GitLab CD 建置&lt;span class="hx-absolute -hx-mt-20" id="gitlab-cd-建置">&lt;/span>
 &lt;a href="#gitlab-cd-%e5%bb%ba%e7%bd%ae" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們玩完 CI 後，接著要把程式部署到伺服器或是雲端上，這時候我們不需要透過人工手動的方式，只需要有 CD 來幫我們自動化部署就可以拉！如果不太清楚，可以參考這張圖片：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_workflow.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_workflow.webp"
 alt="GitLab CI/CD workflow (圖片來源：GitLab)" width="900">&lt;figcaption>
 &lt;p>GitLab CI/CD workflow (圖片來源：&lt;a href="https://docs.gitlab.com/ee/ci/introduction/" target="_blank" rel="noopener">GitLab&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -461,7 +461,7 @@ alt="GitLab CI/CD workflow (圖片來源：GitLab)" width="900">&lt;figcaption>
 &lt;li>腳本製作：上線新版本大概要執行以下圖片的內容&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/laravel_up.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/laravel_up.webp"
 alt="Laravel 專案上線前會下達的指令" width="800">&lt;figcaption>
 &lt;p>Laravel 專案上線前會下達的指令&lt;/p>
 &lt;/figcaption>
@@ -477,7 +477,7 @@ alt="Laravel 專案上線前會下達的指令" width="800">&lt;figcaption>
 &lt;h3>創建 Heroku 專案&lt;span class="hx-absolute -hx-mt-20" id="創建-heroku-專案">&lt;/span>
 &lt;a href="#%e5%89%b5%e5%bb%ba-heroku-%e5%b0%88%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>那要使用 Heroku 當然需要一組帳號拉，建立帳號我應該不用再多介紹了吧 🤡  我們直接到 Heroku 頁面，右上角 New，點選 Create new app，輸入本次專案名稱，我就取叫 &lt;code>laravel-gitlab-cicd-heroku&lt;/code> (這個不能與別人重複，因為他會生成專屬網頁)， 進去後，點選右上角有一個 &lt;strong>Open app&lt;/strong>，就會跳出這個專案專屬的網頁：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/herokuapp.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/herokuapp.webp"
 alt="Heroku 專屬網頁" width="1000">&lt;figcaption>
 &lt;p>Heroku 專屬網頁&lt;/p>
 &lt;/figcaption>
@@ -486,7 +486,7 @@ alt="Heroku 專屬網頁" width="1000">&lt;figcaption>
 &lt;h3>設定 HeroKu 與 GitLab 連線&lt;span class="hx-absolute -hx-mt-20" id="設定-heroku-與-gitlab-連線">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a-heroku-%e8%88%87-gitlab-%e9%80%a3%e7%b7%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>先點選右上角個人頭像 → Account setrtings → 在 Account 往下滑 → API Key，點選 &lt;strong>Reveal&lt;/strong> 並將該 API 記住，這是等等透過 GitLab 部署時會用到的 API Token：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/token.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/token.webp"
 alt="取得部署的 API Token" width="1000">&lt;figcaption>
 &lt;p>取得部署的 API Token&lt;/p>
 &lt;/figcaption>
@@ -498,7 +498,7 @@ alt="取得部署的 API Token" width="1000">&lt;figcaption>
 &lt;li>Key 名稱(HEROKU_PRODUCTION_API_KEY)，Value 值(這個就是我們上面的 API Key，每個人都要用自己的歐！上面的我已經重設了 😎  )&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/variables.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/variables.webp"
 alt="gitLab 設定 Variables" width="800">&lt;figcaption>
 &lt;p>gitLab 設定 Variables&lt;/p>
 &lt;/figcaption>
@@ -510,7 +510,7 @@ alt="gitLab 設定 Variables" width="800">&lt;figcaption>
 &lt;h3>新增 Heroku 識別檔案&lt;span class="hx-absolute -hx-mt-20" id="新增-heroku-識別檔案">&lt;/span>
 &lt;a href="#%e6%96%b0%e5%a2%9e-heroku-%e8%ad%98%e5%88%a5%e6%aa%94%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來我們要新增一個檔案名為 &lt;code>Procfile&lt;/code>，它是 Heroku 部署更新時會啟動的對象，注意他沒有副檔名，我們在裡面輸入以下：(我們使用合併後的 master)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/procfile.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/procfile.webp"
 alt="新增 HeroKu 識別檔案" width="650">&lt;figcaption>
 &lt;p>新增 HeroKu 識別檔案&lt;/p>
 &lt;/figcaption>
@@ -542,7 +542,7 @@ title="Copy code"
 &lt;br>
 &lt;p>最後上傳 GitLab 來觸發 Gitlab-CI 執行自動化部署 (上傳指令就不多說囉，想必大家都會了吧！，不會的話可以去看 &lt;a href="../../git-or-cicd/git/" >Git 介紹&lt;/a>，裡面有詳細的介紹 😍  )&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/cd_pass.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/cd_pass.webp"
 alt="觸發 Gitlab-CI 執行自動化部署" width="700">&lt;figcaption>
 &lt;p>觸發 Gitlab-CI 執行自動化部署&lt;/p>
 &lt;/figcaption>
@@ -550,7 +550,7 @@ alt="觸發 Gitlab-CI 執行自動化部署" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>可以看到部署成功，我們也來看看 Runner 運作狀況：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/cd_runner.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/cd_runner.webp"
 alt="Runner 運作狀況" width="800">&lt;figcaption>
 &lt;p>Runner 運作狀況&lt;/p>
 &lt;/figcaption>
@@ -559,7 +559,7 @@ alt="Runner 運作狀況" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>既然已經部署好了，當然要去看一下我們的網頁啊，但當我們打開部署好的網頁，會發現跳出 500 Error，雖然他與我們 CI/CD 沒有關係，但我們還是試著解決，那這個問題會發生是因為我們沒有給環境變數的 APP_KEY，這個 Key 可以在專案的 .env 取得，拿到後開啟 Heroku → Setting → Config vars 將 APP_KEY 設定上去。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/key.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/key.webp"
 alt="Runner 運作狀況" width="900">&lt;figcaption>
 &lt;p>Runner 運作狀況&lt;/p>
 &lt;/figcaption>
@@ -567,7 +567,7 @@ alt="Runner 運作狀況" width="900">&lt;figcaption>
 &lt;br>
 &lt;p>最後重新整理 &lt;code>https://laravel-gitlab-cicd-heroku.herokuapp.com/&lt;/code>，就可以看到我們部署上去的網站囉！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/laravel_show.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/laravel-gitlab-cicd-heroku/laravel_show.webp"
 alt="透過 CD 部署到 Heroku 的 Laravel 首頁" width="1000">&lt;figcaption>
 &lt;p>透過 CD 部署到 Heroku 的 Laravel 首頁&lt;/p>
 &lt;/figcaption>
@@ -597,7 +597,7 @@ alt="透過 CD 部署到 Heroku 的 Laravel 首頁" width="1000">&lt;figcaption>
 &lt;h3>持續部署 CD&lt;span class="hx-absolute -hx-mt-20" id="持續部署-cd">&lt;/span>
 &lt;a href="#%e6%8c%81%e7%ba%8c%e9%83%a8%e7%bd%b2-cd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>持續部署，讓我們不太需要手動的去部署專案服務，而是將其設置為自動化部署，完全不需要有人工去干涉，減少了人為的部署錯誤。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/cicd.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/cicd.webp"
 alt="GitLab CI/CD (圖片來源：GitLab Agile Planning)" width="800">&lt;figcaption>
 &lt;p>GitLab CI/CD (圖片來源：&lt;a href="https://about.gitlab.com/solutions/agile-delivery/" target="_blank" rel="noopener">GitLab Agile Planning&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -668,7 +668,7 @@ title="Copy code"
 &lt;br>
 &lt;p>當然 &lt;code>.gitlab-ci.yml&lt;/code> 有很多功能，上面只是簡單說明比較常用的，當你不確定自己寫的 CI 設定檔有沒有問題，沒關係就直接推上去，GitLab 還會先檢查一下設定檔是不是正確：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/error.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/error.webp"
 alt="GitLab CI/CD 檢查格式有錯" width="600">&lt;figcaption>
 &lt;p>GitLab CI/CD 檢查格式有錯&lt;/p>
 &lt;/figcaption>
@@ -676,7 +676,7 @@ alt="GitLab CI/CD 檢查格式有錯" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>當我們將 &lt;code>.gitlab-ci.yml&lt;/code> 連同專案一起推到 GitLab 上後，我們可以看到它會開始執行我們所寫的腳本，會顯示整個執行過程：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/ci.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/ci.webp"
 alt="GitLab CI/CD 執行過程" width="1000">&lt;figcaption>
 &lt;p>GitLab CI/CD 執行過程&lt;/p>
 &lt;/figcaption>
@@ -684,7 +684,7 @@ alt="GitLab CI/CD 執行過程" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>查看執行的狀態：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/status.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/status.webp"
 alt="GitLab CI/CD 狀態" width="800">&lt;figcaption>
 &lt;p>GitLab CI/CD 狀態&lt;/p>
 &lt;/figcaption>
@@ -692,7 +692,7 @@ alt="GitLab CI/CD 狀態" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>也可以在 GitLab Pipeline 看到執行的流程：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/pipeline.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/pipeline.webp"
 alt="GitLab CI/CD Pipeline" width="800">&lt;figcaption>
 &lt;p>GitLab CI/CD Pipeline&lt;/p>
 &lt;/figcaption>
@@ -701,7 +701,7 @@ alt="GitLab CI/CD Pipeline" width="800">&lt;figcaption>
 &lt;h3>GitLab CI Runner&lt;span class="hx-absolute -hx-mt-20" id="gitlab-ci-runner">&lt;/span>
 &lt;a href="#gitlab-ci-runner" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們上面有提到，我們在 CI 跑腳本，需要一個 Server 來代替 GitLab 來讓我們執行，這個 Server 我們稱為 Runner。我們來看一下整個執行的圖片：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/gitlab-cicd.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/gitlab-cicd.webp"
 alt="Gitlab CI/CD 實際執行流程 (圖片來源：Gitlab-CI 入門實作教學 - 單元測試篇)" width="600">&lt;figcaption>
 &lt;p>Gitlab CI/CD 實際執行流程 (圖片來源：&lt;a href="https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f" target="_blank" rel="noopener">Gitlab-CI 入門實作教學 - 單元測試篇&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -716,7 +716,7 @@ alt="Gitlab CI/CD 實際執行流程 (圖片來源：Gitlab-CI 入門實作教�
 &lt;h4>共享 Runner (Shared Runners)&lt;span class="hx-absolute -hx-mt-20" id="共享-runner-shared-runners">&lt;/span>
 &lt;a href="#%e5%85%b1%e4%ba%ab-runner-shared-runners" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>因為本文章以及後續 &lt;a href="../laravel-gitlab-cicd-heroku/" >部署 Laravel 於 Heroku 搭配 GitLab CI/CD&lt;/a> 文章所使用的平台是 &lt;a href="https://gitlab.com" target="_blank" rel="noopener">gitlab.com&lt;/a>，由官方所提供，所以我們直接使用共享 Runner，可以在 repository Settings → CI / CD → Runners 中找到，有不少官方提供的共享 Runner 可以使用，也不需要做任何設定。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/sharedrunners.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/sharedrunners.webp"
 alt="GitLab CI/CD 共享 Runner" width="800">&lt;figcaption>
 &lt;p>GitLab CI/CD 共享 Runner&lt;/p>
 &lt;/figcaption>
@@ -730,7 +730,7 @@ alt="GitLab CI/CD 共享 Runner" width="800">&lt;figcaption>
 &lt;br>
 &lt;h4>自架 Runner (Specific Runners)&lt;span class="hx-absolute -hx-mt-20" id="自架-runner-specific-runners">&lt;/span>
 &lt;a href="#%e8%87%aa%e6%9e%b6-runner-specific-runners" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/gitlab-runner.jpg"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/gitlab-runner.webp"
 alt="GitLab CI/CD 自架 Runner (圖片來源：Best Practice for DevOps on GitLab and GCP : GitLab Runner 簡介與安裝 - Day 7)" width="600">&lt;figcaption>
 &lt;p>GitLab CI/CD 自架 Runner (圖片來源：&lt;a href="https://ithelp.ithome.com.tw/articles/10214266" target="_blank" rel="noopener">Best Practice for DevOps on GitLab and GCP : GitLab Runner 簡介與安裝 - Day 7&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -748,7 +748,7 @@ alt="GitLab CI/CD 自架 Runner (圖片來源：Best Practice for DevOps on GitL
 &lt;p>如果把 GitLab Runner 當成一個工廠來看，那 Executor 就是工廠內一個又一個的產線，同一個工廠內可以擁有不同種類的產線，Runner 與 Executor 之間的關係就是如此，這些產線會根據專案中 &lt;code>.gitlab-ci.yml&lt;/code> 的內容，決定產線以及如何產出開發者期望的產品。&lt;/p>
 &lt;p>另外 Executor 的種類非常多，可以看下方這些圖片，因為我們最常使用的就是 Docker，所以我們等等的範例，也是建置在 Docker 之上！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/executor.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/executor.webp"
 alt="GitLab Runner Executors" width="700">&lt;figcaption>
 &lt;p>GitLab Runner Executors&lt;/p>
 &lt;/figcaption>
@@ -759,7 +759,7 @@ alt="GitLab Runner Executors" width="700">&lt;figcaption>
 &lt;li>首先，我們回去剛剛在 repository Settings → CI / CD → Runners 左側的 Specific runners&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/specificrunners.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/specificrunners.webp"
 alt="GitLab Runner Executors" width="700">&lt;figcaption>
 &lt;p>GitLab Runner Executors&lt;/p>
 &lt;/figcaption>
@@ -787,7 +787,7 @@ title="Copy code"
 &lt;ol start="3">
 &lt;li>接著進入容器裡面，使用 &lt;code>docker exec -it gitlab-runner gitlab-runner register&lt;/code> 來註冊，可以參考下方圖片，輸入 URL 以及 自己的 Token：&lt;/li>
 &lt;/ol>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/register_executor.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/register_executor.webp"
 alt="GitLab Runner 註冊 Executors" width="1000">&lt;figcaption>
 &lt;p>GitLab Runner 註冊 Executors&lt;/p>
 &lt;/figcaption>
@@ -796,7 +796,7 @@ alt="GitLab Runner 註冊 Executors" width="1000">&lt;figcaption>
 &lt;ol start="4">
 &lt;li>可以回到 gitlab.com 查看 Specific runners 下方是否多了我們剛剛所註冊的 GitLab-Runner&lt;/li>
 &lt;/ol>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/available_runners.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/gitlab-cicd/available_runners.webp"
 alt="GitLab Available specific runners" width="700">&lt;figcaption>
 &lt;p>GitLab Available specific runners&lt;/p>
 &lt;/figcaption>
@@ -815,7 +815,7 @@ alt="GitLab Available specific runners" width="700">&lt;figcaption>
 &lt;br>
 &lt;h2>Ansible 是如何運作的？&lt;span class="hx-absolute -hx-mt-20" id="ansible-是如何運作的">&lt;/span>
 &lt;a href="#ansible-%e6%98%af%e5%a6%82%e4%bd%95%e9%81%8b%e4%bd%9c%e7%9a%84" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>在 Ansible 世界裡，我們會透過 &lt;code>Inventory 檔案&lt;/code> 來定義有哪些的 &lt;code>Managed Node&lt;/code>，並藉由 &lt;code>SSH&lt;/code> 與 &lt;code>Python&lt;/code> 來進行溝通。那我們先來看一張圖：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/run.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/run.webp"
 alt="Ansible 運作原理 (圖片來源：七分鐘掌握 Ansible 核心觀念)" width="600">&lt;figcaption>
 &lt;p>Ansible 運作原理 (圖片來源：&lt;a href="https://school.soft-arch.net/courses/28546/lectures/655359" target="_blank" rel="noopener">七分鐘掌握 Ansible 核心觀念&lt;/a>)&lt;/p>
 &lt;/figcaption>
@@ -1125,7 +1125,7 @@ title="Copy code"
 &lt;p>Q2. ~paramiko/transport.py:236: CryptographyDeprecationWarning: Blowfish has been deprecated&lt;/p>
 &lt;p>Ans2. 在我安裝過程中，發現上前幾天才出現這個 Bug 詳細情形可以參考 &lt;a href="https://github.com/paramiko/paramiko/issues/2038" target="_blank" rel="noopener">GitHub issues&lt;/a>，目前解決辦法有降板或是先將錯誤訊息給註解掉，之後再等新的版本出來再更新，大家可以自行選擇，我這邊是直接把出現問題的 &lt;code>transport.py&lt;/code> 內容註解掉，大概位於 236 行，可以看下方圖片。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/blowfish.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/blowfish.webp"
 alt="CryptographyDeprecationWarning 錯誤訊息修正" width="450">&lt;figcaption>
 &lt;p>CryptographyDeprecationWarning 錯誤訊息修正&lt;/p>
 &lt;/figcaption>
@@ -1201,7 +1201,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/helloworld.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/helloworld.webp"
 alt="執行 Playbooks" width="1000">&lt;figcaption>
 &lt;p>執行 Playbooks&lt;/p>
 &lt;/figcaption>
@@ -1676,7 +1676,7 @@ title="Copy code"
 &lt;h2>Ansible 發送通知到 Telegram Bot&lt;span class="hx-absolute -hx-mt-20" id="ansible-發送通知到-telegram-bot">&lt;/span>
 &lt;a href="#ansible-%e7%99%bc%e9%80%81%e9%80%9a%e7%9f%a5%e5%88%b0-telegram-bot" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>剛剛看了很多內建的模組，當然 Ansible 還有很多好玩的模組可以使用，我們就跟 &lt;a href="../jenkins-github-tg-bot/" >使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot 文章&lt;/a> 一樣，將我們取得的內容傳送到 Telegram Bot 吧！那首先我們要先創造一個 Telegram Bot，在 Telegram 找到一個機器人叫 &lt;code>BotFather&lt;/code> 的官方機器人帳號。並使用指令 &lt;code>/newbot&lt;/code>，會看到一下畫面：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/telegram_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/telegram_1.webp"
 alt="Telegram 創建機器人" width="600">&lt;figcaption>
 &lt;p>Telegram 創建機器人&lt;/p>
 &lt;/figcaption>
@@ -1684,7 +1684,7 @@ alt="Telegram 創建機器人" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>他詢問你要幫機器人取叫什麼名稱，可以直接在輸入欄位輸入想要取的名稱，當然不能是別人已經取過的：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/telegram_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/telegram_2.webp"
 alt="Telegram 創建機器人" width="600">&lt;figcaption>
 &lt;p>Telegram 創建機器人&lt;/p>
 &lt;/figcaption>
@@ -1733,7 +1733,7 @@ title="Copy code"
 &lt;br>
 &lt;p>其中 token 就是我們剛剛在 &lt;code>BotFather&lt;/code> 那邊所拿到的 Token，chat_id 就是我們剛剛在網頁上看到的 id，把資料都輸入進去後，我們可以修改 text 內容，改成 &amp;ldquo;Send notify to Telegram 測試傳送通知&amp;rdquo;，接著執行 &lt;code>ansible-ploybook send_notify_tg.yaml&lt;/code> ，看看能不能正常收到通知！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/telegram_3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/telegram_3.webp"
 alt="發送通知至 Telegram Bot" width="600">&lt;figcaption>
 &lt;p>發送通知至 Telegram Bot&lt;/p>
 &lt;/figcaption>
@@ -1753,7 +1753,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/telegram_4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/telegram_4.webp"
 alt="發送通知至 Telegram 群組 Bot" width="600">&lt;figcaption>
 &lt;p>發送通知至 Telegram 群組 Bot&lt;/p>
 &lt;/figcaption>
@@ -1897,7 +1897,7 @@ title="Copy code"
 &lt;br>
 &lt;p>執行後，看看群組是否有收到我們找到的 ansible_ssh_host_key_rsa_public 通知。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/telegram_5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/telegram_5.webp"
 alt="發送通知至 Telegram 群組 Bot" width="800">&lt;figcaption>
 &lt;p>發送通知至 Telegram 群組 Bot&lt;/p>
 &lt;/figcaption>
@@ -1968,7 +1968,7 @@ title="Copy code"
 &lt;li>直接使用 &lt;code>ansible-playbook template_demo.yaml&lt;/code> 執行 Playbook。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/template.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/template.webp"
 alt="Template Module 範例" width="900">&lt;figcaption>
 &lt;p>Template Module 範例&lt;/p>
 &lt;/figcaption>
@@ -1988,7 +1988,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/template_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/template_1.webp"
 alt="Template Module 使用 -e 覆寫參數" width="900">&lt;figcaption>
 &lt;p>Template Module 使用 &lt;code>-e&lt;/code> 覆寫參數&lt;/p>
 &lt;/figcaption>
@@ -2085,7 +2085,7 @@ title="Copy code"
 &lt;li>執行 &lt;code>ansible-playbook template_demo2.yaml -e &amp;quot;dynamic_word=Test&amp;quot;&lt;/code>，並有 &lt;code>-e&lt;/code> 去修改各個環境。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/template_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/template_2.webp"
 alt="Template Module 範例" width="900">&lt;figcaption>
 &lt;p>Template Module 範例&lt;/p>
 &lt;/figcaption>
@@ -2200,7 +2200,7 @@ title="Copy code"
 &lt;/ol>
 &lt;p>可以看到因為我們 &lt;code>modify index.html&lt;/code> 沒有被改變，notify 沒有通知 handlers，所以他不會執行 handlers 該段程式。(正常來說，修改 html 不需要重啟，此為範例 🤣 )&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/handlers_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/handlers_1.webp"
 alt="Handlers 範例" width="900">&lt;figcaption>
 &lt;p>Handlers 範例&lt;/p>
 &lt;/figcaption>
@@ -2210,7 +2210,7 @@ alt="Handlers 範例" width="900">&lt;figcaption>
 &lt;li>那我們修改一下 index.html 來測試一下會不會把 index.html 的狀態&lt;strong>被改變&lt;/strong>，而讓 handlers 執行呢！我們隨意修改 index.html 內容，修改日期改成 05/17：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/handlers_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/ansible/handlers_2.webp"
 alt="Handlers 範例" width="900">&lt;figcaption>
 &lt;p>Handlers 範例&lt;/p>
 &lt;/figcaption>
@@ -2400,7 +2400,7 @@ title="Copy code"
 &lt;br>
 &lt;p>&lt;a href="https://github.com/adrienverge/yamllint" target="_blank" rel="noopener">yamlint&lt;/a>，它是語法檢查工具，可以用來檢查 yaml 檔案的語法是否正確以及符合規範，我們看一下實際操作的畫面：&lt;/p>
 &lt;br>
-&lt;p>&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/yamllint.png"
+&lt;p>&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/yamllint.webp"
 alt="yamllint 測試" width="800">&lt;figcaption>
 &lt;p>yamllint 測試&lt;/p>
 &lt;/figcaption>
@@ -2498,7 +2498,7 @@ title="Copy code"
 &lt;br>
 &lt;p>下完指令後，他就會在背景開始安裝，可以試著用瀏覽器瀏覽 &lt;code>http://localhost:8080&lt;/code>，查看有沒有跳出下面這個畫面：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/unlock.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/unlock.webp"
 alt="瀏覽器訪問 http://localhost:8080" width="800">&lt;figcaption>
 &lt;p>瀏覽器訪問 &lt;code>http://localhost:8080&lt;/code>&lt;/p>
 &lt;/figcaption>
@@ -2535,7 +2535,7 @@ title="Copy code"
 &lt;br>
 &lt;p>我們可以看到它詢問是否要安裝套件，我們選擇左邊 Install suggested plugins 安裝推薦的套件即可：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/plugins.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/plugins.webp"
 alt="安裝推薦的套件" width="800">&lt;figcaption>
 &lt;p>安裝推薦的套件&lt;/p>
 &lt;/figcaption>
@@ -2543,7 +2543,7 @@ alt="安裝推薦的套件" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>等待它安裝套件，安裝完後會自動跳到註冊畫面：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/install.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/install.webp"
 alt="等待安裝&amp;hellip;" width="800">&lt;figcaption>
 &lt;p>等待安裝&amp;hellip;&lt;/p>
 &lt;/figcaption>
@@ -2551,7 +2551,7 @@ alt="等待安裝&amp;hellip;" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>輸入完基本的資料後，按 Save and Continue：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/create_adminuser.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/create_adminuser.webp"
 alt="創建 Admin 使用者" width="800">&lt;figcaption>
 &lt;p>創建 Admin 使用者&lt;/p>
 &lt;/figcaption>
@@ -2559,7 +2559,7 @@ alt="創建 Admin 使用者" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>最後看到下面這個畫面就代表我們安裝好囉！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/done.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/done.webp"
 alt="Jenkins 儀表板" width="1200">&lt;figcaption>
 &lt;p>Jenkins 儀表板&lt;/p>
 &lt;/figcaption>
@@ -2571,7 +2571,7 @@ alt="Jenkins 儀表板" width="1200">&lt;figcaption>
 &lt;li>點選儀表板的新增作業或是 Create a Job：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/create_job.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/create_job.webp"
 alt="新增作業" width="1200">&lt;figcaption>
 &lt;p>新增作業&lt;/p>
 &lt;/figcaption>
@@ -2581,7 +2581,7 @@ alt="新增作業" width="1200">&lt;figcaption>
 &lt;li>輸入 Job 專案名稱並選擇建立 Free-Style 軟體專案：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/disk.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/disk.webp"
 alt="設定 Job 專案" width="1200">&lt;figcaption>
 &lt;p>設定 Job 專案&lt;/p>
 &lt;/figcaption>
@@ -2592,7 +2592,7 @@ alt="設定 Job 專案" width="1200">&lt;figcaption>
 &lt;li>接下來設定專案組態：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/describe.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/describe.webp"
 alt="設定專案組態" width="1200">&lt;figcaption>
 &lt;p>設定專案組態&lt;/p>
 &lt;/figcaption>
@@ -2601,7 +2601,7 @@ alt="設定專案組態" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>接著，在&lt;strong>建置&lt;/strong>的下拉式欄位選擇 &lt;code>選擇建置步驟 &amp;gt; 執行 Shell&lt;/code>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/shell.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/shell.webp"
 alt="設定專案組態" width="1200">&lt;figcaption>
 &lt;p>設定專案組態&lt;/p>
 &lt;/figcaption>
@@ -2609,7 +2609,7 @@ alt="設定專案組態" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>輸入 &lt;code>df -h&lt;/code> 指令：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/df-h.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/df-h.webp"
 alt="設定專案組態" width="1000">&lt;figcaption>
 &lt;p>設定專案組態&lt;/p>
 &lt;/figcaption>
@@ -2621,7 +2621,7 @@ alt="設定專案組態" width="1000">&lt;figcaption>
 &lt;li>專案組態設置完後，我們點選左邊的&lt;strong>馬上建置&lt;/strong>來建置剛剛建好的專案，如果我們設定上沒有問題，應該會在左下角的&lt;strong>建置歷程&lt;/strong>這邊看到我們的第一個建置紀錄：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/build.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/build.webp"
 alt="建置專案" width="800">&lt;figcaption>
 &lt;p>建置專案&lt;/p>
 &lt;/figcaption>
@@ -2631,7 +2631,7 @@ alt="建置專案" width="800">&lt;figcaption>
 &lt;li>點進去後，再點 &lt;strong>Console Output&lt;/strong>，可以看到這次建置的結果：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/console.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/console.webp"
 alt="建置專案" width="800">&lt;figcaption>
 &lt;p>建置專案&lt;/p>
 &lt;/figcaption>
@@ -2647,7 +2647,7 @@ alt="建置專案" width="800">&lt;figcaption>
 &lt;a href="#%e5%bb%ba%e7%bd%ae%e5%b0%88%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;h4>HTTPS&lt;span class="hx-absolute -hx-mt-20" id="https">&lt;/span>
 &lt;a href="#https" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>接下來我們先建立一個新的 Job，選擇 Free-style 模式，這次要在原始碼管理裡面選擇 Git，在 Repositories &amp;gt; Repository URL 裡面輸入我們這次要測試的 &lt;a href="https://github.com/880831ian/jenkins-github-tg-bot" target="_blank" rel="noopener">repository URL&lt;/a>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/repository.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/repository.webp"
 alt="設定 Repository URL" width="1000">&lt;figcaption>
 &lt;p>設定 Repository URL&lt;/p>
 &lt;/figcaption>
@@ -2656,7 +2656,7 @@ alt="設定 Repository URL" width="1000">&lt;figcaption>
 &lt;h4>SSH&lt;span class="hx-absolute -hx-mt-20" id="ssh">&lt;/span>
 &lt;a href="#ssh" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>如果我們想要透過 SSH 來存取專案，我們會遇到以下狀況：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/ssh_error.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/ssh_error.webp"
 alt="SSH 尚未設定錯誤訊息" width="1000">&lt;figcaption>
 &lt;p>SSH 尚未設定錯誤訊息&lt;/p>
 &lt;/figcaption>
@@ -2678,7 +2678,7 @@ alt="SSH 尚未設定錯誤訊息" width="1000">&lt;figcaption>
 &lt;/ol>
 &lt;p>假設我們希望每個 30 分鐘就建置一次當前專案，我們可以在定義規則裡面填入 &lt;code>H/15 * * * *&lt;/code>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/cron.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/cron.webp"
 alt="定期建置" width="1000">&lt;figcaption>
 &lt;p>定期建置&lt;/p>
 &lt;/figcaption>
@@ -2690,7 +2690,7 @@ alt="定期建置" width="1000">&lt;figcaption>
 &lt;a href="#%e6%96%b0%e5%a2%9e-github-personal-access-token" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;ol>
 &lt;li>進入 GitHub 首頁，點選右上角下拉選單，點選 &lt;strong>Settings&lt;/strong>：&lt;/li>
 &lt;/ol>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_1.webp"
 alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
 &lt;/figcaption>
@@ -2700,7 +2700,7 @@ alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;li>先點選左邊的 &lt;strong>Developer settings&lt;/strong> &amp;gt; 點選左邊的 &lt;strong>Personal access tokens&lt;/strong> &amp;gt; 點選右上角的 &lt;strong>Generate new token&lt;/strong>，輸入 token 的描述並勾選 &lt;code>repo&lt;/code> scope 以及 &lt;code>admin:repo_hook&lt;/code> scope 跟 &lt;code>admin:org_hook&lt;/code> scope，點選 &lt;strong>Generate token&lt;/strong>：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_2.webp"
 alt="GitHub hook trigger for GITScm polling 設定" width="700">&lt;figcaption>
 &lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
 &lt;/figcaption>
@@ -2710,7 +2710,7 @@ alt="GitHub hook trigger for GITScm polling 設定" width="700">&lt;figcaption>
 &lt;li>會產生一個 token，請先把 token 複製下來，離開這個畫面後，token 就會看不到了！(此 token 已刪除 ✌️)&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_3.webp"
 alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
 &lt;/figcaption>
@@ -2721,7 +2721,7 @@ alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;li>進入 Jenkins 儀表板頁面，點選左邊&lt;strong>管理 Jenkins&lt;/strong> &amp;gt; System Configuration 的&lt;strong>設定系統&lt;/strong>，往下滑找到 GitHub：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_4.webp"
 alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
 &lt;/figcaption>
@@ -2731,7 +2731,7 @@ alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;li>找到後，再 GitHub Servers 下拉欄位選擇 Add GitHub Server，會看到下面畫面，API URL 輸入 &lt;code>https://api.github.com&lt;/code>，Credentials 點 Add：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_5.webp"
 alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
 &lt;/figcaption>
@@ -2741,7 +2741,7 @@ alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;li>Kind 選擇 Secret Text，Secret 輸入剛剛存的 Personal Access Token，Description 簡單描述一下：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_6.webp"
 alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
 &lt;/figcaption>
@@ -2751,7 +2751,7 @@ alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;li>設定完後，點選一下右邊的 &lt;strong>Test connection&lt;/strong>，如果我顯示 &lt;code>Credentials verified for user UserName, rate limit: xxx&lt;/code> 就代表成功囉！&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_7.webp"
 alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;p>GitHub hook trigger for GITScm polling 設定&lt;/p>
 &lt;/figcaption>
@@ -2762,7 +2762,7 @@ alt="GitHub hook trigger for GITScm polling 設定" width="1000">&lt;figcaption>
 &lt;li>接著我們跳回來剛剛的專案組態，並勾選 &lt;strong>GitHub hook trigger for GITScm polling&lt;/strong>：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_8.webp"
 alt="設定專案組態" width="1000">&lt;figcaption>
 &lt;p>設定專案組態&lt;/p>
 &lt;/figcaption>
@@ -2786,7 +2786,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_9.webp"
 alt="設定專案組態" width="1000">&lt;figcaption>
 &lt;p>設定專案組態&lt;/p>
 &lt;/figcaption>
@@ -2801,7 +2801,7 @@ alt="設定專案組態" width="1000">&lt;figcaption>
 &lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_10.webp"
 alt="Webhooks 設定" width="800">&lt;figcaption>
 &lt;p>Webhooks 設定&lt;/p>
 &lt;/figcaption>
@@ -2813,7 +2813,7 @@ alt="Webhooks 設定" width="800">&lt;figcaption>
 &lt;p>由於我們是將 Jenkins 運行在本機端，所以 Jenkins Hook URL &lt;code>http://localhost:8080&lt;/code> 是 Private IP。GitHub 沒有辦法抓 Private IP，為了練習，我們可以透過 &lt;a href="https://ngrok.com/" target="_blank" rel="noopener">ngrok&lt;/a> 這套簡單小工具來暫時將 &lt;code>http://localhost:8080&lt;/code> 變成 Public IP。&lt;/p>
 &lt;p>&lt;a href="https://ngrok.com/" target="_blank" rel="noopener">ngrok&lt;/a> 的使用方式很簡單，只要先下載 &lt;code>brew install ngrok/ngrok/ngrok&lt;/code> ，並使用 &lt;code>ngrok http 8080&lt;/code> 指令，將 Private IP 變成 Public IP：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_11.webp"
 alt="ngrok 將 Private IP 變成 Public IP" width="1000">&lt;figcaption>
 &lt;p>ngrok 將 Private IP 變成 Public IP&lt;/p>
 &lt;/figcaption>
@@ -2823,7 +2823,7 @@ alt="ngrok 將 Private IP 變成 Public IP" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>完成後，先點選 &lt;strong>Recent Deliveries&lt;/strong> 檢查是否成功，底下的 Response 需要是 &lt;font color=green>200&lt;/font>，才是對的歐！(這裡一定要先檢查，不然後面會找問題到死 XD)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_12.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/setting_12.webp"
 alt="Webhooks 設定" width="1000">&lt;figcaption>
 &lt;p>Webhooks 設定&lt;/p>
 &lt;/figcaption>
@@ -2832,7 +2832,7 @@ alt="Webhooks 設定" width="1000">&lt;figcaption>
 &lt;h3>測試&lt;span class="hx-absolute -hx-mt-20" id="測試">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們都設定好後，要開始來測試，我們可以直接先點選 &lt;strong>馬上建置&lt;/strong>，來測試是否可以透過 &lt;strong>GitHub personal access token&lt;/strong>，抓取 GitHub 的檔案。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_1.webp"
 alt="馬上建置" width="800">&lt;figcaption>
 &lt;p>馬上建置&lt;/p>
 &lt;/figcaption>
@@ -2840,7 +2840,7 @@ alt="馬上建置" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>可以看到在建置流程那邊發現建置失敗，點進去可以看詳細內容，&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_2.webp"
 alt="建置失敗" width="800">&lt;figcaption>
 &lt;p>建置失敗&lt;/p>
 &lt;/figcaption>
@@ -2848,7 +2848,7 @@ alt="建置失敗" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>點選左側的 &lt;strong>Console Output&lt;/strong>，可以看到我們有成功獲取 GitHub 上得專案，並且執行我們的 Shell 來檢查 yaml 的檔案格式，發現是因為格式有錯誤，所以建置才會失敗 ❌&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_3.webp"
 alt="Console Output" width="1000">&lt;figcaption>
 &lt;p>Console Output&lt;/p>
 &lt;/figcaption>
@@ -2856,7 +2856,7 @@ alt="Console Output" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>接下來我們先修改一下 yaml 的檔案，後重新 push 到 Github 上，並觀察 Jenkins 會不會自動建置 ！(修改位置大家可以直接看 &lt;a href="https://github.com/880831ian/jenkins-github-tg-bot/commit/729556412ef8796477a351040604aad8c8083c05" target="_blank" rel="noopener">Commit 結果&lt;/a>)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_4.webp"
 alt="Console Output" width="1000">&lt;figcaption>
 &lt;p>Console Output&lt;/p>
 &lt;/figcaption>
@@ -2865,7 +2865,7 @@ alt="Console Output" width="1000">&lt;figcaption>
 &lt;br>
 &lt;p>也可以點選左側有一個新的 &lt;strong>GitHub Hook Log&lt;/strong> ，可以看到我們成功透過 &lt;strong>GitHub hook trigger for GITScm polling&lt;/strong> 偵測到有新的 event，透過 WebHook 讓 Jenkins 知道。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/test_5.webp"
 alt="GitHub Hook Log" width="1000">&lt;figcaption>
 &lt;p>GitHub Hook Log&lt;/p>
 &lt;/figcaption>
@@ -2876,7 +2876,7 @@ alt="GitHub Hook Log" width="1000">&lt;figcaption>
 &lt;h4>安裝/設定 Build Timestamp&lt;span class="hx-absolute -hx-mt-20" id="安裝設定-build-timestamp">&lt;/span>
 &lt;a href="#%e5%ae%89%e8%a3%9d%e8%a8%ad%e5%ae%9a-build-timestamp" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>&lt;a href="https://plugins.jenkins.io/build-timestamp/" target="_blank" rel="noopener">Build Timestamp&lt;/a> 這個套件可以幫我們在稍後傳送通知時加上當下的時間戳，那要怎麼安裝套件呢？先到儀表板首頁，點選左側的 &lt;strong>管理 Jenkins&lt;/strong> &amp;gt; 點選 &lt;strong>管理外掛程式&lt;/strong>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_1.webp"
 alt="管理 Jenkins &amp;gt; 管理外掛程式" width="1200">&lt;figcaption>
 &lt;p>管理 Jenkins &amp;gt; 管理外掛程式&lt;/p>
 &lt;/figcaption>
@@ -2884,7 +2884,7 @@ alt="管理 Jenkins &amp;gt; 管理外掛程式" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>再 Plugin Manager 的 可用的裡面搜尋 Build Timestamp，選擇後點下方的 &lt;strong>Download now and install after restart&lt;/strong>，等待他安裝後會自動重啟。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_2.webp"
 alt="安裝 Build Timestamp" width="1200">&lt;figcaption>
 &lt;p>安裝 Build Timestamp&lt;/p>
 &lt;/figcaption>
@@ -2892,7 +2892,7 @@ alt="安裝 Build Timestamp" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>重啟後從儀表板點選左側 &lt;strong>管理 Jenkins&lt;/strong> &amp;gt; 點選 &lt;strong>設定系統&lt;/strong>，找到 &lt;strong>Build Timestamp&lt;/strong>，開啟設定，並設定 Timezone 為 &lt;code>Asia/Taipei&lt;/code> 以及 pattern &lt;code>yyyy-MM-dd HH:mm:ss z&lt;/code>，這樣我們待會就可以使用 &lt;code>BUILD_TIMESTAMP&lt;/code> 參數來獲取當下時間，記得要按下儲存歐！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_3.webp"
 alt="設定 Build Timestamp" width="1200">&lt;figcaption>
 &lt;p>設定 Build Timestamp&lt;/p>
 &lt;/figcaption>
@@ -2901,7 +2901,7 @@ alt="設定 Build Timestamp" width="1200">&lt;figcaption>
 &lt;h4>安裝/設定 Notify.Events&lt;span class="hx-absolute -hx-mt-20" id="安裝設定-notifyevents">&lt;/span>
 &lt;a href="#%e5%ae%89%e8%a3%9d%e8%a8%ad%e5%ae%9a-notifyevents" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>&lt;a href="https://plugins.jenkins.io/notify-events/" target="_blank" rel="noopener">Notify.Events&lt;/a> 這個套件可以串接很多的平台，例如 Telegram、Slack、Line 等，也可以透過它寄發郵件，是一個十分方便的套件，但缺點是他需要註冊，免費版只有每個月 300 次的訊息傳輸量，但在我們測試階段已經十分夠用。一樣我們用剛剛的方法安裝 &lt;strong>Notify.Events&lt;/strong>。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_4.webp"
 alt="安裝 Notify.Events" width="1200">&lt;figcaption>
 &lt;p>安裝 Notify.Events&lt;/p>
 &lt;/figcaption>
@@ -2909,7 +2909,7 @@ alt="安裝 Notify.Events" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>安裝好後，Notify.Events 他不需要先設定，它可以依據不同的 Job 有不同的設定，所以我們開啟剛剛的 Job 組態，拉到最下面找到 &lt;strong>建置後動作&lt;/strong> ，選擇 &lt;strong>Notify.Events&lt;/strong>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_5.webp"
 alt="安裝 Notify.Events" width="1200">&lt;figcaption>
 &lt;p>安裝 Notify.Events&lt;/p>
 &lt;/figcaption>
@@ -2918,7 +2918,7 @@ alt="安裝 Notify.Events" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>我們先開啟瀏覽器，搜尋 &lt;a href="https://notify.events/en" target="_blank" rel="noopener">Notify.Events&lt;/a>，註冊帳號後，在 Channels 點選 &lt;strong>Create&lt;/strong>，輸入一下 Title 按下 &lt;strong>Save&lt;/strong>。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_6.webp"
 alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
 &lt;p>Notify.Events 官網設定&lt;/p>
 &lt;/figcaption>
@@ -2926,7 +2926,7 @@ alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>完成後，應該可以看到以下畫面，這邊就可以讓我們選擇來源，以及要發送到哪裡：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_7.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_7.webp"
 alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
 &lt;p>Notify.Events 官網設定&lt;/p>
 &lt;/figcaption>
@@ -2934,7 +2934,7 @@ alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>我們先選擇 Sources，點選 &lt;strong>Add source&lt;/strong>，可以看到很多來源，選擇 &lt;strong>CI/CD and Version control&lt;/strong> ，再選擇 &lt;strong>Jenkins&lt;/strong>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_8.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_8.webp"
 alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
 &lt;p>Notify.Events 官網設定&lt;/p>
 &lt;/figcaption>
@@ -2942,7 +2942,7 @@ alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>點選 &lt;strong>Next&lt;/strong>，就可以看到以下畫面，它告訴我們要將它提供的 &lt;code>Token&lt;/code> 貼入設定檔，也就是我們剛剛在 Job 組態裡面的那個 Token：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_9.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_9.webp"
 alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
 &lt;p>Notify.Events 官網設定&lt;/p>
 &lt;/figcaption>
@@ -2950,7 +2950,7 @@ alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>設定好 Sources，接下來要設定接收方，回到剛剛 Notify.Events 的儀表板，點選 &lt;strong>Subscribe&lt;/strong>，我們測試使用 Telegram 來當接收方，它會跳出一個視窗，告訴你要怎麼把他的機器人加成好友或是加入群組，這邊就依大家需要自行選擇，那我就將它加入群組，使用 &lt;code>/subscribe DRr0bIZ0 @NotifyEventsBot&lt;/code> 指令來綁定&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_10.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_10.webp"
 alt="Notify.Events 官網設定" width="1200">&lt;figcaption>
 &lt;p>Notify.Events 官網設定&lt;/p>
 &lt;/figcaption>
@@ -2979,7 +2979,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_11.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_11.webp"
 alt="Notify.Events Success" width="1000">&lt;figcaption>
 &lt;p>Notify.Events Success&lt;/p>
 &lt;/figcaption>
@@ -3007,7 +3007,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_12.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_12.webp"
 alt="Notify.Events Failure" width="1000">&lt;figcaption>
 &lt;p>Notify.Events Failure&lt;/p>
 &lt;/figcaption>
@@ -3016,7 +3016,7 @@ alt="Notify.Events Failure" width="1000">&lt;figcaption>
 &lt;h4>Telegram 通知測試&lt;span class="hx-absolute -hx-mt-20" id="telegram-通知測試">&lt;/span>
 &lt;a href="#telegram-%e9%80%9a%e7%9f%a5%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>最後我們都設定好了，就來測試一下吧！我們先故意將程式碼格式用錯，&lt;a href="https://github.com/880831ian/jenkins-github-tg-bot/commit/e88d35d56f2b2d1b999682c0f748431999bb4b9e" target="_blank" rel="noopener">讓他先跳出錯誤&lt;/a>，&lt;a href="https://github.com/880831ian/jenkins-github-tg-bot/commit/ec0e9f9c2148cecde6f70ec391d4c775fc180029" target="_blank" rel="noopener">再修改&lt;/a>，來看看結果如何吧！(文字連結是對應的 Commit )&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_13.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-github-tg-bot/trigger_13.webp"
 alt="Telegram 通知" width="600">&lt;figcaption>
 &lt;p>Telegram 通知&lt;/p>
 &lt;/figcaption>
@@ -3045,7 +3045,7 @@ alt="Best Automation Tools for DevOps" width="700">&lt;figcaption>
 &lt;p>由於現在多數開發團隊都會透過版本控制來提交並整合開發人員各自修改的程式碼，若在合併分支時沒有把合併衝突 (conflict) 處理恰當，或是合併程式碼後產生某些邏輯錯誤，往往會到產品發佈後才發現不可預期的錯誤。&lt;/p>
 &lt;p>所以有了持續整合/持續部署的機制下，我們可以透過高頻率的整合、測試並分析程式碼品質，在最短時間發現問題以及發生點，進而確保產品每一次的發布都是穩定且高品質的。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-ansible-it-cicd/CICD.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/jenkins-ansible-it-cicd/CICD.webp"
 alt="CI/CD 流程圖 (作者打錯是 rsync 不是 rsyne) Day12 什麼是 CICD" width="700">&lt;figcaption>
 &lt;p>CI/CD 流程圖 (作者打錯是 rsync 不是 rsyne) &lt;a href="https://ithelp.ithome.com.tw/articles/10219083" target="_blank" rel="noopener">Day12 什麼是 CICD&lt;/a>&lt;/p>
 &lt;/figcaption>
@@ -3183,7 +3183,7 @@ alt="Top 5 DevOps Automation Tools in 2020" width="800">&lt;figcaption>
 &lt;h2>什麼是 Git ?&lt;span class="hx-absolute -hx-mt-20" id="什麼是-git-">&lt;/span>
 &lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-git-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>不管是不是工程師，只要常常需要使用電腦工作，每天一定都會新增、修改、刪除許多檔案，我們看到這張圖：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/sample.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/sample.webp"
 alt="很多人的電腦裡面都有這樣的內容" width="450">&lt;figcaption>
 &lt;p>很多人的電腦裡面都有這樣的內容&lt;/p>
 &lt;/figcaption>
@@ -3204,7 +3204,7 @@ alt="很多人的電腦裡面都有這樣的內容" width="450">&lt;figcaption>
 &lt;h2>Git 操作指令&lt;span class="hx-absolute -hx-mt-20" id="git-操作指令">&lt;/span>
 &lt;a href="#git-%e6%93%8d%e4%bd%9c%e6%8c%87%e4%bb%a4" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Git 的操作指令繁多，包含環境類、查看類、提交類、分支類、遠端類、合併類、還原類等等，所以才有了 Git GUI 工具，筆者很推薦 &lt;a href="https://www.gitkraken.com/" target="_blank" rel="noopener">Gitkraken&lt;/a>，雖然需要付費，但真的很方便，畫面也很乾淨簡潔。如果是學生的話，還可以使用 &lt;a href="https://education.github.com/pack" target="_blank" rel="noopener">GitHub Student Developer Pack&lt;/a> 免費使用歐！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/gitkraken.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/gitkraken.webp"
 alt="Git GUI 工具 (Gitkraken)" width="600">&lt;figcaption>
 &lt;p>Git GUI 工具 (Gitkraken)&lt;/p>
 &lt;/figcaption>
@@ -3232,7 +3232,7 @@ title="Copy code"
 &lt;br>
 &lt;p>使用完後，會看到跑出下面這些文字：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/init.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/init.webp"
 alt="Git init" width="600">&lt;figcaption>
 &lt;p>Git init&lt;/p>
 &lt;/figcaption>
@@ -3294,7 +3294,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>可以查看現在資料夾內有哪些檔案還沒加入版本控制，或是已經加入但還沒 Commit 變成新版本。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/status.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/status.webp"
 alt="Git status" width="600">&lt;figcaption>
 &lt;p>Git status&lt;/p>
 &lt;/figcaption>
@@ -3316,7 +3316,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/log.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/log.webp"
 alt="Git log" width="600">&lt;figcaption>
 &lt;p>Git log&lt;/p>
 &lt;/figcaption>
@@ -3339,7 +3339,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>116e 代表最新的版本，442c 代表上一個版本，可以看上面 &lt;code>log&lt;/code> 的辨識 ID，因為校驗碼很長，最少需要前4個數字跟英文，才可以知道是哪一個版本。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/diff.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/diff.webp"
 alt="Git diff" width="600">&lt;figcaption>
 &lt;p>Git diff&lt;/p>
 &lt;/figcaption>
@@ -3361,12 +3361,12 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reflog.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reflog.webp"
 alt="Git reflog (圖一)" width="600">&lt;figcaption>
 &lt;p>Git reflog (圖一)&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/log-1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/log-1.webp"
 alt="Git log (圖二)" width="600">&lt;figcaption>
 &lt;p>Git log (圖二)&lt;/p>
 &lt;/figcaption>
@@ -3406,7 +3406,7 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/commit.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/commit.webp"
 alt="Git commit" width="600">&lt;figcaption>
 &lt;p>Git commit&lt;/p>
 &lt;/figcaption>
@@ -3430,7 +3430,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>會將所在分支的檔案狀態複製到新增的分支上，當該分支改動時，不會影響到原本的分支。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/branch.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/branch.webp"
 alt="Git branch" width="600">&lt;figcaption>
 &lt;p>Git branch&lt;/p>
 &lt;/figcaption>
@@ -3451,7 +3451,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>來切換不同的分支或是以前的版本。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/checkout_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/checkout_1.webp"
 alt="Git checkout" width="600">&lt;figcaption>
 &lt;p>Git checkout&lt;/p>
 &lt;/figcaption>
@@ -3471,7 +3471,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>&lt;code>-b&lt;/code> 這個參數就等於是 &lt;code>git branch &amp;quot;分支&amp;quot; &amp;amp; git checkout &amp;quot;分支&amp;quot;&lt;/code>。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/checkout_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/checkout_2.webp"
 alt="Git checkout -b" width="600">&lt;figcaption>
 &lt;p>Git checkout -b&lt;/p>
 &lt;/figcaption>
@@ -3508,7 +3508,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>取一個可以代表要新增的遠端 Git 版本庫簡稱。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/remote_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/remote_1.webp"
 alt="Git remote" width="600">&lt;figcaption>
 &lt;p>Git remote&lt;/p>
 &lt;/figcaption>
@@ -3529,7 +3529,7 @@ title="Copy code"
 &lt;p>他會列出每個遠端本版本庫的簡稱。&lt;/p>
 &lt;p>也可以使用 &lt;code>git remote -v&lt;/code> 指令，會顯示 Git 用來讀寫遠端簡稱時所用的網址：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/remote_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/remote_2.webp"
 alt="Git remote -v" width="600">&lt;figcaption>
 &lt;p>Git remote -v&lt;/p>
 &lt;/figcaption>
@@ -3550,7 +3550,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>將本地端版本庫推到遠端的版本庫。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/push.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/push.webp"
 alt="Git push" width="600">&lt;figcaption>
 &lt;p>Git push&lt;/p>
 &lt;/figcaption>
@@ -3601,7 +3601,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>將遠端專案資料下載並合併到本地端。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/pull.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/pull.webp"
 alt="Git pull" width="600">&lt;figcaption>
 &lt;p>Git pull&lt;/p>
 &lt;/figcaption>
@@ -3622,7 +3622,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>將遠端專案資料下載到本地端。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/fetch.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/fetch.webp"
 alt="Git fetch" width="600">&lt;figcaption>
 &lt;p>Git fetch&lt;/p>
 &lt;/figcaption>
@@ -3670,7 +3670,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>像下面這張圖，我們將分支 123 合併到分支 master。(要記得先切換到要合併的主分支，才可以合併其他的分支進來)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/merge.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/merge.webp"
 alt="Git merge" width="600">&lt;figcaption>
 &lt;p>Git merge&lt;/p>
 &lt;/figcaption>
@@ -3813,7 +3813,7 @@ title="Copy code"
 &lt;p>文字說明也不太懂對吧！沒錯我也是 😂，所以我整理了三種不同的範例，我們一起做看看吧！&lt;/p>
 &lt;p>我們先開一個新專案，在 master 上面 commit 2 次，可以參考下方圖片：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_1.webp"
 alt="Git reset 示範" width="700">&lt;figcaption>
 &lt;p>Git reset 示範&lt;/p>
 &lt;/figcaption>
@@ -3821,7 +3821,7 @@ alt="Git reset 示範" width="700">&lt;figcaption>
 &lt;br>
 &lt;p>我們用 &lt;code>git log&lt;/code> 來看一下記錄：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_2.webp"
 alt="Git reset 示範 log 紀錄" width="700">&lt;figcaption>
 &lt;p>Git reset 示範 log 紀錄&lt;/p>
 &lt;/figcaption>
@@ -3831,7 +3831,7 @@ alt="Git reset 示範 log 紀錄" width="700">&lt;figcaption>
 &lt;h5>reset - mixed&lt;span class="hx-absolute -hx-mt-20" id="reset---mixed">&lt;/span>
 &lt;a href="#reset---mixed" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>我們下 &lt;code>git reset --minxed&lt;/code> 按 Tab 可以看要還原的 commit，我們之後的測試都是還原到 &lt;code>24aeb0d -- [HEAD^] add a.txt&lt;/code> 這個，來觀察 &lt;code>add b.txt&lt;/code> 這個 commit 的變化。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_3.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_3.webp"
 alt="Git reset mixed 模式" width="800">&lt;figcaption>
 &lt;p>Git reset mixed 模式&lt;/p>
 &lt;/figcaption>
@@ -3839,7 +3839,7 @@ alt="Git reset mixed 模式" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>所以我們的指令是 &lt;code>git reset --mixed 24aebo4&lt;/code>，我們再來觀看看看，檔案狀態也就是 b.txt 以及暫存區狀態。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_4.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_4.webp"
 alt="Git reset mixed 模式" width="800">&lt;figcaption>
 &lt;p>Git reset mixed 模式&lt;/p>
 &lt;/figcaption>
@@ -3849,7 +3849,7 @@ alt="Git reset mixed 模式" width="800">&lt;figcaption>
 &lt;h5>reset - soft&lt;span class="hx-absolute -hx-mt-20" id="reset---soft">&lt;/span>
 &lt;a href="#reset---soft" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>我們指令是 &lt;code>git reset --soft 24aebo4&lt;/code>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_5.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_5.webp"
 alt="Git reset soft 模式" width="800">&lt;figcaption>
 &lt;p>Git reset soft 模式&lt;/p>
 &lt;/figcaption>
@@ -3859,7 +3859,7 @@ alt="Git reset soft 模式" width="800">&lt;figcaption>
 &lt;h5>reset - hard&lt;span class="hx-absolute -hx-mt-20" id="reset---hard">&lt;/span>
 &lt;a href="#reset---hard" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>我們指令是 &lt;code>git reset --hard 24aebo4&lt;/code>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_6.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/reset_6.webp"
 alt="Git reset hard 模式" width="800">&lt;figcaption>
 &lt;p>Git reset hard 模式&lt;/p>
 &lt;/figcaption>
@@ -3933,7 +3933,7 @@ title="Copy code"
 &lt;br>
 &lt;p>我們先隨意在分支上推一次 commit ，如下圖，讓我們等等有 commit 可以來新增標籤：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/tag.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/tag.webp"
 alt="在隨意的分支推一個 commit" width="800">&lt;figcaption>
 &lt;p>在隨意的分支推一個 commit&lt;/p>
 &lt;/figcaption>
@@ -3956,7 +3956,7 @@ title="Copy code"
 &lt;br>
 &lt;p>接著我們使用 &lt;code>git show lightweight&lt;/code> 來查看標籤：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/tag_1.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/tag_1.webp"
 alt="輕量標籤 lightweight" width="800">&lt;figcaption>
 &lt;p>輕量標籤 lightweight&lt;/p>
 &lt;/figcaption>
@@ -3980,7 +3980,7 @@ title="Copy code"
 &lt;br>
 &lt;p>接著我們使用 &lt;code>git show annotated&lt;/code> 來查看標籤：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/tag_2.png"
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/git-introduce/tag_2.webp"
 alt="標示標籤 annotated" width="800">&lt;figcaption>
 &lt;p>標示標籤 annotated&lt;/p>
 &lt;/figcaption>
