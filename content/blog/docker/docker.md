@@ -15,7 +15,7 @@ Docker 是一種軟體平台，它可以快速建立、測試和部署應用程�
 
 <br>
 
-{{< figure src="/docker/docker/container-vm.png" width="700" caption="Container 與 VM 的差異" >}}
+{{< figure src="/docker/docker/container-vm.webp" width="700" caption="Container 與 VM 的差異" >}}
 
 可以看到 Container 是以應用程式為單位，而 VM 則是以作業系統為單位。Container 是一個封裝了相依性資源與應用程式的執行環境 ; VM 則是一個配置好 CPU、RAM 與 Storage 的作業系統，為了更好的做區別，我把 Container、VM 兩個差別用表格來說明～
 
@@ -120,7 +120,7 @@ docker.io/library/mysql:latest
 
 <br>
 
-{{< figure src="/docker/docker/docker-image.png" width="900" caption="Docker hub 下載 Image" >}}
+{{< figure src="/docker/docker/docker-image.webp" width="900" caption="Docker hub 下載 Image" >}}
 
 <br>
 
@@ -338,7 +338,7 @@ nginx              latest    c919045c4c2b   13 days ago   142MB
 
 我們在介紹指令前，先來了解一下 Dockerfile、Docker Image、Docker Container 這三個的關係，可以先參考以下圖片
 
-{{< figure src="/docker/docker/container.png" width="300" caption="容器 Container 組成" >}}
+{{< figure src="/docker/docker/container.webp" width="300" caption="容器 Container 組成" >}}
 
 <br>
 
@@ -400,7 +400,7 @@ CONTAINER ID   IMAGE        COMMAND                  CREATED              STATUS
 
 <br>
 
-{{< figure src="/docker/docker/container-v.png" width="700" caption="容器 Container -volume 測試" >}}
+{{< figure src="/docker/docker/container-v.webp" width="700" caption="容器 Container -volume 測試" >}}
 
 <br>
 
@@ -569,7 +569,7 @@ latest: digest: sha256:814caacaf3dad3eccb43dc9bcad635d0473bd5946295d40ca1ec23d13
 
 <br>
 
-{{< figure src="/docker/docker/repository.png" width="1000" caption="repository" >}}
+{{< figure src="/docker/docker/repository.webp" width="1000" caption="repository" >}}
 
 <br>
 
@@ -831,7 +831,7 @@ br-36a27cab1817 Link encap:Ethernet  HWaddr 02:42:20:DF:DB:FD
           .... 省略 ....
 ```
 
-{{< figure src="/docker/docker/host.png" width="500" caption="host 網路模式" >}}
+{{< figure src="/docker/docker/host.webp" width="500" caption="host 網路模式" >}}
 
 <br>
 
@@ -847,7 +847,7 @@ docker run --net=bridge -it jonlabelle/network-tools
 
 docker 會新增一個虛擬網卡作為容器網路對外的出口，預設名稱為 `docker0`，docker0 會跟本機的對外網卡(圖中的 `eth0` )相連，藉此取得對外連線的能力，也因為每一個容器都會使用一個 veth device 與 docker0 相連，所以也具備對外連線的能力。
 
-{{< figure src="/docker/docker/host.png" width="600" caption="bridge 網路模式" >}}
+{{< figure src="/docker/docker/host.webp" width="600" caption="bridge 網路模式" >}}
 
 <br>
 
@@ -855,7 +855,7 @@ docker 會新增一個虛擬網卡作為容器網路對外的出口，預設名�
 
 下圖是說明 Host1 實體主機裡面有 Container1，然後 Host2 實體主機裡面有 Container2，可以透過 Docker overlay 模式將 Container1 和 Container2 連接做溝通。另外還需要一個 Consol 來存連線的資料庫，在使用 overlay 時要先在 Docker 做設定，這樣才能存放 overlay 網路模式的連線資訊。
 
-{{< figure src="/docker/docker/overlay.png" width="550" caption="overlay 網路模式" >}}
+{{< figure src="/docker/docker/overlay.webp" width="550" caption="overlay 網路模式" >}}
 
 <br>
 
@@ -863,7 +863,7 @@ docker 會新增一個虛擬網卡作為容器網路對外的出口，預設名�
 
 macvlan 的原理就是在本機的網卡上虛擬出很多個子網卡，通過不同的 MAC 位置在數據鏈路層進行網路資料的轉發。
 
-{{< figure src="/docker/docker/macvlan.png" width="450" caption="macvlan 網路模式" >}}
+{{< figure src="/docker/docker/macvlan.webp" width="450" caption="macvlan 網路模式" >}}
 
 <br>
 
@@ -985,7 +985,7 @@ mysql 使用的映像檔是 mysql 版本是 8.0.28，我們為了要保留資料
 
 最後在上面的 ([這邊有放已經寫好的檔案歐](https://github.com/880831ian/docker-compose-php-mysql-nginx)) 裡面還有多一個 docker-volume/html 的資料夾，就是我們剛剛映射到本地端的資料夾，資料夾內已經放有連線測試的檔案，輸入網址 `http://127.0.0.1:7777/index.php`，如果開啟後有顯示下方畫面，就代表我們成功用 docker-compose 將 PHP MySQL Nginx 整合再一起囉！
 
-{{< figure src="/docker/docker/localhost-7777.png" width="450" caption="測試是否成功用 docker-compose 整合 PHP MySQL Nginx" >}}
+{{< figure src="/docker/docker/localhost-7777.webp" width="450" caption="測試是否成功用 docker-compose 整合 PHP MySQL Nginx" >}}
 
 <br>
 

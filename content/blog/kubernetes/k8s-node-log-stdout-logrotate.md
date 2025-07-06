@@ -25,7 +25,7 @@ authors:
 
 <br>
 
-{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/1.jpg" width="550" caption="How nodes handle container logs 圖片：[Logging Architecture](https://kubernetes.io/docs/concepts/cluster-administration/logging/#how-nodes-handle-container-logs)" >}}
+{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/1.webp" width="550" caption="How nodes handle container logs 圖片：[Logging Architecture](https://kubernetes.io/docs/concepts/cluster-administration/logging/#how-nodes-handle-container-logs)" >}}
 
 <br>
 
@@ -43,7 +43,7 @@ authors:
 
 <br>
 
-{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/2.png" width="550" caption="GKE /etc/logrotate.d 底下檔案設定" >}}
+{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/2.webp" width="550" caption="GKE /etc/logrotate.d 底下檔案設定" >}}
 
 <br>
 
@@ -53,7 +53,7 @@ authors:
 
 <br>
 
-{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/3.png" width="500" caption="EKS /etc/logrotate.d 底下檔案設定" >}}
+{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/3.webp" width="500" caption="EKS /etc/logrotate.d 底下檔案設定" >}}
 
 <br>
 
@@ -73,7 +73,7 @@ journalctl -u kubelet --no-pager | grep "container-log-max"
 
 <br>
 
-{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/4.png" width="750" caption="查看 containerLogMaxSize 跟 containerLogMaxFiles 當前設定值" >}}
+{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/4.webp" width="750" caption="查看 containerLogMaxSize 跟 containerLogMaxFiles 當前設定值" >}}
 
 <br>
 
@@ -85,7 +85,7 @@ journalctl -u kubelet --no-pager | grep "container-log-max"
 
 <br>
 
-{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/5.png" width="650" caption="進入 /var/log/pods" >}}
+{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/5.webp" width="650" caption="進入 /var/log/pods" >}}
 
 <br>
 
@@ -97,13 +97,13 @@ journalctl -u kubelet --no-pager | grep "container-log-max"
 
 <br>
 
-{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/6.png" width="650" >}}
+{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/6.webp" width="650" >}}
 
 <br>
 
 - EKS
 
-{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/7.png" width="650" >}}
+{{< figure src="/kubernetes/k8s-node-log-stdout-logrotate/7.webp" width="650" >}}
 
 <br>
 

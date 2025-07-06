@@ -12,7 +12,7 @@ authors:
 
 <br>
 
-{{< figure src="/opentelemetry/opentelemetry-observability/1.png" width="800" caption="軟體架構以及基礎設施的演進" >}}
+{{< figure src="/opentelemetry/opentelemetry-observability/1.webp" width="800" caption="軟體架構以及基礎設施的演進" >}}
 
 <br>
 
@@ -46,7 +46,7 @@ Traces （後面詳細介紹）
 
 <br>
 
-{{< figure src="/opentelemetry/opentelemetry-observability/2.png" width="400" caption="可觀測性三大支柱" >}}
+{{< figure src="/opentelemetry/opentelemetry-observability/2.webp" width="400" caption="可觀測性三大支柱" >}}
 
 <br>
 
@@ -76,7 +76,7 @@ SpanID：是一條請求路徑中單個操作唯一的 ID。追蹤路徑是由�
 
 <br>
 
-{{< figure src="/opentelemetry/opentelemetry-observability/3.png" width="650" caption="Trace 示意圖" >}}
+{{< figure src="/opentelemetry/opentelemetry-observability/3.webp" width="650" caption="Trace 示意圖" >}}
 
 <br>
 
@@ -86,7 +86,7 @@ SpanID：是一條請求路徑中單個操作唯一的 ID。追蹤路徑是由�
 
 <br>
 
-{{< figure src="/opentelemetry/opentelemetry-observability/4.png" width="1200" caption="ECK Trace 示意圖" >}}
+{{< figure src="/opentelemetry/opentelemetry-observability/4.webp" width="1200" caption="ECK Trace 示意圖" >}}
 
 <br>
 
@@ -94,7 +94,7 @@ SpanID：是一條請求路徑中單個操作唯一的 ID。追蹤路徑是由�
 
 <br>
 
-{{< figure src="/opentelemetry/opentelemetry-observability/5.png" width="900" caption="ECK Trace 示意圖" >}}
+{{< figure src="/opentelemetry/opentelemetry-observability/5.webp" width="900" caption="ECK Trace 示意圖" >}}
 
 <br>
 
@@ -131,7 +131,7 @@ Opentelemetry 是雲原生的可觀測性(Observability)框架，提供標準化
 
 <br>
 
-{{< figure src="/opentelemetry/opentelemetry-observability/6.jpg" width="500" caption="Opentelemetry" >}}
+{{< figure src="/opentelemetry/opentelemetry-observability/6.webp" width="500" caption="Opentelemetry" >}}
 
 <br>
 

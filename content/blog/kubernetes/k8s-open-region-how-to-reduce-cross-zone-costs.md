@@ -15,7 +15,7 @@ authors:
 
 <br>
 
-{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/1.png" width="1000" caption="跨域費用說明" >}}
+{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/1.webp" width="1000" caption="跨域費用說明" >}}
 
 <br>
 
@@ -166,7 +166,7 @@ done
 
 <br>
 
-{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/2.png" width="850" caption="Pod 所在 Node 以及 Zone" >}}
+{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/2.webp" width="850" caption="Pod 所在 Node 以及 Zone" >}}
 
 <br>
 
@@ -182,7 +182,7 @@ done | sort | uniq -c
 
 <br>
 
-{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/3.png" width="550" caption="Pod 所在 Node 以及 Zone" >}}
+{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/3.webp" width="550" caption="Pod 所在 Node 以及 Zone" >}}
 
 <br>
 
@@ -211,7 +211,7 @@ done | sort | uniq -c
 
 <br>
 
-{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/4.png" width="750" caption="設定完成後，會顯示來至 endpoint-slice-controller" >}}
+{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/4.webp" width="750" caption="設定完成後，會顯示來至 endpoint-slice-controller" >}}
 
 <br>
 
@@ -239,7 +239,7 @@ done
 
 <br>
 
-{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/5.png" width="850" caption="測試結果" >}}
+{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/5.webp" width="850" caption="測試結果" >}}
 
 <br>
 
@@ -255,7 +255,7 @@ done | sort | uniq -c
 
 <br>
 
-{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/6.png" width="550" caption="Pod 所在 Node 以及 Zone" >}}
+{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/6.webp" width="550" caption="Pod 所在 Node 以及 Zone" >}}
 
 <br>
 
@@ -279,7 +279,7 @@ done | sort | uniq -c
 
 <br>
 
-{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/7.png" width="850" caption="Pod 所在 Node 以及 Zone" >}}
+{{< figure src="/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/7.webp" width="850" caption="Pod 所在 Node 以及 Zone" >}}
 
 <br>
 

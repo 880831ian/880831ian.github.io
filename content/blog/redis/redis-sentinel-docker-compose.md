@@ -25,7 +25,7 @@ Redis 提供非常實用的功能來讓我們實現多機的 in-memory 資料庫
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/sentinal.png" width="550" caption="哨兵模式 (Sentinel)" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/sentinal.webp" width="550" caption="哨兵模式 (Sentinel)" >}}
 
 <br>
 
@@ -378,11 +378,11 @@ docker exec -it redis-slave2 redis-cli info Replication | grep role
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/docker-compose-up-1.png" width="650" caption="啟動 Docker-compose.yaml" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/docker-compose-up-1.webp" width="650" caption="啟動 Docker-compose.yaml" >}}
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/redis-sh-1.png" width="650" caption="使用 redis.sh 檢查目前 IP 及角色" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/redis-sh-1.webp" width="650" caption="使用 redis.sh 檢查目前 IP 及角色" >}}
 
 <br>
 
@@ -416,7 +416,7 @@ $sentinel = array(
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/php-1.png" width="650" caption="test.com:8888 測試網站" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/php-1.webp" width="650" caption="test.com:8888 測試網站" >}}
 
 <br>
 
@@ -442,7 +442,7 @@ sentinel failover-timeout mymaster 180000
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/docker-compose-up-2.png" width="700" caption="啟動 Docker-compose.yaml" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/docker-compose-up-2.webp" width="700" caption="啟動 Docker-compose.yaml" >}}
 
 <br>
 
@@ -458,7 +458,7 @@ docker stop redis-master
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/redis-sh-2.png" width="700" caption="使用 redis.sh 檢查目前 IP 及角色" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/redis-sh-2.webp" width="700" caption="使用 redis.sh 檢查目前 IP 及角色" >}}
 
 <br>
 
@@ -470,7 +470,7 @@ docker stop redis-master
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/redis-sh-3.png" width="700" caption="使用 redis.sh 檢查目前 IP 及角色" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/redis-sh-3.webp" width="700" caption="使用 redis.sh 檢查目前 IP 及角色" >}}
 
 <br>
 
@@ -482,7 +482,7 @@ docker stop redis-master
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/sentinal-1.png" width="1200" caption="判斷是否主觀下線及客觀下線，並發起投票" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/sentinal-1.webp" width="1200" caption="判斷是否主觀下線及客觀下線，並發起投票" >}}
 
 <br>
 
@@ -490,7 +490,7 @@ docker stop redis-master
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/sentinal-2.png" width="1200" caption="進行透票，確認誰當選" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/sentinal-2.webp" width="1200" caption="進行透票，確認誰當選" >}}
 
 <br>
 
@@ -498,7 +498,7 @@ docker stop redis-master
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/sentinal-3.png" width="1200" caption="領頭哨兵選定新 master" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/sentinal-3.webp" width="1200" caption="領頭哨兵選定新 master" >}}
 
 <br>
 
@@ -506,7 +506,7 @@ docker stop redis-master
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/sentinal-4.png" width="1200" caption="設定 master 並修改原 master 變成 slave" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/sentinal-4.webp" width="1200" caption="設定 master 並修改原 master 變成 slave" >}}
 
 <br>
 
@@ -518,7 +518,7 @@ docker stop redis-master
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/php-2.png" width="700" caption="連線 master" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/php-2.webp" width="700" caption="連線 master" >}}
 
 <br>
 
@@ -530,7 +530,7 @@ docker stop redis-master
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/php-3.png" width="700" caption="連線 master" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/php-3.webp" width="700" caption="連線 master" >}}
 
 <br>
 
@@ -544,7 +544,7 @@ docker stop redis-master
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose/bug.png" width="700" caption="redis WARNING 錯誤訊息 [github issus](https://github.com/redis/redis/issues/8172)" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose/bug.webp" width="700" caption="redis WARNING 錯誤訊息 [github issus](https://github.com/redis/redis/issues/8172)" >}}
 
 <br>
 

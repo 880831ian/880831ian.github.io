@@ -219,7 +219,7 @@ OK
 
 <br>
 
-{{< figure src="/redis/redis-introduce/string.png" width="550" caption="String 適用場景圖" >}}
+{{< figure src="/redis/redis-introduce/string.webp" width="550" caption="String 適用場景圖" >}}
 
 <br>
 
@@ -228,7 +228,7 @@ OK
 
 <br>
 
-{{< figure src="/redis/redis-introduce/hash.png" width="500" caption="Hashes 示意圖 ([Redis 基本資料形態](https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/))" >}}
+{{< figure src="/redis/redis-introduce/hash.webp" width="500" caption="Hashes 示意圖 ([Redis 基本資料形態](https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/))" >}}
 
 <br>
 
@@ -355,7 +355,7 @@ Hashes 的話要使用 `hset`、`hget` 來對 Hashes 做儲存以及讀取。
 
 <br>
 
-{{< figure src="/redis/redis-introduce/hash-template.png" width="550" caption="Hashes 適用場景圖" >}}
+{{< figure src="/redis/redis-introduce/hash-template.webp" width="550" caption="Hashes 適用場景圖" >}}
 
 <br>
 
@@ -436,7 +436,7 @@ OK
 
 <br>
 
-{{< figure src="/redis/redis-introduce/list.png" width="600" caption="Lists 適用場景圖" >}}
+{{< figure src="/redis/redis-introduce/list.webp" width="600" caption="Lists 適用場景圖" >}}
 
 <br>
 
@@ -527,7 +527,7 @@ OK
 
 <br>
 
-{{< figure src="/redis/redis-introduce/set.png" width="700" caption="Sets 適用場景圖" >}}
+{{< figure src="/redis/redis-introduce/set.webp" width="700" caption="Sets 適用場景圖" >}}
 
 <br>
 
@@ -619,7 +619,7 @@ OK
 
 <br>
 
-{{< figure src="/redis/redis-introduce/zset.png" width="550" caption="Zset 適用場景圖" >}}
+{{< figure src="/redis/redis-introduce/zset.webp" width="550" caption="Zset 適用場景圖" >}}
 
 <br>
 
@@ -633,7 +633,7 @@ Redis 客戶端可以使用 `subscribe` 來訂閱任意數量的頻道。
 
 <br>
 
-{{< figure src="/redis/redis-introduce/channel.png" width="550" caption="Subscribe 示意圖" >}}
+{{< figure src="/redis/redis-introduce/channel.webp" width="550" caption="Subscribe 示意圖" >}}
 
 <br>
 
@@ -641,7 +641,7 @@ Redis 客戶端可以使用 `subscribe` 來訂閱任意數量的頻道。
 
 <br>
 
-{{< figure src="/redis/redis-introduce/message.png" width="550" caption="Publish 示意圖" >}}
+{{< figure src="/redis/redis-introduce/message.webp" width="550" caption="Publish 示意圖" >}}
 
 <br>
 

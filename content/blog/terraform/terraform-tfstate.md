@@ -95,7 +95,7 @@ terraform {
 
 <br>
 
-{{< figure src="/terraform/terraform-tfstate/1.png" width="700" caption="init 初始化後，會將後端資訊也存到 .terraform 資料夾" >}}
+{{< figure src="/terraform/terraform-tfstate/1.webp" width="700" caption="init 初始化後，會將後端資訊也存到 .terraform 資料夾" >}}
 
 <br>
 
@@ -103,7 +103,7 @@ terraform {
 
 <br>
 
-{{< figure src="/terraform/terraform-tfstate/2.png" width="700" caption="apply 完，沒有在本地產生 .tfstate 檔案" >}}
+{{< figure src="/terraform/terraform-tfstate/2.webp" width="700" caption="apply 完，沒有在本地產生 .tfstate 檔案" >}}
 
 <br>
 
@@ -111,7 +111,7 @@ terraform {
 
 <br>
 
-{{< figure src="/terraform/terraform-tfstate/3.png" width="500" caption="gitlab/Infrastructure/Terraform" >}}
+{{< figure src="/terraform/terraform-tfstate/3.webp" width="500" caption="gitlab/Infrastructure/Terraform" >}}
 
 <br>
 
@@ -119,7 +119,7 @@ terraform {
 
 <br>
 
-{{< figure src="/terraform/terraform-tfstate/4.png" width="1000" caption="gitlab terraform tfstate 網頁" >}}
+{{< figure src="/terraform/terraform-tfstate/4.webp" width="1000" caption="gitlab terraform tfstate 網頁" >}}
 
 <br>
 
@@ -127,7 +127,7 @@ terraform {
 
 <br>
 
-{{< figure src="/terraform/terraform-tfstate/5.png" width="500" caption="gitlab terraform tfstate 功能說明" >}}
+{{< figure src="/terraform/terraform-tfstate/5.webp" width="500" caption="gitlab terraform tfstate 功能說明" >}}
 
 <br>
 
@@ -143,7 +143,7 @@ terraform {
 
 <br>
 
-{{< figure src="/terraform/terraform-tfstate/6.png" width="1000" caption="GitLab Lock 鎖住" >}}
+{{< figure src="/terraform/terraform-tfstate/6.webp" width="1000" caption="GitLab Lock 鎖住" >}}
 
 <br>
 
@@ -151,7 +151,7 @@ terraform {
 
 <br>
 
-{{< figure src="/terraform/terraform-tfstate/7.png" width="700" caption="在 Lock 下，其他人沒辦法去 plan or apply" >}}
+{{< figure src="/terraform/terraform-tfstate/7.webp" width="700" caption="在 Lock 下，其他人沒辦法去 plan or apply" >}}
 
 <br>
 
@@ -190,7 +190,7 @@ terraform {
 
 <br>
 
-{{< figure src="/terraform/terraform-tfstate/8.png" width="700" caption="產生 defaulte.tfstate" >}}
+{{< figure src="/terraform/terraform-tfstate/8.webp" width="700" caption="產生 defaulte.tfstate" >}}
 
 <br>
 
@@ -200,7 +200,7 @@ terraform {
 
 <br>
 
-{{< figure src="/terraform/terraform-tfstate/9.png" width="700" caption="gcs Lock 會出現 .tflock 檔案" >}}
+{{< figure src="/terraform/terraform-tfstate/9.webp" width="700" caption="gcs Lock 會出現 .tflock 檔案" >}}
 
 <br>
 
@@ -208,4 +208,4 @@ terraform {
 
 <br>
 
-{{< figure src="/terraform/terraform-tfstate/10.png" width="700" caption="gcs Lock 其他人不能操作" >}}
+{{< figure src="/terraform/terraform-tfstate/10.webp" width="700" caption="gcs Lock 其他人不能操作" >}}

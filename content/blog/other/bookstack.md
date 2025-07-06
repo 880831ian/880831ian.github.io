@@ -18,15 +18,15 @@ authors:
 
 ### 簡潔的書本列表模式
 
-{{< figure src="/other/bookstack/1.png" width="850" caption="書架分類" >}}
+{{< figure src="/other/bookstack/1.webp" width="850" caption="書架分類" >}}
 
 <br>
 
-{{< figure src="/other/bookstack/2.png" width="850" caption="書本分類" >}}
+{{< figure src="/other/bookstack/2.webp" width="850" caption="書本分類" >}}
 
 <br>
 
-{{< figure src="/other/bookstack/3.png" width="850" caption="頁面章節分類" >}}
+{{< figure src="/other/bookstack/3.webp" width="850" caption="頁面章節分類" >}}
 
 <br>
 
@@ -38,7 +38,7 @@ authors:
 
 <br>
 
-{{< figure src="/other/bookstack/4.png" width="850" caption="搜尋功能" >}}
+{{< figure src="/other/bookstack/4.webp" width="850" caption="搜尋功能" >}}
 
 當我們的筆記內容越來越多，雖然有上面提到的分類模式，想要找到內容還是需要花一段時間，但 Bookstack 有強大的搜尋功能，可以針對書架、書本、章節或是書面個別搜尋，可以利用時間、標籤、標題或是內容來快速找到想要的內容。
 
@@ -242,7 +242,7 @@ docker 的部分就更簡單了，一樣是把 **<<更換此處>>** 換成對應
 
 <br>
 
-{{< figure src="/other/bookstack/6.png" width="850" caption="功能與安全設定" >}}
+{{< figure src="/other/bookstack/6.webp" width="850" caption="功能與安全設定" >}}
 
 <br>
 

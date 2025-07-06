@@ -76,7 +76,7 @@ Google Support 經過查詢後，回覆說：這個問題是因為 Pod 被強制
 
 <br>
 
-{{< figure src="/kubernetes/pod-veth-name-provided-eth0-already-exists/1.png" width="800" caption="Google Support 回覆" >}}
+{{< figure src="/kubernetes/pod-veth-name-provided-eth0-already-exists/1.webp" width="800" caption="Google Support 回覆" >}}
 
 <br>
 

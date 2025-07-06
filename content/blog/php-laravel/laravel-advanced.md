@@ -916,7 +916,7 @@ use Illuminate\Support\Facades\Validator;
 
 <br>
 
-{{< figure src="/php-laravel/laravel-advanced/login.png" width="600" caption="新增留言 成功" >}}
+{{< figure src="/php-laravel/laravel-advanced/login.webp" width="600" caption="新增留言 成功" >}}
 
 <br>
 
@@ -928,7 +928,7 @@ use Illuminate\Support\Facades\Validator;
 
 <br>
 
-{{< figure src="/php-laravel/laravel-advanced/post-api-success.png" width="600" caption="新增留言 成功" >}}
+{{< figure src="/php-laravel/laravel-advanced/post-api-success.webp" width="600" caption="新增留言 成功" >}}
 
 <br>
 
@@ -940,7 +940,7 @@ use Illuminate\Support\Facades\Validator;
 
 <br>
 
-{{< figure src="/php-laravel/laravel-advanced/post-api-error.png" width="600" caption="新增留言 失敗" >}}
+{{< figure src="/php-laravel/laravel-advanced/post-api-error.webp" width="600" caption="新增留言 失敗" >}}
 
 <br>
 
@@ -950,7 +950,7 @@ use Illuminate\Support\Facades\Validator;
 
 #### 修改留言 - 成功
 
-{{< figure src="/php-laravel/laravel-advanced/put-api-success.png" width="600" caption="修改留言 成功" >}}
+{{< figure src="/php-laravel/laravel-advanced/put-api-success.webp" width="600" caption="修改留言 成功" >}}
 
 <br>
 
@@ -960,7 +960,7 @@ use Illuminate\Support\Facades\Validator;
 
 #### 修改留言 - 失敗 - 沒有登入
 
-{{< figure src="/php-laravel/laravel-advanced/put-api-error-1.png" width="600" caption="修改留言 失敗" >}}
+{{< figure src="/php-laravel/laravel-advanced/put-api-error-1.webp" width="600" caption="修改留言 失敗" >}}
 
 <br>
 
@@ -970,7 +970,7 @@ use Illuminate\Support\Facades\Validator;
 
 #### 修改留言 - 失敗 - 權限不足
 
-{{< figure src="/php-laravel/laravel-advanced/put-api-error-2.png" width="600" caption="修改留言 失敗" >}}
+{{< figure src="/php-laravel/laravel-advanced/put-api-error-2.webp" width="600" caption="修改留言 失敗" >}}
 
 <br>
 
@@ -980,7 +980,7 @@ use Illuminate\Support\Facades\Validator;
 
 #### 按讚留言 - 成功
 
-{{< figure src="/php-laravel/laravel-advanced/patch-api-success.png" width="600" caption="修改留言 成功" >}}
+{{< figure src="/php-laravel/laravel-advanced/patch-api-success.webp" width="600" caption="修改留言 成功" >}}
 
 <br>
 
@@ -990,7 +990,7 @@ use Illuminate\Support\Facades\Validator;
 
 #### 按讚留言 - 失敗 - 沒有登入
 
-{{< figure src="/php-laravel/laravel-advanced/patch-api-error.png" width="600" caption="修改留言 失敗" >}}
+{{< figure src="/php-laravel/laravel-advanced/patch-api-error.webp" width="600" caption="修改留言 失敗" >}}
 
 <br>
 
@@ -1000,7 +1000,7 @@ use Illuminate\Support\Facades\Validator;
 
 #### 刪除留言 - 成功
 
-{{< figure src="/php-laravel/laravel-advanced/delete-api-success.png" width="600" caption="刪除留言 成功" >}}
+{{< figure src="/php-laravel/laravel-advanced/delete-api-success.webp" width="600" caption="刪除留言 成功" >}}
 
 <br>
 
@@ -1012,7 +1012,7 @@ use Illuminate\Support\Facades\Validator;
 
 <br>
 
-{{< figure src="/php-laravel/laravel-advanced/delete-api-error-1.png" width="600" caption="刪除留言 失敗" >}}
+{{< figure src="/php-laravel/laravel-advanced/delete-api-error-1.webp" width="600" caption="刪除留言 失敗" >}}
 
 <br>
 
@@ -1024,7 +1024,7 @@ use Illuminate\Support\Facades\Validator;
 
 <br>
 
-{{< figure src="/php-laravel/laravel-advanced/delete-api-error-2.png" width="600" caption="刪除留言 失敗" >}}
+{{< figure src="/php-laravel/laravel-advanced/delete-api-error-2.webp" width="600" caption="刪除留言 失敗" >}}
 
 <br>
 

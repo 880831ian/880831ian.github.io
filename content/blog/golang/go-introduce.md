@@ -57,7 +57,7 @@ macOS 可以用 brew 等工具來下載，但這次我使用官網直接下載 p
 
 <br>
 
-{{< figure src="/golang/go-introduce/download.png" width="700" caption="Go 官網下載位置" >}}
+{{< figure src="/golang/go-introduce/download.webp" width="700" caption="Go 官網下載位置" >}}
 
 <br>
 
@@ -404,7 +404,7 @@ Hello World //黃色
 
 <br>
 
-{{< figure src="/golang/go-introduce/variable.png" width="700" caption="Go 保留字，不能拿來當變數名稱" >}}
+{{< figure src="/golang/go-introduce/variable.webp" width="700" caption="Go 保留字，不能拿來當變數名稱" >}}
 
 <br>
 
@@ -1312,7 +1312,7 @@ hello
 
 <br>
 
-{{< figure src="/golang/go-introduce/single-thread.png" width="400" caption="單執行緒 ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
+{{< figure src="/golang/go-introduce/single-thread.webp" width="400" caption="單執行緒 ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
 
 <br>
 
@@ -1345,7 +1345,7 @@ hello
 
 <br>
 
-{{< figure src="/golang/go-introduce/multi-thread.png" width="300" caption="多執行緒 ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
+{{< figure src="/golang/go-introduce/multi-thread.webp" width="300" caption="多執行緒 ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
 
 <br>
 
@@ -1389,7 +1389,7 @@ hello
 
 <br>
 
-{{< figure src="/golang/go-introduce/timesleep.png" width="300" caption="time.sleep ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
+{{< figure src="/golang/go-introduce/timesleep.webp" width="300" caption="time.sleep ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
 
 <br>
 
@@ -1430,7 +1430,7 @@ hello
 
 <br>
 
-{{< figure src="/golang/go-introduce/wait-group.png" width="400" caption="sync.WaitGroup ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
+{{< figure src="/golang/go-introduce/wait-group.webp" width="400" caption="sync.WaitGroup ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
 
 <br>
 
@@ -1471,7 +1471,7 @@ world
 
 <br>
 
-{{< figure src="/golang/go-introduce/channel-wait.png" width="400" caption="Channel 阻塞 ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
+{{< figure src="/golang/go-introduce/channel-wait.webp" width="400" caption="Channel 阻塞 ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
 
 <br>
 
@@ -1520,7 +1520,7 @@ $ go run .
 
 <br>
 
-{{< figure src="/golang/go-introduce/total-error.png" width="500" caption="多執行緒下的共享變數 - 錯誤 ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
+{{< figure src="/golang/go-introduce/total-error.webp" width="500" caption="多執行緒下的共享變數 - 錯誤 ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
 
 <br>
 
@@ -1567,7 +1567,7 @@ goroutine2 等到 Channel 中有資料，拉出後結束等待，繼續做運算
 
 <br>
 
-{{< figure src="/golang/go-introduce/total-channel.png" width="500" caption="多執行緒下的共享變數 - Channel ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
+{{< figure src="/golang/go-introduce/total-channel.webp" width="500" caption="多執行緒下的共享變數 - Channel ([Go 的並發：Goroutine 與 Channel 介紹](https://peterhpchen.github.io/2020/03/08/goroutine-and-channel.html))" >}}
 
 <br>
 

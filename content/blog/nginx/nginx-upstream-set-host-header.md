@@ -83,7 +83,7 @@ location /aaa {
 
 <br>
 
-{{< figure src="/nginx/nginx-upstream-set-host-header/1.png" width="800" caption="nginx 原本寫法" >}}
+{{< figure src="/nginx/nginx-upstream-set-host-header/1.webp" width="800" caption="nginx 原本寫法" >}}
 
 <br>
 
@@ -154,7 +154,7 @@ location /aaa {
 
 <br>
 
-{{< figure src="/nginx/nginx-upstream-set-host-header/2.png" width="800" caption="使用多層的 nginx proxy 處理" >}}
+{{< figure src="/nginx/nginx-upstream-set-host-header/2.webp" width="800" caption="使用多層的 nginx proxy 處理" >}}
 
 <br>
 

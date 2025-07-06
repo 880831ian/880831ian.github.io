@@ -18,7 +18,7 @@ authors:
 
 在 Ansible 世界裡，我們會透過 `Inventory 檔案` 來定義有哪些的 `Managed Node`，並藉由 `SSH` 與 `Python` 來進行溝通。那我們先來看一張圖：
 
-{{< figure src="/git-or-cicd/ansible/run.png" width="600" caption="Ansible 運作原理  (圖片來源：[七分鐘掌握 Ansible 核心觀念](https://school.soft-arch.net/courses/28546/lectures/655359))" >}}
+{{< figure src="/git-or-cicd/ansible/run.webp" width="600" caption="Ansible 運作原理  (圖片來源：[七分鐘掌握 Ansible 核心觀念](https://school.soft-arch.net/courses/28546/lectures/655359))" >}}
 
 <br>
 
@@ -294,7 +294,7 @@ Ans2. 在我安裝過程中，發現上前幾天才出現這個 Bug 詳細情形
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/blowfish.png" width="450" caption="CryptographyDeprecationWarning 錯誤訊息修正" >}}
+{{< figure src="/git-or-cicd/ansible/blowfish.webp" width="450" caption="CryptographyDeprecationWarning 錯誤訊息修正" >}}
 
 {{< /callout >}}
 
@@ -350,7 +350,7 @@ $ ansible-playbook helloworld.yaml
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/helloworld.png" width="1000" caption="執行 Playbooks" >}}
+{{< figure src="/git-or-cicd/ansible/helloworld.webp" width="1000" caption="執行 Playbooks" >}}
 
 <br>
 
@@ -688,7 +688,7 @@ Hello World
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/telegram_1.png" width="600" caption="Telegram 創建機器人" >}}
+{{< figure src="/git-or-cicd/ansible/telegram_1.webp" width="600" caption="Telegram 創建機器人" >}}
 
 <br>
 
@@ -696,7 +696,7 @@ Hello World
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/telegram_2.png" width="600" caption="Telegram 創建機器人" >}}
+{{< figure src="/git-or-cicd/ansible/telegram_2.webp" width="600" caption="Telegram 創建機器人" >}}
 
 看到它回覆你 `Done!` 代表成功了，接下來你會拿到一組 API Token，像我的是 `5335968936:AAEDO_Tudhy0t577jtbF9TpgrzqOsL99h9c` (已更換，大家放心 😂 )，接下來開啟瀏覽器輸入以下網址 `https://api.telegram.org/bot{API Token}/getupdates`，其中的 `{API Token}` 請帶入自己的 Token，直到出現 `{"ok":true,"result":[]}` 代表完成。
 
@@ -738,7 +738,7 @@ Hello World
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/telegram_3.png" width="600" caption="發送通知至 Telegram Bot" >}}
+{{< figure src="/git-or-cicd/ansible/telegram_3.webp" width="600" caption="發送通知至 Telegram Bot" >}}
 
 這樣子就成功透過 Ansible Module 傳送通知給 Telegram 囉！
 
@@ -752,7 +752,7 @@ Hello World
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/telegram_4.png" width="600" caption="發送通知至 Telegram 群組 Bot" >}}
+{{< figure src="/git-or-cicd/ansible/telegram_4.webp" width="600" caption="發送通知至 Telegram 群組 Bot" >}}
 
 <br>
 
@@ -873,7 +873,7 @@ server1 | SUCCESS => {
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/telegram_5.png" width="800" caption="發送通知至 Telegram 群組 Bot" >}}
+{{< figure src="/git-or-cicd/ansible/telegram_5.webp" width="800" caption="發送通知至 Telegram 群組 Bot" >}}
 
 <br>
 
@@ -930,7 +930,7 @@ Hello "{{ dynamic_word }}"
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/template.png" width="900" caption="Template Module 範例" >}}
+{{< figure src="/git-or-cicd/ansible/template.webp" width="900" caption="Template Module 範例" >}}
 
 <br>
 
@@ -944,7 +944,7 @@ Hello "{{ dynamic_word }}"
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/template_1.png" width="900" caption="Template Module 使用 `-e` 覆寫參數" >}}
+{{< figure src="/git-or-cicd/ansible/template_1.webp" width="900" caption="Template Module 使用 `-e` 覆寫參數" >}}
 
 <br>
 
@@ -1010,7 +1010,7 @@ Hello "{{ dynamic_word }}"
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/template_2.png" width="900" caption="Template Module 範例" >}}
+{{< figure src="/git-or-cicd/ansible/template_2.webp" width="900" caption="Template Module 範例" >}}
 
 <br>
 
@@ -1116,7 +1116,7 @@ _____________________________________
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/handlers_1.png" width="900" caption="Handlers 範例" >}}
+{{< figure src="/git-or-cicd/ansible/handlers_1.webp" width="900" caption="Handlers 範例" >}}
 
 <br>
 
@@ -1124,7 +1124,7 @@ _____________________________________
 
 <br>
 
-{{< figure src="/git-or-cicd/ansible/handlers_2.png" width="900" caption="Handlers 範例" >}}
+{{< figure src="/git-or-cicd/ansible/handlers_2.webp" width="900" caption="Handlers 範例" >}}
 
 可以看到我們的 `modify index.html` 被改變了，所以 notify 通知 handlers 執行重新啟動。
 

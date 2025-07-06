@@ -45,7 +45,7 @@ Filebeats 是一個輕量級收集本地 log 數據的方案，它僅能收集�
 
 那我們在這邊就使用 Fluentd 來做我們的 EFK 示範：
 
-{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/efk.jpeg" width="700" caption="EFK 示意圖 [EFK Stack: Elasticsearch, Fluentd and Kibana on Docker](https://aesher9o1.medium.com/efk-stack-elasticsearch-fluentd-and-kibana-on-docker-be60597fa99)" >}}
+{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/efk.webp" width="700" caption="EFK 示意圖 [EFK Stack: Elasticsearch, Fluentd and Kibana on Docker](https://aesher9o1.medium.com/efk-stack-elasticsearch-fluentd-and-kibana-on-docker-be60597fa99)" >}}
 
 <br>
 
@@ -454,11 +454,11 @@ networks:
 
 我們先用 docker-compose up 來啟動 efk/Docker-compose.yaml，接著再啟動 nginx_php_redis/Docker-compose.yaml，最後啟動 haproxy_sentinel/Docker-compose.yaml：
 
-{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/efk-compose.png" width="700" caption="啟動 efk/Docker-compose.yaml" >}}
+{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/efk-compose.webp" width="700" caption="啟動 efk/Docker-compose.yaml" >}}
 
-{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/nginx-php-redis-compose.png" width="700" caption="啟動 nginx_php_redis/Docker-compose.yaml" >}}
+{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/nginx-php-redis-compose.webp" width="700" caption="啟動 nginx_php_redis/Docker-compose.yaml" >}}
 
-{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/haproxy-sentinel-compose.png" width="700" caption="啟動 efk/Docker-compose.yaml" >}}
+{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/haproxy-sentinel-compose.webp" width="700" caption="啟動 efk/Docker-compose.yaml" >}}
 
 (啟動 efk 時要等他跑完，因為他需要啟動一陣子，如果還沒等他啟動完畢就啟動下一個，會導致 fluentd 的 fluentd-address 尚未設定好，導致啟動錯誤)
 
@@ -469,7 +469,7 @@ networks:
 
 <br>
 
-{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/gui.png" width="1000" caption="kibana 設定" >}}
+{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/gui.webp" width="1000" caption="kibana 設定" >}}
 
 <br>
 
@@ -479,21 +479,21 @@ networks:
 
 <br>
 
-{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/kibana.png" width="1000" caption="kibana 設定" >}}
+{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/kibana.webp" width="1000" caption="kibana 設定" >}}
 
 然後會跳出一個視窗點選 "Create data view"，在 name 欄位輸入 fluentd* (右側有 fluentd 加時間，代表我們接 fluentd 有成功)，按下 "Create data view"
 
 <br>
 
-{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/fluentd.png" width="1000" caption="kibana 設定" >}}
+{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/fluentd.webp" width="1000" caption="kibana 設定" >}}
 
 接著點選左側的欄位，點選 "Analytics > Discover" ，就可以看到我們目前所有的 log 囉！
 
 <br>
 
-{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/fluentd-1.png" width="1000" caption="kibana 設定" >}}
+{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/fluentd-1.webp" width="1000" caption="kibana 設定" >}}
 
-{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/log.png" width="1000" caption="kibana Analytics > Discover" >}}
+{{< figure src="/rd/redis-sentinel-docker-compose-haproxy-efk/log.webp" width="1000" caption="kibana Analytics > Discover" >}}
 
 <br>
 

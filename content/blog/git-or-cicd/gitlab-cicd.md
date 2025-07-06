@@ -48,7 +48,7 @@ GitLab CI/CD 是 GitLab 內建強大的工具，在 GitHub 被稱為 Github Acti
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-cicd/cicd.jpg" width="800" caption="GitLab CI/CD (圖片來源：[GitLab Agile Planning](https://about.gitlab.com/solutions/agile-delivery/))" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/cicd.webp" width="800" caption="GitLab CI/CD (圖片來源：[GitLab Agile Planning](https://about.gitlab.com/solutions/agile-delivery/))" >}}
 
 <br>
 
@@ -119,7 +119,7 @@ deploy-prod:
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-cicd/error.png" width="600" caption="GitLab CI/CD 檢查格式有錯" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/error.webp" width="600" caption="GitLab CI/CD 檢查格式有錯" >}}
 
 <br>
 
@@ -127,7 +127,7 @@ deploy-prod:
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-cicd/ci.png" width="1000" caption="GitLab CI/CD 執行過程" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/ci.webp" width="1000" caption="GitLab CI/CD 執行過程" >}}
 
 <br>
 
@@ -135,7 +135,7 @@ deploy-prod:
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-cicd/status.png" width="800" caption="GitLab CI/CD 狀態" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/status.webp" width="800" caption="GitLab CI/CD 狀態" >}}
 
 <br>
 
@@ -143,7 +143,7 @@ deploy-prod:
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-cicd/pipeline.png" width="800" caption="GitLab CI/CD Pipeline" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/pipeline.webp" width="800" caption="GitLab CI/CD Pipeline" >}}
 
 <br>
 
@@ -153,7 +153,7 @@ deploy-prod:
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-cicd/gitlab-cicd.png" width="600" caption="Gitlab CI/CD 實際執行流程 (圖片來源：[Gitlab-CI 入門實作教學 - 單元測試篇](https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f))" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/gitlab-cicd.webp" width="600" caption="Gitlab CI/CD 實際執行流程 (圖片來源：[Gitlab-CI 入門實作教學 - 單元測試篇](https://nick-chen.medium.com/gitlab-ci-%E5%85%A5%E9%96%80%E7%AD%86%E8%A8%98-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E7%AF%87-156455e2ad9f))" >}}
 
 <br>
 
@@ -170,7 +170,7 @@ deploy-prod:
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-cicd/sharedrunners.png" width="800" caption="GitLab CI/CD 共享 Runner" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/sharedrunners.webp" width="800" caption="GitLab CI/CD 共享 Runner" >}}
 
 <br>
 
@@ -185,7 +185,7 @@ deploy-prod:
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-cicd/gitlab-runner.jpg" width="600" caption="GitLab CI/CD 自架 Runner (圖片來源：[Best Practice for DevOps on GitLab and GCP : GitLab Runner 簡介與安裝 - Day 7](https://ithelp.ithome.com.tw/articles/10214266))" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/gitlab-runner.webp" width="600" caption="GitLab CI/CD 自架 Runner (圖片來源：[Best Practice for DevOps on GitLab and GCP : GitLab Runner 簡介與安裝 - Day 7](https://ithelp.ithome.com.tw/articles/10214266))" >}}
 
 <br>
 
@@ -207,7 +207,7 @@ GitLab Runner 的建議建置步驟如下：
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-cicd/executor.png" width="700" caption="GitLab Runner Executors" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/executor.webp" width="700" caption="GitLab Runner Executors" >}}
 
 <br>
 
@@ -217,7 +217,7 @@ GitLab Runner 的建議建置步驟如下：
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-cicd/specificrunners.png" width="700" caption="GitLab Runner Executors" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/specificrunners.webp" width="700" caption="GitLab Runner Executors" >}}
 
 可以看到一個註冊的 URL 以及 Token，這個我們在設定 Executor 會使用到！
 
@@ -236,13 +236,13 @@ gitlab/gitlab-runner:alpine-v15.0.0
 
 3. 接著進入容器裡面，使用 `docker exec -it gitlab-runner gitlab-runner register` 來註冊，可以參考下方圖片，輸入 URL 以及 自己的 Token：
 
-{{< figure src="/git-or-cicd/gitlab-cicd/register_executor.png" width="1000" caption="GitLab Runner 註冊 Executors" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/register_executor.webp" width="1000" caption="GitLab Runner 註冊 Executors" >}}
 
 <br>
 
 4. 可以回到 gitlab.com 查看 Specific runners 下方是否多了我們剛剛所註冊的 GitLab-Runner
 
-{{< figure src="/git-or-cicd/gitlab-cicd/available_runners.png" width="700" caption="GitLab Available specific runners" >}}
+{{< figure src="/git-or-cicd/gitlab-cicd/available_runners.webp" width="700" caption="GitLab Available specific runners" >}}
 
 <br>
 

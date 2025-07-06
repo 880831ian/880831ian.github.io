@@ -30,7 +30,7 @@ authors:
 
 <br>
 
-{{< figure src="/kubernetes/pod-curl-error-6-could-not-resolve-host/1.png" width="800" caption="kube-dns-autoscaler configmap" >}}
+{{< figure src="/kubernetes/pod-curl-error-6-could-not-resolve-host/1.webp" width="800" caption="kube-dns-autoscaler configmap" >}}
 
 <br>
 
@@ -42,7 +42,7 @@ Kube-dns 的 Pod 是由 kube-dns-autoscaler 的 configmap 來控制 Pod 數量�
 
 <br>
 
-{{< figure src="/kubernetes/pod-curl-error-6-could-not-resolve-host/2.png" width="700" caption="kube-dns-autoscaler configmap" >}}
+{{< figure src="/kubernetes/pod-curl-error-6-could-not-resolve-host/2.webp" width="700" caption="kube-dns-autoscaler configmap" >}}
 
 <br>
 

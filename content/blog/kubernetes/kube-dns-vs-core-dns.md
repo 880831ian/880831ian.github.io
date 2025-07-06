@@ -32,7 +32,7 @@ K8s 會有 DNS 服務，主要是因為 K8s 連線是透過 Pod IP 來連線，�
 
 <br>
 
-{{< figure src="/kubernetes/kube-dns-vs-core-dns/1.png" width="900" caption="可以看到 /etc/resolv.conf 與 kube-dns 的 cluster IP ㄧ致" >}}
+{{< figure src="/kubernetes/kube-dns-vs-core-dns/1.webp" width="900" caption="可以看到 /etc/resolv.conf 與 kube-dns 的 cluster IP ㄧ致" >}}
 
 <br>
 
@@ -60,7 +60,7 @@ pod cluster IP 這邊要將 IP 從 . 的分隔符號換成 -，例如：`10-166-
 
 <br>
 
-{{< figure src="/kubernetes/kube-dns-vs-core-dns/2.png" width="750" caption="可以看到 curl 的 pod cluster IP 與 svc 的 endpoint ㄧ致" >}}
+{{< figure src="/kubernetes/kube-dns-vs-core-dns/2.webp" width="750" caption="可以看到 curl 的 pod cluster IP 與 svc 的 endpoint ㄧ致" >}}
 
 <br>
 
@@ -84,7 +84,7 @@ pod cluster IP 這邊要將 IP 從 . 的分隔符號換成 -，例如：`10-166-
 
 <br>
 
-{{< figure src="/kubernetes/kube-dns-vs-core-dns/3.jpg" width="700" caption="應用程式 DNS 查詢流程 圖片：[Connecting the Dots: Understanding How Pods Talk in Kubernetes Networks](https://medium.com/@seifeddinerajhi/connecting-the-dots-understanding-how-pods-talk-in-kubernetes-networks-992fa69fbbeb)" >}}
+{{< figure src="/kubernetes/kube-dns-vs-core-dns/3.webp" width="700" caption="應用程式 DNS 查詢流程 圖片：[Connecting the Dots: Understanding How Pods Talk in Kubernetes Networks](https://medium.com/@seifeddinerajhi/connecting-the-dots-understanding-how-pods-talk-in-kubernetes-networks-992fa69fbbeb)" >}}
 
 <br>
 
@@ -102,11 +102,11 @@ pod cluster IP 這邊要將 IP 從 . 的分隔符號換成 -，例如：`10-166-
 
 <br>
 
-{{< figure src="/kubernetes/kube-dns-vs-core-dns/4.jpg" width="600" caption="kube-dns 架構 圖片：[DNS](https://feisky.gitbooks.io/kubernetes/content/components/kube-dns.html)" >}}
+{{< figure src="/kubernetes/kube-dns-vs-core-dns/4.webp" width="600" caption="kube-dns 架構 圖片：[DNS](https://feisky.gitbooks.io/kubernetes/content/components/kube-dns.html)" >}}
 
 <br>
 
-{{< figure src="/kubernetes/kube-dns-vs-core-dns/5.png" width="750" caption="目前 GKE 1.29 kube-dns" >}}
+{{< figure src="/kubernetes/kube-dns-vs-core-dns/5.webp" width="750" caption="目前 GKE 1.29 kube-dns" >}}
 
 <br>
 
@@ -116,7 +116,7 @@ pod cluster IP 這邊要將 IP 從 . 的分隔符號換成 -，例如：`10-166-
 
 <br>
 
-{{< figure src="/kubernetes/kube-dns-vs-core-dns/6.png" width="750" caption="SkyDNS Metrics Port 以及監聽 10053 Port" >}}
+{{< figure src="/kubernetes/kube-dns-vs-core-dns/6.webp" width="750" caption="SkyDNS Metrics Port 以及監聽 10053 Port" >}}
 
 <br>
 
@@ -127,7 +127,7 @@ pod cluster IP 這邊要將 IP 從 . 的分隔符號換成 -，例如：`10-166-
 
 <br>
 
-{{< figure src="/kubernetes/kube-dns-vs-core-dns/7.png" width="750" caption="sidecar 健康檢查以及監聽 10054 Port" >}}
+{{< figure src="/kubernetes/kube-dns-vs-core-dns/7.webp" width="750" caption="sidecar 健康檢查以及監聽 10054 Port" >}}
 
 <br>
 
@@ -162,7 +162,7 @@ CoreDNS 是一個用 Go 語言寫的 DNS 伺服器，它是一個 CNCF 的專案
 
 <br>
 
-{{< figure src="/kubernetes/kube-dns-vs-core-dns/8.png" width="750" caption="CoreDNS 使用的 Plugins/架構 圖片：[A Brief Look at CoreDNS](https://livewyer.io/blog/2018/05/31/a-brief-look-at-coredns/)" >}}
+{{< figure src="/kubernetes/kube-dns-vs-core-dns/8.webp" width="750" caption="CoreDNS 使用的 Plugins/架構 圖片：[A Brief Look at CoreDNS](https://livewyer.io/blog/2018/05/31/a-brief-look-at-coredns/)" >}}
 
 <br>
 

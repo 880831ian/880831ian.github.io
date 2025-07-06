@@ -39,7 +39,7 @@ authors:
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-ansible-it-cicd/CICD.png" width="700" caption="CI/CD 流程圖 (作者打錯是 rsync 不是 rsyne) [Day12 什麼是 CICD](https://ithelp.ithome.com.tw/articles/10219083)" >}}
+{{< figure src="/git-or-cicd/jenkins-ansible-it-cicd/CICD.webp" width="700" caption="CI/CD 流程圖 (作者打錯是 rsync 不是 rsyne) [Day12 什麼是 CICD](https://ithelp.ithome.com.tw/articles/10219083)" >}}
 
 <br>
 

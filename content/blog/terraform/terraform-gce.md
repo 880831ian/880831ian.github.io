@@ -133,7 +133,7 @@ resource "google_compute_instance" "default" {
 
 <br>
 
-{{< figure src="/terraform/terraform-gce/1.png" width="700" caption="terraform init" >}}
+{{< figure src="/terraform/terraform-gce/1.webp" width="700" caption="terraform init" >}}
 
 <br>
 
@@ -141,7 +141,7 @@ resource "google_compute_instance" "default" {
 
 <br>
 
-{{< figure src="/terraform/terraform-gce/2.png" width="700" caption="terraform apply" >}}
+{{< figure src="/terraform/terraform-gce/2.webp" width="700" caption="terraform apply" >}}
 
 <br>
 
@@ -149,7 +149,7 @@ resource "google_compute_instance" "default" {
 
 <br>
 
-{{< figure src="/terraform/terraform-gce/3.png" width="700" caption="GCP Google Compute Engine" >}}
+{{< figure src="/terraform/terraform-gce/3.webp" width="700" caption="GCP Google Compute Engine" >}}
 
 <br>
 
@@ -161,7 +161,7 @@ resource "google_compute_instance" "default" {
 
 <br>
 
-{{< figure src="/terraform/terraform-gce/4.png" width="700" caption="terraform changed" >}}
+{{< figure src="/terraform/terraform-gce/4.webp" width="700" caption="terraform changed" >}}
 
 <br>
 
@@ -169,7 +169,7 @@ resource "google_compute_instance" "default" {
 
 <br>
 
-{{< figure src="/terraform/terraform-gce/5.png" width="700" caption="terraform changed" >}}
+{{< figure src="/terraform/terraform-gce/5.webp" width="700" caption="terraform changed" >}}
 
 <br>
 
@@ -185,7 +185,7 @@ resource "google_compute_instance" "default" {
 
 <br>
 
-{{< figure src="/terraform/terraform-gce/6.png" width="900" caption="terraform destroy" >}}
+{{< figure src="/terraform/terraform-gce/6.webp" width="900" caption="terraform destroy" >}}
 
 <br>
 
@@ -193,7 +193,7 @@ resource "google_compute_instance" "default" {
 
 <br>
 
-{{< figure src="/terraform/terraform-gce/7.png" width="900" caption="改成 false 在下 terraform apply" >}}
+{{< figure src="/terraform/terraform-gce/7.webp" width="900" caption="改成 false 在下 terraform apply" >}}
 
 <br>
 
@@ -201,11 +201,11 @@ resource "google_compute_instance" "default" {
 
 <br>
 
-{{< figure src="/terraform/terraform-gce/8.png" width="700" caption="terraform destroy" >}}
+{{< figure src="/terraform/terraform-gce/8.webp" width="700" caption="terraform destroy" >}}
 
 <br>
 
-{{< figure src="/terraform/terraform-gce/9.png" width="500" caption="Google Compute Engine 刪除中..." >}}
+{{< figure src="/terraform/terraform-gce/9.webp" width="500" caption="Google Compute Engine 刪除中..." >}}
 
 <br>
 

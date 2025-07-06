@@ -15,7 +15,7 @@ authors:
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/sample.png" width="450" caption="很多人的電腦裡面都有這樣的內容" >}}
+{{< figure src="/git-or-cicd/git-introduce/sample.webp" width="450" caption="很多人的電腦裡面都有這樣的內容" >}}
 
 <br>
 
@@ -42,7 +42,7 @@ Git 的操作指令繁多，包含環境類、查看類、提交類、分支類�
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/gitkraken.png" width="600" caption="Git GUI 工具 (Gitkraken)" >}}
+{{< figure src="/git-or-cicd/git-introduce/gitkraken.webp" width="600" caption="Git GUI 工具 (Gitkraken)" >}}
 
 <br>
 
@@ -71,7 +71,7 @@ $ git init
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/init.png" width="600" caption="Git init" >}}
+{{< figure src="/git-or-cicd/git-introduce/init.webp" width="600" caption="Git init" >}}
 
 <br>
 
@@ -119,7 +119,7 @@ $ git status
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/status.png" width="600" caption="Git status" >}}
+{{< figure src="/git-or-cicd/git-introduce/status.webp" width="600" caption="Git status" >}}
 
 <br>
 
@@ -137,7 +137,7 @@ $ git log
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/log.png" width="600" caption="Git log" >}}
+{{< figure src="/git-or-cicd/git-introduce/log.webp" width="600" caption="Git log" >}}
 
 <br>
 
@@ -156,7 +156,7 @@ $ git diff 116e 442c
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/diff.png" width="600" caption="Git diff" >}}
+{{< figure src="/git-or-cicd/git-introduce/diff.webp" width="600" caption="Git diff" >}}
 
 <br>
 
@@ -174,9 +174,9 @@ $ git reflog
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/reflog.png" width="600" caption="Git reflog (圖一)" >}}
+{{< figure src="/git-or-cicd/git-introduce/reflog.webp" width="600" caption="Git reflog (圖一)" >}}
 
-{{< figure src="/git-or-cicd/git-introduce/log-1.png" width="600" caption="Git log (圖二)" >}}
+{{< figure src="/git-or-cicd/git-introduce/log-1.webp" width="600" caption="Git log (圖二)" >}}
 
 <br>
 
@@ -211,7 +211,7 @@ $ git commit -m "內容打這"
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/commit.png" width="600" caption="Git commit" >}}
+{{< figure src="/git-or-cicd/git-introduce/commit.webp" width="600" caption="Git commit" >}}
 
 <br>
 
@@ -233,7 +233,7 @@ $ git branch "分支名稱"
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/branch.png" width="600" caption="Git branch" >}}
+{{< figure src="/git-or-cicd/git-introduce/branch.webp" width="600" caption="Git branch" >}}
 
 <br>
 
@@ -248,7 +248,7 @@ $ git checkout "分支名稱/分支ID"
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/checkout_1.png" width="600" caption="Git checkout" >}}
+{{< figure src="/git-or-cicd/git-introduce/checkout_1.webp" width="600" caption="Git checkout" >}}
 
 <br>
 
@@ -261,7 +261,7 @@ $ git chechout -b "分支名稱"
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/checkout_2.png" width="600" caption="Git checkout -b" >}}
+{{< figure src="/git-or-cicd/git-introduce/checkout_2.webp" width="600" caption="Git checkout -b" >}}
 
 <br>
 
@@ -289,7 +289,7 @@ $ git remote add [簡稱] [遠端網址]
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/remote_1.png" width="600" caption="Git remote" >}}
+{{< figure src="/git-or-cicd/git-introduce/remote_1.webp" width="600" caption="Git remote" >}}
 
 <br>
 
@@ -304,7 +304,7 @@ $ git remote
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/remote_2.png" width="600" caption="Git remote -v" >}}
+{{< figure src="/git-or-cicd/git-introduce/remote_2.webp" width="600" caption="Git remote -v" >}}
 
 <br>
 
@@ -319,7 +319,7 @@ $ git push [簡稱] [分支名稱]
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/push.png" width="600" caption="Git push" >}}
+{{< figure src="/git-or-cicd/git-introduce/push.webp" width="600" caption="Git push" >}}
 
 <br>
 
@@ -356,7 +356,7 @@ $ git pull [簡稱] [分支名稱]
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/pull.png" width="600" caption="Git pull" >}}
+{{< figure src="/git-or-cicd/git-introduce/pull.webp" width="600" caption="Git pull" >}}
 
 <br>
 
@@ -371,7 +371,7 @@ $ git fetch [簡稱] [分支名稱]
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/fetch.png" width="600" caption="Git fetch" >}}
+{{< figure src="/git-or-cicd/git-introduce/fetch.webp" width="600" caption="Git fetch" >}}
 
 <br>
 
@@ -397,7 +397,7 @@ $ git merge [分支名稱]
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/merge.png" width="600" caption="Git merge" >}}
+{{< figure src="/git-or-cicd/git-introduce/merge.webp" width="600" caption="Git merge" >}}
 
 <br>
 
@@ -500,7 +500,7 @@ $ git reset [HEAD~?]
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/reset_1.png" width="700" caption="Git reset 示範" >}}
+{{< figure src="/git-or-cicd/git-introduce/reset_1.webp" width="700" caption="Git reset 示範" >}}
 
 <br>
 
@@ -508,7 +508,7 @@ $ git reset [HEAD~?]
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/reset_2.png" width="700" caption="Git reset 示範 log 紀錄" >}}
+{{< figure src="/git-or-cicd/git-introduce/reset_2.webp" width="700" caption="Git reset 示範 log 紀錄" >}}
 
 <br>
 
@@ -520,7 +520,7 @@ $ git reset [HEAD~?]
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/reset_3.png" width="800" caption="Git reset mixed 模式" >}}
+{{< figure src="/git-or-cicd/git-introduce/reset_3.webp" width="800" caption="Git reset mixed 模式" >}}
 
 <br>
 
@@ -528,7 +528,7 @@ $ git reset [HEAD~?]
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/reset_4.png" width="800" caption="Git reset mixed 模式" >}}
+{{< figure src="/git-or-cicd/git-introduce/reset_4.webp" width="800" caption="Git reset mixed 模式" >}}
 
 可以看到使用 `--mixed` 模式，檔案 b.txt 還會存在，只是移除暫存區。
 
@@ -540,7 +540,7 @@ $ git reset [HEAD~?]
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/reset_5.png" width="800" caption="Git reset soft 模式" >}}
+{{< figure src="/git-or-cicd/git-introduce/reset_5.webp" width="800" caption="Git reset soft 模式" >}}
 
 可以看到使用 `--soft` 模式，檔案 b.txt 還會存在，且會在暫存區。
 
@@ -552,7 +552,7 @@ $ git reset [HEAD~?]
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/reset_6.png" width="800" caption="Git reset hard 模式" >}}
+{{< figure src="/git-or-cicd/git-introduce/reset_6.webp" width="800" caption="Git reset hard 模式" >}}
 
 可以看到使用 `--hard` 模式，檔案 b.txt 不見了，所以也不會在暫存區。
 
@@ -610,7 +610,7 @@ Git 中有兩種標籤類型：輕量標籤(lightweight tag)和標示標籤(anno
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/tag.png" width="800" caption="在隨意的分支推一個 commit" >}}
+{{< figure src="/git-or-cicd/git-introduce/tag.webp" width="800" caption="在隨意的分支推一個 commit" >}}
 
 <br>
 
@@ -629,7 +629,7 @@ lightweight 是我們 tag 名稱，bc4c597 是剛剛 commit 的 SHA-1
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/tag_1.png" width="800" caption="輕量標籤 lightweight" >}}
+{{< figure src="/git-or-cicd/git-introduce/tag_1.webp" width="800" caption="輕量標籤 lightweight" >}}
 
 可以發現因為我們使用「輕量標籤」，所以沒有存任何資訊，但可以在圖片第一行最後面看到我們使用的 tag。
 
@@ -650,7 +650,7 @@ $ git tag annotated bc4c597 -a -m "可以備註"
 
 <br>
 
-{{< figure src="/git-or-cicd/git-introduce/tag_2.png" width="800" caption="標示標籤 annotated" >}}
+{{< figure src="/git-or-cicd/git-introduce/tag_2.webp" width="800" caption="標示標籤 annotated" >}}
 
 <br>
 

@@ -12,7 +12,7 @@ authors:
 
 <br>
 
-{{< figure src="/other/snyk/devops.jpg" width="500" caption="DevOps 圖片 [(醫院 DevOps 如何落地(1) ─ DevOps 與醫院](https://www.cio.com.tw/how-hospital-devops-landed-1-devops-and-hospitals/))" >}}
+{{< figure src="/other/snyk/devops.webp" width="500" caption="DevOps 圖片 [(醫院 DevOps 如何落地(1) ─ DevOps 與醫院](https://www.cio.com.tw/how-hospital-devops-landed-1-devops-and-hospitals/))" >}}
 
 <br>
 
@@ -32,7 +32,7 @@ authors:
 
 <br>
 
-{{< figure src="/other/snyk/devsecops.png" width="450" caption="DevSecOps 圖片 ([Apps Built Better: Why DevSecOps is Your Security Team’s Silver Bullet](https://threatpost.com/apps-built-better-devsecops-security-silver-bullet/167793/))" >}}
+{{< figure src="/other/snyk/devsecops.webp" width="450" caption="DevSecOps 圖片 ([Apps Built Better: Why DevSecOps is Your Security Team’s Silver Bullet](https://threatpost.com/apps-built-better-devsecops-security-silver-bullet/167793/))" >}}
 
 <br>
 
@@ -73,7 +73,7 @@ IDE 我們這邊以 VS Code 為例來說明，如果有在用 VS Code 的大家�
 
 <br>
 
-{{< figure src="/other/snyk/ide.png" width="1000" caption="VS Code Marketplace 安裝 Snyk" >}}
+{{< figure src="/other/snyk/ide.webp" width="1000" caption="VS Code Marketplace 安裝 Snyk" >}}
 
 <br>
 
@@ -81,7 +81,7 @@ IDE 我們這邊以 VS Code 為例來說明，如果有在用 VS Code 的大家�
 
 <br>
 
-{{< figure src="/other/snyk/ide2.png" width="1000" caption="IDE Plugins 掃描" >}}
+{{< figure src="/other/snyk/ide2.webp" width="1000" caption="IDE Plugins 掃描" >}}
 
 <br>
 
@@ -91,9 +91,9 @@ IDE 我們這邊以 VS Code 為例來說明，如果有在用 VS Code 的大家�
 
 <br>
 
-{{< figure src="/other/snyk/web.png" width="500" caption="選擇加入 project" >}}
+{{< figure src="/other/snyk/web.webp" width="500" caption="選擇加入 project" >}}
 
-{{< figure src="/other/snyk/web1.png" width="800" caption="掃描漏洞並顯示錯誤內容" >}}
+{{< figure src="/other/snyk/web1.webp" width="800" caption="掃描漏洞並顯示錯誤內容" >}}
 
 <br>
 
@@ -114,7 +114,7 @@ brew install snyk
 
 <br>
 
-{{< figure src="/other/snyk/cli.png" width="800" caption="CLI 掃描 ([官網](https://docs.snyk.io/snyk-cli))" >}}
+{{< figure src="/other/snyk/cli.webp" width="800" caption="CLI 掃描 ([官網](https://docs.snyk.io/snyk-cli))" >}}
 
 <br>
 
@@ -124,7 +124,7 @@ brew install snyk
 
 <br>
 
-{{< figure src="/other/snyk/open.png" width="600" caption="Open Source library 掃描 ([官網](https://docs.snyk.io/products/snyk-open-source/language-and-package-manager-support))" >}}
+{{< figure src="/other/snyk/open.webp" width="600" caption="Open Source library 掃描 ([官網](https://docs.snyk.io/products/snyk-open-source/language-and-package-manager-support))" >}}
 
 <br>
 
@@ -136,7 +136,7 @@ brew install snyk
 
 <br>
 
-{{< figure src="/other/snyk/container.png" width="800" caption="Container 掃描" >}}
+{{< figure src="/other/snyk/container.webp" width="800" caption="Container 掃描" >}}
 
 <br>
 

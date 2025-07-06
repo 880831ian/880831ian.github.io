@@ -53,8 +53,8 @@ params:
     displayTitle: true
     displayLogo: true
     logo:
-      path: images/logo.png
-      dark: images/logo.png
+      path: images/logo.webp
+      dark: images/logo.webp
     width: full
 
   page:

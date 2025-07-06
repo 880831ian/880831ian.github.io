@@ -31,7 +31,7 @@ IaC 全名是 Infrastructure as Code (基礎設施即代碼)，從字面意思�
 
 <br>
 
-{{< figure src="/terraform/terraform/iac.png" width="800" caption="Infrastructure as Code [初心企服行研07：认识「基础设施即代码」(Infrastructure as Code) — 初心内参](https://www.36dianping.com/info/15473.html)" >}}
+{{< figure src="/terraform/terraform/iac.webp" width="800" caption="Infrastructure as Code [初心企服行研07：认识「基础设施即代码」(Infrastructure as Code) — 初心内参](https://www.36dianping.com/info/15473.html)" >}}
 
 <br>
 
@@ -59,7 +59,7 @@ Terraform 提供插件讓 Terraform 可以通過其 API 與雲平台和其他服
 
 <br>
 
-{{< figure src="/terraform/terraform/terraform.jpg" width="800" caption="Terraform [什麼是 Terraform 的基礎設施即代碼？](https://learn.hashicorp.com/tutorials/terraform/infrastructure-as-code?in=terraform/aws-get-started)" >}}
+{{< figure src="/terraform/terraform/terraform.webp" width="800" caption="Terraform [什麼是 Terraform 的基礎設施即代碼？](https://learn.hashicorp.com/tutorials/terraform/infrastructure-as-code?in=terraform/aws-get-started)" >}}
 
 <br>
 
@@ -93,7 +93,7 @@ brew install hashicorp/tap/terraform
 
 <br>
 
-{{< figure src="/terraform/terraform/1.png" width="800" caption="驗證 Terraform 安裝成功 [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started#install-terraform)" >}}
+{{< figure src="/terraform/terraform/1.webp" width="800" caption="驗證 Terraform 安裝成功 [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli?in=terraform/aws-get-started#install-terraform)" >}}
 
 <br>
 
@@ -115,7 +115,7 @@ terraform -uninstall-autocomplete
 
 <br>
 
-{{< figure src="/terraform/terraform/8.png" width="800" caption="放上成果圖片" >}}
+{{< figure src="/terraform/terraform/8.webp" width="800" caption="放上成果圖片" >}}
 
 <br>
 
@@ -217,7 +217,7 @@ resource "雲端資源名稱" "自定義的名稱" {
 
 <br>
 
-{{< figure src="/terraform/terraform/11.png" width="400" caption="官方教學" >}}
+{{< figure src="/terraform/terraform/11.webp" width="400" caption="官方教學" >}}
 
 <br>
 
@@ -261,7 +261,7 @@ alias td='terraform destroy'
 
 <br>
 
-{{< figure src="/terraform/terraform/2.png" width="900" caption="無法直接執行 apply" >}}
+{{< figure src="/terraform/terraform/2.webp" width="900" caption="無法直接執行 apply" >}}
 
 <br>
 
@@ -275,13 +275,13 @@ alias td='terraform destroy'
 
 <br>
 
-{{< figure src="/terraform/terraform/3.png" width="800" caption="terraform init" >}}
+{{< figure src="/terraform/terraform/3.webp" width="800" caption="terraform init" >}}
 
 當我們初始化後，資料夾會多一個檔案 (.terraform.lock.hcl) 以及資料夾 (.terraform)
 
 <br>
 
-{{< figure src="/terraform/terraform/9.png" width="650" caption="init 前後檔案差異" >}}
+{{< figure src="/terraform/terraform/9.webp" width="650" caption="init 前後檔案差異" >}}
 
 <br>
 
@@ -297,7 +297,7 @@ alias td='terraform destroy'
 
 <br>
 
-{{< figure src="/terraform/terraform/4.png" width="600" caption="terraform plan" >}}
+{{< figure src="/terraform/terraform/4.webp" width="600" caption="terraform plan" >}}
 
 <br>
 
@@ -307,9 +307,9 @@ alias td='terraform destroy'
 
 <br>
 
-{{< figure src="/terraform/terraform/5.png" width="800" caption="terraform apply" >}}
+{{< figure src="/terraform/terraform/5.webp" width="800" caption="terraform apply" >}}
 
-{{< figure src="/terraform/terraform/6.png" width="800" caption="查看 docker nginx 以及檢查其服務" >}}
+{{< figure src="/terraform/terraform/6.webp" width="800" caption="查看 docker nginx 以及檢查其服務" >}}
 
 <br>
 
@@ -317,7 +317,7 @@ alias td='terraform destroy'
 
 <br>
 
-{{< figure src="/terraform/terraform/10.png" width="800" caption="多了一個檔案 terraform.tfstate" >}}
+{{< figure src="/terraform/terraform/10.webp" width="800" caption="多了一個檔案 terraform.tfstate" >}}
 
 <br>
 
@@ -331,7 +331,7 @@ alias td='terraform destroy'
 
 <br>
 
-{{< figure src="/terraform/terraform/7.png" width="700" caption="terraform destroy" >}}
+{{< figure src="/terraform/terraform/7.webp" width="700" caption="terraform destroy" >}}
 
 <br>
 
@@ -345,7 +345,7 @@ alias td='terraform destroy'
 
 <br>
 
-{{< figure src="/terraform/terraform/12.png" width="700" caption="測試沒有 terraform.tfstate 直接下 terraform apply" >}}
+{{< figure src="/terraform/terraform/12.webp" width="700" caption="測試沒有 terraform.tfstate 直接下 terraform apply" >}}
 
 <br>
 
@@ -376,7 +376,7 @@ import 後面會加上 main.tf resource 名稱 docker_container，以及我們�
 
 <br>
 
-{{< figure src="/terraform/terraform/13.png" width="700" caption="terraform import 匯出 terraform.tfstate" >}}
+{{< figure src="/terraform/terraform/13.webp" width="700" caption="terraform import 匯出 terraform.tfstate" >}}
 
 <br>
 
@@ -386,7 +386,7 @@ import 後面會加上 main.tf resource 名稱 docker_container，以及我們�
 
 <br>
 
-{{< figure src="/terraform/terraform/14.png" width="700" caption="terraform show 將 terraform.tfstate 轉成 tf" >}}
+{{< figure src="/terraform/terraform/14.webp" width="700" caption="terraform show 將 terraform.tfstate 轉成 tf" >}}
 
 <br>
 
@@ -394,7 +394,7 @@ import 後面會加上 main.tf resource 名稱 docker_container，以及我們�
 
 <br>
 
-{{< figure src="/terraform/terraform/15.png" width="700" caption="轉換後還需將不用的設定給移除" >}}
+{{< figure src="/terraform/terraform/15.webp" width="700" caption="轉換後還需將不用的設定給移除" >}}
 
 <br>
 

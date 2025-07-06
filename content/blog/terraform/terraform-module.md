@@ -471,9 +471,9 @@ module "ian-test" {
 
 <br>
 
-{{< figure src="/terraform/terraform-module/1.png" width="700" caption="原先 terraform init 結果" >}}
+{{< figure src="/terraform/terraform-module/1.webp" width="700" caption="原先 terraform init 結果" >}}
 
-{{< figure src="/terraform/terraform-module/2.png" width="700" caption="使用 module init 結果" >}}
+{{< figure src="/terraform/terraform-module/2.webp" width="700" caption="使用 module init 結果" >}}
 
 <br>
 
@@ -481,7 +481,7 @@ module "ian-test" {
 
 <br>
 
-{{< figure src="/terraform/terraform-module/3.png" width="700" caption=".terraform 檔案差異" >}}
+{{< figure src="/terraform/terraform-module/3.webp" width="700" caption=".terraform 檔案差異" >}}
 
 <br>
 
@@ -489,7 +489,7 @@ module "ian-test" {
 
 <br>
 
-{{< figure src="/terraform/terraform-module/4.png" width="700" caption="使用 module 會多一個 modules.json 檔案" >}}
+{{< figure src="/terraform/terraform-module/4.webp" width="700" caption="使用 module 會多一個 modules.json 檔案" >}}
 
 <br>
 
@@ -499,9 +499,9 @@ module "ian-test" {
 
 <br>
 
-{{< figure src="/terraform/terraform-module/5.png" width="700" caption="原先 terraform plan 結果" >}}
+{{< figure src="/terraform/terraform-module/5.webp" width="700" caption="原先 terraform plan 結果" >}}
 
-{{< figure src="/terraform/terraform-module/6.png" width="700" caption="使用 module plan 結果" >}}
+{{< figure src="/terraform/terraform-module/6.webp" width="700" caption="使用 module plan 結果" >}}
 
 <br>
 
@@ -515,9 +515,9 @@ module "ian-test" {
 
 <br>
 
-{{< figure src="/terraform/terraform-module/7.png" width="700" caption="原先 terraform apply 結果" >}}
+{{< figure src="/terraform/terraform-module/7.webp" width="700" caption="原先 terraform apply 結果" >}}
 
-{{< figure src="/terraform/terraform-module/8.png" width="700" caption="使用 module apply 結果" >}}
+{{< figure src="/terraform/terraform-module/8.webp" width="700" caption="使用 module apply 結果" >}}
 
 <br>
 
@@ -525,9 +525,9 @@ apply 看到的與 plan 顯示的一樣，使用 module 建立的資料格式會
 
 <br>
 
-{{< figure src="/terraform/terraform-module/9.png" width="800" caption="原先 terraform 建立的 tfstate 檔案" >}}
+{{< figure src="/terraform/terraform-module/9.webp" width="800" caption="原先 terraform 建立的 tfstate 檔案" >}}
 
-{{< figure src="/terraform/terraform-module/10.png" width="800" caption="使用 module 建立的 tfstate 檔案" >}}
+{{< figure src="/terraform/terraform-module/10.webp" width="800" caption="使用 module 建立的 tfstate 檔案" >}}
 
 <br>
 
@@ -550,7 +550,7 @@ resource "google_compute_instance" "instance" {
 
 <br>
 
-{{< figure src="/terraform/terraform-module/11.png" width="700" caption="原先 terraform import 線上服務" >}}
+{{< figure src="/terraform/terraform-module/11.webp" width="700" caption="原先 terraform import 線上服務" >}}
 
 <br>
 
@@ -589,7 +589,7 @@ module "ian-test" {
 
 <br>
 
-{{< figure src="/terraform/terraform-module/12.png" width="700" caption="使用 module import 線上服務" >}}
+{{< figure src="/terraform/terraform-module/12.webp" width="700" caption="使用 module import 線上服務" >}}
 
 <br>
 

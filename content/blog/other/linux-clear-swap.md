@@ -85,7 +85,7 @@ Swap:           15G          0B         15G
 
 <br>
 
-{{< figure src="/other/linux-clear-swap/before.png" width="800" caption="Swap 使用 (尚未清除)" >}}
+{{< figure src="/other/linux-clear-swap/before.webp" width="800" caption="Swap 使用 (尚未清除)" >}}
 
 可以看到我們的 Swap used 是 797M，我們設定它不能超過 5%，超過就會通知，所以我們要把它手動清除。
 
@@ -121,7 +121,7 @@ swapoff -a && swapon -a
 
 <br>
 
-{{< figure src="/other/linux-clear-swap/after.png" width="800" caption="Swap 使用 (已清除)" >}}
+{{< figure src="/other/linux-clear-swap/after.webp" width="800" caption="Swap 使用 (已清除)" >}}
 
 可以看到我們清除完 Swap 後，Swap 的 used 已經從 797M 變成 0B。
 

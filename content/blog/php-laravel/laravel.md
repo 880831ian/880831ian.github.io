@@ -29,7 +29,7 @@ authors:
 
 <br>
 
-{{< figure src="/php-laravel/laravel/mvc.png" width="700" caption="MVC 架構 [一起走向MVC(上)](https://bak.infolight.com/new/ShareDetail.aspx?DocumentID=NDUz)" >}}
+{{< figure src="/php-laravel/laravel/mvc.webp" width="700" caption="MVC 架構 [一起走向MVC(上)](https://bak.infolight.com/new/ShareDetail.aspx?DocumentID=NDUz)" >}}
 
 <br>
 
@@ -343,7 +343,7 @@ $ php artisan down --message="Upgrading Database" --retry=60
 
 <br>
 
-{{< figure src="/php-laravel/laravel/error503.png" width="700" caption="Laravel 維護模式顯示頁面" >}}
+{{< figure src="/php-laravel/laravel/error503.webp" width="700" caption="Laravel 維護模式顯示頁面" >}}
 
 <br>
 
@@ -372,7 +372,7 @@ $ php artisan up
 
 <br>
 
-{{< figure src="/php-laravel/laravel/laravel_welcome.png" width="700" caption="Laravel 預設首頁" >}}
+{{< figure src="/php-laravel/laravel/laravel_welcome.webp" width="700" caption="Laravel 預設首頁" >}}
 
 <br>
 
@@ -470,7 +470,7 @@ Route::get('/hello-world', function () {
 
 <br>
 
-{{< figure src="/php-laravel/laravel/layout.png" width="700" caption="PinYi 小天地" >}}
+{{< figure src="/php-laravel/laravel/layout.webp" width="700" caption="PinYi 小天地" >}}
 
 <br>
 
@@ -535,7 +535,7 @@ Route::get('/test', function () {
 
 <br>
 
-{{< figure src="/php-laravel/laravel/layout_show.png" width="500" caption="PinYi 小天地" >}}
+{{< figure src="/php-laravel/laravel/layout_show.webp" width="500" caption="PinYi 小天地" >}}
 
 <br>
 
@@ -566,7 +566,7 @@ Route::get('/test/{name}', function ($name) {
 
 <br>
 
-{{< figure src="/php-laravel/laravel/layout_show_2.png" width="500" caption="PinYi 小天地" >}}
+{{< figure src="/php-laravel/laravel/layout_show_2.webp" width="500" caption="PinYi 小天地" >}}
 
 <br>
 
@@ -605,7 +605,7 @@ Laravel 會自動產生一個 ```TriviaController.php``` 的檔案，位置在 `
 
 <br>
 
-{{< figure src="/php-laravel/laravel/controller.png" width="300" caption="Controller 產生檔案位置" >}}
+{{< figure src="/php-laravel/laravel/controller.webp" width="300" caption="Controller 產生檔案位置" >}}
 
 <br>
 
@@ -691,7 +691,7 @@ class TriviaController extends Controller
 
 <br>
 
-{{< figure src="/php-laravel/laravel/trivia.jpg" width="700" caption="依照輸入不同的 ```id``` 顯示的冷知識" >}}
+{{< figure src="/php-laravel/laravel/trivia.webp" width="700" caption="依照輸入不同的 ```id``` 顯示的冷知識" >}}
 
 <br>
 
@@ -742,7 +742,7 @@ DB_PASSWORD=secret
 
 <br>
 
-{{< figure src="/php-laravel/laravel/mysql_1.png" width="800" caption="MySQL 8.x 版本導致錯誤" >}}
+{{< figure src="/php-laravel/laravel/mysql_1.webp" width="800" caption="MySQL 8.x 版本導致錯誤" >}}
 
 <br>
 
@@ -778,11 +778,11 @@ DB_PASSWORD=secret
 ```
 <br>
 
-{{< figure src="/php-laravel/laravel/mysql_2.png" width="800" caption="加入 modes 修復成功" >}}
+{{< figure src="/php-laravel/laravel/mysql_2.webp" width="800" caption="加入 modes 修復成功" >}}
 
 <br>
 
-{{< figure src="/php-laravel/laravel/migration.png" width="800" caption="使用 migration 後的資料庫" >}}
+{{< figure src="/php-laravel/laravel/migration.webp" width="800" caption="使用 migration 後的資料庫" >}}
 
 <br>
 
@@ -892,7 +892,7 @@ Migrated:  2022_03_07_054858_create_messages_table
 
 <br>
 
-{{< figure src="/php-laravel/laravel/mysql_fields.png" width="800" caption="messages 欄位" >}}
+{{< figure src="/php-laravel/laravel/mysql_fields.webp" width="800" caption="messages 欄位" >}}
 
 <br>
 
@@ -904,7 +904,7 @@ Migrated:  2022_03_07_054858_create_messages_table
 
 <br>
 
-{{< figure src="/php-laravel/laravel/mysql_status_1.png" width="800" caption="Migration 是否運作中" >}}
+{{< figure src="/php-laravel/laravel/mysql_status_1.webp" width="800" caption="Migration 是否運作中" >}}
 
 <br>
 
@@ -920,7 +920,7 @@ Rolled back:  2022_03_07_054858_create_messages_table
 
 <br>
 
-{{< figure src="/php-laravel/laravel/mysql_status_2.png" width="800" caption="Migration 是否運作中" >}}
+{{< figure src="/php-laravel/laravel/mysql_status_2.webp" width="800" caption="Migration 是否運作中" >}}
 
 <br>
 
@@ -960,7 +960,7 @@ Migrated:  2022_03_07_054858_create_messages_table
 
 <br>
 
-{{< figure src="/php-laravel/laravel/mysql_fields_1.png" width="800" caption="修改後 message_board 欄位" >}}
+{{< figure src="/php-laravel/laravel/mysql_fields_1.webp" width="800" caption="修改後 message_board 欄位" >}}
 
 <br>
 
@@ -1202,7 +1202,7 @@ class MessageTableSeeder extends Seeder
 
 <br>
 
-{{< figure src="/php-laravel/laravel/seeder.png" width="800" caption="messages 資料" >}}
+{{< figure src="/php-laravel/laravel/seeder.webp" width="800" caption="messages 資料" >}}
 
 <br>
 
@@ -1364,7 +1364,7 @@ class MessageController extends Controller
 
 <br>
 
-{{< figure src="/php-laravel/laravel/restful-get-null.png" width="600" caption="查詢全部留言 無資料" >}}
+{{< figure src="/php-laravel/laravel/restful-get-null.webp" width="600" caption="查詢全部留言 無資料" >}}
 
 <br>
 
@@ -1376,7 +1376,7 @@ class MessageController extends Controller
 
 <br>
 
-{{< figure src="/php-laravel/laravel/restful-get-all.png" width="600" caption="查詢全部留言 成功" >}}
+{{< figure src="/php-laravel/laravel/restful-get-all.webp" width="600" caption="查詢全部留言 成功" >}}
 
 <br>
 
@@ -1388,7 +1388,7 @@ class MessageController extends Controller
 
 <br>
 
-{{< figure src="/php-laravel/laravel/restful-get-id.png" width="600" caption="查詢{id}留言 成功" >}}
+{{< figure src="/php-laravel/laravel/restful-get-id.webp" width="600" caption="查詢{id}留言 成功" >}}
 
 <br>
 
@@ -1398,7 +1398,7 @@ class MessageController extends Controller
 
 ##### 新增留言 - 成功
 
-{{< figure src="/php-laravel/laravel/restful-post-success.png" width="600" caption="新增留言 成功" >}}
+{{< figure src="/php-laravel/laravel/restful-post-success.webp" width="600" caption="新增留言 成功" >}}
 
 <br>
 
@@ -1408,7 +1408,7 @@ class MessageController extends Controller
 
 ##### 新增留言 - 失敗
 
-{{< figure src="/php-laravel/laravel/restful-post-error.png" width="600" caption="新增留言 失敗" >}}
+{{< figure src="/php-laravel/laravel/restful-post-error.webp" width="600" caption="新增留言 失敗" >}}
 
 <br>
 
@@ -1418,7 +1418,7 @@ class MessageController extends Controller
 
 ##### 修改留言 - 成功
 
-{{< figure src="/php-laravel/laravel/restufl-put-success.png" width="600" caption="修改留言 成功" >}}
+{{< figure src="/php-laravel/laravel/restufl-put-success.webp" width="600" caption="修改留言 成功" >}}
 
 <br>
 
@@ -1428,7 +1428,7 @@ class MessageController extends Controller
 
 ##### 修改留言 - 失敗
 
-{{< figure src="/php-laravel/laravel/restufl-put-error.png" width="600" caption="修改留言 失敗" >}}
+{{< figure src="/php-laravel/laravel/restufl-put-error.webp" width="600" caption="修改留言 失敗" >}}
 
 <br>
 
@@ -1440,7 +1440,7 @@ class MessageController extends Controller
 
 <br>
 
-{{< figure src="/php-laravel/laravel/restufl-delete-success.png" width="600" caption="刪除留言 成功" >}}
+{{< figure src="/php-laravel/laravel/restufl-delete-success.webp" width="600" caption="刪除留言 成功" >}}
 
 <br>
 
@@ -1452,7 +1452,7 @@ class MessageController extends Controller
 
 <br>
 
-{{< figure src="/php-laravel/laravel/restufl-delete-error.png" width="600" caption="刪除留言 失敗" >}}
+{{< figure src="/php-laravel/laravel/restufl-delete-error.webp" width="600" caption="刪除留言 失敗" >}}
 
 <br>
 

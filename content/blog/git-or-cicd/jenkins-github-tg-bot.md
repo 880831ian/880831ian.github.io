@@ -36,7 +36,7 @@ authors:
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/yamllint.png" width="800" caption="yamllint 測試" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/yamllint.webp" width="800" caption="yamllint 測試" >}}
 可以看到如果不符合 yaml 規範就會跳出錯誤訊息。
 
 <br>
@@ -115,7 +115,7 @@ $ docker-compose up -d
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/unlock.png" width="800" caption="瀏覽器訪問 `http://localhost:8080`" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/unlock.webp" width="800" caption="瀏覽器訪問 `http://localhost:8080`" >}}
 
 <br>
 
@@ -148,7 +148,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/plugins.png" width="800" caption="安裝推薦的套件" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/plugins.webp" width="800" caption="安裝推薦的套件" >}}
 
 <br>
 
@@ -156,7 +156,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/install.png" width="800" caption="等待安裝..." >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/install.webp" width="800" caption="等待安裝..." >}}
 
 <br>
 
@@ -164,7 +164,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/create_adminuser.png" width="800" caption="創建 Admin 使用者" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/create_adminuser.webp" width="800" caption="創建 Admin 使用者" >}}
 
 <br>
 
@@ -172,7 +172,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/done.png" width="1200" caption="Jenkins 儀表板" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/done.webp" width="1200" caption="Jenkins 儀表板" >}}
 
 <br>
 
@@ -184,7 +184,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/create_job.png" width="1200" caption="新增作業" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/create_job.webp" width="1200" caption="新增作業" >}}
 
 <br>
 
@@ -192,7 +192,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/disk.png" width="1200" caption="設定 Job 專案" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/disk.webp" width="1200" caption="設定 Job 專案" >}}
 
 可以看到這邊有不同的專案類型可以選擇，**Free-Style** 以及 **Pipeline** 這兩種類型的專案基本上就涵蓋大部分的需求。**Free-Style** 類型的專案提供了非常大的彈性讓使用者來做原始碼管理以及建置。如果建置流程涉及多個專案，則可以使用 **Pipeline** 類型的專案來組合及定義建置邏輯。
 
@@ -202,7 +202,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/describe.png" width="1200" caption="設定專案組態" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/describe.webp" width="1200" caption="設定專案組態" >}}
 
 要記得幫每一個專案都加上描述，讓其他人知道該專案的用途或是使用時機等。
 
@@ -212,7 +212,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/shell.png" width="1200" caption="設定專案組態" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/shell.webp" width="1200" caption="設定專案組態" >}}
 
 <br>
 
@@ -220,7 +220,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/df-h.png" width="1000" caption="設定專案組態" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/df-h.webp" width="1000" caption="設定專案組態" >}}
 
 <br>
 
@@ -232,7 +232,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/build.png" width="800" caption="建置專案" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/build.webp" width="800" caption="建置專案" >}}
 
 <br>
 
@@ -240,7 +240,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/console.png" width="800" caption="建置專案" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/console.webp" width="800" caption="建置專案" >}}
 
 這樣我們的第一個 Jenkins Job 就設定完成囉！Jenkins 也確實的執行我們所設定的指令，並將系統的使用狀況呈現在終端機的輸出上。
 <br>
@@ -263,7 +263,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/repository.png" width="1000" caption="設定 Repository URL" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/repository.webp" width="1000" caption="設定 Repository URL" >}}
 
 <br>
 
@@ -273,7 +273,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/ssh_error.png" width="1000" caption="SSH 尚未設定錯誤訊息" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/ssh_error.webp" width="1000" caption="SSH 尚未設定錯誤訊息" >}}
 
 會有錯誤訊息是因為我們還沒有把 Jenkins 與 GitHub 做 SSH 金鑰配對，所以 GitHub 拒絕 Jenkins 透過 SSH 存取。那要怎麼解決呢？
 
@@ -301,7 +301,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/cron.png" width="1000" caption="定期建置" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/cron.webp" width="1000" caption="定期建置" >}}
 
 <br>
 
@@ -313,7 +313,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 1. 進入 GitHub 首頁，點選右上角下拉選單，點選 **Settings**：
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_1.png" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_1.webp" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
 
 <br>
 
@@ -321,7 +321,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_2.png" width="700" caption="GitHub hook trigger for GITScm polling 設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_2.webp" width="700" caption="GitHub hook trigger for GITScm polling 設定" >}}
 
 <br>
 
@@ -329,7 +329,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_3.png" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_3.webp" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
 
 <br>
 
@@ -339,7 +339,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_4.png" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_4.webp" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
 
 <br>
 
@@ -347,7 +347,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_5.png" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_5.webp" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
 
 <br>
 
@@ -355,7 +355,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_6.png" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_6.webp" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
 
 <br>
 
@@ -363,7 +363,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_7.png" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_7.webp" width="1000" caption="GitHub hook trigger for GITScm polling 設定" >}}
 
 <br>
 
@@ -373,7 +373,7 @@ This may also be found at: /var/jenkins_home/secrets/initialAdminPassword
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_8.png" width="1000" caption="設定專案組態" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_8.webp" width="1000" caption="設定專案組態" >}}
 
 <br>
 
@@ -388,7 +388,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_9.png" width="1000" caption="設定專案組態" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_9.webp" width="1000" caption="設定專案組態" >}}
 
 這邊利用一個簡單的 Shell Script 迴圈來對所有 YAML file 進行 yamllint 的檢查，最後點選儲存離開。
 
@@ -402,7 +402,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_10.png" width="800" caption="Webhooks 設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_10.webp" width="800" caption="Webhooks 設定" >}}
 
 <br>
 
@@ -414,7 +414,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_11.png" width="1000" caption="ngrok 將 Private IP 變成 Public IP" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_11.webp" width="1000" caption="ngrok 將 Private IP 變成 Public IP" >}}
 
 <br>
 
@@ -426,7 +426,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_12.png" width="1000" caption="Webhooks 設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/setting_12.webp" width="1000" caption="Webhooks 設定" >}}
 
 <br>
 
@@ -436,7 +436,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/test_1.png" width="800" caption="馬上建置" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/test_1.webp" width="800" caption="馬上建置" >}}
 
 <br>
 
@@ -444,7 +444,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/test_2.png" width="800" caption="建置失敗" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/test_2.webp" width="800" caption="建置失敗" >}}
 
 <br>
 
@@ -452,7 +452,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/test_3.png" width="1000" caption="Console Output" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/test_3.webp" width="1000" caption="Console Output" >}}
 
 <br>
 
@@ -460,7 +460,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/test_4.png" width="1000" caption="Console Output" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/test_4.webp" width="1000" caption="Console Output" >}}
 
 當你 push 完後，發現它會自動建置，請因為我們修改成正確格式，所以他也建置成功囉！
 
@@ -470,7 +470,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/test_5.png" width="1000" caption="GitHub Hook Log" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/test_5.webp" width="1000" caption="GitHub Hook Log" >}}
 
 <br>
 
@@ -484,7 +484,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_1.png" width="1200" caption="管理 Jenkins > 管理外掛程式" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_1.webp" width="1200" caption="管理 Jenkins > 管理外掛程式" >}}
 
 <br>
 
@@ -492,7 +492,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_2.png" width="1200" caption="安裝 Build Timestamp" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_2.webp" width="1200" caption="安裝 Build Timestamp" >}}
 
 <br>
 
@@ -500,7 +500,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_3.png" width="1200" caption="設定 Build Timestamp" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_3.webp" width="1200" caption="設定 Build Timestamp" >}}
 
 <br>
 
@@ -510,7 +510,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_4.png" width="1200" caption="安裝 Notify.Events" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_4.webp" width="1200" caption="安裝 Notify.Events" >}}
 
 <br>
 
@@ -518,7 +518,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_5.png" width="1200" caption="安裝 Notify.Events" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_5.webp" width="1200" caption="安裝 Notify.Events" >}}
 
 可以看到這邊要先輸入 Token，那 Token 就必須去官網註冊後設定。
 
@@ -528,7 +528,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_6.png" width="1200" caption="Notify.Events 官網設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_6.webp" width="1200" caption="Notify.Events 官網設定" >}}
 
 <br>
 
@@ -536,7 +536,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_7.png" width="1200" caption="Notify.Events 官網設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_7.webp" width="1200" caption="Notify.Events 官網設定" >}}
 
 <br>
 
@@ -544,7 +544,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_8.png" width="1200" caption="Notify.Events 官網設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_8.webp" width="1200" caption="Notify.Events 官網設定" >}}
 
 <br>
 
@@ -552,7 +552,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_9.png" width="1200" caption="Notify.Events 官網設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_9.webp" width="1200" caption="Notify.Events 官網設定" >}}
 
 <br>
 
@@ -560,7 +560,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_10.png" width="1200" caption="Notify.Events 官網設定" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_10.webp" width="1200" caption="Notify.Events 官網設定" >}}
 
 <br>
 
@@ -583,7 +583,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_11.png" width="1000" caption="Notify.Events Success" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_11.webp" width="1000" caption="Notify.Events Success" >}}
 
 <br>
 
@@ -604,7 +604,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_12.png" width="1000" caption="Notify.Events Failure" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_12.webp" width="1000" caption="Notify.Events Failure" >}}
 
 <br>
 
@@ -614,7 +614,7 @@ done
 
 <br>
 
-{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_13.png" width="600" caption="Telegram 通知" >}}
+{{< figure src="/git-or-cicd/jenkins-github-tg-bot/trigger_13.webp" width="600" caption="Telegram 通知" >}}
 
 <br>
 

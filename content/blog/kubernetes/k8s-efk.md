@@ -141,7 +141,7 @@ service/elasticsearch created
 
 <br>
 
-{{< figure src="/kubernetes/k8s-efk/service.png" width="1200" caption="elasticsearch service" >}}
+{{< figure src="/kubernetes/k8s-efk/service.webp" width="1200" caption="elasticsearch service" >}}
 
 <br>
 
@@ -284,7 +284,7 @@ statefulset.apps/es-cluster created
 
 <br>
 
-{{< figure src="/kubernetes/k8s-efk/statefulset.png" width="1200" caption="elasticsearch statefulset" >}}
+{{< figure src="/kubernetes/k8s-efk/statefulset.webp" width="1200" caption="elasticsearch statefulset" >}}
 
 <br>
 
@@ -385,7 +385,7 @@ deployment.apps/kibana created
 
 <br>
 
-{{< figure src="/kubernetes/k8s-efk/kibana-1.png" width="1200" caption="kibana Deployments" >}}
+{{< figure src="/kubernetes/k8s-efk/kibana-1.webp" width="1200" caption="kibana Deployments" >}}
 
 <br>
 
@@ -405,7 +405,7 @@ Handling connection for 5601
 
 <br>
 
-{{< figure src="/kubernetes/k8s-efk/kibana-2.png" width="1200" caption="kibana Deployments" >}}
+{{< figure src="/kubernetes/k8s-efk/kibana-2.webp" width="1200" caption="kibana Deployments" >}}
 
 <br>
 
@@ -582,7 +582,7 @@ daemonset.apps/fluentd created
 
 <br>
 
-{{< figure src="/kubernetes/k8s-efk/Daemonset.png" width="1200" caption="fluentd DaemonSet" >}}
+{{< figure src="/kubernetes/k8s-efk/Daemonset.webp" width="1200" caption="fluentd DaemonSet" >}}
 
 <br>
 
@@ -602,7 +602,7 @@ Handling connection for 5601
 
 <br>
 
-{{< figure src="/kubernetes/k8s-efk/fluentd-1.png" width="1200" caption="fluentd 設定" >}}
+{{< figure src="/kubernetes/k8s-efk/fluentd-1.webp" width="1200" caption="fluentd 設定" >}}
 
 <br>
 
@@ -610,7 +610,7 @@ Handling connection for 5601
 
 <br>
 
-{{< figure src="/kubernetes/k8s-efk/fluentd-2.png" width="1200" caption="fluentd 設定" >}}
+{{< figure src="/kubernetes/k8s-efk/fluentd-2.webp" width="1200" caption="fluentd 設定" >}}
 
 <br>
 
@@ -618,7 +618,7 @@ Name 輸入 `logstash*` ，並選擇 `@timestamp` 來用時間過濾日誌，最
 
 <br>
 
-{{< figure src="/kubernetes/k8s-efk/fluentd-3.png" width="1200" caption="fluentd 設定" >}}
+{{< figure src="/kubernetes/k8s-efk/fluentd-3.webp" width="1200" caption="fluentd 設定" >}}
 
 <br>
 
@@ -626,7 +626,7 @@ Name 輸入 `logstash*` ，並選擇 `@timestamp` 來用時間過濾日誌，最
 
 <br>
 
-{{< figure src="/kubernetes/k8s-efk/fluentd-4.png" width="1200" caption="fluentd 設定" >}}
+{{< figure src="/kubernetes/k8s-efk/fluentd-4.webp" width="1200" caption="fluentd 設定" >}}
 
 <br>
 
@@ -634,7 +634,7 @@ Name 輸入 `logstash*` ，並選擇 `@timestamp` 來用時間過濾日誌，最
 
 <br>
 
-{{< figure src="/kubernetes/k8s-efk/log.png" width="1200" caption="顯示容器 log" >}}
+{{< figure src="/kubernetes/k8s-efk/log.webp" width="1200" caption="顯示容器 log" >}}
 
 <br>
 

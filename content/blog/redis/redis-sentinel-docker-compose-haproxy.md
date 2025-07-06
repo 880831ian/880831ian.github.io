@@ -25,7 +25,7 @@ HAProxy 是一個使用 C 語言編寫的自由及開放原始碼軟體，其提
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/haproxy.png" width="700" caption="HAProxy 與 Reids Sentinel 示意圖 [selcukusta/redis-sentinel-with-haproxy](https://github.com/selcukusta/redis-sentinel-with-haproxy)" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/haproxy.webp" width="700" caption="HAProxy 與 Reids Sentinel 示意圖 [selcukusta/redis-sentinel-with-haproxy](https://github.com/selcukusta/redis-sentinel-with-haproxy)" >}}
 
 <br>
 
@@ -491,9 +491,9 @@ sentinel down-after-milliseconds mymaster 5000
 
 我們先用 docker-compose up 來啟動 Docker-compose.yaml，接著再啟動 sentinel/Docker-compose.yaml：
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/yaml.png" width="700" caption="啟動 Docker-compose.yaml" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/yaml.webp" width="700" caption="啟動 Docker-compose.yaml" >}}
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/sentinel-yaml.png" width="700" caption="啟動 sentinel/Docker-compose.yaml" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/sentinel-yaml.webp" width="700" caption="啟動 sentinel/Docker-compose.yaml" >}}
 
 由於為了測試，有先將所有容器設定好 IP，就不會像上一篇文章一樣要去抓 IP ，才能啟動 Sentinel。
 
@@ -504,7 +504,7 @@ sentinel down-after-milliseconds mymaster 5000
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/haproxy8404.png" width="1200" caption="HAProxy 監控平台" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/haproxy8404.webp" width="1200" caption="HAProxy 監控平台" >}}
 
 <br>
 
@@ -512,7 +512,7 @@ sentinel down-after-milliseconds mymaster 5000
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/rw.png" width="600" caption="master  (redis1)" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/rw.webp" width="600" caption="master  (redis1)" >}}
 
 <br>
 
@@ -520,11 +520,11 @@ sentinel down-after-milliseconds mymaster 5000
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/r1.png" width="600" caption="master  (redis1)" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/r1.webp" width="600" caption="master  (redis1)" >}}
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/r3.png" width="600" caption="slave  (redis2)" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/r3.webp" width="600" caption="slave  (redis2)" >}}
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/r2.png" width="600" caption="slave  (redis3)" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/r2.webp" width="600" caption="slave  (redis3)" >}}
 
 <br>
 
@@ -573,7 +573,7 @@ redis1
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-1.png" width="1200" caption="模擬中斷服務 HAProxy 監控平台" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-1.webp" width="1200" caption="模擬中斷服務 HAProxy 監控平台" >}}
 
 <br>
 
@@ -581,7 +581,7 @@ redis1
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-2.png" width="1200" caption="模擬中斷服務 HAProxy 監控平台" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-2.webp" width="1200" caption="模擬中斷服務 HAProxy 監控平台" >}}
 
 <br>
 
@@ -589,7 +589,7 @@ redis1
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/rw-1.png" width="600" caption="master (redis2)" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/rw-1.webp" width="600" caption="master (redis2)" >}}
 
 代表我們 HAProxy 也有成功將 master 給顯示出來！
 
@@ -599,9 +599,9 @@ redis1
 
 <br>
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/r4.png" width="600" caption="master (redis2)" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/r4.webp" width="600" caption="master (redis2)" >}}
 
-{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/r2.png" width="600" caption="slave (redis3)" >}}
+{{< figure src="/redis/redis-sentinel-docker-compose-haproxy/r2.webp" width="600" caption="slave (redis3)" >}}
 
 
 <br>

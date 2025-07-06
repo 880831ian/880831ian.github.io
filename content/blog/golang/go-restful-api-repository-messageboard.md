@@ -455,56 +455,56 @@ func DeleteMessage(message *model.Message, id string) (err error) {
 
 ### 查詢全部留言 - 成功(無資料)
 
-{{< figure src="/golang/go-restful-api-repository-messageboard/get-success-1.png" width="700" caption="查詢留言 成功(無資料)" >}}
+{{< figure src="/golang/go-restful-api-repository-messageboard/get-success-1.webp" width="700" caption="查詢留言 成功(無資料)" >}}
 
 <br>
 
 ### 查詢全部留言 - 成功(有資料)
 
-{{< figure src="/golang/go-restful-api-repository-messageboard/get-success-2.png" width="700" caption="查詢留言 成功(有資料)" >}}
+{{< figure src="/golang/go-restful-api-repository-messageboard/get-success-2.webp" width="700" caption="查詢留言 成功(有資料)" >}}
 
 <br>
 
 ### 查詢{id}留言 - 成功
 
-{{< figure src="/golang/go-restful-api-repository-messageboard/get-id-succes.png" width="700" caption="查詢{id}留言 成功" >}}
+{{< figure src="/golang/go-restful-api-repository-messageboard/get-id-succes.webp" width="700" caption="查詢{id}留言 成功" >}}
 
 <br>
 
 ### 查詢{id}留言 - 失敗
 
-{{< figure src="/golang/go-restful-api-repository-messageboard/get-error.png" width="700" caption="查詢{id}留言 失敗" >}}
+{{< figure src="/golang/go-restful-api-repository-messageboard/get-error.webp" width="700" caption="查詢{id}留言 失敗" >}}
 
 <br>
 
 ### 新增留言 - 成功
 
-{{< figure src="/golang/go-restful-api-repository-messageboard/create.png" width="700" caption="新增留言 成功" >}}
+{{< figure src="/golang/go-restful-api-repository-messageboard/create.webp" width="700" caption="新增留言 成功" >}}
 
 <br>
 
 ### 修改{id}留言 - 成功
 
-{{< figure src="/golang/go-restful-api-repository-messageboard/patch-success.png" width="700" caption="修改 {id}留言 成功" >}}
+{{< figure src="/golang/go-restful-api-repository-messageboard/patch-success.webp" width="700" caption="修改 {id}留言 成功" >}}
 
 <br>
 
 ### 修改{id}留言 - 失敗
 
-{{< figure src="/golang/go-restful-api-repository-messageboard/patch-error.png" width="700" caption="修改 {id}留言 失敗" >}}
+{{< figure src="/golang/go-restful-api-repository-messageboard/patch-error.webp" width="700" caption="修改 {id}留言 失敗" >}}
 
 <br>
 
 ### 刪除{id}留言 - 成功
 
-{{< figure src="/golang/go-restful-api-repository-messageboard/delete.png" width="700" caption="刪除 {id}留言 成功" >}}
+{{< figure src="/golang/go-restful-api-repository-messageboard/delete.webp" width="700" caption="刪除 {id}留言 成功" >}}
 
 <br>
 
 
 ### 執行結果
 
-{{< figure src="/golang/go-restful-api-repository-messageboard/gin-cli.png" width="700" caption="執行結果" >}}
+{{< figure src="/golang/go-restful-api-repository-messageboard/gin-cli.webp" width="700" caption="執行結果" >}}
 
 <br>
 

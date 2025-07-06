@@ -26,7 +26,7 @@ HorizontalPodAutoscaler (HPA) 中文可以叫水平 Pod 自動擴縮，他會自
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/1.png" width="650" caption="HorizontalPodAutoscaler 工作流程圖" >}}
+{{< figure src="/kubernetes/k8s-hpa/1.webp" width="650" caption="HorizontalPodAutoscaler 工作流程圖" >}}
 
 <br>
 
@@ -70,7 +70,7 @@ minikube start --vm-driver=docker
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/2.png" width="800" caption="啟動 Minikube" >}}
+{{< figure src="/kubernetes/k8s-hpa/2.webp" width="800" caption="啟動 Minikube" >}}
 
 <br>
 
@@ -84,7 +84,7 @@ minikube start --vm-driver=docker
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/3.png" width="1200" caption="修改 components.yaml" >}}
+{{< figure src="/kubernetes/k8s-hpa/3.webp" width="1200" caption="修改 components.yaml" >}}
 
 <br>
 
@@ -92,7 +92,7 @@ minikube start --vm-driver=docker
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/4.png" width="800" caption="apply components.yaml" >}}
+{{< figure src="/kubernetes/k8s-hpa/4.webp" width="800" caption="apply components.yaml" >}}
 
 <br>
 
@@ -100,7 +100,7 @@ minikube start --vm-driver=docker
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/5.png" width="1200" caption="檢查 metrics-server 是否有問題" >}}
+{{< figure src="/kubernetes/k8s-hpa/5.webp" width="1200" caption="檢查 metrics-server 是否有問題" >}}
 
 <br>
 
@@ -110,7 +110,7 @@ minikube start --vm-driver=docker
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/6.png" width="500" caption="index.php" >}}
+{{< figure src="/kubernetes/k8s-hpa/6.webp" width="500" caption="index.php" >}}
 
 <br>
 
@@ -118,7 +118,7 @@ minikube start --vm-driver=docker
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/7.png" width="500" caption="Dockerfile" >}}
+{{< figure src="/kubernetes/k8s-hpa/7.webp" width="500" caption="Dockerfile" >}}
 
 <br>
 
@@ -172,7 +172,7 @@ spec:
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/8.png" width="1200" caption="k8slens 檢查是否正常" >}}
+{{< figure src="/kubernetes/k8s-hpa/8.webp" width="1200" caption="k8slens 檢查是否正常" >}}
 
 <br>
 
@@ -194,7 +194,7 @@ kubectl autoscale deployment php-apache --cpu-percent=50 --min=1 --max=10
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/9.png" width="700" caption="查看目前 HPA 使用量" >}}
+{{< figure src="/kubernetes/k8s-hpa/9.webp" width="700" caption="查看目前 HPA 使用量" >}}
 
 <br>
 
@@ -256,7 +256,7 @@ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never --
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/10.png" width="800" caption="模擬增加負載" >}}
+{{< figure src="/kubernetes/k8s-hpa/10.webp" width="800" caption="模擬增加負載" >}}
 
 <br>
 
@@ -264,7 +264,7 @@ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never --
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/11.png" width="1100" caption="HPA 自動長 Pod" >}}
+{{< figure src="/kubernetes/k8s-hpa/11.webp" width="1100" caption="HPA 自動長 Pod" >}}
 
 <br>
 
@@ -272,7 +272,7 @@ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never --
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/12.png" width="800" caption="觀察 HPA" >}}
+{{< figure src="/kubernetes/k8s-hpa/12.webp" width="800" caption="觀察 HPA" >}}
 
 <br>
 
@@ -288,7 +288,7 @@ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never --
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/13.png" width="700" caption="觀察 HPA" >}}
+{{< figure src="/kubernetes/k8s-hpa/13.webp" width="700" caption="觀察 HPA" >}}
 
 <br>
 
@@ -296,7 +296,7 @@ kubectl run -i --tty load-generator --rm --image=busybox:1.28 --restart=Never --
 
 <br>
 
-{{< figure src="/kubernetes/k8s-hpa/14.png" width="1100" caption="Pod 自動減少" >}}
+{{< figure src="/kubernetes/k8s-hpa/14.webp" width="1100" caption="Pod 自動減少" >}}
 
 <br>
 

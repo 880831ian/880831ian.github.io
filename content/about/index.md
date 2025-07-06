@@ -3,7 +3,7 @@ title: 關於我
 toc: false
 ---
 
-<img src="/images/logo.png" width="350" />
+<img src="/images/logo.webp" width="350" />
 
 <br>
 

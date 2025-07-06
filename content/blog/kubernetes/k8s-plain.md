@@ -16,7 +16,7 @@ authors:
 
 <br>
 
-{{< figure src="/kubernetes/k8s-plain/1.jpg" width="550" caption="大型社區示意圖  (圖片來源：[蘋果地產](https://tw.feature.appledaily.com/house/news/article/205878))" >}}
+{{< figure src="/kubernetes/k8s-plain/1.webp" width="550" caption="大型社區示意圖  (圖片來源：[蘋果地產](https://tw.feature.appledaily.com/house/news/article/205878))" >}}
 
 可以看到上面這張圖片，他是一個很典型的大型社區，我們這次的 Kubernetes 元件白話文，會以大型社區來當作現實中的元件，以社區的例子來說明 Kubernetes 。
 

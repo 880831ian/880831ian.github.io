@@ -76,7 +76,7 @@ authors:
 
 <br>
 
-{{< figure src="/opentelemetry/opentelemetry-ingress-nginx-controller/1.png" width="800" caption="啟動服務" >}}
+{{< figure src="/opentelemetry/opentelemetry-ingress-nginx-controller/1.webp" width="800" caption="啟動服務" >}}
 
 <br>
 
@@ -84,7 +84,7 @@ authors:
 
 <br>
 
-{{< figure src="/opentelemetry/opentelemetry-ingress-nginx-controller/2.png" width="1200" caption="Datadog LOG" >}}
+{{< figure src="/opentelemetry/opentelemetry-ingress-nginx-controller/2.webp" width="1200" caption="Datadog LOG" >}}
 
 <br>
 
@@ -92,7 +92,7 @@ authors:
 
 <br>
 
-{{< figure src="/opentelemetry/opentelemetry-ingress-nginx-controller/3.png" width="1200" caption="Datadog APM" >}}
+{{< figure src="/opentelemetry/opentelemetry-ingress-nginx-controller/3.webp" width="1200" caption="Datadog APM" >}}
 
 <br>
 
@@ -104,7 +104,7 @@ authors:
 
 <br>
 
-{{< figure src="/opentelemetry/opentelemetry-ingress-nginx-controller/4.png" width="900" caption="Datadog Ingress Nginx Controller 的 Metrics" >}}
+{{< figure src="/opentelemetry/opentelemetry-ingress-nginx-controller/4.webp" width="900" caption="Datadog Ingress Nginx Controller 的 Metrics" >}}
 
 <br>
 
@@ -112,7 +112,7 @@ authors:
 
 <br>
 
-{{< figure src="/opentelemetry/opentelemetry-ingress-nginx-controller/5.png" width="1000" caption="Datadog Dashboard" >}}
+{{< figure src="/opentelemetry/opentelemetry-ingress-nginx-controller/5.webp" width="1000" caption="Datadog Dashboard" >}}
 
 <br>
 

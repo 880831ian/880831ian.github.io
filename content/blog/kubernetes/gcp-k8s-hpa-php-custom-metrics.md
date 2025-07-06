@@ -19,7 +19,7 @@ authors:
 
 <br>
 
-{{< figure src="/kubernetes/gcp-k8s-hpa-php-custom-metrics/1.png" width="400" caption="[Kubernetes HPA : ExternalMetrics+Prometheus](https://blog.kloia.com/kubernetes-hpa-externalmetrics-prometheus-acb1d8a4ed50)" >}}
+{{< figure src="/kubernetes/gcp-k8s-hpa-php-custom-metrics/1.webp" width="400" caption="[Kubernetes HPA : ExternalMetrics+Prometheus](https://blog.kloia.com/kubernetes-hpa-externalmetrics-prometheus-acb1d8a4ed50)" >}}
 
 <br>
 
@@ -155,7 +155,7 @@ php-fpm 就是我們要使用的 php，nginx 會提供 9000 Port 讓 phpfpm-expo
 
 <br>
 
-{{< figure src="/kubernetes/gcp-k8s-hpa-php-custom-metrics/2.png" width="1200" caption="架構圖" >}}
+{{< figure src="/kubernetes/gcp-k8s-hpa-php-custom-metrics/2.webp" width="1200" caption="架構圖" >}}
 
 <br>
 
@@ -280,7 +280,7 @@ spec:
 
 <br>
 
-{{< figure src="/kubernetes/gcp-k8s-hpa-php-custom-metrics/3.png" width="1200" caption="Pod 是否正常啟動" >}}
+{{< figure src="/kubernetes/gcp-k8s-hpa-php-custom-metrics/3.webp" width="1200" caption="Pod 是否正常啟動" >}}
 
 <br>
 
@@ -288,7 +288,7 @@ spec:
 
 <br>
 
-{{< figure src="/kubernetes/gcp-k8s-hpa-php-custom-metrics/4.png" width="550" caption="metrics 是否都有抓到目前的值" >}}
+{{< figure src="/kubernetes/gcp-k8s-hpa-php-custom-metrics/4.webp" width="550" caption="metrics 是否都有抓到目前的值" >}}
 
 <br>
 
@@ -296,7 +296,7 @@ spec:
 
 <br>
 
-{{< figure src="/kubernetes/gcp-k8s-hpa-php-custom-metrics/5.png" width="1200" caption="Google Cloud Platform 的監控" >}}
+{{< figure src="/kubernetes/gcp-k8s-hpa-php-custom-metrics/5.webp" width="1200" caption="Google Cloud Platform 的監控" >}}
 
 <br>
 

@@ -39,7 +39,7 @@ authors:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/create.png" width="900" caption="新建一個 Laravel 新專案" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/create.webp" width="900" caption="新建一個 Laravel 新專案" >}}
 
 <br>
 
@@ -47,7 +47,7 @@ authors:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/laravel.png" width="900" caption="Laravel 首頁" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/laravel.webp" width="900" caption="Laravel 首頁" >}}
 
 <br>
 
@@ -57,7 +57,7 @@ authors:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/unittest.png" width="900" caption="在本地端執行單元測試" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/unittest.webp" width="900" caption="在本地端執行單元測試" >}}
 
 <br>
 
@@ -65,7 +65,7 @@ authors:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/demo_test.png" width="900" caption="執行單元測試結果" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/demo_test.webp" width="900" caption="執行單元測試結果" >}}
 
 <br>
 
@@ -80,7 +80,7 @@ authors:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab.png" width="800" caption="在 GitLab 上建立新專案" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab.webp" width="800" caption="在 GitLab 上建立新專案" >}}
 
 <br>
 
@@ -88,7 +88,7 @@ authors:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_push.png" width="800" caption="將 Laravel 專案推到 GitLab 上" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_push.webp" width="800" caption="將 Laravel 專案推到 GitLab 上" >}}
 
 <br>
 
@@ -96,7 +96,7 @@ authors:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_show.png" width="800" caption="成功推到 GitLab 上" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_show.webp" width="800" caption="成功推到 GitLab 上" >}}
 
 <br>
 
@@ -106,7 +106,7 @@ authors:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/runner.png" width="800" caption="本次使用 Share runners" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/runner.webp" width="800" caption="本次使用 Share runners" >}}
 
 <br>
 
@@ -137,15 +137,15 @@ Unit_test:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab-ci.png" width="600" caption="將 `.gitlab-ci.yml` 推到 GitLab" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab-ci.webp" width="600" caption="將 `.gitlab-ci.yml` 推到 GitLab" >}}
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/pipeline.png" width="700" caption="查看 Runner 已經進行執行單元測試檢測" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/pipeline.webp" width="700" caption="查看 Runner 已經進行執行單元測試檢測" >}}
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/runner-cicd.png" width="700" caption="可以看到 Runner 先安裝我們的環境，再執行單元測試的腳本" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/runner-cicd.webp" width="700" caption="可以看到 Runner 先安裝我們的環境，再執行單元測試的腳本" >}}
 
 <br>
 
@@ -157,7 +157,7 @@ Unit_test:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/mergechecks.png" width="700" caption="點選 **Pipelines must succeed** 來確保程式合併前都必須經過測試" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/mergechecks.webp" width="700" caption="點選 **Pipelines must succeed** 來確保程式合併前都必須經過測試" >}}
 
 <br>
 
@@ -175,7 +175,7 @@ git checkout -b "new"
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/exampletest.png" width="500" caption="新增錯誤測試，還模擬看看是否能成功擋住" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/exampletest.webp" width="500" caption="新增錯誤測試，還模擬看看是否能成功擋住" >}}
 
 `assertEquals` 會檢查這兩個值是否相同，不同的話，就會跳出錯誤，所以我們故意輸入 1 和 2。
 
@@ -185,11 +185,11 @@ git checkout -b "new"
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab-test.png" width="600" caption="將新增錯誤的 ExampleTest 加入暫存，推到 GitLab" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab-test.webp" width="600" caption="將新增錯誤的 ExampleTest 加入暫存，推到 GitLab" >}}
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/mergerequest.png" width="1000" caption="並將 new 分支透過 Merge Request 來合併到 master" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/mergerequest.webp" width="1000" caption="並將 new 分支透過 Merge Request 來合併到 master" >}}
 
 <br>
 
@@ -197,7 +197,7 @@ git checkout -b "new"
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/mergeerror.png" width="700" caption="分支 new 沒有通過測試，所以沒有進行 Merge" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/mergeerror.webp" width="700" caption="分支 new 沒有通過測試，所以沒有進行 Merge" >}}
 
 <br>
 
@@ -207,7 +207,7 @@ git checkout -b "new"
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_workflow.png" width="900" caption="GitLab CI/CD workflow (圖片來源：[GitLab](https://docs.gitlab.com/ee/ci/introduction/))" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/gitlab_workflow.webp" width="900" caption="GitLab CI/CD workflow (圖片來源：[GitLab](https://docs.gitlab.com/ee/ci/introduction/))" >}}
 
 當我們剛剛進行 CI 的整合測試，最後經過 Review and approve 合併到主分支，這時候如果我們有設定 CD，CD 就會幫我們部署到服務上，我把 CD 流程轉成文字步驟說明：
 
@@ -234,7 +234,7 @@ git checkout -b "new"
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/laravel_up.png" width="800" caption="Laravel 專案上線前會下達的指令" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/laravel_up.webp" width="800" caption="Laravel 專案上線前會下達的指令" >}}
 
 <br>
 
@@ -254,7 +254,7 @@ Heroku 是一個支援多種程式語言的雲平台即時服務(PaaS)， 是一
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/herokuapp.png" width="1000" caption="Heroku 專屬網頁" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/herokuapp.webp" width="1000" caption="Heroku 專屬網頁" >}}
 
 <br>
 
@@ -264,7 +264,7 @@ Heroku 是一個支援多種程式語言的雲平台即時服務(PaaS)， 是一
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/token.png" width="1000" caption="取得部署的 API Token" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/token.webp" width="1000" caption="取得部署的 API Token" >}}
 
 <br>
 
@@ -275,7 +275,7 @@ Heroku 是一個支援多種程式語言的雲平台即時服務(PaaS)， 是一
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/variables.png" width="800" caption="gitLab 設定 Variables" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/variables.webp" width="800" caption="gitLab 設定 Variables" >}}
 
 - 這邊要注意先把預設的 Protect variable 給關閉，他預設會只能在受保護的分支或標籤運行，但我們這此以簡單為主，所以這些設定都先關掉。
 
@@ -287,7 +287,7 @@ Heroku 是一個支援多種程式語言的雲平台即時服務(PaaS)， 是一
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/procfile.png" width="650" caption="新增 HeroKu 識別檔案" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/procfile.webp" width="650" caption="新增 HeroKu 識別檔案" >}}
 
 它代表我們網頁服務使用 apache2 指令運行並把入口指向專案資料夾中的 laravel 專案的入口資料夾。
 
@@ -316,7 +316,7 @@ Production_Deploy:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/cd_pass.png" width="700" caption="觸發 Gitlab-CI 執行自動化部署" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/cd_pass.webp" width="700" caption="觸發 Gitlab-CI 執行自動化部署" >}}
 
 <br>
 
@@ -324,7 +324,7 @@ Production_Deploy:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/cd_runner.png" width="800" caption="Runner 運作狀況" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/cd_runner.webp" width="800" caption="Runner 運作狀況" >}}
 
 看到他成功將服務給部署到 `https://laravel-gitlab-cicd-heroku.herokuapp.com/`。
 
@@ -334,7 +334,7 @@ Production_Deploy:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/key.png" width="900" caption="Runner 運作狀況" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/key.webp" width="900" caption="Runner 運作狀況" >}}
 
 <br>
 
@@ -342,7 +342,7 @@ Production_Deploy:
 
 <br>
 
-{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/laravel_show.png" width="1000" caption="透過 CD 部署到 Heroku 的 Laravel 首頁" >}}
+{{< figure src="/git-or-cicd/laravel-gitlab-cicd-heroku/laravel_show.webp" width="1000" caption="透過 CD 部署到 Heroku 的 Laravel 首頁" >}}
 
 <br>
 

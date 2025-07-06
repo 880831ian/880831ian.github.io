@@ -18,7 +18,7 @@ authors:
 
 <br>
 
-{{< figure src="/rd/kibana-create-index-forbidden/1.png" width="800" caption="輸入 Index pattern (圖片為範例，正常都是用 -* )" >}}
+{{< figure src="/rd/kibana-create-index-forbidden/1.webp" width="800" caption="輸入 Index pattern (圖片為範例，正常都是用 -* )" >}}
 
 <br>
 
@@ -26,7 +26,7 @@ authors:
 
 <br>
 
-{{< figure src="/rd/kibana-create-index-forbidden/2.png" width="800" caption="新增索引後，一直轉圈圈" >}}
+{{< figure src="/rd/kibana-create-index-forbidden/2.webp" width="800" caption="新增索引後，一直轉圈圈" >}}
 
 <br>
 
@@ -34,7 +34,7 @@ authors:
 
 <br>
 
-{{< figure src="/rd/kibana-create-index-forbidden/3.png" width="800" caption="開發者工具網頁內容顯示 HTTP 403 Forbidden" >}}
+{{< figure src="/rd/kibana-create-index-forbidden/3.webp" width="800" caption="開發者工具網頁內容顯示 HTTP 403 Forbidden" >}}
 
 <br>
 
@@ -54,7 +54,7 @@ authors:
 
 <br>
 
-{{< figure src="/rd/kibana-create-index-forbidden/4.png" width="900" caption="索引只允許讀取的設定變成" >}}
+{{< figure src="/rd/kibana-create-index-forbidden/4.webp" width="900" caption="索引只允許讀取的設定變成" >}}
 
 <br>
 
@@ -83,7 +83,7 @@ PUT _settings
 
 <br>
 
-{{< figure src="/rd/kibana-create-index-forbidden/5.png" width="600" caption="Dev Tools 修改 Index 的狀態" >}}
+{{< figure src="/rd/kibana-create-index-forbidden/5.webp" width="600" caption="Dev Tools 修改 Index 的狀態" >}}
 
 <br>
 
@@ -91,7 +91,7 @@ PUT _settings
 
 <br>
 
-{{< figure src="/rd/kibana-create-index-forbidden/6.png" width="900" caption="索引只允許讀取的設定變成 false" >}}
+{{< figure src="/rd/kibana-create-index-forbidden/6.webp" width="900" caption="索引只允許讀取的設定變成 false" >}}
 
 <br>
 
@@ -99,7 +99,7 @@ PUT _settings
 
 <br>
 
-{{< figure src="/rd/kibana-create-index-forbidden/7.png" width="900" caption="順利新增索引" >}}
+{{< figure src="/rd/kibana-create-index-forbidden/7.webp" width="900" caption="順利新增索引" >}}
 
 <br>
 

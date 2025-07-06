@@ -92,7 +92,7 @@ server {
 
 <br>
 
-{{< figure src="/nginx/proxy-set-header/1.png" width="800" caption="官方文件介紹 proxy_set_header" >}}
+{{< figure src="/nginx/proxy-set-header/1.webp" width="800" caption="官方文件介紹 proxy_set_header" >}}
 
 <br>
 

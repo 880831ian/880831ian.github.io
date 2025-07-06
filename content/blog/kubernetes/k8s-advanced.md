@@ -62,7 +62,7 @@ Handling connection for 3000
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/service.png" width="300" caption="k8s service 流程圖 [Kubernetes 那些事 — Service 篇](https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-service-%E7%AF%87-d19d4c6e945f)" >}}
+{{< figure src="/kubernetes/k8s-advanced/service.webp" width="300" caption="k8s service 流程圖 [Kubernetes 那些事 — Service 篇](https://medium.com/andy-blog/kubernetes-%E9%82%A3%E4%BA%9B%E4%BA%8B-service-%E7%AF%87-d19d4c6e945f)" >}}
 
 <br>
 
@@ -115,7 +115,7 @@ $ kubectl apply -f service.yaml
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/service-4.png" width="1300" caption="k8s 建立 service (NodePort)" >}}
+{{< figure src="/kubernetes/k8s-advanced/service-4.webp" width="1300" caption="k8s 建立 service (NodePort)" >}}
 
 <br>
 
@@ -133,7 +133,7 @@ $ minikube ip
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-1.png" width="1000" caption="成功顯示柴犬" >}}
+{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-1.webp" width="1000" caption="成功顯示柴犬" >}}
 
 <br>
 
@@ -184,13 +184,13 @@ $ kubectl apply -f service.yaml
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/service-1.png" width="1300" caption="k8s 建立 service (LoadBalancer)" >}}
+{{< figure src="/kubernetes/k8s-advanced/service-1.webp" width="1300" caption="k8s 建立 service (LoadBalancer)" >}}
 
 可以看到 dashboard 有我們剛剛啟動的 Service，但是啟動後前面的燈是黃色的，是因為 minikube LoadBalancer 需要透過 `tunnel` 才可以使用，可以參考 minikube 官網說明：
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/service-2.png" width="800" caption="[minikube 官網](https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-tunnel) 說明 LoadBalancer minikube tunnel" >}}
+{{< figure src="/kubernetes/k8s-advanced/service-2.webp" width="800" caption="[minikube 官網](https://minikube.sigs.k8s.io/docs/handbook/accessing/#using-minikube-tunnel) 說明 LoadBalancer minikube tunnel" >}}
 
 所以我們需要使用 `minikube tunnel` 來啟動 tunnel
 
@@ -212,7 +212,7 @@ $ minikube tunnel
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/service-3.png" width="1300" caption="k8s service" >}}
+{{< figure src="/kubernetes/k8s-advanced/service-3.webp" width="1300" caption="k8s service" >}}
 
 <br>
 
@@ -220,7 +220,7 @@ $ minikube tunnel
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu.png" width="1000" caption="成功顯示柴犬" >}}
+{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu.webp" width="1000" caption="成功顯示柴犬" >}}
 
 <br>
 
@@ -234,7 +234,7 @@ Ingress 可以幫助我們統一對外的 port number，並根據 hostname 或�
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/describe-service.png" width="800" caption="Service 圖片來源：[[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller](https://ithelp.ithome.com.tw/articles/10196261)" >}}
+{{< figure src="/kubernetes/k8s-advanced/describe-service.webp" width="800" caption="Service 圖片來源：[[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller](https://ithelp.ithome.com.tw/articles/10196261)" >}}
 
 可以看到當多個 Service 同時運行時，Node 都需要有對應的 port number 去對應每個 Server 的 port number。像是 GCP 這種雲端服務，每台機器都會配置屬於自己的防火牆。這也代表，不論新增、刪除 Service 物件，都必須要額外多調整防火牆的設定，Port 的管理也想對複雜。
 
@@ -242,7 +242,7 @@ Ingress 可以幫助我們統一對外的 port number，並根據 hostname 或�
 
 若是使用 Ingress，我們只需要開放一個對外的 port numer，Ingree 可以在設定檔中設定不同的路徑，決定要將使用者的請求傳送到哪一個 Service 物件上：
 
-{{< figure src="/kubernetes/k8s-advanced/describe-ingress.png" width="900" caption="Ingress 圖片來源：[[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller](https://ithelp.ithome.com.tw/articles/10196261)" >}}
+{{< figure src="/kubernetes/k8s-advanced/describe-ingress.webp" width="900" caption="Ingress 圖片來源：[[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller](https://ithelp.ithome.com.tw/articles/10196261)" >}}
 
 這樣的設計，除了讓維運人員不需要維護多個 port 或是頻繁的更改防火牆外，可以自訂條件的功能，也使得請求的導向可以更加彈性。
 
@@ -274,7 +274,7 @@ SSL 全名是傳輸層安全性協定，而網站通常都會利用 https 進行
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/ingress.png" width="900" caption="Ingress 圖片來源：[[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller](https://ithelp.ithome.com.tw/articles/10196261)" >}}
+{{< figure src="/kubernetes/k8s-advanced/ingress.webp" width="900" caption="Ingress 圖片來源：[[Day 19] 在 Kubernetes 中實現負載平衡 - Ingress Controller](https://ithelp.ithome.com.tw/articles/10196261)" >}}
 
 <br>
 
@@ -411,13 +411,13 @@ kubernetes-demo-ingress   nginx   test.tw   192.168.64.11   80      10m
 
 - `test.tw`
 
-{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-3.png" width="1000" caption="成功顯示柴犬" >}}
+{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-3.webp" width="1000" caption="成功顯示柴犬" >}}
 
 <br>
 
 - `test-test.tw `
 
-{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-4.png" width="800" caption="顯示 404" >}}
+{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-4.webp" width="800" caption="顯示 404" >}}
 
 <br>
 
@@ -452,13 +452,13 @@ kubernetes-demo-ingress   nginx   *       192.168.64.11   80      5m56s
 
 - `test.tw`
 
-{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-3.png" width="1000" caption="成功顯示柴犬" >}}
+{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-3.webp" width="1000" caption="成功顯示柴犬" >}}
 
 <br>
 
 - `test-test.tw `
 
-{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-5.png" width="1000" caption="顯示 404" >}}
+{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-5.webp" width="1000" caption="顯示 404" >}}
 
 <br>
 
@@ -474,7 +474,7 @@ kubernetes-demo-ingress   nginx   *       192.168.64.11   80      5m56s
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/ReplicationController.png" width="700" caption="Kubernetes StatefulSet 架構" >}}
+{{< figure src="/kubernetes/k8s-advanced/ReplicationController.webp" width="700" caption="Kubernetes StatefulSet 架構" >}}
 
 <br>
 
@@ -561,19 +561,19 @@ kubernetes-demo-pt9px   1/1     Running   0          37s
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/rc-1.png" width="1200" caption="刪除隨機一個 Pod" >}}
+{{< figure src="/kubernetes/k8s-advanced/rc-1.webp" width="1200" caption="刪除隨機一個 Pod" >}}
 
 <br>
 
 當我們隨機刪除一個 Pod 時，被刪除的 Pod 會 Terminating 準備刪除，且啟動一個新的 Pod ContainerCreating：
 
-{{< figure src="/kubernetes/k8s-advanced/rc-2.png" width="1200" caption="Pod 服務" >}}
+{{< figure src="/kubernetes/k8s-advanced/rc-2.webp" width="1200" caption="Pod 服務" >}}
 
 <br>
 
 當新的 Pod 啟動成功後，舊的 Pod 才會被刪除，所以可以確保我們的服務穩定度。
 
-{{< figure src="/kubernetes/k8s-advanced/rc-3.png" width="1200" caption="Pod 服務" >}}
+{{< figure src="/kubernetes/k8s-advanced/rc-3.webp" width="1200" caption="Pod 服務" >}}
 
 <br>
 
@@ -641,7 +641,7 @@ Deployment 是一種負責管理 `ReplicaSet` 以及控制 Pod 更新的物件�
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/deployment.png" width="500" caption="Deployment 與 ReplicaSet 架構圖" >}}
+{{< figure src="/kubernetes/k8s-advanced/deployment.webp" width="500" caption="Deployment 與 ReplicaSet 架構圖" >}}
 
 <br>
 
@@ -787,7 +787,7 @@ kubernetes-deployment-dc5c59fdb-r92zt  1/1     Running   0          11m
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/DeploymentReplicaSet.png" width="1200" caption="minikube dashboard 查看 Deployment 與 ReplicaSet" >}}
+{{< figure src="/kubernetes/k8s-advanced/DeploymentReplicaSet.webp" width="1200" caption="minikube dashboard 查看 Deployment 與 ReplicaSet" >}}
 
 <br>
 
@@ -799,7 +799,7 @@ Deployment 的最後要來說的是要如何更新底下的 Pod 呢，大家就�
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/set.png" width="800" caption="kubectl set" >}}
+{{< figure src="/kubernetes/k8s-advanced/set.webp" width="800" caption="kubectl set" >}}
 
 <br>
 
@@ -819,13 +819,13 @@ deployment.apps/kubernetes-deployment image updated
 
 這是還沒更新 Pod 前的 Deployment 與 ReplicaSet：
 
-{{< figure src="/kubernetes/k8s-advanced/DeploymentReplicaSet.png" width="1200" caption="Deployment 與 ReplicaSet" >}}
+{{< figure src="/kubernetes/k8s-advanced/DeploymentReplicaSet.webp" width="1200" caption="Deployment 與 ReplicaSet" >}}
 
 <br>
 
 我們用 set 下完更新指令後，可以查看 ReplicaSet 以及 Pod 在更新過程中的變化：
 
-{{< figure src="/kubernetes/k8s-advanced/set-1.png" width="1200" caption="ReplicaSet 以及 Pod 在更新過程中的變化" >}}
+{{< figure src="/kubernetes/k8s-advanced/set-1.webp" width="1200" caption="ReplicaSet 以及 Pod 在更新過程中的變化" >}}
 
 <br>
 
@@ -833,7 +833,7 @@ deployment.apps/kubernetes-deployment image updated
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/set-2.png" width="1200" caption="因為 strategy 為 RollingUpdate，所以會同時出現新舊內容" >}}
+{{< figure src="/kubernetes/k8s-advanced/set-2.webp" width="1200" caption="因為 strategy 為 RollingUpdate，所以會同時出現新舊內容" >}}
 
 <br>
 
@@ -841,7 +841,7 @@ deployment.apps/kubernetes-deployment image updated
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/set-3.png" width="1200" caption="新的 Pod 建立成功，並刪除舊 Pod" >}}
+{{< figure src="/kubernetes/k8s-advanced/set-3.webp" width="1200" caption="新的 Pod 建立成功，並刪除舊 Pod" >}}
 
 <br>
 
@@ -849,7 +849,7 @@ deployment.apps/kubernetes-deployment image updated
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/set-4.png" width="600" caption="更新至 kubernetes-demo:v1" >}}
+{{< figure src="/kubernetes/k8s-advanced/set-4.webp" width="600" caption="更新至 kubernetes-demo:v1" >}}
 
 <br>
 
@@ -859,7 +859,7 @@ deployment.apps/kubernetes-deployment image updated
 
  <br>
 
-{{< figure src="/kubernetes/k8s-advanced/rollout.png" width="800" caption="更新至 kubernetes-demo:v1" >}}
+{{< figure src="/kubernetes/k8s-advanced/rollout.webp" width="800" caption="更新至 kubernetes-demo:v1" >}}
 
 <br>
 
@@ -879,7 +879,7 @@ deployment.apps/kubernetes-deployment rolled back
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-3.png" width="1000" caption="成功還原柴犬" >}}
+{{< figure src="/kubernetes/k8s-advanced/Shiba-Inu-3.webp" width="1000" caption="成功還原柴犬" >}}
 
 <br>
 
@@ -909,7 +909,7 @@ Stateful 就是 Stateless 的相反，也就是每次的 Request 都會被記錄
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/stateless_ful.png" width="700" caption="Stateless vs Stateful" >}}
+{{< figure src="/kubernetes/k8s-advanced/stateless_ful.webp" width="700" caption="Stateless vs Stateful" >}}
 
 <br>
 
@@ -955,7 +955,7 @@ Persistent Volume Claim (PVC) 就是負責連接 Persistent Volume (PV) 的物�
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/StatefulSet.png" width="300" caption="Kubernetes StatefulSet 架構" >}}
+{{< figure src="/kubernetes/k8s-advanced/StatefulSet.webp" width="300" caption="Kubernetes StatefulSet 架構" >}}
 
 <br>
 
@@ -1236,7 +1236,7 @@ $ kubectl create configmap <configmapName> --from-file=<filePath>
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/configmap.png" width="1000" caption="建立 ConfigMap" >}}
+{{< figure src="/kubernetes/k8s-advanced/configmap.webp" width="1000" caption="建立 ConfigMap" >}}
 
 <br>
 
@@ -1244,7 +1244,7 @@ $ kubectl create configmap <configmapName> --from-file=<filePath>
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/configmap_1.png" width="700" caption="使用 get 查詢是否正確 ConfigMap" >}}
+{{< figure src="/kubernetes/k8s-advanced/configmap_1.webp" width="700" caption="使用 get 查詢是否正確 ConfigMap" >}}
 
 <br>
 
@@ -1252,7 +1252,7 @@ $ kubectl create configmap <configmapName> --from-file=<filePath>
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/configmap_2.png" width="800" caption="使用 describe 查看 ConfigMap 的內容" >}}
+{{< figure src="/kubernetes/k8s-advanced/configmap_2.webp" width="800" caption="使用 describe 查看 ConfigMap 的內容" >}}
 
 <br>
 
@@ -1278,7 +1278,7 @@ kubectl create secret generic <secretName> --from-file=<filePath>
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/secret.png" width="800" caption="建立 Secrets" >}}
+{{< figure src="/kubernetes/k8s-advanced/secret.webp" width="800" caption="建立 Secrets" >}}
 
 <br>
 
@@ -1286,7 +1286,7 @@ kubectl create secret generic <secretName> --from-file=<filePath>
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/secret_1.png" width="700" caption="使用 get 查詢是否正確 Secrets" >}}
+{{< figure src="/kubernetes/k8s-advanced/secret_1.webp" width="700" caption="使用 get 查詢是否正確 Secrets" >}}
 
 <br>
 
@@ -1294,7 +1294,7 @@ kubectl create secret generic <secretName> --from-file=<filePath>
 
 <br>
 
-{{< figure src="/kubernetes/k8s-advanced/secret_2.png" width="700" caption="使用 describe 查看 Secrets 的內容" >}}
+{{< figure src="/kubernetes/k8s-advanced/secret_2.webp" width="700" caption="使用 describe 查看 Secrets 的內容" >}}
 
 <br>
 

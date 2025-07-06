@@ -102,7 +102,7 @@ gitlab_rails['packages_object_store_connection'] = {
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-package-registry-to-gcs/1.png" width="800" caption="檢查是否還有 Package 在預設儲存位置 (尚未遷移)" >}}
+{{< figure src="/git-or-cicd/gitlab-package-registry-to-gcs/1.webp" width="800" caption="檢查是否還有 Package 在預設儲存位置 (尚未遷移)" >}}
 
 <br>
 
@@ -112,7 +112,7 @@ gitlab_rails['packages_object_store_connection'] = {
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-package-registry-to-gcs/2.png" width="800" caption="檢查是否還有 Package 在預設儲存位置  (已遷移)" >}}
+{{< figure src="/git-or-cicd/gitlab-package-registry-to-gcs/2.webp" width="800" caption="檢查是否還有 Package 在預設儲存位置  (已遷移)" >}}
 
 <br>
 
@@ -120,7 +120,7 @@ gitlab_rails['packages_object_store_connection'] = {
 
 <br>
 
-{{< figure src="/git-or-cicd/gitlab-package-registry-to-gcs/3.png" width="800" caption="查看已遷移到 Google Cloud Storage 的 Package" >}}
+{{< figure src="/git-or-cicd/gitlab-package-registry-to-gcs/3.webp" width="800" caption="查看已遷移到 Google Cloud Storage 的 Package" >}}
 
 <br>
 

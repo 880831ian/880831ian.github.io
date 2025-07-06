@@ -15,7 +15,7 @@ authors:
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/prometheus.png" width="400" caption="Prometheus Logo" >}}
+{{< figure src="/docker/prometheus-grafana-docker/prometheus.webp" width="400" caption="Prometheus Logo" >}}
 
 <br>
 
@@ -23,7 +23,7 @@ authors:
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/prometheus-architecture.jpg" width="800" caption="Prometheus 架構圖 (圖片來源：[使用 Prometheus 和 Grafana 打造 Flask Web App 監控預警系統](https://blog.techbridge.cc/2019/08/26/how-to-use-prometheus-grafana-in-flask-app/))" >}}
+{{< figure src="/docker/prometheus-grafana-docker/prometheus-architecture.webp" width="800" caption="Prometheus 架構圖 (圖片來源：[使用 Prometheus 和 Grafana 打造 Flask Web App 監控預警系統](https://blog.techbridge.cc/2019/08/26/how-to-use-prometheus-grafana-in-flask-app/))" >}}
 
 <br>
 
@@ -43,7 +43,7 @@ Prometheus 可能在儲存擴展上比不上其他 Time Series Database，但在
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/grafana.jpg" width="400" caption="Grafana Logo" >}}
+{{< figure src="/docker/prometheus-grafana-docker/grafana.webp" width="400" caption="Grafana Logo" >}}
 
 <br>
 
@@ -221,7 +221,7 @@ done
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_1.png" width="600" caption="啟動容器" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_1.webp" width="600" caption="啟動容器" >}}
 
 <br>
 
@@ -229,7 +229,7 @@ done
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_2.png" width="800" caption="檢查 Nginx 以及 nginx-prometheus-exporter 的設定" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_2.webp" width="800" caption="檢查 Nginx 以及 nginx-prometheus-exporter 的設定" >}}
 
 如果有出現，恭喜你完成了 Nginx 以及 nginx-prometheus-exporter 的設定，我們將 Nginx 的 `stub_status` 服務，透過 `http://nginx:8080/stub_status` 讓 nginx-prometheus-exporter 可以抓到圖片中的這些指標 (Metrics)。
 
@@ -241,7 +241,7 @@ done
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_3.png" width="1200" caption="檢查 Prometheus targets" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_3.webp" width="1200" caption="檢查 Prometheus targets" >}}
 
 如果兩個出現的都是 <font color='green'>綠色的 UP</font> 就代表正常有抓到資料囉！
 
@@ -251,7 +251,7 @@ done
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_4.png" width="800" caption="Prometheus 內建的圖形化介面" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_4.webp" width="800" caption="Prometheus 內建的圖形化介面" >}}
 
 <br>
 
@@ -259,7 +259,7 @@ done
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_5.png" width="1200" caption="Prometheus 內建的圖形化介面" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_5.webp" width="1200" caption="Prometheus 內建的圖形化介面" >}}
 
 這個功能就是把我們所收到的 Nginx 指標 (Metrics)，轉換成圖表讓我們可以知道他的變化。
 
@@ -269,7 +269,7 @@ done
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_6.png" width="800" caption="經過測試顯示的 nginx_connections_accepted 圖形" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_6.webp" width="800" caption="經過測試顯示的 nginx_connections_accepted 圖形" >}}
 
 可以發現剛剛原本只有 1 個的連接數因為我們模擬總共跑了 10 次，所以連接數變成 11 了！
 
@@ -281,7 +281,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_7.png" width="1000" caption="Grafana 登入頁面" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_7.webp" width="1000" caption="Grafana 登入頁面" >}}
 
 <br>
 
@@ -289,7 +289,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_8.png" width="1000" caption="Grafana 新增資料來源" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_8.webp" width="1000" caption="Grafana 新增資料來源" >}}
 
 <br>
 
@@ -297,7 +297,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_9.png" width="1000" caption="Grafana 新增資料來源" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_9.webp" width="1000" caption="Grafana 新增資料來源" >}}
 
 <br>
 
@@ -310,7 +310,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_10.png" width="800" caption="Grafana 載入別人做好的儀表板" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_10.webp" width="800" caption="Grafana 載入別人做好的儀表板" >}}
 
 <br>
 
@@ -318,7 +318,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_11.png" width="1000" caption="Grafana 儀表板" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_11.webp" width="1000" caption="Grafana 儀表板" >}}
 
 <br>
 
@@ -326,7 +326,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_12.png" width="1000" caption="測試 Grafana 是否成功抓到資料" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_12.webp" width="1000" caption="測試 Grafana 是否成功抓到資料" >}}
 
 可以看到在我們使用完測試腳本後，在該時段的資料有明顯的不一樣，代表我們有成功抓到資料 😄
 
@@ -336,7 +336,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/run_13.png" width="1000" caption="測試暫停 Nginx 查看 Grafana 儀表板 NGINX Status" >}}
+{{< figure src="/docker/prometheus-grafana-docker/run_13.webp" width="1000" caption="測試暫停 Nginx 查看 Grafana 儀表板 NGINX Status" >}}
 
 <br>
 
@@ -352,11 +352,11 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/alert_1.png" width="1000" caption="Alerting 設定" >}}
+{{< figure src="/docker/prometheus-grafana-docker/alert_1.webp" width="1000" caption="Alerting 設定" >}}
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/alert_2.png" width="600" caption="Alerting 測試結果" >}}
+{{< figure src="/docker/prometheus-grafana-docker/alert_2.webp" width="600" caption="Alerting 測試結果" >}}
 
 <br>
 
@@ -366,7 +366,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/alert_3.png" width="800" caption="Create Panel" >}}
+{{< figure src="/docker/prometheus-grafana-docker/alert_3.webp" width="800" caption="Create Panel" >}}
 
 <br>
 
@@ -374,7 +374,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/alert_4.png" width="1200" caption="設定 Panel" >}}
+{{< figure src="/docker/prometheus-grafana-docker/alert_4.webp" width="1200" caption="設定 Panel" >}}
 
 <br>
 
@@ -382,7 +382,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/alert_5.png" width="800" caption="設定好 Alert 的控制板" >}}
+{{< figure src="/docker/prometheus-grafana-docker/alert_5.webp" width="800" caption="設定好 Alert 的控制板" >}}
 
 <br>
 
@@ -390,7 +390,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/alert_6.png" width="800" caption="超過閥值，控制板變成紅色" >}}
+{{< figure src="/docker/prometheus-grafana-docker/alert_6.webp" width="800" caption="超過閥值，控制板變成紅色" >}}
 
 <br>
 
@@ -398,7 +398,7 @@ Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們
 
 <br>
 
-{{< figure src="/docker/prometheus-grafana-docker/alert_7.png" width="500" caption="自動發送通知到 Telegram Bot，並附上控制板圖片" >}}
+{{< figure src="/docker/prometheus-grafana-docker/alert_7.webp" width="500" caption="自動發送通知到 Telegram Bot，並附上控制板圖片" >}}
 
 <br>
 

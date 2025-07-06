@@ -81,7 +81,7 @@ authors:
 
 <br>
 
-{{< figure src="/terraform/terragrunt/1.png" width="800" caption="檔案差異" >}}
+{{< figure src="/terraform/terragrunt/1.webp" width="800" caption="檔案差異" >}}
 
 <br>
 
@@ -464,7 +464,7 @@ inputs = {
 
 <br>
 
-{{< figure src="/terraform/terragrunt/2.png" width="700" caption="測試 terragrunt run-all" >}}
+{{< figure src="/terraform/terragrunt/2.webp" width="700" caption="測試 terragrunt run-all" >}}
 
 (黃色的 WARN 是因為 gcs 上還沒有存過該狀態檔案，所以會跳出提示)
 
@@ -472,7 +472,7 @@ inputs = {
 
 等到 cluster 建立完成後，會將 cluster 的資訊帶入 node_pool，才開始建立 node_pool 的資源：
 
-{{< figure src="/terraform/terragrunt/3.png" width="700" caption="測試 terragrunt run-all" >}}
+{{< figure src="/terraform/terragrunt/3.webp" width="700" caption="測試 terragrunt run-all" >}}
 
 <br>
 
@@ -488,7 +488,7 @@ terragrunt graph-dependencies | dot -Tpng > graph.png
 
 <br>
 
-{{< figure src="/terraform/terragrunt/4.png" width="100" caption="關聯圖" >}}
+{{< figure src="/terraform/terragrunt/4.webp" width="100" caption="關聯圖" >}}
 
 <br>
 

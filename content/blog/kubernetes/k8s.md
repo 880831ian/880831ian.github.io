@@ -14,7 +14,7 @@ Kubernetes 也可以叫 K8s，這個名稱來源希臘語，意思是舵手或�
 
 <br>
 
-{{< figure src="/kubernetes/k8s/logo.jpg" width="200" caption="kubernetes logo" >}}
+{{< figure src="/kubernetes/k8s/logo.webp" width="200" caption="kubernetes logo" >}}
 
 <br>
 
@@ -31,7 +31,7 @@ Kubernetes 是一種開源可用來自動化部屬、擴展以及管理多個容
 
 <br>
 
-{{< figure src="/kubernetes/k8s/flower.jpg" width="600" caption="[kubernetes 官網](https://kubernetes.io/)" >}}
+{{< figure src="/kubernetes/k8s/flower.webp" width="600" caption="[kubernetes 官網](https://kubernetes.io/)" >}}
 
 <br>
 
@@ -135,7 +135,7 @@ Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架
 
 ## 基本運作
 
-{{< figure src="/kubernetes/k8s/k8s.jpg" width="600" caption="kubernetes 組件 [Kubernetes 基礎教學（一）原理介紹](https://cwhu.medium.com/kubernetes-basic-concept-tutorial-e033e3504ec0)" >}}
+{{< figure src="/kubernetes/k8s/k8s.webp" width="600" caption="kubernetes 組件 [Kubernetes 基礎教學（一）原理介紹](https://cwhu.medium.com/kubernetes-basic-concept-tutorial-e033e3504ec0)" >}}
 
 接下來我們用 「Kuberntes 是如何建立一個 Pod ？」來複習一下整個 Kubernetes 的架構。
 
@@ -156,7 +156,7 @@ Cluster 也叫叢集，可以管理眾多機器的存在，在一般的系統架
 
 <br>
 
-{{< figure src="/kubernetes/k8s/minikube.png" width="900" caption="安裝 minikube" >}}
+{{< figure src="/kubernetes/k8s/minikube.webp" width="900" caption="安裝 minikube" >}}
 
 <br>
 
@@ -166,7 +166,7 @@ Hyperkit 是 MacOS 系統細部設定的驅動程式。
 
 <br>
 
-{{< figure src="/kubernetes/k8s/hyperkit.png" width="900" caption="安裝 hyperkit" >}}
+{{< figure src="/kubernetes/k8s/hyperkit.webp" width="900" caption="安裝 hyperkit" >}}
 
 <br>
 
@@ -176,7 +176,7 @@ Kubectl 是 Kubernetes 的 Command Line 工具，我們之後會透過 Kubectl �
 
 <br>
 
-{{< figure src="/kubernetes/k8s/kubectl.png" width="800" caption="安裝 kubectl" >}}
+{{< figure src="/kubernetes/k8s/kubectl.webp" width="800" caption="安裝 kubectl" >}}
 
 <br>
 
@@ -338,7 +338,7 @@ http://127.0.0.1:55991/api/v1/namespaces/kubernetes-dashboard/services/http:kube
 
 <br>
 
-{{< figure src="/kubernetes/k8s/minikube-k8s.png" width="1000" caption="minikube dashboard" >}}
+{{< figure src="/kubernetes/k8s/minikube-k8s.webp" width="1000" caption="minikube dashboard" >}}
 
 <br>
 
@@ -358,7 +358,7 @@ Handling connection for 3000
 
 <br>
 
-{{< figure src="/kubernetes/k8s/Shiba-Inu.png" width="900" caption="成功顯示柴犬" >}}
+{{< figure src="/kubernetes/k8s/Shiba-Inu.webp" width="900" caption="成功顯示柴犬" >}}
 
 <br>
 
