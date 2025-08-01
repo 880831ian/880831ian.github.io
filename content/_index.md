@@ -23,6 +23,12 @@ layout: hextra-home
 
 {{< hextra/feature-grid cols=4 >}}
 {{< card
+  link="blog/gcp/gke-kube-dns-nodelocaldns"
+  title="GKE Kube DNS + NodeLocalDNS 運作測試"
+  subtitle="發布日期：2025-08-01"
+  image="/gcp/gke-kube-dns-nodelocaldns/cover.webp"
+>}}
+{{< card
   link="blog/aws/aws-assuming-roles-tool-introduce"
   title="手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！"
   subtitle="發布日期：2025-07-06"

@@ -12,6 +12,12 @@ sidebar:
 
 {{< cards >}}
 {{< card
+  link="gke-kube-dns-nodelocaldns"
+  title="GKE Kube DNS + NodeLocalDNS 運作測試"
+  subtitle="發布日期：2025-08-01"
+  image="/gcp/gke-kube-dns-nodelocaldns/cover.webp"
+>}}
+{{< card
   link="gcp-lb-introduce"
   title="GCP Load Balancer 介紹"
   subtitle="發布日期：2025-05-26"
