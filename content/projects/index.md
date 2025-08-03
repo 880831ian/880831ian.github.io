@@ -20,7 +20,7 @@ layout: wide
     imageStyle="object-fit:cover; aspect-ratio:16/9;"
 >}}
 {{< card
-    link="https://api.pin-yi.me/taiwan-calendar/"
+    link="https://api.pin-yi.me/taiwan-calendar/swagger/index.html"
     title="臺灣行事曆 (API)"
     subtitle="臺灣行事曆，資料來源中華民國政府行政機關辦公日曆表，可以透過 API 取得資料，並新增其他欄位，例如：民國年、星期英文、星期縮寫等等，方便大家使用。"
     image="/projects/taiwan-calendar.webp"

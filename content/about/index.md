@@ -13,7 +13,7 @@ toc: false
 
 除此之後，也熟悉使用 Google Cloud Platform (GCP) 雲端相關服務，喜歡使用 Terraform + Terragrunt 來管理雲端大量的 IaC 資源 (GCP Module：12、AWS Module：22)，當然也會使用 Grafana、Prometheus、EFK 等監控 Log 收集工具來確保服務的穩定性以及可追蹤性。並協助 RD 建立 CICD 部署流程。
 
-在下班空閒時間，我喜歡閱讀技術相關的文件、寫部落格，也會參加一些線下技術社群的活動，曾參加過：Google Next 2025、DevOpsDay 2023|2024、Cloud Summit 2024|2025、AWS Summit 2025，希望能夠透過這些活動來學習更多的知識，並且與更多的技術人員交流。
+在下班空閒時間，我喜歡閱讀技術相關的文件、寫部落格，也會參加一些線下技術社群的活動，曾參加過：Google Next 2025、AWS Summit 2025、DevOpsDay 2022|2023|2024、Cloud Summit 2024|2025，希望能夠透過這些活動來學習更多的知識，並且與更多的技術人員交流。
 
 歡迎大家使用下方 giscus 留言系統留言交流 d(`･∀･)b。
 
@@ -118,3 +118,27 @@ GCP 成本優化實踐
     證照編號: 190-008-011 / 發照日期： Jan 11, 2019 / 到期日：Jan 11, 2021
 
 <img src="/about/rhcsa.webp" width="550" />
+
+<br>
+
+## 履歷
+
+<br>
+
+{{< hextra/feature-grid cols=2 >}}
+{{< card
+  link="https://pin-yi.me/about/resume-tw.pdf"
+  title="中文版"
+  subtitle="最後上傳日期：2025-08-03"
+  image="/about/resume-tw.webp"
+  target="_blank"
+  tag="New" tagType="error"
+>}}
+{{< card
+  link="https://pin-yi.me/about/resume-en.pdf"
+  title="英文版"
+  subtitle="最後上傳日期：2025-08-03"
+  image="/about/resume-en.webp"
+  tag="New" tagType="error"
+>}}
+{{< /hextra/feature-grid >}}
