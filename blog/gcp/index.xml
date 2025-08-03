@@ -368,7 +368,6 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;p>&amp;ndash;&lt;/p>
 &lt;h3>模擬 node-local-dns pod 異常&lt;span class="hx-absolute -hx-mt-20" id="模擬-node-local-dns-pod-異常-1">&lt;/span>
 &lt;a href="#%e6%a8%a1%e6%93%ac-node-local-dns-pod-%e7%95%b0%e5%b8%b8-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來我們測試最後一個情境，故意用壞 node-local-dns 服務，觀察此模式對於 node-local-dns 的依賴&lt;/p>
 &lt;p>測試情境：&lt;/p>
@@ -709,6 +708,24 @@ alt="IP 第四次測試" width="1000">&lt;figcaption>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kube-dns-nodelocaldns/k6/8.webp"
 alt="DNS 第四次測試" width="1000">&lt;figcaption>
 &lt;p>DNS 第四次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>結論&lt;span class="hx-absolute -hx-mt-20" id="結論">&lt;/span>
+&lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 node-local-dns 的模式下，對於 kube-dns 的依賴性降低了很多，因為 node-local-dns 會先做 cache hit，這樣就算 kube-dns 異常（只有 cluster 內的，且 cache 失效才會影響），也不會影響到 pod 的 DNS 解析。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kube-dns-nodelocaldns/nodelocal-dns-cache-diagram.webp"
+alt="kube DNS &amp;#43; Nodelocaldn 架構圖
+https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture" width="900">&lt;figcaption>
+&lt;p>kube DNS + Nodelocaldn 架構圖&lt;br>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>但是這個結果其實是因為 GKE 在這個模式下，共用 kube-dns IP，並調整 iptables 的方式來實現的。所以跟一般的 node-local-dns 邏輯，會有點不同。&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kube-dns-nodelocaldns/nodelocaldns.webp"
+alt="Using NodeLocal DNSCache in Kubernetes Clusters
+https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram" width="900">&lt;figcaption>
+&lt;p>Using NodeLocal DNSCache in Kubernetes Clusters&lt;br>&lt;a href="https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram" target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram&lt;/a>&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
