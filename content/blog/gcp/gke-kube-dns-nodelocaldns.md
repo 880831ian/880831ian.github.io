@@ -1,7 +1,7 @@
 ---
 title: "GKE Kube DNS + NodeLocalDNS 運作測試"
 type: docs
-weight: 9987
+weight: 9986
 description: GKE Kube DNS + NodeLocalDNS 運作測試
 images:
   - gcp/gke-kube-dns-nodelocaldns/og.webp
@@ -31,7 +31,7 @@ authors:
 
 ## 叢集內部 cluster.local
 
-Prometheus 監控設定參數：`zones="cluster.local."`
+node-local-dns Prometheus 監控設定參數：`zones="cluster.local."`
 
 <br>
 
@@ -91,6 +91,7 @@ echo "== NSLOOKUP TEST END: $END_TIME ==" | tee -a nslookup_full.log
 echo "成功次數: $SUCCESS_COUNT" | tee -a nslookup_full.log
 echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 ```
+10.36.17.66 是 nginx-svc Cluster IP
 
 需要先確認 `nginx-svc` 的 IP 是多少，然後修改腳本中的 `EXPECTED_IP` 變數。
 
@@ -219,7 +220,7 @@ kubectl patch daemonset node-local-dns -n kube-system --type='strategic' -p '{"s
 
 <br>
 
-Prometheus 監控設定參數：`zones="."`
+node-local-dns Prometheus 監控設定參數：`zones="."`
 
 <br>
 
@@ -278,6 +279,8 @@ echo "== NSLOOKUP TEST END: $END_TIME ==" | tee -a nslookup_full.log
 echo "成功次數: $SUCCESS_COUNT" | tee -a nslookup_full.log
 echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 ```
+10.1.1.4 是隨機亂取的 IP，只是為了確認 domain 是否能夠正常解析
+
 
 <br>
 
@@ -323,8 +326,7 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP]<br>
-觀察發現，因為 cloud dns private 不是 .cluster.local，所以就算沒有 kube-dns 也能正常運作，後續就沒有把 kube-dns 開回去 (只有 node-local-dns)
+> [!TIP] 觀察發現，因為 cloud dns private 不是 .cluster.local，所以就算沒有 kube-dns 也能正常運作。
 
 <br>
 
@@ -388,7 +390,7 @@ kubectl patch daemonset node-local-dns -n kube-system --type='strategic' -p '{"s
 
 ## 外部 DNS (ifconfig.me)
 
-Prometheus 監控設定參數：`zones="."`
+node-local-dns Prometheus 監控設定參數：`zones="."`
 
 <br>
 
@@ -448,6 +450,9 @@ echo "== NSLOOKUP TEST END: $END_TIME ==" | tee -a nslookup_full.log
 echo "成功次數: $SUCCESS_COUNT" | tee -a nslookup_full.log
 echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 ```
+34.160.111.145 是 ifconfig.me 的 IP，只是為了確認 domain 是否能夠正常解析
+
+<br>
 
 ### 測試腳本
 
@@ -492,8 +497,7 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP]<br>
-觀察發現，因為外部 dns 不是 .cluster.local，所以就算沒有 kube-dns 也能正常運作，後續就沒有把 kube-dns 開回去 (只有 node-local-dns)
+> [!TIP] 觀察發現，因為外部 dns 不是 .cluster.local，所以就算沒有 kube-dns 也能正常運作。
 
 <br>
 
@@ -617,17 +621,17 @@ IP (avg=149.5ms / 3965 RPS)、DNS (avg=133.73ms / 4230 RPS)
 
 ## 結論
 
-可以發現，使用 node-local-dns 的模式下，對於 kube-dns 的依賴性降低了很多，因為 node-local-dns 會先做 cache hit，這樣就算 kube-dns 異常（只有 cluster 內的，且 cache 失效才會影響），也不會影響到 pod 的 DNS 解析。
+可以發現，使用 kube-dns + node-local-dns 的模式下，對於 kube-dns 的依賴性降低了很多，因為 node-local-dns 會先做 cache hit，這樣就算 kube-dns 異常（只有 cluster 內的，且 cache 失效才會影響），否則不會影響到 pod 的 DNS 解析。
 
 <br>
 
-{{< figure src="/gcp/gke-kube-dns-nodelocaldns/nodelocal-dns-cache-diagram.webp" width="900" caption="kube DNS + Nodelocaldn 架構圖<br>[https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture](https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture)" >}}
+{{< figure src="/gcp/gke-kube-dns-nodelocaldns/nodelocal-dns-cache-diagram.webp" width="650" caption="kube DNS + Nodelocaldn 架構圖<br>[https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture](https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture)" >}}
 
 <br>
 
 但是這個結果其實是因為 GKE 在這個模式下，共用 kube-dns IP，並調整 iptables 的方式來實現的。所以跟一般的 node-local-dns 邏輯，會有點不同。
 
-{{< figure src="/gcp/gke-kube-dns-nodelocaldns/nodelocaldns.webp" width="900" caption="Using NodeLocal DNSCache in Kubernetes Clusters<br>[https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram](https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram)" >}}
+{{< figure src="/gcp/gke-kube-dns-nodelocaldns/nodelocaldns.webp" width="600" caption="Using NodeLocal DNSCache in Kubernetes Clusters<br>[https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram](https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram)" >}}
 
 <br>
 
