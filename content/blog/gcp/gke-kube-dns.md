@@ -469,3 +469,13 @@ IP (avg=321.47ms / 2337 RPS)、DNS (avg=254.11ms / 2775 RPS)
 ## 結論
 
 可以發現，使用 kube-dns 的模式下，對於 kube-dns 的依賴性極高，只要壞掉，不管任何的解析(叢集內、internal-dns、外部 dns)都會失效。
+
+<br>
+
+{{< figure src="/gcp/gke-kube-dns/kubeDNS.webp" width="700" caption="GKE KubeDNS" >}}
+
+<br>
+
+## 參考資料
+
+使用 kube-dns：[https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw](https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw)
