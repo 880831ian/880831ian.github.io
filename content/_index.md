@@ -23,10 +23,10 @@ layout: hextra-home
 
 {{< hextra/feature-grid cols=4 >}}
 {{< card
-  link="blog/gcp/gke-kube-dns"
-  title="GKE Kube DNS 運作測試"
+  link="blog/gcp/gke-kubedns"
+  title="GKE KubeDNS 運作測試"
   subtitle="發布日期：2025-08-04"
-  image="/gcp/gke-kube-dns/cover.webp"
+  image="/gcp/gke-kubedns/cover.webp"
 >}}
 {{< card
   link="blog/gcp/gke-kubedns-nodelocaldnscache"

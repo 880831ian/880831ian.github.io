@@ -210,8 +210,8 @@ https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh
 Q3：deployment 會被還原是因為 KubeDNS 後面還有一個 Controller 在控制，Configmap 設計目的的確是可以讓我們自行接管來調整，且不會被還原。
 <br><br>
 另外，目前有針對 GKE 的四種 KubeDNS、CloudDNS、NodeLocal DNSCache 組合有進行測試，詳細可以查看以下連結：
-
-
+<br>
+原本自定義 KubeDNS、或是改成其他 DNS 供應商，可以參考此篇文件：[設定自訂 kube-dns 部署作業](https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw)
 
 <br>
 
