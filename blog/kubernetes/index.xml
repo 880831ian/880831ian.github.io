@@ -657,13 +657,21 @@ A3：KubeDNS 如果想要調整 pod 數量，我們知道要調整 kube-dns-auto
 &lt;br>
 Q3：deployment 會被還原是因為 KubeDNS 後面還有一個 Controller 在控制，Configmap 設計目的的確是可以讓我們自行接管來調整，且不會被還原。
 &lt;br>&lt;br>
-另外，目前有針對 GKE 的四種 KubeDNS、CloudDNS、NodeLocal DNSCache 組合有進行測試，詳細可以查看以下連結：
+原本自定義 KubeDNS、或是改成其他 DNS 供應商，可以參考此篇文件：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw" target="_blank" rel="noopener">設定自訂 kube-dns 部署作業&lt;/a>
+&lt;br>&lt;br>
+另外，目前有針對 GKE 的四種 KubeDNS、Cloud DNS、NodeLocal DNSCache 組合有進行測試，詳細可以查看以下連結：
 &lt;br>
-原本自定義 KubeDNS、或是改成其他 DNS 供應商，可以參考此篇文件：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw" target="_blank" rel="noopener">設定自訂 kube-dns 部署作業&lt;/a>&lt;/p>&lt;/div>
+&lt;a href="../../gcp/gke-kubedns/" >GKE KubeDNS 運作測試&lt;/a>
+&lt;br>
+&lt;a href="../../gcp/gke-kubedns-nodelocaldnscache/" >GKE KubeDNS + NodeLocal DNSCache 運作測試&lt;/a>
+&lt;br>
+&lt;a href="../../gcp/gke-cloud-dns/" >GKE Cloud DNS 運作測試&lt;/a>
+&lt;br>
+&lt;a href="../../gcp/gke-cloud-dns-nodelocaldnscache/" >GKE Cloud DNS + NodeLocal DNSCache 運作測試&lt;/a>&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;p>在爬文的過程中有發現，Google 有一篇 knowledge 文章 &lt;a href="https://cloud.google.com/knowledge/kb/how-to-run-coredns-on-kubernetes-engine-000004698" target="_blank" rel="noopener">How to run CoreDNS on Kubernetes Engine?&lt;/a> 有提到 Google 預設就是使用 KubeDNS，沒辦法把 KubeDNS 縮小到 0 並完全替換，如果只是單純想要使用 CoreDNS 的快取功能，可以啟用 GKE 上的 NodeLocal DNSCache&lt;/p>
+&lt;p>在爬文的過程中有發現，Google 有一篇 knowledge 文章 &lt;a href="https://cloud.google.com/knowledge/kb/how-to-run-coredns-on-kubernetes-engine-000004698" target="_blank" rel="noopener">How to run CoreDNS on Kubernetes Engine?&lt;/a> 有提到 Google 預設就是使用 KubeDNS，沒辦法把 KubeDNS 縮小到 0 並完全替換，如果只是單純想要使用 CoreDNS 的快取功能，可以啟用 GKE 上的 NodeLocal DNSCache。&lt;/p>
 &lt;p>如果想要把 CronDNS 解析功能加到 GKE 上，要先部署一個 CoreDNS Pod，並透過 service 公開它，並為 KubeDNS 配置一個 stub domain，將其指向 CoreDNS 服務 IP。&lt;/p>
 &lt;p>所有與 stub domain 後綴相符的流量都會路由到 CoreDNS Pod。不符合的流量將繼續由 KubeDNS 解析。&lt;/p>
 &lt;br>
