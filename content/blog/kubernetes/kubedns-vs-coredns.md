@@ -209,13 +209,21 @@ https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh
 <br>
 Q3：deployment 會被還原是因為 KubeDNS 後面還有一個 Controller 在控制，Configmap 設計目的的確是可以讓我們自行接管來調整，且不會被還原。
 <br><br>
-另外，目前有針對 GKE 的四種 KubeDNS、CloudDNS、NodeLocal DNSCache 組合有進行測試，詳細可以查看以下連結：
-<br>
 原本自定義 KubeDNS、或是改成其他 DNS 供應商，可以參考此篇文件：[設定自訂 kube-dns 部署作業](https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw)
+<br><br>
+另外，目前有針對 GKE 的四種 KubeDNS、Cloud DNS、NodeLocal DNSCache 組合有進行測試，詳細可以查看以下連結：
+<br>
+[GKE KubeDNS 運作測試](../../gcp/gke-kubedns/)
+<br>
+[GKE KubeDNS + NodeLocal DNSCache 運作測試](../../gcp/gke-kubedns-nodelocaldnscache/)
+<br>
+[GKE Cloud DNS 運作測試](../../gcp/gke-cloud-dns/)
+<br>
+[GKE Cloud DNS + NodeLocal DNSCache 運作測試](../../gcp/gke-cloud-dns-nodelocaldnscache/)
 
 <br>
 
-在爬文的過程中有發現，Google 有一篇 knowledge 文章 [How to run CoreDNS on Kubernetes Engine?](https://cloud.google.com/knowledge/kb/how-to-run-coredns-on-kubernetes-engine-000004698) 有提到 Google 預設就是使用 KubeDNS，沒辦法把 KubeDNS 縮小到 0 並完全替換，如果只是單純想要使用 CoreDNS 的快取功能，可以啟用 GKE 上的 NodeLocal DNSCache
+在爬文的過程中有發現，Google 有一篇 knowledge 文章 [How to run CoreDNS on Kubernetes Engine?](https://cloud.google.com/knowledge/kb/how-to-run-coredns-on-kubernetes-engine-000004698) 有提到 Google 預設就是使用 KubeDNS，沒辦法把 KubeDNS 縮小到 0 並完全替換，如果只是單純想要使用 CoreDNS 的快取功能，可以啟用 GKE 上的 NodeLocal DNSCache。
 
 如果想要把 CronDNS 解析功能加到 GKE 上，要先部署一個 CoreDNS Pod，並透過 service 公開它，並為 KubeDNS 配置一個 stub domain，將其指向 CoreDNS 服務 IP。
 

@@ -97,27 +97,31 @@ GCP 成本優化實踐
 
 ## 證照
 
-- Google Cloud Professional Cloud Architect
-
-    證照編號: ed519d0fcb984d428460841eb83419c8 / 發照日期： Feb 21, 2025 / 到期日：Feb 21, 2027
-
-<img src="/about/pca.webp" width="550" />
-
 <br>
 
-- RED HAT CERTIFIED ENGINEER (RHCE)
-
-    證照編號: 190-008-011 / 發照日期： July 5, 2019 / 到期日：July 5, 2021
-
-<img src="/about/rhce.webp" width="550" />
-
-<br>
-
-- RED HAT CERTIFIED SYSTEM ADMINISTRATOR (RHCSA)
-
-    證照編號: 190-008-011 / 發照日期： Jan 11, 2019 / 到期日：Jan 11, 2021
-
-<img src="/about/rhcsa.webp" width="550" />
+{{< hextra/feature-grid cols=2 >}}
+{{< card
+  link="https://www.credly.com/badges/b277830e-b1ea-4eeb-a7f2-7fbb71ed2b8d/public_url"
+  title="Google Cloud Professional Cloud Architect"
+  subtitle="證照編號: ed519d0fcb984d428460841eb83419c8 <br>發照日期： Feb 21, 2025 / 到期日：Feb 21, 2027"
+  image="/about/pca.webp"
+  tag="GCP" tagType="info"
+>}}
+{{< card
+  link=""
+  title="RED HAT CERTIFIED ENGINEER (RHCE)"
+  subtitle="證照編號: 190-008-011 / 發照日期： July 5, 2019 / 到期日：July 5, 2021"
+  image="/about/rhce.webp"
+  tag="Red Hat" tagType="error"
+>}}
+{{< card
+  link=""
+  title="RED HAT CERTIFIED SYSTEM ADMINISTRATOR (RHCSA)"
+  subtitle="證照編號: 190-008-011 / 發照日期： Jan 11, 2019 / 到期日：Jan 11, 2021"
+  image="/about/rhcsa.webp"
+  tag="Red Hat" tagType="error"
+>}}
+{{< /hextra/feature-grid >}}
 
 <br>
 
