@@ -119,10 +119,10 @@ layout: hextra-home
   image="/aws/aws-cli/cover.webp"
 >}}
 {{< card
-  link="blog/kubernetes/kube-dns-vs-core-dns"
-  title="kube-dns vs CoreDNS 比較，DNS 的最佳實踐"
+  link="blog/kubernetes/kubedns-vs-coredns"
+  title="KubeDNS vs CoreDNS 比較"
   subtitle="發布日期：2024-07-23"
-  image="/kubernetes/kube-dns-vs-core-dns/cover.webp"
+  image="/kubernetes/kubedns-vs-coredns/cover.webp"
 >}}
 {{< card
   link="blog/kubernetes/pod-curl-error-6-could-not-resolve-host"
