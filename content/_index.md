@@ -29,10 +29,10 @@ layout: hextra-home
   image="/gcp/gke-kube-dns/cover.webp"
 >}}
 {{< card
-  link="blog/gcp/gke-kube-dns-nodelocaldns"
-  title="GKE Kube DNS + NodeLocalDNS 運作測試"
+  link="blog/gcp/gke-kubedns-nodelocaldnscache"
+  title="GKE KubeDNS + NodeLocal DNSCache 運作測試"
   subtitle="發布日期：2025-08-01"
-  image="/gcp/gke-kube-dns-nodelocaldns/cover.webp"
+  image="/gcp/gke-kubedns-nodelocaldnscache/cover.webp"
 >}}
 {{< card
   link="blog/aws/aws-assuming-roles-tool-introduce"
