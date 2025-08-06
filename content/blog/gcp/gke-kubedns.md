@@ -1,7 +1,7 @@
 ---
 title: "GKE KubeDNS 運作測試"
 type: docs
-weight: 9987
+weight: 9986
 description: GKE KubeDNS 運作測試
 images:
   - gcp/gke-kubedns/og.webp
@@ -481,6 +481,10 @@ IP (avg=321.47ms / 2337 RPS)、DNS (avg=254.11ms / 2775 RPS)
 另外也可以從官方文件中得知 KubeDNS 的 `/etc/resolv.conf` 設定值，可以知道 Pod 最開始使用的 DNS 解析 Server 是誰。
 
 {{< figure src="/gcp/gke-kubedns/resolv.webp" width="800" caption="/etc/resolv.conf 設定值 [服務探索和 DNS /etc/resolv.conf](https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value)" >}}
+
+<br>
+
+{{< figure src="/gcp/gke-kubedns/config.webp" width="800" caption="實際查看 /etc/resolv.conf" >}}
 
 <br>
 

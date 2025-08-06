@@ -1,7 +1,7 @@
 ---
 title: "GKE KubeDNS + NodeLocal DNSCache 運作測試"
 type: docs
-weight: 9986
+weight: 9987
 description: GKE KubeDNS + NodeLocal DNSCache 運作測試
 images:
   - gcp/gke-kubedns-nodelocaldnscache/og.webp

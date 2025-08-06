@@ -110,14 +110,14 @@ GCP 成本優化實踐
 {{< card
   link=""
   title="RED HAT CERTIFIED ENGINEER (RHCE)"
-  subtitle="證照編號: 190-008-011 / 發照日期： July 5, 2019 / 到期日：July 5, 2021"
+  subtitle="證照編號: 190-008-011 <br>發照日期： July 5, 2019 / 到期日：July 5, 2021"
   image="/about/rhce.webp"
   tag="Red Hat" tagType="error"
 >}}
 {{< card
   link=""
   title="RED HAT CERTIFIED SYSTEM ADMINISTRATOR (RHCSA)"
-  subtitle="證照編號: 190-008-011 / 發照日期： Jan 11, 2019 / 到期日：Jan 11, 2021"
+  subtitle="證照編號: 190-008-011 <br>發照日期： Jan 11, 2019 / 到期日：Jan 11, 2021"
   image="/about/rhcsa.webp"
   tag="Red Hat" tagType="error"
 >}}
