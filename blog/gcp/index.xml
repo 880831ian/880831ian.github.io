@@ -1,4 +1,1079 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Google Cloud Platform</title><link>https://pin-yi.me/blog/gcp/</link><description>Recent content in Google Cloud Platform on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/gcp/index.xml" rel="self" type="application/rss+xml"/><item><title>GKE KubeDNS + NodeLocal DNSCache 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</link><pubDate>Fri, 01 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Google Cloud Platform</title><link>https://pin-yi.me/blog/gcp/</link><description>Recent content in Google Cloud Platform on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/gcp/index.xml" rel="self" type="application/rss+xml"/><item><title>GKE Cloud DNS 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-cloud-dns/</link><pubDate>Wed, 06 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-cloud-dns/</guid><description>
+&lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone，所以需要測試 GKE 內的 DNS 解析方案，避免發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，本次測試 Cloud DNS 的運作。&lt;/p>
+&lt;br>
+&lt;p>先建立一個 dns-test pod 以及 nginx 的 pod + svc，會分別測試&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" >叢集內部 cluster.local&lt;/a> (nginx-svc.default.svc.cluster.local)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="#internal-dns-cloud-dns-private" >Internal DNS (Cloud DNS Private)&lt;/a> (aaa.test-audit.com.)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="#%e5%a4%96%e9%83%a8-dns-ifconfigme" >外部 dns&lt;/a> (ifconfig.me)&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>並使用腳本進行確認回傳 DNS 解析。&lt;/p>
+&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
+&lt;br>
+&lt;p>在建立完 Cluster 後，可以先觀察在 Cloud DNS 是否新增的 Private Zone&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cloud-dns-private.webp" width="850">
+&lt;/figure>
+&lt;br>
+&lt;p>有很多 Record，我們就先搜尋下面會用到的 nginx-svc.default.svc.cluster.local 來當作範例&lt;/p>
+&lt;br>
+&lt;h2>叢集內部 cluster.local&lt;span class="hx-absolute -hx-mt-20" id="叢集內部-clusterlocal">&lt;/span>
+&lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>一樣會觀察 KubeDNS Pod Metrics，因為就算開啟 Cloud DNS 後，KubeDNS 還是會留著&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/1.webp"
+alt="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture" width="750">&lt;figcaption>
+&lt;p>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/2.webp" width="750">
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>相關 Prometheus 監控指標：&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>測試腳本：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/bin/bash
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>get_taiwan_time&lt;span style="color:#f92672">()&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 獲取當前 UTC 時間的 Unix 時間戳&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> UTC_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -u +%s&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 加上 8 小時 (台灣時間是 UTC+8)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TAIPEI_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>UTC_TIMESTAMP &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">28800&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 將時間戳轉換為格式化後的日期時間&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> date -d &lt;span style="color:#e6db74">&amp;#34;@&lt;/span>$TAIPEI_TIMESTAMP&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;nginx-svc.default.svc.cluster.local&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;10.36.16.243&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>START_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST START: &lt;/span>$START_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#66d9ef">$(&lt;/span>seq &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>; &lt;span style="color:#66d9ef">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> OUTPUT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>nslookup &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$DOMAIN&lt;span style="color:#e6db74">&amp;#34;&lt;/span> 2&amp;gt;&amp;amp;1&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ADDR_LINE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$OUTPUT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | grep -E &lt;span style="color:#e6db74">&amp;#39;^Address:&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$ADDR_LINE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">==&lt;/span> *&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$EXPECTED_IP&lt;span style="color:#e6db74">&amp;#34;&lt;/span>* &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>SUCCESS_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>FAIL_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;[&lt;/span>$i&lt;span style="color:#e6db74">] === &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> 成功: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74"> 失敗: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>END_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST END: &lt;/span>$END_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;成功次數: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;失敗次數: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>10.36.16.243 是 nginx-svc Cluster IP&lt;/p>
+&lt;p>需要先確認 &lt;code>nginx-svc&lt;/code> 的 IP 是多少，然後修改腳本中的 &lt;code>EXPECTED_IP&lt;/code> 變數。&lt;/p>
+&lt;br>
+&lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/3.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/4.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/5.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>模擬 KubeDNS Pod 異常&lt;span class="hx-absolute -hx-mt-20" id="模擬-kubedns-pod-異常">&lt;/span>
+&lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
+&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/6.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/7.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，可以發現解析還是正常，代表使用 Cloud DNS 後，KubeDNS 對於叢集內部解析不會有影響&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/8.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>Internal DNS (Cloud DNS Private)&lt;span class="hx-absolute -hx-mt-20" id="internal-dns-cloud-dns-private">&lt;/span>
+&lt;a href="#internal-dns-cloud-dns-private" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先建立一個 cloud dns private，以下範例是 aaa.test-audit.com &amp;gt; 10.1.1.4，並將此 use VPC 與 GKE 的 VPC 打通&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/1.webp"
+alt="設定 cloud dns private" width="600">&lt;figcaption>
+&lt;p>設定 cloud dns private&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/2.webp" width="750">
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>相關 Prometheus 監控指標：&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>測試腳本：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/bin/bash
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>get_taiwan_time&lt;span style="color:#f92672">()&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 獲取當前 UTC 時間的 Unix 時間戳&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> UTC_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -u +%s&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 加上 8 小時 (台灣時間是 UTC+8)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TAIPEI_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>UTC_TIMESTAMP &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">28800&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 將時間戳轉換為格式化後的日期時間&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> date -d &lt;span style="color:#e6db74">&amp;#34;@&lt;/span>$TAIPEI_TIMESTAMP&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;aaa.test-audit.com&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;10.1.1.4&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>START_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST START: &lt;/span>$START_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#66d9ef">$(&lt;/span>seq &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>; &lt;span style="color:#66d9ef">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> OUTPUT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>nslookup &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$DOMAIN&lt;span style="color:#e6db74">&amp;#34;&lt;/span> 2&amp;gt;&amp;amp;1&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ADDR_LINE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$OUTPUT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | grep -E &lt;span style="color:#e6db74">&amp;#39;^Address:&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$ADDR_LINE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">==&lt;/span> *&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$EXPECTED_IP&lt;span style="color:#e6db74">&amp;#34;&lt;/span>* &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>SUCCESS_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>FAIL_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;[&lt;/span>$i&lt;span style="color:#e6db74">] === &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> 成功: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74"> 失敗: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>END_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST END: &lt;/span>$END_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;成功次數: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;失敗次數: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>10.1.1.4 是隨機亂取的 IP，只是為了確認 domain 是否能夠正常解析&lt;/p>
+&lt;br>
+&lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本-1">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/3.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/4.webp"
+alt="Prometheus 監控指標 (監控中間斷掉是因為 port-forward 斷了)" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標 (監控中間斷掉是因為 port-forward 斷了)&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/5.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>模擬 KubeDNS Pod 異常&lt;span class="hx-absolute -hx-mt-20" id="模擬-kubedns-pod-異常-1">&lt;/span>
+&lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
+&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/6.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/7.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/8.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，可以發現解析還是正常，代表使用 Cloud DNS 後，KubeDNS 對於 internal-dns 解析不會有影響&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>外部 DNS (ifconfig.me)&lt;span class="hx-absolute -hx-mt-20" id="外部-dns-ifconfigme">&lt;/span>
+&lt;a href="#%e5%a4%96%e9%83%a8-dns-ifconfigme" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/1.webp" width="750">
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>相關 Prometheus 監控指標：&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>測試腳本：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/bin/bash
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>get_taiwan_time&lt;span style="color:#f92672">()&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 獲取當前 UTC 時間的 Unix 時間戳&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> UTC_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -u +%s&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 加上 8 小時 (台灣時間是 UTC+8)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TAIPEI_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>UTC_TIMESTAMP &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">28800&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 將時間戳轉換為格式化後的日期時間&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> date -d &lt;span style="color:#e6db74">&amp;#34;@&lt;/span>$TAIPEI_TIMESTAMP&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;ifconfig.me&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;34.160.111.145&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>START_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST START: &lt;/span>$START_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#66d9ef">$(&lt;/span>seq &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>; &lt;span style="color:#66d9ef">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> OUTPUT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>nslookup &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$DOMAIN&lt;span style="color:#e6db74">&amp;#34;&lt;/span> 2&amp;gt;&amp;amp;1&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ADDR_LINE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$OUTPUT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | grep -E &lt;span style="color:#e6db74">&amp;#39;^Address:&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$ADDR_LINE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">==&lt;/span> *&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$EXPECTED_IP&lt;span style="color:#e6db74">&amp;#34;&lt;/span>* &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>SUCCESS_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>FAIL_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;[&lt;/span>$i&lt;span style="color:#e6db74">] === &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> 成功: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74"> 失敗: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>END_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST END: &lt;/span>$END_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;成功次數: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;失敗次數: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>34.160.111.145 是 ifconfig.me 的 IP，只是為了確認 domain 是否能夠正常解析&lt;/p>
+&lt;br>
+&lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本-2">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/2.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/3.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/4.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>模擬 KubeDNS Pod 異常&lt;span class="hx-absolute -hx-mt-20" id="模擬-kubedns-pod-異常-2">&lt;/span>
+&lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
+&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/5.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/6.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/7.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，可以發現解析還是正常，代表使用 Cloud DNS 後，KubeDNS 對於外部 DNS解析不會有影響&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>k6 測試&lt;span class="hx-absolute -hx-mt-20" id="k6-測試">&lt;/span>
+&lt;a href="#k6-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>額外在另一個 cluster 建立 nginx deployment 開 5 個 pod 以及 svc 改成 lb (L4)，然後在 cloud dns 的 test-audit-com 設定 nginx-lb-internal.test-audit.com 解析到內網的 svc (10.156.16.16)&lt;/p>
+&lt;br>
+&lt;p>使用 k6 測試 kube dns 模式下 IP 跟 DNS 的差異&lt;/p>
+&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>有發現之前在 KubeDNS 跟 KubeDNS + NodeLocal DNSCache 會有 DNS RPS 大於 IP 的情況，但使用 Cloud DNS 後則沒有發生，推測是因為。Cloud DNS 在 Cluster 外部，所以會比較慢&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>第一次測試&lt;span class="hx-absolute -hx-mt-20" id="第一次測試">&lt;/span>
+&lt;a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=179.06ms / 3479 RPS)、DNS (avg=191.56ms / 3348 RPS)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/1.webp"
+alt="IP 第一次測試" width="1000">&lt;figcaption>
+&lt;p>IP 第一次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/2.webp"
+alt="DNS 第一次測試" width="1000">&lt;figcaption>
+&lt;p>DNS 第一次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>第二次測試&lt;span class="hx-absolute -hx-mt-20" id="第二次測試">&lt;/span>
+&lt;a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=193.67ms / 3322 RPS)、DNS (avg=302.73ms / 2430 RPS)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/3.webp"
+alt="IP 第二次測試" width="1000">&lt;figcaption>
+&lt;p>IP 第二次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/4.webp"
+alt="DNS 第二次測試" width="1000">&lt;figcaption>
+&lt;p>DNS 第二次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>第三次測試&lt;span class="hx-absolute -hx-mt-20" id="第三次測試">&lt;/span>
+&lt;a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=174.94ms / 3529 RPS)、DNS (avg=253.71ms / 2761 RPS)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/5.webp"
+alt="IP 第三次測試" width="1000">&lt;figcaption>
+&lt;p>IP 第三次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/6.webp"
+alt="DNS 第三次測試" width="1000">&lt;figcaption>
+&lt;p>DNS 第三次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>第四次測試&lt;span class="hx-absolute -hx-mt-20" id="第四次測試">&lt;/span>
+&lt;a href="#%e7%ac%ac%e5%9b%9b%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=227.56ms / 2971 RPS)、DNS (avg=316.07ms / 2361 RPS)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/7.webp"
+alt="IP 第四次測試" width="1000">&lt;figcaption>
+&lt;p>IP 第四次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/8.webp"
+alt="DNS 第四次測試" width="1000">&lt;figcaption>
+&lt;p>DNS 第四次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>結論&lt;span class="hx-absolute -hx-mt-20" id="結論">&lt;/span>
+&lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 Cloud DNS 的模式下，所有的 DNS 解析都會依靠 Cloud DNS，不會使用到 KubeDNS，所以可以把 KubeDNS 關成 0 顆，避免浪費資源。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/gke-cloud-dns-architecture.webp"
+alt="GKE KubeDNS" width="700">&lt;figcaption>
+&lt;p>GKE KubeDNS&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>另外也可以從官方文件中得知 KubeDNS 的 &lt;code>/etc/resolv.conf&lt;/code> 設定值，可以知道 Pod 最開始使用的 DNS 解析 Server 是誰。&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/resolv.webp"
+alt="/etc/resolv.conf 設定值 服務探索和 DNS /etc/resolv.conf" width="800">&lt;figcaption>
+&lt;p>/etc/resolv.conf 設定值 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value" target="_blank" rel="noopener">服務探索和 DNS /etc/resolv.conf&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/config.webp"
+alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
+&lt;p>實際查看 /etc/resolv.conf&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 GKE 適用的 Cloud DNS：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw&lt;/a>&lt;/p></description></item><item><title>GKE KubeDNS 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-kubedns/</link><pubDate>Mon, 04 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-kubedns/</guid><description>
+&lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone，所以需要測試 GKE 內的 DNS 解析方案，避免發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，本次測試 KubeDNS 的運作。&lt;/p>
+&lt;br>
+&lt;p>先建立一個 dns-test pod 以及 nginx 的 pod + svc，會分別測試&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>&lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" >叢集內部 cluster.local&lt;/a> (nginx-svc.default.svc.cluster.local)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="#internal-dns-cloud-dns-private" >Internal DNS (Cloud DNS Private)&lt;/a> (aaa.test-audit.com.)&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>&lt;a href="#%e5%a4%96%e9%83%a8-dns-ifconfigme" >外部 dns&lt;/a> (ifconfig.me)&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod&lt;/p>
+&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
+&lt;br>
+&lt;h2>叢集內部 cluster.local&lt;span class="hx-absolute -hx-mt-20" id="叢集內部-clusterlocal">&lt;/span>
+&lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/1.webp" width="750">
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>相關 Prometheus 監控指標：&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>測試腳本：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/bin/bash
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>get_taiwan_time&lt;span style="color:#f92672">()&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 獲取當前 UTC 時間的 Unix 時間戳&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> UTC_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -u +%s&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 加上 8 小時 (台灣時間是 UTC+8)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TAIPEI_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>UTC_TIMESTAMP &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">28800&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 將時間戳轉換為格式化後的日期時間&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> date -d &lt;span style="color:#e6db74">&amp;#34;@&lt;/span>$TAIPEI_TIMESTAMP&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;nginx-svc.default.svc.cluster.local&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;10.36.17.113&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>START_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST START: &lt;/span>$START_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#66d9ef">$(&lt;/span>seq &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>; &lt;span style="color:#66d9ef">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> OUTPUT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>nslookup &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$DOMAIN&lt;span style="color:#e6db74">&amp;#34;&lt;/span> 2&amp;gt;&amp;amp;1&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ADDR_LINE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$OUTPUT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | grep -E &lt;span style="color:#e6db74">&amp;#39;^Address:&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$ADDR_LINE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">==&lt;/span> *&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$EXPECTED_IP&lt;span style="color:#e6db74">&amp;#34;&lt;/span>* &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>SUCCESS_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>FAIL_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;[&lt;/span>$i&lt;span style="color:#e6db74">] === &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> 成功: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74"> 失敗: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>END_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST END: &lt;/span>$END_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;成功次數: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;失敗次數: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>10.36.17.113 是 nginx-svc Cluster IP&lt;/p>
+&lt;p>需要先確認 &lt;code>nginx-svc&lt;/code> 的 IP 是多少，然後修改腳本中的 &lt;code>EXPECTED_IP&lt;/code> 變數。&lt;/p>
+&lt;br>
+&lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/2.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/3.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/4.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>可以觀察 kubedns_dnsmasq_hits hit 有持續上升&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>模擬 KubeDNS Pod 異常&lt;span class="hx-absolute -hx-mt-20" id="模擬-kubedns-pod-異常">&lt;/span>
+&lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
+&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/5.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/6.webp"
+alt="KubeDNS 關成 0 顆" width="500">&lt;figcaption>
+&lt;p>KubeDNS 關成 0 顆&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/7.webp"
+alt="因為 Pod 不會馬上關掉，所以還能夠解析 DNS" width="500">&lt;figcaption>
+&lt;p>因為 Pod 不會馬上關掉，所以還能夠解析 DNS&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/8.webp"
+alt="切換回來就正常可以解析" width="500">&lt;figcaption>
+&lt;p>切換回來就正常可以解析&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/9.webp"
+alt="進入下指令查看錯誤訊息" width="500">&lt;figcaption>
+&lt;p>進入下指令查看錯誤訊息&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/10.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 7234 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，可以看到有額外測試，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
+&lt;br>
+&lt;br>
+從 Prometheus 可以發現，kubedns_dnsmasq_hits 在 15:48 開始飆高，與 2000 筆切換時間差不多，後面就因為 KubeDNS 關掉，導致沒有 metrics&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/11.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>Internal DNS (Cloud DNS Private)&lt;span class="hx-absolute -hx-mt-20" id="internal-dns-cloud-dns-private">&lt;/span>
+&lt;a href="#internal-dns-cloud-dns-private" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先建立一個 cloud dns private，以下範例是 aaa.test-audit.com &amp;gt; 10.1.1.4，並將此 use VPC 與 GKE 的 VPC 打通&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/1.webp"
+alt="設定 cloud dns private" width="600">&lt;figcaption>
+&lt;p>設定 cloud dns private&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/2.webp" width="750">
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>相關 Prometheus 監控指標：&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>測試腳本：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/bin/bash
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>get_taiwan_time&lt;span style="color:#f92672">()&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 獲取當前 UTC 時間的 Unix 時間戳&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> UTC_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -u +%s&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 加上 8 小時 (台灣時間是 UTC+8)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TAIPEI_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>UTC_TIMESTAMP &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">28800&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 將時間戳轉換為格式化後的日期時間&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> date -d &lt;span style="color:#e6db74">&amp;#34;@&lt;/span>$TAIPEI_TIMESTAMP&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;aaa.test-audit.com&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;10.1.1.4&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>START_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST START: &lt;/span>$START_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#66d9ef">$(&lt;/span>seq &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>; &lt;span style="color:#66d9ef">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> OUTPUT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>nslookup &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$DOMAIN&lt;span style="color:#e6db74">&amp;#34;&lt;/span> 2&amp;gt;&amp;amp;1&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ADDR_LINE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$OUTPUT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | grep -E &lt;span style="color:#e6db74">&amp;#39;^Address:&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$ADDR_LINE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">==&lt;/span> *&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$EXPECTED_IP&lt;span style="color:#e6db74">&amp;#34;&lt;/span>* &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>SUCCESS_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>FAIL_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;[&lt;/span>$i&lt;span style="color:#e6db74">] === &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> 成功: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74"> 失敗: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>END_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST END: &lt;/span>$END_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;成功次數: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;失敗次數: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>10.1.1.4 是隨機亂取的 IP，只是為了確認 domain 是否能夠正常解析&lt;/p>
+&lt;br>
+&lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本-1">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/3.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/4.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/5.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>可以觀察 kubedns_dnsmasq_hits hit 有持續上升&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>模擬 KubeDNS Pod 異常&lt;span class="hx-absolute -hx-mt-20" id="模擬-kubedns-pod-異常-1">&lt;/span>
+&lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
+&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/6.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/7.webp"
+alt="關閉 pod 時間" width="450">&lt;figcaption>
+&lt;p>關閉 pod 時間&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/8.webp"
+alt="因為 pod 關閉開始失敗" width="450">&lt;figcaption>
+&lt;p>因為 pod 關閉開始失敗&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/9.webp"
+alt="解析恢復" width="450">&lt;figcaption>
+&lt;p>解析恢復&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/10.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/11.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 4847 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS， 最後再將 KubeDNS 切成 1 顆後，就正常可以解析了&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>外部 DNS (ifconfig.me)&lt;span class="hx-absolute -hx-mt-20" id="外部-dns-ifconfigme">&lt;/span>
+&lt;a href="#%e5%a4%96%e9%83%a8-dns-ifconfigme" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/1.webp" width="750">
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>相關 Prometheus 監控指標：&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>測試腳本：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/bin/bash
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>get_taiwan_time&lt;span style="color:#f92672">()&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 獲取當前 UTC 時間的 Unix 時間戳&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> UTC_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -u +%s&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 加上 8 小時 (台灣時間是 UTC+8)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TAIPEI_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>UTC_TIMESTAMP &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">28800&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 將時間戳轉換為格式化後的日期時間&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> date -d &lt;span style="color:#e6db74">&amp;#34;@&lt;/span>$TAIPEI_TIMESTAMP&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;ifconfig.me&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;34.160.111.145&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>START_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10000&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST START: &lt;/span>$START_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#66d9ef">$(&lt;/span>seq &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>; &lt;span style="color:#66d9ef">do&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> OUTPUT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>nslookup &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$DOMAIN&lt;span style="color:#e6db74">&amp;#34;&lt;/span> 2&amp;gt;&amp;amp;1&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ADDR_LINE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$OUTPUT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | grep -E &lt;span style="color:#e6db74">&amp;#39;^Address:&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$ADDR_LINE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">==&lt;/span> *&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$EXPECTED_IP&lt;span style="color:#e6db74">&amp;#34;&lt;/span>* &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>SUCCESS_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>FAIL_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">fi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;[&lt;/span>$i&lt;span style="color:#e6db74">] === &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> 成功: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74"> 失敗: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>END_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST END: &lt;/span>$END_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;成功次數: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;失敗次數: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>34.160.111.145 是 ifconfig.me 的 IP，只是為了確認 domain 是否能夠正常解析&lt;/p>
+&lt;br>
+&lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本-2">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/2.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/3.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/4.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 kubedns_dnsmasq_hits hit 有持續上升，且有比較特別的現象是 叢集內部 cluster.local 跟 internal-dns kubedns_dnsmasq_misses 會跟 kubedns_dnsmasq_hits 差不多，但外部 DNS卻不會 (但目前網路上沒有相關的 metrics 資訊)&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>模擬 KubeDNS Pod 異常&lt;span class="hx-absolute -hx-mt-20" id="模擬-kubedns-pod-異常-2">&lt;/span>
+&lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
+&lt;p>測試結果：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/5.webp"
+alt="測試結果" width="450">&lt;figcaption>
+&lt;p>測試結果&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/6.webp"
+alt="強制刪除，所以馬上無法解析" width="500">&lt;figcaption>
+&lt;p>強制刪除，所以馬上無法解析&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/7.webp"
+alt="因為是刪除，不是切成 0 顆，所以他馬上又長一顆出來，就恢復正常" width="500">&lt;figcaption>
+&lt;p>因為是刪除，不是切成 0 顆，所以他馬上又長一顆出來，就恢復正常&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/8.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/9.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，這次強制刪除 pod，所以在 2110 筆的時候就會失敗，但因為這次不是將 pod 關成 0 顆，他會馬上再長一顆新的，所以約 2123 就正常了，中間時間大約是 7 秒左右，就正常可以解析了&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>k6 測試&lt;span class="hx-absolute -hx-mt-20" id="k6-測試">&lt;/span>
+&lt;a href="#k6-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>額外在另一個 cluster 建立 nginx deployment 開 5 個 pod 以及 svc 改成 lb (L4)，然後在 cloud dns 的 test-audit-com 設定 nginx-lb-internal.test-audit.com 解析到內網的 svc (10.156.16.5)&lt;/p>
+&lt;br>
+&lt;p>使用 k6 測試 kube dns 模式下 IP 跟 DNS 的差異&lt;/p>
+&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>第一次測試&lt;span class="hx-absolute -hx-mt-20" id="第一次測試">&lt;/span>
+&lt;a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=137.2ms / 4080 RPS)、DNS (avg=140.4ms / 4024 RPS)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/1.webp"
+alt="IP 第一次測試" width="1000">&lt;figcaption>
+&lt;p>IP 第一次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/2.webp"
+alt="DNS 第一次測試" width="1000">&lt;figcaption>
+&lt;p>DNS 第一次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>第二次測試&lt;span class="hx-absolute -hx-mt-20" id="第二次測試">&lt;/span>
+&lt;a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=151.05ms / 3878 RPS)、DNS (avg=260.19ms / 2715 RPS)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/3.webp"
+alt="IP 第二次測試" width="1000">&lt;figcaption>
+&lt;p>IP 第二次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/4.webp"
+alt="DNS 第二次測試" width="1000">&lt;figcaption>
+&lt;p>DNS 第二次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>第三次測試&lt;span class="hx-absolute -hx-mt-20" id="第三次測試">&lt;/span>
+&lt;a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=150.84ms / 3858 RPS)、DNS (avg=155.8ms / 3806 RPS)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/5.webp"
+alt="IP 第三次測試" width="1000">&lt;figcaption>
+&lt;p>IP 第三次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/6.webp"
+alt="DNS 第三次測試" width="1000">&lt;figcaption>
+&lt;p>DNS 第三次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>第四次測試&lt;span class="hx-absolute -hx-mt-20" id="第四次測試">&lt;/span>
+&lt;a href="#%e7%ac%ac%e5%9b%9b%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=321.47ms / 2337 RPS)、DNS (avg=254.11ms / 2775 RPS)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/7.webp"
+alt="IP 第四次測試" width="1000">&lt;figcaption>
+&lt;p>IP 第四次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/8.webp"
+alt="DNS 第四次測試" width="1000">&lt;figcaption>
+&lt;p>DNS 第四次測試&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>結論&lt;span class="hx-absolute -hx-mt-20" id="結論">&lt;/span>
+&lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 KubeDNS 的模式下，對於 KubeDNS 的依賴性極高，只要壞掉，不管任何的解析(叢集內、internal-dns、外部 dns)都會失效。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/kubeDNS.webp"
+alt="GKE KubeDNS" width="700">&lt;figcaption>
+&lt;p>GKE KubeDNS&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>另外也可以從官方文件中得知 KubeDNS 的 &lt;code>/etc/resolv.conf&lt;/code> 設定值，可以知道 Pod 最開始使用的 DNS 解析 Server 是誰。&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/resolv.webp"
+alt="/etc/resolv.conf 設定值 服務探索和 DNS /etc/resolv.conf" width="800">&lt;figcaption>
+&lt;p>/etc/resolv.conf 設定值 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value" target="_blank" rel="noopener">服務探索和 DNS /etc/resolv.conf&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/config.webp"
+alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
+&lt;p>實際查看 /etc/resolv.conf&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 KubeDNS：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw&lt;/a>&lt;/p></description></item><item><title>GKE KubeDNS + NodeLocal DNSCache 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</link><pubDate>Fri, 01 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</guid><description>
 &lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone，所以需要測試 GKE 內的 DNS 解析方案，避免發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，本次測試 KubeDNS + NodeLocal DNSCache 的運作。&lt;/p>
 &lt;br>
 &lt;p>先建立一個 dns-test pod 以及 nginx 的 pod + svc，會分別測試&lt;/p>
@@ -744,560 +1819,7 @@ alt="/etc/resolv.conf 設定值 服務探索和 DNS /etc/resolv.conf" width="800
 &lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>設定 NodeLocal DNSCache：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw&lt;/a>&lt;/p></description></item><item><title>GKE KubeDNS 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-kubedns/</link><pubDate>Mon, 04 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-kubedns/</guid><description>
-&lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone，所以需要測試 GKE 內的 DNS 解析方案，避免發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，本次測試 KubeDNS 的運作。&lt;/p>
-&lt;br>
-&lt;p>先建立一個 dns-test pod 以及 nginx 的 pod + svc，會分別測試&lt;/p>
-&lt;ol>
-&lt;li>
-&lt;p>&lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" >叢集內部 cluster.local&lt;/a> (nginx-svc.default.svc.cluster.local)&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>&lt;a href="#internal-dns-cloud-dns-private" >Internal DNS (Cloud DNS Private)&lt;/a> (aaa.test-audit.com.)&lt;/p>
-&lt;/li>
-&lt;li>
-&lt;p>&lt;a href="#%e5%a4%96%e9%83%a8-dns-ifconfigme" >外部 dns&lt;/a> (ifconfig.me)&lt;/p>
-&lt;/li>
-&lt;/ol>
-&lt;p>並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod&lt;/p>
-&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
-&lt;br>
-&lt;h2>叢集內部 cluster.local&lt;span class="hx-absolute -hx-mt-20" id="叢集內部-clusterlocal">&lt;/span>
-&lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/1.webp" width="750">
-&lt;/figure>
-&lt;br>
-&lt;ul>
-&lt;li>相關 Prometheus 監控指標：&lt;/li>
-&lt;/ul>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-&lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-title="Copy code"
->
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;p>測試腳本：&lt;/p>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/bin/bash
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>get_taiwan_time&lt;span style="color:#f92672">()&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 獲取當前 UTC 時間的 Unix 時間戳&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> UTC_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -u +%s&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 加上 8 小時 (台灣時間是 UTC+8)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TAIPEI_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>UTC_TIMESTAMP &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">28800&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 將時間戳轉換為格式化後的日期時間&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> date -d &lt;span style="color:#e6db74">&amp;#34;@&lt;/span>$TAIPEI_TIMESTAMP&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;nginx-svc.default.svc.cluster.local&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;10.36.17.113&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>START_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10000&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST START: &lt;/span>$START_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#66d9ef">$(&lt;/span>seq &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>; &lt;span style="color:#66d9ef">do&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> OUTPUT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>nslookup &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$DOMAIN&lt;span style="color:#e6db74">&amp;#34;&lt;/span> 2&amp;gt;&amp;amp;1&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ADDR_LINE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$OUTPUT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | grep -E &lt;span style="color:#e6db74">&amp;#39;^Address:&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$ADDR_LINE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">==&lt;/span> *&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$EXPECTED_IP&lt;span style="color:#e6db74">&amp;#34;&lt;/span>* &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>SUCCESS_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>FAIL_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">fi&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;[&lt;/span>$i&lt;span style="color:#e6db74">] === &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> 成功: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74"> 失敗: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>END_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST END: &lt;/span>$END_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;成功次數: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;失敗次數: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-&lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-title="Copy code"
->
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>10.36.17.113 是 nginx-svc Cluster IP&lt;/p>
-&lt;p>需要先確認 &lt;code>nginx-svc&lt;/code> 的 IP 是多少，然後修改腳本中的 &lt;code>EXPECTED_IP&lt;/code> 變數。&lt;/p>
-&lt;br>
-&lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本">&lt;/span>
-&lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/2.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/3.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/4.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>可以觀察 kubedns_dnsmasq_hits hit 有持續上升&lt;/p>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;h3>模擬 KubeDNS Pod 異常&lt;span class="hx-absolute -hx-mt-20" id="模擬-kubedns-pod-異常">&lt;/span>
-&lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
-&lt;p>測試結果：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/5.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/6.webp"
-alt="KubeDNS 關成 0 顆" width="500">&lt;figcaption>
-&lt;p>KubeDNS 關成 0 顆&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/7.webp"
-alt="因為 Pod 不會馬上關掉，所以還能夠解析 DNS" width="500">&lt;figcaption>
-&lt;p>因為 Pod 不會馬上關掉，所以還能夠解析 DNS&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/8.webp"
-alt="切換回來就正常可以解析" width="500">&lt;figcaption>
-&lt;p>切換回來就正常可以解析&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/9.webp"
-alt="進入下指令查看錯誤訊息" width="500">&lt;figcaption>
-&lt;p>進入下指令查看錯誤訊息&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/10.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 7234 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，可以看到有額外測試，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
-&lt;br>
-&lt;br>
-從 Prometheus 可以發現，kubedns_dnsmasq_hits 在 15:48 開始飆高，與 2000 筆切換時間差不多，後面就因為 KubeDNS 關掉，導致沒有 metrics&lt;/p>&lt;/div>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/11.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;h2>Internal DNS (Cloud DNS Private)&lt;span class="hx-absolute -hx-mt-20" id="internal-dns-cloud-dns-private">&lt;/span>
-&lt;a href="#internal-dns-cloud-dns-private" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先建立一個 cloud dns private，以下範例是 aaa.test-audit.com &amp;gt; 10.1.1.4，並將此 use VPC 與 GKE 的 VPC 打通&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/1.webp"
-alt="設定 cloud dns private" width="600">&lt;figcaption>
-&lt;p>設定 cloud dns private&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/2.webp" width="750">
-&lt;/figure>
-&lt;br>
-&lt;ul>
-&lt;li>相關 Prometheus 監控指標：&lt;/li>
-&lt;/ul>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-&lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-title="Copy code"
->
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;p>測試腳本：&lt;/p>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/bin/bash
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>get_taiwan_time&lt;span style="color:#f92672">()&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 獲取當前 UTC 時間的 Unix 時間戳&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> UTC_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -u +%s&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 加上 8 小時 (台灣時間是 UTC+8)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TAIPEI_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>UTC_TIMESTAMP &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">28800&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 將時間戳轉換為格式化後的日期時間&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> date -d &lt;span style="color:#e6db74">&amp;#34;@&lt;/span>$TAIPEI_TIMESTAMP&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;aaa.test-audit.com&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;10.1.1.4&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>START_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10000&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST START: &lt;/span>$START_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#66d9ef">$(&lt;/span>seq &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>; &lt;span style="color:#66d9ef">do&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> OUTPUT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>nslookup &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$DOMAIN&lt;span style="color:#e6db74">&amp;#34;&lt;/span> 2&amp;gt;&amp;amp;1&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ADDR_LINE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$OUTPUT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | grep -E &lt;span style="color:#e6db74">&amp;#39;^Address:&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$ADDR_LINE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">==&lt;/span> *&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$EXPECTED_IP&lt;span style="color:#e6db74">&amp;#34;&lt;/span>* &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>SUCCESS_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>FAIL_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">fi&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;[&lt;/span>$i&lt;span style="color:#e6db74">] === &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> 成功: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74"> 失敗: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>END_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST END: &lt;/span>$END_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;成功次數: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;失敗次數: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-&lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-title="Copy code"
->
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>10.1.1.4 是隨機亂取的 IP，只是為了確認 domain 是否能夠正常解析&lt;/p>
-&lt;br>
-&lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本-1">&lt;/span>
-&lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/3.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/4.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/5.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>可以觀察 kubedns_dnsmasq_hits hit 有持續上升&lt;/p>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;h3>模擬 KubeDNS Pod 異常&lt;span class="hx-absolute -hx-mt-20" id="模擬-kubedns-pod-異常-1">&lt;/span>
-&lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
-&lt;p>測試結果：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/6.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/7.webp"
-alt="關閉 pod 時間" width="450">&lt;figcaption>
-&lt;p>關閉 pod 時間&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/8.webp"
-alt="因為 pod 關閉開始失敗" width="450">&lt;figcaption>
-&lt;p>因為 pod 關閉開始失敗&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/9.webp"
-alt="解析恢復" width="450">&lt;figcaption>
-&lt;p>解析恢復&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/10.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/11.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 4847 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS， 最後再將 KubeDNS 切成 1 顆後，就正常可以解析了&lt;/p>&lt;/div>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;h2>外部 DNS (ifconfig.me)&lt;span class="hx-absolute -hx-mt-20" id="外部-dns-ifconfigme">&lt;/span>
-&lt;a href="#%e5%a4%96%e9%83%a8-dns-ifconfigme" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/1.webp" width="750">
-&lt;/figure>
-&lt;br>
-&lt;ul>
-&lt;li>相關 Prometheus 監控指標：&lt;/li>
-&lt;/ul>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-&lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-title="Copy code"
->
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;p>測試腳本：&lt;/p>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#!/bin/bash
-&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>get_taiwan_time&lt;span style="color:#f92672">()&lt;/span> &lt;span style="color:#f92672">{&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 獲取當前 UTC 時間的 Unix 時間戳&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> UTC_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>date -u +%s&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 加上 8 小時 (台灣時間是 UTC+8)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> TAIPEI_TIMESTAMP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>UTC_TIMESTAMP &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">28800&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># 將時間戳轉換為格式化後的日期時間&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> date -d &lt;span style="color:#e6db74">&amp;#34;@&lt;/span>$TAIPEI_TIMESTAMP&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#e6db74">&amp;#34;+%Y-%m-%d %H:%M:%S&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;ifconfig.me&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;34.160.111.145&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>START_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10000&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST START: &lt;/span>$START_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">for&lt;/span> i in &lt;span style="color:#66d9ef">$(&lt;/span>seq &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>; &lt;span style="color:#66d9ef">do&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> OUTPUT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>nslookup &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$DOMAIN&lt;span style="color:#e6db74">&amp;#34;&lt;/span> 2&amp;gt;&amp;amp;1&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ADDR_LINE&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$OUTPUT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | grep -E &lt;span style="color:#e6db74">&amp;#39;^Address:&amp;#39;&lt;/span>&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> &lt;span style="color:#e6db74">&amp;#34;&lt;/span>$ADDR_LINE&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#f92672">==&lt;/span> *&lt;span style="color:#e6db74">&amp;#34;&lt;/span>$EXPECTED_IP&lt;span style="color:#e6db74">&amp;#34;&lt;/span>* &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>SUCCESS_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">else&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> FAIL_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$((&lt;/span>FAIL_COUNT &lt;span style="color:#f92672">+&lt;/span> &lt;span style="color:#ae81ff">1&lt;/span>&lt;span style="color:#66d9ef">))&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#66d9ef">fi&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> echo &lt;span style="color:#e6db74">&amp;#34;[&lt;/span>$i&lt;span style="color:#e6db74">] === &lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>&lt;span style="color:#e6db74"> 成功: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74"> 失敗: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">done&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>END_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;== NSLOOKUP TEST END: &lt;/span>$END_TIME&lt;span style="color:#e6db74"> ==&amp;#34;&lt;/span> | tee -a nslookup_full.log
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;成功次數: &lt;/span>$SUCCESS_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;失敗次數: &lt;/span>$FAIL_COUNT&lt;span style="color:#e6db74">&amp;#34;&lt;/span> | tee -a nslookup_full.log&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-&lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-title="Copy code"
->
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>34.160.111.145 是 ifconfig.me 的 IP，只是為了確認 domain 是否能夠正常解析&lt;/p>
-&lt;br>
-&lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本-2">&lt;/span>
-&lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/2.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/3.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/4.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 kubedns_dnsmasq_hits hit 有持續上升，且有比較特別的現象是 叢集內部 cluster.local 跟 internal-dns kubedns_dnsmasq_misses 會跟 kubedns_dnsmasq_hits 差不多，但外部 DNS卻不會 (但目前網路上沒有相關的 metrics 資訊)&lt;/p>&lt;/div>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;h3>模擬 KubeDNS Pod 異常&lt;span class="hx-absolute -hx-mt-20" id="模擬-kubedns-pod-異常-2">&lt;/span>
-&lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
-&lt;p>測試結果：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/5.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/6.webp"
-alt="強制刪除，所以馬上無法解析" width="500">&lt;figcaption>
-&lt;p>強制刪除，所以馬上無法解析&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/7.webp"
-alt="因為是刪除，不是切成 0 顆，所以他馬上又長一顆出來，就恢復正常" width="500">&lt;figcaption>
-&lt;p>因為是刪除，不是切成 0 顆，所以他馬上又長一顆出來，就恢復正常&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/8.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/9.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，這次強制刪除 pod，所以在 2110 筆的時候就會失敗，但因為這次不是將 pod 關成 0 顆，他會馬上再長一顆新的，所以約 2123 就正常了，中間時間大約是 7 秒左右，就正常可以解析了&lt;/p>&lt;/div>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;h2>k6 測試&lt;span class="hx-absolute -hx-mt-20" id="k6-測試">&lt;/span>
-&lt;a href="#k6-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>額外在另一個 cluster 建立 nginx deployment 開 5 個 pod 以及 svc 改成 lb (L4)，然後在 cloud dns 的 test-audit-com 設定 nginx-lb-internal.test-audit.com 解析到內網的 svc (10.156.16.5)&lt;/p>
-&lt;br>
-&lt;p>使用 k6 測試 kube dns 模式下 IP 跟 DNS 的差異&lt;/p>
-&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
-&lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定&lt;/p>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;h3>第一次測試&lt;span class="hx-absolute -hx-mt-20" id="第一次測試">&lt;/span>
-&lt;a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=137.2ms / 4080 RPS)、DNS (avg=140.4ms / 4024 RPS)&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/1.webp"
-alt="IP 第一次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第一次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/2.webp"
-alt="DNS 第一次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第一次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;h3>第二次測試&lt;span class="hx-absolute -hx-mt-20" id="第二次測試">&lt;/span>
-&lt;a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=151.05ms / 3878 RPS)、DNS (avg=260.19ms / 2715 RPS)&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/3.webp"
-alt="IP 第二次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第二次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/4.webp"
-alt="DNS 第二次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第二次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;h3>第三次測試&lt;span class="hx-absolute -hx-mt-20" id="第三次測試">&lt;/span>
-&lt;a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=150.84ms / 3858 RPS)、DNS (avg=155.8ms / 3806 RPS)&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/5.webp"
-alt="IP 第三次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第三次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/6.webp"
-alt="DNS 第三次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第三次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;h3>第四次測試&lt;span class="hx-absolute -hx-mt-20" id="第四次測試">&lt;/span>
-&lt;a href="#%e7%ac%ac%e5%9b%9b%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=321.47ms / 2337 RPS)、DNS (avg=254.11ms / 2775 RPS)&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/7.webp"
-alt="IP 第四次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第四次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/k6/8.webp"
-alt="DNS 第四次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第四次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;h2>結論&lt;span class="hx-absolute -hx-mt-20" id="結論">&lt;/span>
-&lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 KubeDNS 的模式下，對於 KubeDNS 的依賴性極高，只要壞掉，不管任何的解析(叢集內、internal-dns、外部 dns)都會失效。&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/kubeDNS.webp"
-alt="GKE KubeDNS" width="700">&lt;figcaption>
-&lt;p>GKE KubeDNS&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>另外也可以從官方文件中得知 KubeDNS 的 &lt;code>/etc/resolv.conf&lt;/code> 設定值，可以知道 Pod 最開始使用的 DNS 解析 Server 是誰。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/resolv.webp"
-alt="/etc/resolv.conf 設定值 服務探索和 DNS /etc/resolv.conf" width="800">&lt;figcaption>
-&lt;p>/etc/resolv.conf 設定值 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value" target="_blank" rel="noopener">服務探索和 DNS /etc/resolv.conf&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 KubeDNS：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw&lt;/a>&lt;/p></description></item><item><title>GCP Load Balancer 介紹</title><link>https://pin-yi.me/blog/gcp/gcp-lb-introduce/</link><pubDate>Mon, 26 May 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-lb-introduce/</guid><description>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>設定 NodeLocal DNSCache：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw&lt;/a>&lt;/p></description></item><item><title>GCP Load Balancer 介紹</title><link>https://pin-yi.me/blog/gcp/gcp-lb-introduce/</link><pubDate>Mon, 26 May 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-lb-introduce/</guid><description>
 &lt;p>最近公司在導入 Multi-Zone，有發現大量的跨域費用產生，主要是不同 Cluster 或是 Cluster 跟 VM 之間的跨域流量，與 Google TAM 討論，他們有提出可以嘗試用 &lt;a href="https://cloud.google.com/load-balancing/docs/service-lb-policy" target="_blank" rel="noopener">Service load balancing policy&lt;/a> 的 Waterfall by zone，或是之後會推出的 Zone affinity，這些都會需要使用到 Load Balancer，簡單整理一下發現 GCP 的 Load Balancer 其實有很多種，因此，這篇文章就來介紹一下 GCP 的 Load Balancer。
 (如果 Service load balancing policy 測試有結果，也會再寫一篇文章來介紹)&lt;/p>
 &lt;br>
