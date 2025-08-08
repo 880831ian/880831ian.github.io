@@ -1,0 +1,241 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Cloud Build</title><link>https://pin-yi.me/tags/cloud-build/</link><description>Recent content in Cloud Build on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Wed, 06 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/cloud-build/index.xml" rel="self" type="application/rss+xml"/><item><title>Google Cloud Platform (GCP) - Cloud Build</title><link>https://pin-yi.me/blog/gcp/cloud-build/</link><pubDate>Wed, 06 Jul 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/cloud-build/</guid><description>
+&lt;p>跟大家介紹一下今天的主題 Cloud Build，Cloud Build 可以幫我們做持續建構、測試和部署，我們可以把它想成簡易版的 Jenkins，從整個映像檔案打包到部署，也就幾分鐘的事情，且內建許多指令。&lt;/p>
+&lt;br>
+&lt;p>我們今天文章，需要使用前幾天提到的 &lt;a href="https://pin-yi.me/blog/gcp/cloud-source-repositories/" >Cloud Source Repositories&lt;/a> 、&lt;a href="https://pin-yi.me/blog/gcp/compute-engine/" >Compute Engine&lt;/a>、&lt;a href="https://pin-yi.me/blog/gcp/container-registry/" >Container Registry&lt;/a>，我們需要先透過 GitLab 將程式鏡像到 Cloud Source Repositories，再透過 Cloud Build 觸發將 GitLab 上面的 Dockerfile 建置到 Container Registry 中，再部署到 Compute Engine VM 上。大家可以參考流程圖，會更清楚今天的流程！那我們就開始囉 🥸&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/1.webp"
+alt="流程圖" width="1200">&lt;figcaption>
+&lt;p>流程圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>Cloud Source Repositories 測試&lt;span class="hx-absolute -hx-mt-20" id="cloud-source-repositories-測試">&lt;/span>
+&lt;a href="#cloud-source-repositories-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>前面 GitLab 鏡像設定，請先參考上上篇 &lt;a href="https://pin-yi.me/blog/gcp/cloud-source-repositories/" >Google Cloud Platform (GCP) - Cloud Source Repositories&lt;/a>，上上篇會帶大家從 GitLab 鏡像到 Cloud Source Repositories，所以我們就接續之前的內容，繼續往下開始學習吧～&lt;/p>
+&lt;br>
+&lt;ol>
+&lt;li>開啟 GCP，選擇左側的 menu &amp;gt; 點擊 &lt;strong>Cloud Build&lt;/strong> &amp;gt; 選擇 &lt;strong>觸發條件&lt;/strong>，點擊 &lt;strong>建立觸發條件&lt;/strong> 按鈕。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;ol start="2">
+&lt;li>輸入觸發條件的名稱，事件可以設定我們要怎麼進行觸發，我們這邊先選擇 &lt;strong>推送至分支的版本&lt;/strong> 來觸發，在來源選擇上上篇建立好的 Cloud Source Repositories 存放區，分支版本我們先使用預設的 master，也就是推程式到 master 他會就觸發 Cloud Build：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/2.webp"
+alt="建立觸發條件 1" width="900">&lt;figcaption>
+&lt;p>建立觸發條件 1&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>設定類型我們選擇 Cloud Build 設定檔，他也是 Cloud Build 專用的設定檔，後面會帶大家寫一份 Cloud Build，位置當然是使用我們 Cloud Source Repositories 存放區，以及可以依照專案來修改 cloudbuild.yaml 放在專案的哪裡，最後都沒問題，就按下建立：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/3.webp"
+alt="建立觸發條件 2" width="900">&lt;figcaption>
+&lt;p>建立觸發條件 2&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>撰寫 cloudbuild.yaml 設定檔&lt;span class="hx-absolute -hx-mt-20" id="撰寫-cloudbuildyaml-設定檔">&lt;/span>
+&lt;a href="#%e6%92%b0%e5%af%ab-cloudbuildyaml-%e8%a8%ad%e5%ae%9a%e6%aa%94" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在開始建立檔案前，先來跟大家說說檔案內有哪些設定吧：&lt;/p>
+&lt;br>
+&lt;p>首先 Cloud Build 建構器是裝有常用的程式語言和工具的容器映像。我們可以配置 Cloud Build，讓建構器中運行特定命令，我舉個例子讓大家了解：&lt;/p>
+&lt;p>以下程式碼是來自 &lt;a href="https://hub.docker.com/search?q=&amp;amp;type=image" target="_blank" rel="noopener">Docker Hub&lt;/a> 的 &lt;code>ubnutu&lt;/code> 映像檔中所執行的命令：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">steps&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;ubuntu&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">args&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;echo&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;hello world&amp;#34;&lt;/span>]&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到我們配置文件中 &lt;code>steps&lt;/code> 參數是指我們要建構的步驟， &lt;code>name&lt;/code> 字段指定 Docker 映像檔的位置，以及 &lt;code>args&lt;/code> 字段中是指定映像檔運行的命令。&lt;/p>
+&lt;p>我們的 Cloud Build 一樣會需要用 &lt;code>name&lt;/code> 來指定建構容器的映像檔，以及使用 &lt;code>args&lt;/code> 來執行我們映像檔所要運行的命令。&lt;/p>
+&lt;br>
+&lt;p>我們的 Cloud Build 設定檔中的 &lt;code>name&lt;/code> 常用的建構器映像檔如下：&lt;/p>
+&lt;table>
+&lt;thead>
+&lt;tr>
+&lt;th style="text-align: center">Builder&lt;/th>
+&lt;th style="text-align: center">名稱&lt;/th>
+&lt;/tr>
+&lt;/thead>
+&lt;tbody>
+&lt;tr>
+&lt;td style="text-align: center">bazel&lt;/td>
+&lt;td style="text-align: center">gcr.io/cloud-builders/bazel&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: center">docker&lt;/td>
+&lt;td style="text-align: center">gcr.io/cloud-builders/docker&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: center">git&lt;/td>
+&lt;td style="text-align: center">gcr.io/cloud-builders/git&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: center">gcloud&lt;/td>
+&lt;td style="text-align: center">gcr.io/cloud-builders/gcloud&lt;/td>
+&lt;/tr>
+&lt;tr>
+&lt;td style="text-align: center">gke-deploy&lt;/td>
+&lt;td style="text-align: center">gcr.io/cloud-builders/gke-deploy&lt;/td>
+&lt;/tr>
+&lt;/tbody>
+&lt;/table>
+&lt;br>
+&lt;p>接著我們來試著寫一個 cloudbuild.yaml 來建構我們的 nginx 服務，並部署到 Compute Engine 上。&lt;/p>
+&lt;br>
+&lt;p>我們先回到 Gitlab 該專案下的目錄，新增 cloudbuild.yaml 檔案，將複製以下內容：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">steps&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Docker Build&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcr.io/cloud-builders/docker&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">args&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;build&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;-t&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;gcr.io/$PROJECT_ID/ian-test:ian-nginx-test&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Docker Push&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcr.io/cloud-builders/docker&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">args&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;push&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;gcr.io/$PROJECT_ID/ian-test:ian-nginx-test&amp;#34;&lt;/span>]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#75715e"># Build VM&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcr.io/google.com/cloudsdktool/cloud-sdk&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">entrypoint&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcloud&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">args&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;compute&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;instances&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;create-with-container&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;ian-test-vm&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;--container-image&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;gcr.io/$PROJECT_ID/ian-test:ian-nginx-test&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">env&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;CLOUDSDK_COMPUTE_REGION=asia-east1&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#e6db74">&amp;#34;CLOUDSDK_COMPUTE_ZONE=asia-east1-b&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>我們一個一個來說說的這個 cloudbuild.yaml 裡面的設定吧！(我以前面的註解來區分)&lt;/p>
+&lt;ul>
+&lt;li>Docker Build：這邊的 &lt;code>name&lt;/code> 我們用 &lt;code>gcr.io/cloud-builders/docker&lt;/code>，代表我們將使用 docker 建構器，&lt;code>args&lt;/code> 這邊下的意思是要把與 cloudbuild.yaml 放在一起的 Dokcerfile 給 build 起來，並改名為 gcr.io/$PROJECT_ID/ian-test:ian-nginx-test。&lt;/li>
+&lt;li>Docker Push：這邊一樣使用 &lt;code>gcr.io/cloud-builders/docker&lt;/code>，&lt;code>args&lt;/code> 指令部分變成我們要把他 push 到 gcr.io/$PROJECT_ID/ian-test 這個 Cloud Source Repositories，其中這個映像檔案的 tag 為 ian-nginx-test。&lt;/li>
+&lt;li>Build VM：這邊我們使用 &lt;code>gcr.io/google.com/cloudsdktool/cloud-sdk&lt;/code>，可以透過它來建立 VM，並且執行 tag 名為 ian-nginx-test 的映像檔，後面環境變數是來設定 VM 的區域等等。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-orange-100 hx-bg-orange-50 hx-text-orange-800 dark:hx-border-orange-400/30 dark:hx-bg-orange-400/20 dark:hx-text-orange-300">
+&lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;/div>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;code>ian-test&lt;/code> 是 Container Registry 資料夾名稱，&lt;code>ian-nginx-test&lt;/code> 是 Container Registry 映像檔的 tag，&lt;code>ian-test-vm&lt;/code> 是我們建立 VM 的名字，所以要記得改成自己的命名歐！&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>撰寫 Dockerfile&lt;span class="hx-absolute -hx-mt-20" id="撰寫-dockerfile">&lt;/span>
+&lt;a href="#%e6%92%b0%e5%af%ab-dockerfile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來剛剛有提到 Docker Build 會將我們放在一起的 Dockerfile 給 build 起來，所以我們也要先寫好要用的 Dockerfile：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-Dockerfile" data-lang="Dockerfile">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">FROM&lt;/span>&lt;span style="color:#e6db74"> nginx:latest&lt;/span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#960050;background-color:#1e0010">&lt;/span>&lt;span style="color:#66d9ef">COPY&lt;/span> ./index.html /usr/share/nginx/html/&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>我們的 Dockerfile 很簡單，簡單寫了要使用的映像檔，以及將我們等等要測試的 index 複製到裡面&lt;/p>
+&lt;br>
+&lt;h3>撰寫測試 index.html&lt;span class="hx-absolute -hx-mt-20" id="撰寫測試-indexhtml">&lt;/span>
+&lt;a href="#%e6%92%b0%e5%af%ab%e6%b8%ac%e8%a9%a6-indexhtml" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-html" data-lang="html">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&amp;lt;!DOCTYPE html&amp;gt;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;lt;&lt;span style="color:#f92672">html&lt;/span> &lt;span style="color:#a6e22e">lang&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;en&amp;#34;&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">head&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">meta&lt;/span> &lt;span style="color:#a6e22e">charset&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;UTF-8&amp;#34;&lt;/span> /&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">meta&lt;/span> &lt;span style="color:#a6e22e">http-equiv&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;X-UA-Compatible&amp;#34;&lt;/span> &lt;span style="color:#a6e22e">content&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;IE=edge&amp;#34;&lt;/span> /&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">meta&lt;/span> &lt;span style="color:#a6e22e">name&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;viewport&amp;#34;&lt;/span> &lt;span style="color:#a6e22e">content&lt;/span>&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;width=device-width, initial-scale=1.0&amp;#34;&lt;/span> /&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">title&lt;/span>&amp;gt;測試測試測試&amp;lt;/&lt;span style="color:#f92672">title&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;/&lt;span style="color:#f92672">head&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;&lt;span style="color:#f92672">body&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> 我是測試檔案
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &amp;lt;/&lt;span style="color:#f92672">body&lt;/span>&amp;gt;
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&amp;lt;/&lt;span style="color:#f92672">html&lt;/span>&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>這個測試檔案，會蓋過 nginx 的預設畫面，當我們成功將 VM 建立後，瀏覽 80 Port 時，應該會跳出這個測試的網頁。&lt;/p>
+&lt;br>
+&lt;h3>Commit 到 GitLab&lt;span class="hx-absolute -hx-mt-20" id="commit-到-gitlab">&lt;/span>
+&lt;a href="#commit-%e5%88%b0-gitlab" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當我們都新增好檔案後，我們就將程式推到我們前幾篇的 Cloud Source Repositories 已經鏡像的 GitLab 中，接著就是等待見證奇蹟的時候了ＸＤ&lt;/p>
+&lt;ol>
+&lt;li>當我們推送後，我們先檢查 Cloud Source Repositories 是否有成功從 GitLab 鏡像過來：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/4.webp"
+alt="Cloud Source Repositories" width="700">&lt;figcaption>
+&lt;p>Cloud Source Repositories&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>檢查看看 Container Registry 是否多了名為 &lt;code>ian-test&lt;/code> 的資料夾，且裡面有一個 tag 為 &lt;code>ian-nginx-test&lt;/code> 的映像檔：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/5.webp"
+alt="Container Registry" width="1000">&lt;figcaption>
+&lt;p>Container Registry&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>檢查一下 Cloud Build 的觸發條件是不是在運作，最後成功可以看到類似下方圖片內容：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/6.webp"
+alt="Cloud Build 的觸發條件" width="1200">&lt;figcaption>
+&lt;p>Cloud Build 的觸發條件&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="4">
+&lt;li>檢查 Compute Engine 的 VM 是否有成功被建立：&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/7.webp"
+alt="Compute Engine" width="1200">&lt;figcaption>
+&lt;p>Compute Engine&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="5">
+&lt;li>最後就是測試這個映像檔案，是不是我們所 Build 的，測試方法很簡單，我們剛剛在 Dockerfile 有複製我們自己寫的 index.html 檔案，去蓋掉原本 nginx 的預設檔，所以我們可以瀏覽上面圖片的外部 IP，就可以看到我們所改的頁面囉！&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/8.webp"
+alt="測試用 index.html" width="700">&lt;figcaption>
+&lt;p>測試用 index.html&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Cloud Builder：&lt;a href="https://cloud.google.com/build/docs/cloud-builders" target="_blank" rel="noopener">https://cloud.google.com/build/docs/cloud-builders&lt;/a>&lt;/p>
+&lt;p>Day27 - 用 Cloud Build 實作 CI 部分：&lt;a href="https://ithelp.ithome.com.tw/articles/10224727" target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10224727&lt;/a>&lt;/p></description></item></channel></rss>

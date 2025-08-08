@@ -718,9 +718,9 @@ alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>搭配 Cloud DNS 使用 NodeLocal DNSCache：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane&lt;/a>&lt;/p></description></item><item><title>GKE Cloud DNS 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-cloud-dns/</link><pubDate>Wed, 06 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-cloud-dns/</guid><description>
-&lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone，所以需要測試 GKE 內的 DNS 解析方案，避免發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，本次測試 Cloud DNS 的運作。&lt;/p>
+&lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，此篇文章測試的是： Cloud DNS 的運作。&lt;/p>
 &lt;br>
-&lt;p>先建立一個 dns-test pod 以及 nginx 的 pod + svc，會分別測試&lt;/p>
+&lt;p>先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml" target="_blank" rel="noopener">程式連結&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml" target="_blank" rel="noopener">程式連結&lt;/a>，會分別測試&lt;/p>
 &lt;ol>
 &lt;li>
 &lt;p>&lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" >叢集內部 cluster.local&lt;/a> (nginx-svc.default.svc.cluster.local)&lt;/p>
@@ -732,15 +732,15 @@ alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;p>&lt;a href="#%e5%a4%96%e9%83%a8-dns-ifconfigme" >外部 dns&lt;/a> (ifconfig.me)&lt;/p>
 &lt;/li>
 &lt;/ol>
-&lt;p>並使用腳本進行確認回傳 DNS 解析。&lt;/p>
-&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
+&lt;p>並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod&lt;/p>
+&lt;p>相關程式以及 Prometheus、Grafana 的設定可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
 &lt;br>
 &lt;p>在建立完 Cluster 後，可以先觀察在 Cloud DNS 是否新增的 Private Zone&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cloud-dns-private.webp" width="850">
 &lt;/figure>
 &lt;br>
-&lt;p>有很多 Record，我們就先搜尋下面會用到的 nginx-svc.default.svc.cluster.local 來當作範例&lt;/p>
+&lt;p>由於裡面有很多的 Record，我們先搜尋下面會用到的 nginx-svc.default.svc.cluster.local 來當作範例&lt;/p>
 &lt;br>
 &lt;h2>叢集內部 cluster.local&lt;span class="hx-absolute -hx-mt-20" id="叢集內部-clusterlocal">&lt;/span>
 &lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>一樣會觀察 KubeDNS Pod Metrics，因為就算開啟 Cloud DNS 後，KubeDNS 還是會留著&lt;/p>
@@ -843,9 +843,9 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -865,18 +865,18 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，可以發現解析還是正常，代表使用 Cloud DNS 後，KubeDNS 對於叢集內部解析不會有影響&lt;/p>&lt;/div>
-&lt;/div>
-&lt;/div>
-&lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/8.webp"
 alt="資源監控" width="900">&lt;figcaption>
 &lt;p>資源監控&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，可以發現解析還是正常，代表使用 Cloud DNS 後，KubeDNS 對於叢集內部解析不會有影響&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
 &lt;br>
 &lt;h2>Internal DNS (Cloud DNS Private)&lt;span class="hx-absolute -hx-mt-20" id="internal-dns-cloud-dns-private">&lt;/span>
 &lt;a href="#internal-dns-cloud-dns-private" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先建立一個 cloud dns private，以下範例是 aaa.test-audit.com &amp;gt; 10.1.1.4，並將此 use VPC 與 GKE 的 VPC 打通&lt;/p>
@@ -978,9 +978,9 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -1007,7 +1007,7 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，可以發現解析還是正常，代表使用 Cloud DNS 後，KubeDNS 對於 internal-dns 解析不會有影響&lt;/p>&lt;/div>
 &lt;/div>
@@ -1106,9 +1106,9 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -1135,7 +1135,7 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，可以發現解析還是正常，代表使用 Cloud DNS 後，KubeDNS 對於外部 DNS解析不會有影響&lt;/p>&lt;/div>
 &lt;/div>
@@ -1146,13 +1146,6 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;br>
 &lt;p>使用 k6 測試 kube dns 模式下 IP 跟 DNS 的差異&lt;/p>
 &lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
-&lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>有發現之前在 KubeDNS 跟 KubeDNS + NodeLocal DNSCache 會有 DNS RPS 大於 IP 的情況，但使用 Cloud DNS 後則沒有發生，推測是因為。Cloud DNS 在 Cluster 外部，所以會比較慢&lt;/p>&lt;/div>
-&lt;/div>
-&lt;/div>
 &lt;br>
 &lt;h3>第一次測試&lt;span class="hx-absolute -hx-mt-20" id="第一次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=179.06ms / 3479 RPS)、DNS (avg=191.56ms / 3348 RPS)&lt;/p>
@@ -1210,6 +1203,13 @@ alt="DNS 第四次測試" width="1000">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>有發現之前在 KubeDNS 跟 KubeDNS + NodeLocal DNSCache 會有 DNS RPS 大於 IP 的情況，但使用 Cloud DNS 後則沒有發生，推測是因為。Cloud DNS 在 Cluster 外部，所以會比較慢&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
 &lt;h2>結論&lt;span class="hx-absolute -hx-mt-20" id="結論">&lt;/span>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 Cloud DNS 的模式下，所有的 DNS 解析都會依靠 Cloud DNS，不會使用到 KubeDNS，所以可以把 KubeDNS 關成 0 顆，避免浪費資源。&lt;/p>
 &lt;br>
@@ -1234,9 +1234,9 @@ alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 GKE 適用的 Cloud DNS：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw&lt;/a>&lt;/p></description></item><item><title>GKE KubeDNS 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-kubedns/</link><pubDate>Mon, 04 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-kubedns/</guid><description>
-&lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone，所以需要測試 GKE 內的 DNS 解析方案，避免發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，本次測試 KubeDNS 的運作。&lt;/p>
+&lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，此篇文章測試的是： KubeDNS 的運作。&lt;/p>
 &lt;br>
-&lt;p>先建立一個 dns-test pod 以及 nginx 的 pod + svc，會分別測試&lt;/p>
+&lt;p>先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml" target="_blank" rel="noopener">程式連結&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml" target="_blank" rel="noopener">程式連結&lt;/a>，會分別測試&lt;/p>
 &lt;ol>
 &lt;li>
 &lt;p>&lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" >叢集內部 cluster.local&lt;/a> (nginx-svc.default.svc.cluster.local)&lt;/p>
@@ -1249,7 +1249,7 @@ alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;/li>
 &lt;/ol>
 &lt;p>並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod&lt;/p>
-&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
+&lt;p>相關程式以及 Prometheus、Grafana 的設定可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
 &lt;br>
 &lt;h2>叢集內部 cluster.local&lt;span class="hx-absolute -hx-mt-20" id="叢集內部-clusterlocal">&lt;/span>
 &lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
@@ -1345,9 +1345,9 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>可以觀察 kubedns_dnsmasq_hits hit 有持續上升&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 kubedns_dnsmasq_hits hit 有持續上升&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -1391,8 +1391,14 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/11.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 7234 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，可以看到有額外測試，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
 &lt;br>
@@ -1400,12 +1406,6 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 從 Prometheus 可以發現，kubedns_dnsmasq_hits 在 15:48 開始飆高，與 2000 筆切換時間差不多，後面就因為 KubeDNS 關掉，導致沒有 metrics&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/11.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
 &lt;br>
 &lt;h2>Internal DNS (Cloud DNS Private)&lt;span class="hx-absolute -hx-mt-20" id="internal-dns-cloud-dns-private">&lt;/span>
 &lt;a href="#internal-dns-cloud-dns-private" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先建立一個 cloud dns private，以下範例是 aaa.test-audit.com &amp;gt; 10.1.1.4，並將此 use VPC 與 GKE 的 VPC 打通&lt;/p>
@@ -1507,9 +1507,9 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>可以觀察 kubedns_dnsmasq_hits hit 有持續上升&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 kubedns_dnsmasq_hits hit 有持續上升&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -1548,13 +1548,13 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/11.webp"
-alt="資源監控" width="900">&lt;figcaption>
+alt="資源監控" width="750">&lt;figcaption>
 &lt;p>資源監控&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 4847 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS， 最後再將 KubeDNS 切成 1 顆後，就正常可以解析了&lt;/p>&lt;/div>
 &lt;/div>
@@ -1653,7 +1653,7 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 kubedns_dnsmasq_hits hit 有持續上升，且有比較特別的現象是 叢集內部 cluster.local 跟 internal-dns kubedns_dnsmasq_misses 會跟 kubedns_dnsmasq_hits 差不多，但外部 DNS卻不會 (但目前網路上沒有相關的 metrics 資訊)&lt;/p>&lt;/div>
 &lt;/div>
@@ -1694,7 +1694,7 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，這次強制刪除 pod，所以在 2110 筆的時候就會失敗，但因為這次不是將 pod 關成 0 顆，他會馬上再長一顆新的，所以約 2123 就正常了，中間時間大約是 7 秒左右，就正常可以解析了&lt;/p>&lt;/div>
 &lt;/div>
@@ -1705,13 +1705,6 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;br>
 &lt;p>使用 k6 測試 kube dns 模式下 IP 跟 DNS 的差異&lt;/p>
 &lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
-&lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定&lt;/p>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
-&lt;/div>
-&lt;/div>
 &lt;br>
 &lt;h3>第一次測試&lt;span class="hx-absolute -hx-mt-20" id="第一次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=137.2ms / 4080 RPS)、DNS (avg=140.4ms / 4024 RPS)&lt;/p>
@@ -1769,6 +1762,13 @@ alt="DNS 第四次測試" width="1000">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
 &lt;h2>結論&lt;span class="hx-absolute -hx-mt-20" id="結論">&lt;/span>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 KubeDNS 的模式下，對於 KubeDNS 的依賴性極高，只要壞掉，不管任何的解析(叢集內、internal-dns、外部 dns)都會失效。&lt;/p>
 &lt;br>
@@ -1793,9 +1793,9 @@ alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 KubeDNS：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw&lt;/a>&lt;/p></description></item><item><title>GKE KubeDNS + NodeLocal DNSCache 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</link><pubDate>Fri, 01 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</guid><description>
-&lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone，所以需要測試 GKE 內的 DNS 解析方案，避免發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，本次測試 KubeDNS + NodeLocal DNSCache 的運作。&lt;/p>
+&lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，此篇文章測試的是： KubeDNS + NodeLocal DNSCache 的運作。&lt;/p>
 &lt;br>
-&lt;p>先建立一個 dns-test pod 以及 nginx 的 pod + svc，會分別測試&lt;/p>
+&lt;p>先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml" target="_blank" rel="noopener">程式連結&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml" target="_blank" rel="noopener">程式連結&lt;/a>，會分別測試&lt;/p>
 &lt;ol>
 &lt;li>
 &lt;p>&lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" >叢集內部 cluster.local&lt;/a> (nginx-svc.default.svc.cluster.local)&lt;/p>
@@ -1808,7 +1808,7 @@ alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;/li>
 &lt;/ol>
 &lt;p>並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS、NodeLocal DNSCache Pod&lt;/p>
-&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
+&lt;p>相關程式以及 Prometheus、Grafana 的設定可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
 &lt;br>
 &lt;h2>叢集內部 cluster.local&lt;span class="hx-absolute -hx-mt-20" id="叢集內部-clusterlocal">&lt;/span>
 &lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>NodeLocal DNSCache Prometheus 監控設定參數：&lt;code>zones=&amp;quot;cluster.local.&amp;quot;&lt;/code>&lt;/p>
@@ -1908,9 +1908,9 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -1936,8 +1936,14 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/8.webp"
+alt="資源監控" width="900">&lt;figcaption>
+&lt;p>資源監控&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 6104 筆的時候才開始出現解析失敗，代表中間因爲有 NodeLocal DNSCache cache，所以 dns 解析還有相關紀錄可以回覆，但後面當 cache TTL 到期後，需要先訪問 KubeDNS 時，就會出現解析錯誤
 &lt;br>
@@ -1945,12 +1951,6 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 從 Prometheus 可以發現，前面 NodeLocal DNSCache request 跟 hit 差不多，但當 18:38 線圖開始 request 大於 hit，這代表因為後面的 KubeDNS 異常，導致 NodeLocal DNSCache 沒辦法做 cache hit&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/8.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
 &lt;br>
 &lt;h3>模擬 NodeLocal DNSCache Pod 異常&lt;span class="hx-absolute -hx-mt-20" id="模擬-nodelocal-dnscache-pod-異常">&lt;/span>
 &lt;a href="#%e6%a8%a1%e6%93%ac-nodelocal-dnscache-pod-%e7%95%b0%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來我們測試最後一個情境，故意用壞 NodeLocal DNSCache 服務，觀察此模式對於 NodeLocal DNSCache 的依賴&lt;/p>
@@ -2015,7 +2015,7 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>發現當 NodeLocal DNSCache 掛了後，會短暫卡住，但會直接切換到 KubeDNS 上繼續進行解析，因此以結果論，如果 NodeLocal DNSCache 有短暫異常，不會出現無法解析的問題
 &lt;br>
@@ -2132,9 +2132,9 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -2161,9 +2161,9 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>觀察發現，因為 cloud dns private 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作。&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>觀察發現，因為 cloud dns private 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作。&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -2230,7 +2230,7 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>發現當 NodeLocal DNSCache 掛了後，會短暫卡住，但會直接切換到 KubeDNS 上繼續進行解析，因此以結果論，如果 NodeLocal DNSCache 有短暫異常，不會出現無法解析的問題
 &lt;br>
@@ -2339,9 +2339,9 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -2368,9 +2368,9 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>觀察發現，因為外部 dns 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作。&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>觀察發現，因為外部 dns 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作。&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -2431,7 +2431,7 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;br>&lt;/p>
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>發現當 NodeLocal DNSCache 掛了後，會短暫卡住，但會直接切換到 KubeDNS 上繼續進行解析，因此以結果論，如果 NodeLocal DNSCache 有短暫異常，不會出現無法解析的問題
 &lt;br>
@@ -2448,13 +2448,6 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>使用 k6 測試 KubeDNS + NodeLocal DNSCache 模式下 IP 跟 DNS 的差異&lt;/p>
 &lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
-&lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
-&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定&lt;/p>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;/div>
-&lt;/div>
-&lt;/div>
 &lt;br>
 &lt;h3>第一次測試&lt;span class="hx-absolute -hx-mt-20" id="第一次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=181.7ms / 3511 RPS)、DNS (avg=335.43ms / 2278 RPS)&lt;/p>
@@ -2512,6 +2505,13 @@ alt="DNS 第四次測試" width="1000">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
 &lt;h2>結論&lt;span class="hx-absolute -hx-mt-20" id="結論">&lt;/span>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 KubeDNS + NodeLocal DNSCache 的模式下，對於 KubeDNS 的依賴性降低了很多，因為 NodeLocal DNSCache 會先做 cache hit，這樣就算 KubeDNS 異常（只有 cluster 內的，且 cache 失效才會影響），否則不會影響到 pod 的 DNS 解析。&lt;/p>
 &lt;br>
@@ -2534,6 +2534,12 @@ https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-d
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/resolv.webp"
 alt="/etc/resolv.conf 設定值 服務探索和 DNS /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;p>/etc/resolv.conf 設定值 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value" target="_blank" rel="noopener">服務探索和 DNS /etc/resolv.conf&lt;/a>&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/config.webp"
+alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
+&lt;p>實際查看 /etc/resolv.conf&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
