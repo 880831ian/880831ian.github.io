@@ -9,6 +9,12 @@ date: 2025-03-18
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
+  - Google Cloud Platform
+  - GCP
+  - GCS
+  - CORS
+  - Bucket
 ---
 
 最近公司有需求需要透過前端去打 GCS Bucket 的檔案，但會遇到 CORS 錯誤，所以寫一篇來記錄此問題的解決方法。

@@ -9,6 +9,12 @@ date: 2024-09-02
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
+  - Google Cloud Platform
+  - GCP
+  - Kubernetes
+  - K8s
+  - Local ephemeral storage
 ---
 
 此文章主要針對 Google Kubernetes Engine Local ephemeral storage 的計算方式來做介紹。

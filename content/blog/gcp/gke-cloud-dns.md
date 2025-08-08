@@ -9,13 +9,20 @@ date: 2025-08-06
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
+  - Google Cloud Platform
+  - GCP
+  - Kubernetes
+  - K8s
+  - DNS
+  - Cloud DNS
 ---
 
-最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone，所以需要測試 GKE 內的 DNS 解析方案，避免發生 [Pod 出現 cURL error 6: Could not resolve host](../../kubernetes/pod-curl-error-6-could-not-resolve-host)，本次測試 Cloud DNS 的運作。
+最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 [Pod 出現 cURL error 6: Could not resolve host](../../kubernetes/pod-curl-error-6-could-not-resolve-host)，此篇文章測試的是： Cloud DNS 的運作。
 
 <br>
 
-先建立一個 dns-test pod 以及 nginx 的 pod + svc，會分別測試
+先建立一個 dns-test pod [程式連結](https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml) 以及 nginx 的 pod + svc [程式連結](https://github.com/880831ian/gke-dns/blob/main/nginx.yaml)，會分別測試
 
 1. [叢集內部 cluster.local](#叢集內部-clusterlocal) (nginx-svc.default.svc.cluster.local)
 
@@ -23,9 +30,9 @@ authors:
 
 3. [外部 dns](#外部-dns-ifconfigme) (ifconfig.me)
 
-並使用腳本進行確認回傳 DNS 解析。
+並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod
 
-相關程式可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
+相關程式以及 Prometheus、Grafana 的設定可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
 
 <br>
 
@@ -37,8 +44,7 @@ authors:
 
 <br>
 
-有很多 Record，我們就先搜尋下面會用到的 nginx-svc.default.svc.cluster.local 來當作範例
-
+由於裡面有很多的 Record，我們先搜尋下面會用到的 nginx-svc.default.svc.cluster.local 來當作範例
 
 <br>
 
@@ -129,7 +135,8 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP] 因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高
+> [!TIP] 結論
+因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高
 
 <br>
 
@@ -149,12 +156,12 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP]<br>
-大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，可以發現解析還是正常，代表使用 Cloud DNS 後，KubeDNS 對於叢集內部解析不會有影響
+{{< figure src="/gcp/gke-cloud-dns/cluster-dns/8.webp" width="900" caption="資源監控" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/cluster-dns/8.webp" width="900" caption="資源監控" >}}
+> [!TIP]結論
+大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，可以發現解析還是正常，代表使用 Cloud DNS 後，KubeDNS 對於叢集內部解析不會有影響
 
 <br>
 
@@ -224,7 +231,6 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 ```
 10.1.1.4 是隨機亂取的 IP，只是為了確認 domain 是否能夠正常解析
 
-
 <br>
 
 ### 測試腳本
@@ -245,7 +251,8 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP] 因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高
+> [!TIP]結論
+因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高
 
 <br>
 
@@ -269,7 +276,7 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP] <br>
+> [!TIP]結論
 大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，可以發現解析還是正常，代表使用 Cloud DNS 後，KubeDNS 對於 internal-dns 解析不會有影響
 
 <br>
@@ -353,7 +360,8 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP] 因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高
+> [!TIP]結論
+因為改用 Cloud DNS，所以 KubeDNS 的 hit 沒有往上衝高
 
 <br>
 
@@ -375,10 +383,9 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 {{< figure src="/gcp/gke-cloud-dns/external-dns/7.webp" width="900" caption="資源監控" >}}
 
-
 <br>
 
-> [!TIP] <br>
+> [!TIP]結論
 大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，可以發現解析還是正常，代表使用 Cloud DNS 後，KubeDNS 對於外部 DNS解析不會有影響
 
 <br>
@@ -392,11 +399,6 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 使用 k6 測試 kube dns 模式下 IP 跟 DNS 的差異
 
 相關程式可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
-
-<br>
-
-> [!TIP] <br>
-有發現之前在 KubeDNS 跟 KubeDNS + NodeLocal DNSCache 會有 DNS RPS 大於 IP 的情況，但使用 Cloud DNS 後則沒有發生，推測是因為。Cloud DNS 在 Cluster 外部，所以會比較慢
 
 <br>
 
@@ -445,6 +447,11 @@ IP (avg=227.56ms / 2971 RPS)、DNS (avg=316.07ms / 2361 RPS)
 {{< figure src="/gcp/gke-cloud-dns/k6/7.webp" width="1000" caption="IP 第四次測試" >}}
 
 {{< figure src="/gcp/gke-cloud-dns/k6/8.webp" width="1000" caption="DNS 第四次測試" >}}
+
+<br>
+
+> [!TIP]結論
+有發現之前在 KubeDNS 跟 KubeDNS + NodeLocal DNSCache 會有 DNS RPS 大於 IP 的情況，但使用 Cloud DNS 後則沒有發生，推測是因為。Cloud DNS 在 Cluster 外部，所以會比較慢
 
 <br>
 

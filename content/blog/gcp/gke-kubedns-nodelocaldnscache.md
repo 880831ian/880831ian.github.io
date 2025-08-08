@@ -9,13 +9,21 @@ date: 2025-08-01
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
+  - Google Cloud Platform
+  - GCP
+  - Kubernetes
+  - K8s
+  - DNS
+  - KubeDNS
+  - NodeLocal DNSCache
 ---
 
-最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone，所以需要測試 GKE 內的 DNS 解析方案，避免發生 [Pod 出現 cURL error 6: Could not resolve host](../../kubernetes/pod-curl-error-6-could-not-resolve-host)，本次測試 KubeDNS + NodeLocal DNSCache 的運作。
+最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 [Pod 出現 cURL error 6: Could not resolve host](../../kubernetes/pod-curl-error-6-could-not-resolve-host)，此篇文章測試的是： KubeDNS + NodeLocal DNSCache 的運作。
 
 <br>
 
-先建立一個 dns-test pod 以及 nginx 的 pod + svc，會分別測試
+先建立一個 dns-test pod [程式連結](https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml) 以及 nginx 的 pod + svc [程式連結](https://github.com/880831ian/gke-dns/blob/main/nginx.yaml)，會分別測試
 
 1. [叢集內部 cluster.local](#叢集內部-clusterlocal) (nginx-svc.default.svc.cluster.local)
 
@@ -25,7 +33,7 @@ authors:
 
 並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS、NodeLocal DNSCache Pod
 
-相關程式可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
+相關程式以及 Prometheus、Grafana 的設定可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
 
 <br>
 
@@ -115,7 +123,8 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP] 可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升
+> [!TIP]結論
+可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升
 
 <br>
 
@@ -139,15 +148,15 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP]<br>
+{{< figure src="/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/8.webp" width="900" caption="資源監控" >}}
+
+<br>
+
+> [!TIP]結論
 大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 6104 筆的時候才開始出現解析失敗，代表中間因爲有 NodeLocal DNSCache cache，所以 dns 解析還有相關紀錄可以回覆，但後面當 cache TTL 到期後，需要先訪問 KubeDNS 時，就會出現解析錯誤
 <br>
 <br>
 從 Prometheus 可以發現，前面 NodeLocal DNSCache request 跟 hit 差不多，但當 18:38 線圖開始 request 大於 hit，這代表因為後面的 KubeDNS 異常，導致 NodeLocal DNSCache 沒辦法做 cache hit
-
-<br>
-
-{{< figure src="/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/8.webp" width="900" caption="資源監控" >}}
 
 <br>
 
@@ -199,7 +208,7 @@ kubectl patch daemonset node-local-dns -n kube-system --type='strategic' -p '{"s
 
 <br>
 
-> [!TIP]<br>
+> [!TIP]結論
 發現當 NodeLocal DNSCache 掛了後，會短暫卡住，但會直接切換到 KubeDNS 上繼續進行解析，因此以結果論，如果 NodeLocal DNSCache 有短暫異常，不會出現無法解析的問題
 <br>
 <br>
@@ -283,7 +292,6 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 ```
 10.1.1.4 是隨機亂取的 IP，只是為了確認 domain 是否能夠正常解析
 
-
 <br>
 
 ### 測試腳本
@@ -304,7 +312,8 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP] 可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升
+> [!TIP]結論
+可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升
 
 <br>
 
@@ -328,7 +337,8 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP] 觀察發現，因為 cloud dns private 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作。
+> [!TIP]結論
+觀察發現，因為 cloud dns private 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作。
 
 <br>
 
@@ -379,7 +389,7 @@ kubectl patch daemonset node-local-dns -n kube-system --type='strategic' -p '{"s
 
 <br>
 
-> [!TIP]<br>
+> [!TIP]結論
 發現當 NodeLocal DNSCache 掛了後，會短暫卡住，但會直接切換到 KubeDNS 上繼續進行解析，因此以結果論，如果 NodeLocal DNSCache 有短暫異常，不會出現無法解析的問題
 <br>
 <br>
@@ -474,7 +484,8 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP] 可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升
+> [!TIP]結論
+可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升
 
 <br>
 
@@ -496,10 +507,10 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 {{< figure src="/gcp/gke-kubedns-nodelocaldnscache/external-dns/7.webp" width="900" caption="資源監控" >}}
 
-
 <br>
 
-> [!TIP] 觀察發現，因為外部 dns 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作。
+> [!TIP]結論
+觀察發現，因為外部 dns 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作。
 
 <br>
 
@@ -546,7 +557,7 @@ kubectl patch daemonset node-local-dns -n kube-system --type='strategic' -p '{"s
 
 <br>
 
-> [!TIP]<br>
+> [!TIP]結論
 發現當 NodeLocal DNSCache 掛了後，會短暫卡住，但會直接切換到 KubeDNS 上繼續進行解析，因此以結果論，如果 NodeLocal DNSCache 有短暫異常，不會出現無法解析的問題
 <br>
 <br>
@@ -566,10 +577,6 @@ kubectl patch daemonset node-local-dns -n kube-system --type='strategic' -p '{"s
 使用 k6 測試 KubeDNS + NodeLocal DNSCache 模式下 IP 跟 DNS 的差異
 
 相關程式可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
-
-<br>
-
-> [!TIP]理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定
 
 <br>
 
@@ -621,6 +628,11 @@ IP (avg=149.5ms / 3965 RPS)、DNS (avg=133.73ms / 4230 RPS)
 
 <br>
 
+> [!TIP]結論
+理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定
+
+<br>
+
 ## 結論
 
 可以發現，使用 KubeDNS + NodeLocal DNSCache 的模式下，對於 KubeDNS 的依賴性降低了很多，因為 NodeLocal DNSCache 會先做 cache hit，這樣就算 KubeDNS 異常（只有 cluster 內的，且 cache 失效才會影響），否則不會影響到 pod 的 DNS 解析。
@@ -640,6 +652,10 @@ IP (avg=149.5ms / 3965 RPS)、DNS (avg=133.73ms / 4230 RPS)
 另外也可以從官方文件中得知 KubeDNS + NodeLocal DNSCache 的 `/etc/resolv.conf` 設定值，可以知道 Pod 最開始使用的 DNS 解析 Server 是誰。
 
 {{< figure src="/gcp/gke-kubedns-nodelocaldnscache/resolv.webp" width="800" caption="/etc/resolv.conf 設定值 [服務探索和 DNS /etc/resolv.conf](https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value)" >}}
+
+<br>
+
+{{< figure src="/gcp/gke-kubedns-nodelocaldnscache/config.webp" width="800" caption="實際查看 /etc/resolv.conf" >}}
 
 <br>
 

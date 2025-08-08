@@ -9,6 +9,14 @@ date: 2025-08-08
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
+  - Google Cloud Platform
+  - GCP
+  - Kubernetes
+  - K8s
+  - DNS
+  - Cloud DNS
+  - NodeLocal DNSCache
 ---
 
 最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 [Pod 出現 cURL error 6: Could not resolve host](../../kubernetes/pod-curl-error-6-could-not-resolve-host)，此篇文章測試的是： Cloud DNS + NodeLocal DNSCache 的運作。

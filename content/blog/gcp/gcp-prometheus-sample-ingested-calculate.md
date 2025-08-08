@@ -6,6 +6,15 @@ date: 2024-07-10
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
+  - Google Cloud Platform
+  - GCP
+  - Prometheus Samples Ingested
+  - GMP
+  - Google Managed Prometheus
+  - Metrics
+  - Cost
+  - Billing
 ---
 
 最近在優化公司帳單費用，發現公司有幾個 project 裡面的 Prometheus Samples Ingested 費用很高，此文章會針對費用如何計算以及如何去減少費用來做說明。

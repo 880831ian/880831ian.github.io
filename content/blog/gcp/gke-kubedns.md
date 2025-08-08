@@ -9,13 +9,19 @@ date: 2025-08-04
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+  - Google Cloud Platform
+  - GCP
+  - Kubernetes
+  - K8s
+  - DNS
+  - KubeDNS
 ---
 
-最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone，所以需要測試 GKE 內的 DNS 解析方案，避免發生 [Pod 出現 cURL error 6: Could not resolve host](../../kubernetes/pod-curl-error-6-could-not-resolve-host)，本次測試 KubeDNS 的運作。
+最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 [Pod 出現 cURL error 6: Could not resolve host](../../kubernetes/pod-curl-error-6-could-not-resolve-host)，此篇文章測試的是： KubeDNS 的運作。
 
 <br>
 
-先建立一個 dns-test pod 以及 nginx 的 pod + svc，會分別測試
+先建立一個 dns-test pod [程式連結](https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml) 以及 nginx 的 pod + svc [程式連結](https://github.com/880831ian/gke-dns/blob/main/nginx.yaml)，會分別測試
 
 1. [叢集內部 cluster.local](#叢集內部-clusterlocal) (nginx-svc.default.svc.cluster.local)
 
@@ -25,7 +31,7 @@ authors:
 
 並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod
 
-相關程式可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
+相關程式以及 Prometheus、Grafana 的設定可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
 
 <br>
 
@@ -110,7 +116,8 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP] 可以觀察 kubedns_dnsmasq_hits hit 有持續上升
+> [!TIP]結論
+可以觀察 kubedns_dnsmasq_hits hit 有持續上升
 
 <br>
 
@@ -146,15 +153,15 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP]<br>
+{{< figure src="/gcp/gke-kubedns/cluster-dns/11.webp" width="900" caption="資源監控" >}}
+
+<br>
+
+> [!TIP]結論
 大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 7234 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，可以看到有額外測試，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
 <br>
 <br>
 從 Prometheus 可以發現，kubedns_dnsmasq_hits 在 15:48 開始飆高，與 2000 筆切換時間差不多，後面就因為 KubeDNS 關掉，導致沒有 metrics
-
-<br>
-
-{{< figure src="/gcp/gke-kubedns/cluster-dns/11.webp" width="900" caption="資源監控" >}}
 
 <br>
 
@@ -224,7 +231,6 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 ```
 10.1.1.4 是隨機亂取的 IP，只是為了確認 domain 是否能夠正常解析
 
-
 <br>
 
 ### 測試腳本
@@ -245,7 +251,8 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP] 可以觀察 kubedns_dnsmasq_hits hit 有持續上升
+> [!TIP]結論
+可以觀察 kubedns_dnsmasq_hits hit 有持續上升
 
 <br>
 
@@ -277,11 +284,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/internal-dns/11.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-kubedns/internal-dns/11.webp" width="750" caption="資源監控" >}}
 
 <br>
 
-> [!TIP] <br>
+> [!TIP]結論
 大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 4847 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS， 最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
 
 <br>
@@ -365,7 +372,7 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-> [!TIP] <br>
+> [!TIP]結論
 可以觀察 kubedns_dnsmasq_hits hit 有持續上升，且有比較特別的現象是 叢集內部 cluster.local  跟 internal-dns kubedns_dnsmasq_misses 會跟 kubedns_dnsmasq_hits 差不多，但外部 DNS卻不會 (但目前網路上沒有相關的 metrics 資訊)
 
 <br>
@@ -396,10 +403,9 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 {{< figure src="/gcp/gke-kubedns/external-dns/9.webp" width="900" caption="資源監控" >}}
 
-
 <br>
 
-> [!TIP] <br>
+> [!TIP]結論
 大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，這次強制刪除 pod，所以在 2110 筆的時候就會失敗，但因為這次不是將 pod 關成 0 顆，他會馬上再長一顆新的，所以約 2123 就正常了，中間時間大約是 7 秒左右，就正常可以解析了
 
 <br>
@@ -413,10 +419,6 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 使用 k6 測試 kube dns 模式下 IP 跟 DNS 的差異
 
 相關程式可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
-
-<br>
-
-> [!TIP]理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定
 
 <br>
 
@@ -465,6 +467,11 @@ IP (avg=321.47ms / 2337 RPS)、DNS (avg=254.11ms / 2775 RPS)
 {{< figure src="/gcp/gke-kubedns/k6/7.webp" width="1000" caption="IP 第四次測試" >}}
 
 {{< figure src="/gcp/gke-kubedns/k6/8.webp" width="1000" caption="DNS 第四次測試" >}}
+
+<br>
+
+> [!TIP]結論
+理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定
 
 <br>
 

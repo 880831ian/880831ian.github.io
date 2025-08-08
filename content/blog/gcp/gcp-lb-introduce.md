@@ -9,6 +9,11 @@ date: 2025-05-26
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
+  - Google Cloud Platform
+  - GCP
+  - Load Balancer
+  - LB
 ---
 
 最近公司在導入 Multi-Zone，有發現大量的跨域費用產生，主要是不同 Cluster 或是 Cluster 跟 VM 之間的跨域流量，與 Google TAM 討論，他們有提出可以嘗試用 [Service load balancing policy](https://cloud.google.com/load-balancing/docs/service-lb-policy) 的 Waterfall by zone，或是之後會推出的 Zone affinity，這些都會需要使用到 Load Balancer，簡單整理一下發現 GCP 的 Load Balancer 其實有很多種，因此，這篇文章就來介紹一下 GCP 的 Load Balancer。

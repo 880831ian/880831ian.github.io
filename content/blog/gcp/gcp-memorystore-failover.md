@@ -6,6 +6,12 @@ date: 2024-07-02
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
+  - Google Cloud Platform
+  - GCP
+  - Memorystore
+  - HA
+  - failover
 ---
 
 此文章主要針對 GCP Memorystore failover 來做測試，測試 Memorystore 高可用性 (HA) 在標準 Standard Tier failover 故障轉移需要多久，以及不同 replica 條件下轉移是否會有差異等等。
