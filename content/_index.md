@@ -23,6 +23,12 @@ layout: hextra-home
 
 {{< hextra/feature-grid cols=4 >}}
 {{< card
+  link="blog/gcp/gke-dns"
+  title="GKE DNS 相關注意事項及結論"
+  subtitle="發布日期：2025-08-12"
+  image="/gcp/gke-dns/cover.webp"
+>}}
+{{< card
   link="blog/gcp/gke-cloud-dns-nodelocaldnscache"
   title="GKE Cloud DNS + NodeLocal DNSCache 運作測試"
   subtitle="發布日期：2025-08-08"
