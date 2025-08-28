@@ -657,7 +657,7 @@ A3：KubeDNS 如果想要調整 pod 數量，我們知道要調整 kube-dns-auto
 &lt;br>
 Q3：deployment 會被還原是因為 KubeDNS 後面還有一個 Controller 在控制，Configmap 設計目的的確是可以讓我們自行接管來調整，且不會被還原。
 &lt;br>&lt;br>
-原本自定義 KubeDNS、或是改成其他 DNS 供應商，可以參考此篇文件：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw" target="_blank" rel="noopener">設定自訂 kube-dns 部署作業&lt;/a>
+原本自定義 KubeDNS、或是改成其他 DNS 供應商，可以參考此篇文件：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/custom-kube-dns?hl=zh-tw" target="_blank" rel="noopener">設定自訂 kube-dns 部署作業&lt;/a>
 &lt;br>&lt;br>
 另外，目前有針對 GKE 的四種 KubeDNS、Cloud DNS、NodeLocal DNSCache 組合有進行測試，詳細可以查看以下連結：
 &lt;br>
