@@ -1,8 +1,8 @@
 ---
-title: "GKE KubeDNS 運作測試"
+title: "GKE DNS 使用 KubeDNS 運作測試"
 type: docs
 weight: 9986
-description: GKE KubeDNS 運作測試
+description: GKE DNS 使用 KubeDNS 運作測試
 images:
   - gcp/gke-kubedns/og.webp
 date: 2025-08-04
@@ -21,15 +21,15 @@ authors:
 
 <br>
 
-先建立一個 dns-test pod [程式連結](https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml) 以及 nginx 的 pod + svc [程式連結](https://github.com/880831ian/gke-dns/blob/main/nginx.yaml)，會分別測試
+首先，先建立一個 dns-test pod [程式連結](https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml) 以及 nginx 的 pod + svc [程式連結](https://github.com/880831ian/gke-dns/blob/main/nginx.yaml)，會分別測試
 
 1. [叢集內部 cluster.local](#叢集內部-clusterlocal) (nginx-svc.default.svc.cluster.local)
 
-2. [Internal DNS (Cloud DNS Private)](#internal-dns-cloud-dns-private) (aaa.test-audit.com.)
+2. [internal-dns 使用 cloud dns private](#internal-dns-cloud-dns-private) (aaa.test-audit.com)
 
 3. [外部 dns](#外部-dns-ifconfigme) (ifconfig.me)
 
-並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod
+並使用 nslookup 腳本進行確認回傳 DNS 解析，每一次測試時，都會重新啟動 KubeDNS Pod
 
 相關程式以及 Prometheus、Grafana 的設定可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
 
@@ -39,15 +39,11 @@ authors:
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/cluster-dns/1.webp" width="750" caption="" >}}
-
-<br>
-
 - 相關 Prometheus 監控指標：
 
 ```shell
-kubedns_dnsmasq_hits{job="kube-dns-nodelocaldns-kube-dns"}
-kubedns_dnsmasq_misses{job="kube-dns-nodelocaldns-kube-dns"}
+kubedns_dnsmasq_hits{job="kubedns-dns"}
+kubedns_dnsmasq_misses{job="kubedns-dns"}
 ```
 
 <br>
@@ -66,7 +62,7 @@ get_taiwan_time() {
 }
 
 DOMAIN="nginx-svc.default.svc.cluster.local"
-EXPECTED_IP="10.36.17.113"
+EXPECTED_IP="10.36.16.255"
 START_TIME=$(get_taiwan_time)
 COUNT=10000
 SUCCESS_COUNT=0
@@ -92,7 +88,7 @@ echo "== NSLOOKUP TEST END: $END_TIME ==" | tee -a nslookup_full.log
 echo "成功次數: $SUCCESS_COUNT" | tee -a nslookup_full.log
 echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 ```
-10.36.17.113 是 nginx-svc Cluster IP
+10.36.16.255 是 nginx-svc 的 Cluster IP
 
 需要先確認 `nginx-svc` 的 IP 是多少，然後修改腳本中的 `EXPECTED_IP` 變數。
 
@@ -104,15 +100,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/cluster-dns/2.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-kubedns/cluster-dns/1.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/cluster-dns/3.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-kubedns/cluster-dns/4.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-kubedns/cluster-dns/2.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -129,39 +121,24 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/cluster-dns/5.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-kubedns/cluster-dns/3.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/cluster-dns/6.webp" width="500" caption="KubeDNS 關成 0 顆" >}}
+{{< figure src="/gcp/gke-kubedns/cluster-dns/4.webp" width="500" caption="KubeDNS 關成 0 顆，過一陣子後開始噴錯" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/cluster-dns/7.webp" width="500" caption="因為 Pod 不會馬上關掉，所以還能夠解析 DNS" >}}
+{{< figure src="/gcp/gke-kubedns/cluster-dns/5.webp" width="700" caption="因為 KubeDNS Pod 不會馬上關掉，所以還能夠解析 DNS" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/cluster-dns/8.webp" width="500" caption="切換回來就正常可以解析" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-kubedns/cluster-dns/9.webp" width="500" caption="進入下指令查看錯誤訊息" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-kubedns/cluster-dns/10.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-kubedns/cluster-dns/11.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-kubedns/cluster-dns/6.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
 > [!TIP]結論
-大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 7234 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，可以看到有額外測試，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
-<br>
-<br>
-從 Prometheus 可以發現，kubedns_dnsmasq_hits 在 15:48 開始飆高，與 2000 筆切換時間差不多，後面就因為 KubeDNS 關掉，導致沒有 metrics
+大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 8733 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
 
 <br>
 
@@ -175,15 +152,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/internal-dns/2.webp" width="750" caption="" >}}
-
-<br>
-
 - 相關 Prometheus 監控指標：
 
 ```shell
-kubedns_dnsmasq_hits{job="kube-dns-nodelocaldns-kube-dns"}
-kubedns_dnsmasq_misses{job="kube-dns-nodelocaldns-kube-dns"}
+kubedns_dnsmasq_hits{job="kubedns-dns"}
+kubedns_dnsmasq_misses{job="kubedns-dns"}
 ```
 
 <br>
@@ -239,20 +212,16 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/internal-dns/3.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-kubedns/internal-dns/2.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/internal-dns/4.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-kubedns/internal-dns/5.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-kubedns/internal-dns/3.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
 > [!TIP]結論
-可以觀察 kubedns_dnsmasq_hits hit 有持續上升
+可以觀察 KubeDNS 內的指標 kubedns_dnsmasq_hits hit 有持續上升
 
 <br>
 
@@ -264,32 +233,24 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/internal-dns/6.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-kubedns/internal-dns/4.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/internal-dns/7.webp" width="450" caption="關閉 pod 時間" >}}
+{{< figure src="/gcp/gke-kubedns/internal-dns/5.webp" width="450" caption="KubeDNS 關成 0 顆，過一陣子後開始噴錯" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/internal-dns/8.webp" width="450" caption="因為 pod 關閉開始失敗" >}}
+{{< figure src="/gcp/gke-kubedns/internal-dns/6.webp" width="700" caption="因為 KubeDNS Pod 不會馬上關掉，所以還能夠解析 DNS" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/internal-dns/9.webp" width="450" caption="解析恢復" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-kubedns/internal-dns/10.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-kubedns/internal-dns/11.webp" width="750" caption="資源監控" >}}
+{{< figure src="/gcp/gke-kubedns/internal-dns/7.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
 > [!TIP]結論
-大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 4847 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS， 最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
+大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 7130 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
 
 <br>
 
@@ -297,15 +258,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/external-dns/1.webp" width="750" caption="" >}}
-
-<br>
-
 - 相關 Prometheus 監控指標：
 
 ```shell
-kubedns_dnsmasq_hits{job="kube-dns-nodelocaldns-kube-dns"}
-kubedns_dnsmasq_misses{job="kube-dns-nodelocaldns-kube-dns"}
+kubedns_dnsmasq_hits{job="kubedns-dns"}
+kubedns_dnsmasq_misses{job="kubedns-dns"}
 ```
 
 <br>
@@ -360,20 +317,30 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/external-dns/2.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-kubedns/external-dns/1.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/external-dns/3.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-kubedns/external-dns/4.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-kubedns/external-dns/2.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
 > [!TIP]結論
-可以觀察 kubedns_dnsmasq_hits hit 有持續上升，且有比較特別的現象是 叢集內部 cluster.local  跟 internal-dns kubedns_dnsmasq_misses 會跟 kubedns_dnsmasq_hits 差不多，但外部 DNS卻不會 (但目前網路上沒有相關的 metrics 資訊)
+可以觀察 KubeDNS 內的指標 kubedns_dnsmasq_hits hit 有持續上升，且有比較特別的現象是 叢集內部 cluster.local  跟 internal-dns kubedns_dnsmasq_misses 會跟 kubedns_dnsmasq_hits 差不多，但外部 DNS 卻不會
+<br><br>
+cluster 內 / cloud DNS private zone 流程會是
+<br>
+Pod → dnsmasq (miss) → kubedns 回答 → dnsmasq cache → 下次 hit
+<br>
+所以會是 N hit + N miss
+<br><br>
+外部 domain 流程會是
+<br>
+Pod → kubedns → upstream → dnsmasq 只 cache 回應，不算 miss
+<br>
+加上 dnsmasq 本身會為不同類型的查詢（例如 A/AAAA 或 CNAME chain）各記一次 hit
+<br>
+所以會是 2N hit，0 miss
 
 <br>
 
@@ -385,28 +352,24 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/external-dns/5.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-kubedns/external-dns/3.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/external-dns/6.webp" width="500" caption="強制刪除，所以馬上無法解析" >}}
+{{< figure src="/gcp/gke-kubedns/external-dns/4.webp" width="500" caption="KubeDNS 關成 0 顆，過一陣子後開始噴錯" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/external-dns/7.webp" width="500" caption="因為是刪除，不是切成 0 顆，所以他馬上又長一顆出來，就恢復正常" >}}
+{{< figure src="/gcp/gke-kubedns/external-dns/5.webp" width="700" caption="因為 KubeDNS Pod 不會馬上關掉，所以還能夠解析 DNS" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/external-dns/8.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-kubedns/external-dns/9.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-kubedns/external-dns/6.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
 > [!TIP]結論
-大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，這次強制刪除 pod，所以在 2110 筆的時候就會失敗，但因為這次不是將 pod 關成 0 顆，他會馬上再長一顆新的，所以約 2123 就正常了，中間時間大約是 7 秒左右，就正常可以解析了
+大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 8934 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
 
 <br>
 
@@ -419,6 +382,8 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 使用 k6 測試 kube dns 模式下 IP 跟 DNS 的差異
 
 相關程式可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
+
+這邊測試的 Node 是用 e2-medium 而非 c3d-standard-4
 
 <br>
 
@@ -481,11 +446,62 @@ IP (avg=321.47ms / 2337 RPS)、DNS (avg=254.11ms / 2775 RPS)
 
 <br>
 
-{{< figure src="/gcp/gke-kubedns/kubeDNS.webp" width="700" caption="GKE KubeDNS" >}}
+{{< figure src="/gcp/gke-kubedns/kubeDNS.webp" width="700" caption="GKE KubeDNS 流程圖" >}}
+
+<br>
+
+由於官方流程圖有些細節沒有揭露的完成，我們有額外詢問 Google TAM，並畫出以下流程圖，Google TAM 也確認流程正確
+
+{{< figure src="/gcp/gke-kubedns/kubeDNS-flow.webp" width="1200" caption="自己重新畫的 GKE KubeDNS 流程圖" >}}
+
+<br>
+
+以下是我們與 Google 討論的內容：
+
+我們：
+
+圖中的 metadata server 是畫在 GKE Cluster 層內，與 Kube DNS 上游伺服器 (kube-dns svc) 以及 Kube DNS 在同一層。而 Kube DNS + NodeLocal DNSCache 版本架構圖中的 metadata server 則是被標示在Worker Node 裡面，這兩者實質上歸屬與位置皆不同是正確的嗎？為何會這樣？
+
+<br>
+
+Google：
+
+1. metadata server 是存在每一台 VM 上面
+
+2. 如果是 Kube DNS，請求流向是 application pod -> kube-dns svc -> 隨機 kube-dns pod，如果 kube-dns 沒答案，跳轉該 kube-dns pod 上面的 VM/worker node 的 metadata server
+
+3. (情境2)如果是 node-local-dns，請求流向會是 application pod -> node-local-dns pod
+    1. 如果是 cluster.local 就會轉發到 kube-dns
+    2. 如果有設定 stubDomain 就轉發到設定的 DNS
+    3. 如果是其他的則轉發這台 VM/pod 的 metadata server
+
+
+--
+
+我們補充詢問：
+
+附上的圖是 KubeDNS 的請求解析圖，我們知道 Metadata Server 是在每一個 VM (Worker Node 上)，只是圖上範例是將 Metadata Server 放到 GKE Cluster 的 Scope 內，而不是在一個 Worker Node，因為情境2. 的 KubeDNS + NodeLocal DNSCache 是將 Metadata Server 放到 Worker Node 裡面，而不是 GKE Cluster，想確認是不是 KubeDNS 請求解析圖在這一塊比較沒有畫清楚呢？
+
+<br>
+Google 回覆：
+
+KubeDNS Only：所有請求都會先到 kube-dns pod，如果是 cluster 之外的會轉發到 kube-dns pod 上面的 VM/worker node 的 metadata server，不是每一台 worker。
+
+KubeDNS + node-local-dns 如果不是 cluster.svc.local 就會直接轉發到該台 worker 的 metadata 了
+
+因此用到的 Metadata server 的 worker 不太一樣，一個是指會用到 kube-dns pod 上面的 VM，一個是全部 VM/worker 都用到
+
+同意您說的 "圖上範例是將 Metadata Server 放到 GKE Cluster 的 Scope 內" 可能會有點誤導
+
+您畫的圖示意是正確的
+
+--
 
 <br>
 
 另外也可以從官方文件中得知 KubeDNS 的 `/etc/resolv.conf` 設定值，可以知道 Pod 最開始使用的 DNS 解析 Server 是誰。
+
+<br>
 
 {{< figure src="/gcp/gke-kubedns/resolv.webp" width="800" caption="/etc/resolv.conf 設定值 [服務探索和 DNS /etc/resolv.conf](https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value)" >}}
 
