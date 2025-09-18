@@ -1,10 +1,10 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – KubeDNS</title><link>https://pin-yi.me/tags/kubedns/</link><description>Recent content in KubeDNS on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Tue, 12 Aug 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/kubedns/index.xml" rel="self" type="application/rss+xml"/><item><title>GKE DNS 相關注意事項及結論</title><link>https://pin-yi.me/blog/gcp/gke-dns/</link><pubDate>Tue, 12 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-dns/</guid><description>
 &lt;p>一樣先前情提要：&lt;/p>
 &lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，此篇文章再來回顧以及整理，可以依照情境測試後的結論以及注意事項，來選擇適合 GKE DNS 組合：&lt;/p>
-&lt;p>&lt;a href="../gke-kubedns/" >GKE KubeDNS 運作測試&lt;/a>&lt;/p>
-&lt;p>&lt;a href="../gke-kubedns-nodelocaldnscache/" >GKE KubeDNS + NodeLocal DNSCache 運作測試&lt;/a>&lt;/p>
-&lt;p>&lt;a href="../gke-cloud-dns/" >GKE Cloud DNS 運作測試&lt;/a>&lt;/p>
-&lt;p>&lt;a href="../gke-cloud-dns-nodelocaldnscache/" >GKE Cloud DNS + NodeLocal DNSCache 運作測試&lt;/a>&lt;/p>
+&lt;p>&lt;a href="../gke-kubedns/" >GKE DNS 使用 KubeDNS 運作測試&lt;/a>&lt;/p>
+&lt;p>&lt;a href="../gke-kubedns-nodelocaldnscache/" >GKE DNS 使用 KubeDNS + NodeLocal DNSCache 運作測試&lt;/a>&lt;/p>
+&lt;p>&lt;a href="../gke-cloud-dns/" >GKE DNS 使用 Cloud DNS 運作測試&lt;/a>&lt;/p>
+&lt;p>&lt;a href="../gke-cloud-dns-nodelocaldnscache/" >GKE DNS 使用 Cloud DNS + NodeLocal DNSCache 運作測試&lt;/a>&lt;/p>
 &lt;br>
 &lt;h2>測試情境的依賴性&lt;span class="hx-absolute -hx-mt-20" id="測試情境的依賴性">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e6%83%85%e5%a2%83%e7%9a%84%e4%be%9d%e8%b3%b4%e6%80%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;table>
