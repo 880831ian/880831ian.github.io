@@ -29,7 +29,7 @@ authors:
 
 3. [外部 dns](#外部-dns-ifconfigme) (ifconfig.me)
 
-並使用 nslookup 腳本進行確認回傳 DNS 解析，每一次測試時，都會重新啟動 KubeDNS Pod
+並使用 nslookup 腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod
 
 相關程式以及 Prometheus、Grafana 的設定可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
 
