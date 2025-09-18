@@ -1,8 +1,8 @@
 ---
-title: "GKE Cloud DNS 運作測試"
+title: "GKE DNS 使用 Cloud DNS 運作測試"
 type: docs
 weight: 9986
-description: GKE Cloud DNS 運作測試
+description: GKE DNS 使用 Cloud DNS 運作測試
 images:
   - gcp/gke-cloud-dns/og.webp
 date: 2025-08-06
@@ -26,11 +26,11 @@ tags:
 
 1. [叢集內部 cluster.local](#叢集內部-clusterlocal) (nginx-svc.default.svc.cluster.local)
 
-2. [Internal DNS (Cloud DNS Private)](#internal-dns-cloud-dns-private) (aaa.test-audit.com.)
+2. [internal-dns 使用 cloud dns private](#internal-dns-cloud-dns-private) (aaa.test-audit.com)
 
 3. [外部 dns](#外部-dns-ifconfigme) (ifconfig.me)
 
-並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod
+並使用 nslookup 腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod
 
 相關程式以及 Prometheus、Grafana 的設定可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
 
@@ -58,15 +58,11 @@ tags:
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/cluster-dns/2.webp" width="750" caption="" >}}
-
-<br>
-
 - 相關 Prometheus 監控指標：
 
 ```shell
-kubedns_dnsmasq_hits{job="kube-dns-nodelocaldns-kube-dns"}
-kubedns_dnsmasq_misses{job="kube-dns-nodelocaldns-kube-dns"}
+kubedns_dnsmasq_hits{job="kubedns-dns"}
+kubedns_dnsmasq_misses{job="kubedns-dns"}
 ```
 
 <br>
@@ -123,15 +119,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/cluster-dns/3.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns/cluster-dns/2.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/cluster-dns/4.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns/cluster-dns/5.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns/cluster-dns/3.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -148,15 +140,12 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/cluster-dns/6.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns/cluster-dns/4.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/cluster-dns/7.webp" width="1200" caption="Prometheus 監控指標" >}}
+{{< figure src="/gcp/gke-cloud-dns/cluster-dns/5.webp" width="1200" caption="Prometheus 監控指標" >}}
 
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns/cluster-dns/8.webp" width="900" caption="資源監控" >}}
 
 <br>
 
@@ -175,15 +164,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/internal-dns/2.webp" width="750" caption="" >}}
-
-<br>
-
 - 相關 Prometheus 監控指標：
 
 ```shell
-kubedns_dnsmasq_hits{job="kube-dns-nodelocaldns-kube-dns"}
-kubedns_dnsmasq_misses{job="kube-dns-nodelocaldns-kube-dns"}
+kubedns_dnsmasq_hits{job="kubedns-dns"}
+kubedns_dnsmasq_misses{job="kubedns-dns"}
 ```
 
 <br>
@@ -239,15 +224,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/internal-dns/3.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns/internal-dns/2.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/internal-dns/4.webp" width="1200" caption="Prometheus 監控指標 (監控中間斷掉是因為 port-forward 斷了)" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns/internal-dns/5.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns/internal-dns/3.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -264,15 +245,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/internal-dns/6.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns/internal-dns/4.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/internal-dns/7.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns/internal-dns/8.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns/internal-dns/5.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -285,15 +262,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/external-dns/1.webp" width="750" caption="" >}}
-
-<br>
-
 - 相關 Prometheus 監控指標：
 
 ```shell
-kubedns_dnsmasq_hits{job="kube-dns-nodelocaldns-kube-dns"}
-kubedns_dnsmasq_misses{job="kube-dns-nodelocaldns-kube-dns"}
+kubedns_dnsmasq_hits{job="kubedns-dns"}
+kubedns_dnsmasq_misses{job="kubedns-dns"}
 ```
 
 <br>
@@ -348,15 +321,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/external-dns/2.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns/external-dns/1.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/external-dns/3.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns/external-dns/4.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns/external-dns/2.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -373,15 +342,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/external-dns/5.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns/external-dns/3.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/external-dns/6.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns/external-dns/7.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns/external-dns/4.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -399,6 +364,8 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 使用 k6 測試 kube dns 模式下 IP 跟 DNS 的差異
 
 相關程式可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
+
+這邊測試的 Node 是用 e2-medium 而非 c3d-standard-4
 
 <br>
 
@@ -461,7 +428,39 @@ IP (avg=227.56ms / 2971 RPS)、DNS (avg=316.07ms / 2361 RPS)
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns/gke-cloud-dns-architecture.webp" width="700" caption="GKE KubeDNS" >}}
+{{< figure src="/gcp/gke-cloud-dns/gke-cloud-dns-architecture.webp" width="700" caption="GKE Cloud DNS" >}}
+
+<br>
+
+由於官方流程圖有些細節沒有揭露的完成，我們有額外詢問 Google TAM，並畫出以下流程圖，Google TAM 也確認流程正確
+
+<br>
+
+{{< figure src="/gcp/gke-cloud-dns/gke-cloud-dns-architecture-flow.webp" width="1200" caption="自己重新畫的 GKE Cloud DNS" >}}
+
+<br>
+
+以下是我們與 Google 討論的內容：
+
+我們：
+
+1. 圖中粉紅框所選取的兩個 Cloud DNS<Cloud DNS & Cloud DNS (Data Plane)> 在實際的架構中，是兩個獨立的物件嗎？或者其實是同一個物件?
+
+2. 承(1)，以下項目所述的理解是否正確？若有差異的部分請協助說明：目前我們的認知是，在 Internal DNS 上會有三個 Cloud DNS：
+    1. GKE 的設定改用 Cloud DNS 的 provider，此時系統會協助我們建立一個 Cloud DNS (Data Plane)。
+    2. 我們會自己建立一個 Cloud DNS(Private) For 我們內部自己要用的 Internal DNS。
+    3. 進行外部 DNS 解析時，目前的理解是會從 metadata server 對 Cloud DNS 轉送解析需求，是否屬實？
+
+3. 完成解析後，Cache 的部分是否在 metadata server 裡面進行？
+
+
+Google：
+
+1. 處理 private zone 和公有網域名稱的是不同物件，但都在 GCE DNS 服務裡
+
+2. 1. 主要是建立 cluster-scoped private zone，進到 metadata server 後的行為與原本相同、2 跟 3 正確
+
+3. 是，除了metadata server 外，同時也會在 GCE DNS 服務裡快取
 
 <br>
 

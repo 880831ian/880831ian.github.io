@@ -25,7 +25,7 @@ sidebar:
 >}}
 {{< card
   link="gke-cloud-dns"
-  title="GKE Cloud DNS 運作測試"
+  title="GKE DNS 使用 Cloud DNS 運作測試"
   subtitle="發布日期：2025-08-06"
   image="/gcp/gke-cloud-dns/cover.webp"
 >}}
