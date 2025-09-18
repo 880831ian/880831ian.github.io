@@ -190,39 +190,37 @@
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-dns/3.webp" width="600">
 &lt;/figure>
-&lt;br></description></item><item><title>GKE KubeDNS + NodeLocal DNSCache 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</link><pubDate>Fri, 01 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</guid><description>
+&lt;br></description></item><item><title>GKE DNS 使用 KubeDNS + NodeLocal DNSCache 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</link><pubDate>Fri, 01 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</guid><description>
 &lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，此篇文章測試的是： KubeDNS + NodeLocal DNSCache 的運作。&lt;/p>
 &lt;br>
-&lt;p>先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml" target="_blank" rel="noopener">程式連結&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml" target="_blank" rel="noopener">程式連結&lt;/a>，會分別測試&lt;/p>
+&lt;p>首先，先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml" target="_blank" rel="noopener">程式連結&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml" target="_blank" rel="noopener">程式連結&lt;/a>，會分別測試&lt;/p>
 &lt;ol>
 &lt;li>
 &lt;p>&lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" >叢集內部 cluster.local&lt;/a> (nginx-svc.default.svc.cluster.local)&lt;/p>
 &lt;/li>
 &lt;li>
-&lt;p>&lt;a href="#internal-dns-cloud-dns-private" >Internal DNS (Cloud DNS Private)&lt;/a> (aaa.test-audit.com.)&lt;/p>
+&lt;p>&lt;a href="#internal-dns-cloud-dns-private" >internal-dns 使用 cloud dns private&lt;/a> (aaa.test-audit.com)&lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>&lt;a href="#%e5%a4%96%e9%83%a8-dns-ifconfigme" >外部 dns&lt;/a> (ifconfig.me)&lt;/p>
 &lt;/li>
 &lt;/ol>
-&lt;p>並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS、NodeLocal DNSCache Pod&lt;/p>
+&lt;p>並使用 nslookup 腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS、NodeLocal DNSCache Pod&lt;/p>
 &lt;p>相關程式以及 Prometheus、Grafana 的設定可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
 &lt;br>
 &lt;h2>叢集內部 cluster.local&lt;span class="hx-absolute -hx-mt-20" id="叢集內部-clusterlocal">&lt;/span>
 &lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>NodeLocal DNSCache Prometheus 監控設定參數：&lt;code>zones=&amp;quot;cluster.local.&amp;quot;&lt;/code>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/1.webp" width="750">
-&lt;/figure>
-&lt;br>
 &lt;ul>
 &lt;li>相關 Prometheus 監控指標：&lt;/li>
 &lt;/ul>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>coredns_cache_hits_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;cluster.local.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_requests_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;cluster.local.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_entries&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;cluster.local.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>coredns_cache_requests_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;cluster.local.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_entries&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;cluster.local.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_hits_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;cluster.local.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_misses_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;cluster.local.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -247,7 +245,7 @@ title="Copy code"
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;nginx-svc.default.svc.cluster.local&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;10.36.17.66&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;10.36.16.35&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>START_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10000&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
@@ -281,34 +279,28 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>10.36.17.66 是 nginx-svc Cluster IP&lt;/p>
+&lt;p>10.36.16.35 是 nginx-svc Cluster IP&lt;/p>
 &lt;p>需要先確認 &lt;code>nginx-svc&lt;/code> 的 IP 是多少，然後修改腳本中的 &lt;code>EXPECTED_IP&lt;/code> 變數。&lt;/p>
 &lt;br>
 &lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/2.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/1.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/3.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/2.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/4.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
 &lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升&lt;/p>&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 NodeLocal DNSCache 內的指標 hit 跟 request 都有持續上升&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -316,15 +308,27 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/5.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/3.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/4.webp"
+alt="第二輪才出現錯誤" width="500">&lt;figcaption>
+&lt;p>第二輪才出現錯誤&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/5.webp"
+alt="因為 KubeDNS 關成 0 顆，不會馬上關掉" width="700">&lt;figcaption>
+&lt;p>因為 KubeDNS 關成 0 顆，不會馬上關掉&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/6.webp"
-alt="因為 cache 失效出現解析失敗" width="500">&lt;figcaption>
-&lt;p>因為 cache 失效出現解析失敗&lt;/p>
+alt="將 KubeDNS 調整回來，就正常解析" width="500">&lt;figcaption>
+&lt;p>將 KubeDNS 調整回來，就正常解析&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
@@ -334,19 +338,13 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/8.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
 &lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 6104 筆的時候才開始出現解析失敗，代表中間因爲有 NodeLocal DNSCache cache，所以 dns 解析還有相關紀錄可以回覆，但後面當 cache TTL 到期後，需要先訪問 KubeDNS 時，就會出現解析錯誤
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>總共打了兩輪的 10000 筆，在第一輪大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了第二輪的 2838 筆的時候才開始出現解析失敗，因為前面 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，中間又因爲有 NodeLocal DNSCache 做 Cache，所以 DNS 解析還有相關紀錄可以回覆，但後面當 Cache TTL 到期後，需要先訪問 KubeDNS 時，此時 KubeDNS 也已經關閉，最後才會出現解析錯誤
 &lt;br>
 &lt;br>
-從 Prometheus 可以發現，前面 NodeLocal DNSCache request 跟 hit 差不多，但當 18:38 線圖開始 request 大於 hit，這代表因為後面的 KubeDNS 異常，導致 NodeLocal DNSCache 沒辦法做 cache hit&lt;/p>&lt;/div>
+從 Prometheus 可以發現，前面 NodeLocal DNSCache request 跟 hit 差不多，但當 15:33 線圖開始 request 大於 hit，且出現 miss，這代表因為後面的 KubeDNS 異常，導致 NodeLocal DNSCache 沒辦法做 Cache hit&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -381,32 +379,32 @@ title="Copy code"
 &lt;br>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/9.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/8.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;p>分別在 16:26:03 跟 16:28:45 下指令調整&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/10.webp"
+&lt;p>分別在 15:55:53 跟 15:57:04 下指令調整&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/9.webp"
 alt="模擬 NodeLocal DNSCache 故障" width="800">&lt;figcaption>
 &lt;p>模擬 NodeLocal DNSCache 故障&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/11.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/10.webp"
 alt="觀察調整讓 NodeLocal DNSCache 故障 Log" width="500">&lt;figcaption>
 &lt;p>觀察調整讓 NodeLocal DNSCache 故障 Log&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/12.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/11.webp"
 alt="觀察修正 NodeLocal DNSCache Log" width="500">&lt;figcaption>
 &lt;p>觀察修正 NodeLocal DNSCache Log&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/13.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/12.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
 &lt;/figcaption>
@@ -418,10 +416,10 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>發現當 NodeLocal DNSCache 掛了後，會短暫卡住，但會直接切換到 KubeDNS 上繼續進行解析，因此以結果論，如果 NodeLocal DNSCache 有短暫異常，不會出現無法解析的問題
 &lt;br>
 &lt;br>
-從 Prometheus 可以發現，前面 NodeLocal DNSCache 正常運作，當我們在 16:26:03 調整後，變成 KubeDNS 起來開始處理解析，在 16:28:45 切換讓 NodeLocal DNSCache 恢復，後面又會變成由 NodeLocal DNSCache 來處理解析
+從 Prometheus 可以發現，前面 NodeLocal DNSCache 正常運作，當我們在 15:55:53 調整後，變成 KubeDNS 起來開始處理解析，在 15:57:04 切換讓 NodeLocal DNSCache 恢復，後面又會變成由 NodeLocal DNSCache 來處理解析
 &lt;br>
 &lt;br>
-綠色是 NodeLocal DNSCache，紫色是 KubeDNS&lt;/p>&lt;/div>
+紫色是 NodeLocal DNSCache，黃色是 KubeDNS&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -436,18 +434,16 @@ alt="設定 cloud dns private" width="600">&lt;figcaption>
 &lt;br>
 &lt;p>NodeLocal DNSCache Prometheus 監控設定參數：&lt;code>zones=&amp;quot;.&amp;quot;&lt;/code>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/2.webp" width="750">
-&lt;/figure>
-&lt;br>
 &lt;ul>
 &lt;li>相關 Prometheus 監控指標：&lt;/li>
 &lt;/ul>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>coredns_cache_hits_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_requests_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_entries&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>coredns_cache_requests_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_entries&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_hits_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_misses_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -511,28 +507,22 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本-1">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/3.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/2.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/4.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/3.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/5.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
 &lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升&lt;/p>&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 NodeLocal DNSCache 內的指標 hit 跟 request 都有持續上升&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -540,28 +530,28 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/6.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/4.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/7.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/5.webp"
+alt="因為 KubeDNS 關成 0 顆，不會馬上關掉" width="700">&lt;figcaption>
+&lt;p>因為 KubeDNS 關成 0 顆，不會馬上關掉&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/8.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/6.webp"
+alt="Prometheus 監控指標" width="1200">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
 &lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>觀察發現，因為 cloud dns private 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作。&lt;/p>&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>總共打了兩輪的 10000 筆，在第一輪大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，因為前面 KubeDNS 切成 0，Pod 不會馬上關掉，避免有測試誤差，所以在打第二輪 10000 筆，但從結果發現，所有的 DNS 請求都是走 NodeLocal DNSCache，因為 cloud dns private 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -596,32 +586,20 @@ title="Copy code"
 &lt;br>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/9.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/7.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;p>分別在 17:54:11 跟 17:57:23 下指令調整&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/10.webp"
+&lt;p>分別在 18:26:11 跟 18:28:03 下指令調整&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/8.webp"
 alt="模擬 NodeLocal DNSCache 故障" width="800">&lt;figcaption>
 &lt;p>模擬 NodeLocal DNSCache 故障&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/11.webp"
-alt="觀察調整讓 NodeLocal DNSCache 故障 Log，卡了 3 秒" width="500">&lt;figcaption>
-&lt;p>觀察調整讓 NodeLocal DNSCache 故障 Log，卡了 3 秒&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/12.webp"
-alt="觀察修正 NodeLocal DNSCache Log，卡了 2 秒" width="500">&lt;figcaption>
-&lt;p>觀察修正 NodeLocal DNSCache Log，卡了 2 秒&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/13.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/9.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
 &lt;/figcaption>
@@ -633,28 +611,26 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>發現當 NodeLocal DNSCache 掛了後，會短暫卡住，但會直接切換到 KubeDNS 上繼續進行解析，因此以結果論，如果 NodeLocal DNSCache 有短暫異常，不會出現無法解析的問題
 &lt;br>
 &lt;br>
-從 Prometheus 可以發現，前面 NodeLocal DNSCache 正常運作，當我們在 17:54:11 調整後，變成 KubeDNS 起來開始處理解析，在 17:57:23 切換讓 NodeLocal DNSCache 恢復，後面又會變成由 NodeLocal DNSCache 來處理解析
+從 Prometheus 可以發現，前面 NodeLocal DNSCache 正常運作，當我們在 18:26:11 調整後，變成 KubeDNS 起來開始處理解析，在 18:28:03 切換讓 NodeLocal DNSCache 恢復，後面又會變成由 NodeLocal DNSCache 來處理解析
 &lt;br>
 &lt;br>
-黃色是 NodeLocal DNSCache，紫色是 KubeDNS （後面黃色是因為手動來不及把新的 pod forward metrics 導致前面沒有線圖）&lt;/p>&lt;/div>
+紫色是 NodeLocal DNSCache，黃色是 KubeDNS&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
 &lt;h2>外部 DNS (ifconfig.me)&lt;span class="hx-absolute -hx-mt-20" id="外部-dns-ifconfigme">&lt;/span>
 &lt;a href="#%e5%a4%96%e9%83%a8-dns-ifconfigme" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>NodeLocal DNSCache Prometheus 監控設定參數：&lt;code>zones=&amp;quot;.&amp;quot;&lt;/code>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/1.webp" width="750">
-&lt;/figure>
-&lt;br>
 &lt;ul>
 &lt;li>相關 Prometheus 監控指標：&lt;/li>
 &lt;/ul>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>coredns_cache_hits_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;cluster.local.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_requests_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;cluster.local.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_entries&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;cluster.local.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>coredns_cache_requests_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_entries&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_hits_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>coredns_cache_misses_total&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-nodelocaldns&amp;#34;&lt;/span>, zones&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;.&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -718,28 +694,22 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本-2">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/2.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/1.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/3.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/2.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/4.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
 &lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 NodeLocal DNSCache hit 跟 request 都有持續上升&lt;/p>&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 NodeLocal DNSCache 內的指標 hit 跟 request 都有持續上升&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -747,28 +717,28 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/5.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/3.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/6.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/4.webp"
+alt="因為 KubeDNS 關成 0 顆，不會馬上關掉" width="700">&lt;figcaption>
+&lt;p>因為 KubeDNS 關成 0 顆，不會馬上關掉&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/7.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/5.webp"
+alt="Prometheus 監控指標" width="900">&lt;figcaption>
+&lt;p>Prometheus 監控指標&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
 &lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>觀察發現，因為外部 dns 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作。&lt;/p>&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>總共打了兩輪的 10000 筆，在第一輪大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，因為前面 KubeDNS 切成 0，Pod 不會馬上關掉，避免有測試誤差，所以在打第二輪 10000 筆，但從結果發現，所有的 DNS 請求都是走 NodeLocal DNSCache，因為外部 dns 不是 .cluster.local，所以就算沒有 KubeDNS 也能正常運作&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -803,26 +773,20 @@ title="Copy code"
 &lt;br>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/8.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/6.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;p>分別在 12:13:30 跟 12:15:48 下指令調整&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/9.webp"
+&lt;p>分別在 19:52:28 跟 19:53:16 下指令調整&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/7.webp"
 alt="模擬 NodeLocal DNSCache 故障" width="800">&lt;figcaption>
 &lt;p>模擬 NodeLocal DNSCache 故障&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/10.webp"
-alt="觀察調整讓 NodeLocal DNSCache 故障 Log，卡了 2 秒" width="500">&lt;figcaption>
-&lt;p>觀察調整讓 NodeLocal DNSCache 故障 Log，卡了 2 秒&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/11.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/8.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
 &lt;/figcaption>
@@ -834,10 +798,10 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>發現當 NodeLocal DNSCache 掛了後，會短暫卡住，但會直接切換到 KubeDNS 上繼續進行解析，因此以結果論，如果 NodeLocal DNSCache 有短暫異常，不會出現無法解析的問題
 &lt;br>
 &lt;br>
-從 Prometheus 可以發現，前面 NodeLocal DNSCache 正常運作，當我們在 12:13:30 調整後，變成 KubeDNS 起來開始處理解析，在 12:15:48 切換讓 NodeLocal DNSCache 恢復，後面又會變成由 NodeLocal DNSCache 來處理解析
+從 Prometheus 可以發現，前面 NodeLocal DNSCache 正常運作，當我們在 19:52:28 調整後，變成 KubeDNS 起來開始處理解析，在 19:53:16 切換讓 NodeLocal DNSCache 恢復，後面又會變成由 NodeLocal DNSCache 來處理解析
 &lt;br>
 &lt;br>
-黃色是 NodeLocal DNSCache，紫色是 KubeDNS&lt;/p>&lt;/div>
+紫色是 NodeLocal DNSCache，黃色是 KubeDNS&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -846,6 +810,7 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;br>
 &lt;p>使用 k6 測試 KubeDNS + NodeLocal DNSCache 模式下 IP 跟 DNS 的差異&lt;/p>
 &lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
+&lt;p>這邊測試的 Node 是用 e2-medium 而非 c3d-standard-4&lt;/p>
 &lt;br>
 &lt;h3>第一次測試&lt;span class="hx-absolute -hx-mt-20" id="第一次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=181.7ms / 3511 RPS)、DNS (avg=335.43ms / 2278 RPS)&lt;/p>
@@ -914,13 +879,42 @@ alt="DNS 第四次測試" width="1000">&lt;figcaption>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 KubeDNS + NodeLocal DNSCache 的模式下，對於 KubeDNS 的依賴性降低了很多，因為 NodeLocal DNSCache 會先做 cache hit，這樣就算 KubeDNS 異常（只有 cluster 內的，且 cache 失效才會影響），否則不會影響到 pod 的 DNS 解析。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/nodelocal-dns-cache-diagram.webp"
-alt="KubeDNS &amp;#43; NodeLocal DNSCache 架構圖
+alt="KubeDNS &amp;#43; NodeLocal DNSCache 流程圖
 https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture" width="650">&lt;figcaption>
-&lt;p>KubeDNS + NodeLocal DNSCache 架構圖&lt;br>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture&lt;/a>&lt;/p>
+&lt;p>KubeDNS + NodeLocal DNSCache 流程圖&lt;br>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture&lt;/a>&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;p>但是這個結果其實是因為 GKE 在這個模式下，共用 KubeDNS IP，並調整 iptables 的方式來實現的。所以跟一般的 NodeLocal DNSCache 邏輯，會有點不同。&lt;/p>
+&lt;p>由於官方流程圖有些細節沒有揭露的完成，我們有額外詢問 Google TAM，並畫出以下流程圖，Google TAM 也確認流程正確&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/nodelocal-dns-cache-flow.webp"
+alt="自己重新畫的 GKE KubeDNS &amp;#43; NodeLocal DNSCache 流程圖" width="1200">&lt;figcaption>
+&lt;p>自己重新畫的 GKE KubeDNS + NodeLocal DNSCache 流程圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>以下是我們與 Google 討論的內容：&lt;/p>
+&lt;p>我們：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>MetaData Server 是否會快取外部DNS的解析結果？若會的話，是否 DNS Provider 改為 Cloud DNS才會有這個行爲發生？&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>公用的 Cloud DNS 是否有什麼統一的稱呼 (例：Common Cloud DNS…之類的)？或者就真的只叫 “Cloud DNS”？&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;p>Google：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>會快取並遵循 TTL，無論是否設定為 Cloud DNS，內外部的 DNS 解析都需要透過 Cloud DNS 查詢，只有是否先經過 kube-dns 的差異，因此快取無論開啟 Cloud DNS 都會有&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>就叫 Cloud DNS，或內部稱 GCE DNS&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>這是 K8s 官方的 NodeLocalDNS 流程圖：&lt;/p>
+&lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/nodelocaldns.webp"
 alt="Using NodeLocal DNSCache in Kubernetes Clusters
 https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram" width="600">&lt;figcaption>
