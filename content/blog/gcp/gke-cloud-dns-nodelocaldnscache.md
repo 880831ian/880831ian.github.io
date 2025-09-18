@@ -1,8 +1,8 @@
 ---
-title: "GKE Cloud DNS + NodeLocal DNSCache 運作測試"
+title: "GKE DNS 使用 Cloud DNS + NodeLocal DNSCache 運作測試"
 type: docs
 weight: 9985
-description: GKE Cloud DNS + NodeLocal DNSCache 運作測試
+description: GKE DNS 使用 Cloud DNS + NodeLocal DNSCache 運作測試
 images:
   - gcp/gke-cloud-dns-nodelocaldnscache/og.webp
 date: 2025-08-08
@@ -23,15 +23,15 @@ tags:
 
 <br>
 
-先建立一個 dns-test pod [程式連結](https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml) 以及 nginx 的 pod + svc [程式連結](https://github.com/880831ian/gke-dns/blob/main/nginx.yaml)，會分別測試
+首先，先建立一個 dns-test pod [程式連結](https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml) 以及 nginx 的 pod + svc [程式連結](https://github.com/880831ian/gke-dns/blob/main/nginx.yaml)，會分別測試
 
 1. [叢集內部 cluster.local](#叢集內部-clusterlocal) (nginx-svc.default.svc.cluster.local)
 
-2. [Internal DNS (Cloud DNS Private)](#internal-dns-cloud-dns-private) (aaa.test-audit.com.)
+2. [internal-dns 使用 cloud dns private](#internal-dns-cloud-dns-private) (aaa.test-audit.com)
 
 3. [外部 dns](#外部-dns-ifconfigme) (ifconfig.me)
 
-並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS、NodeLocal DNSCache Pod
+並使用 nslookup 腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS、NodeLocal DNSCache Pod
 
 相關程式以及 Prometheus、Grafana 的設定可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
 
@@ -63,18 +63,15 @@ NodeLocal DNSCache Prometheus 監控設定參數：`zones="cluster.local."`
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/2.webp" width="750" caption="" >}}
-
-<br>
-
 - 相關 Prometheus 監控指標：
 
 ```shell
-coredns_cache_hits_total{job="kube-dns-nodelocaldns-nodelocaldns", zones="cluster.local."}
-coredns_cache_requests_total{job="kube-dns-nodelocaldns-nodelocaldns", zones="cluster.local."}
-coredns_cache_entries{job="kube-dns-nodelocaldns-nodelocaldns", zones="cluster.local."}
-kubedns_dnsmasq_hits{job="kube-dns-nodelocaldns-kube-dns"}
-kubedns_dnsmasq_misses{job="kube-dns-nodelocaldns-kube-dns"}
+coredns_cache_requests_total{job="cloud-dns-nodelocaldns", zones="cluster.local."}
+coredns_cache_entries{job="cloud-dns-nodelocaldns", zones="cluster.local."}
+coredns_cache_hits_total{job="cloud-dns-nodelocaldns", zones="cluster.local."}
+coredns_cache_misses_total{job="cloud-dns-nodelocaldns", zones="cluster.local."}
+kubedns_dnsmasq_hits{job="kubedns-dns"}
+kubedns_dnsmasq_misses{job="kubedns-dns"}
 ```
 
 <br>
@@ -131,15 +128,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/3.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/2.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/4.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/5.webp" width="900" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/3.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -157,15 +150,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/6.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/4.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/7.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/8.webp" width="750" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/5.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -199,19 +188,15 @@ kubectl patch daemonset node-local-dns -n kube-system --type='strategic' -p '{"s
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/9.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/6.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/10.webp" width="500" caption="發現會卡住，直到手動下指令恢復 NodeLocal DNSCache" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/7.webp" width="500" caption="發現會卡住，直到手動下指令恢復 NodeLocal DNSCache" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/11.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/12.webp" width="750" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/8.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -234,18 +219,15 @@ NodeLocal DNSCache Prometheus 監控設定參數：`zones="."`
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/2.webp" width="750" caption="" >}}
-
-<br>
-
 - 相關 Prometheus 監控指標：
 
 ```shell
-coredns_cache_hits_total{job="kube-dns-nodelocaldns-nodelocaldns", zones="."}
-coredns_cache_requests_total{job="kube-dns-nodelocaldns-nodelocaldns", zones="."}
-coredns_cache_entries{job="kube-dns-nodelocaldns-nodelocaldns", zones="."}
-kubedns_dnsmasq_hits{job="kube-dns-nodelocaldns-kube-dns"}
-kubedns_dnsmasq_misses{job="kube-dns-nodelocaldns-kube-dns"}
+coredns_cache_requests_total{job="cloud-dns-nodelocaldns", zones="."}
+coredns_cache_entries{job="cloud-dns-nodelocaldns", zones="."}
+coredns_cache_hits_total{job="cloud-dns-nodelocaldns", zones="."}
+coredns_cache_misses_total{job="cloud-dns-nodelocaldns", zones="."}
+kubedns_dnsmasq_hits{job="kubedns-dns"}
+kubedns_dnsmasq_misses{job="kubedns-dns"}
 ```
 
 <br>
@@ -301,15 +283,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/3.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/2.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/4.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/5.webp" width="750" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/3.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -326,15 +304,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/6.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/4.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/7.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/8.webp" width="750" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/5.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -368,19 +342,19 @@ kubectl patch daemonset node-local-dns -n kube-system --type='strategic' -p '{"s
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/9.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/6.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/10.webp" width="500" caption="只要 NodeLocal DNSCache 故障解析就會卡住，等到恢復，就能繼續正常運作" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/7.webp" width="500" caption="只要 NodeLocal DNSCache 故障解析就會卡住，等到恢復，就能繼續正常運作" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/11.webp" width="1200" caption="Prometheus 監控指標" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/8.webp" width=800" caption="模擬 NodeLocal DNSCache 故障" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/12.webp" width=750" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/9.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -395,18 +369,15 @@ NodeLocal DNSCache Prometheus 監控設定參數：`zones="."`
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/1.webp" width="750" caption="" >}}
-
-<br>
-
 - 相關 Prometheus 監控指標：
 
 ```shell
-coredns_cache_hits_total{job="kube-dns-nodelocaldns-nodelocaldns", zones="cluster.local."}
-coredns_cache_requests_total{job="kube-dns-nodelocaldns-nodelocaldns", zones="cluster.local."}
-coredns_cache_entries{job="kube-dns-nodelocaldns-nodelocaldns", zones="cluster.local."}
-kubedns_dnsmasq_hits{job="kube-dns-nodelocaldns-kube-dns"}
-kubedns_dnsmasq_misses{job="kube-dns-nodelocaldns-kube-dns"}
+coredns_cache_requests_total{job="cloud-dns-nodelocaldns", zones="."}
+coredns_cache_entries{job="cloud-dns-nodelocaldns", zones="."}
+coredns_cache_hits_total{job="cloud-dns-nodelocaldns", zones="."}
+coredns_cache_misses_total{job="cloud-dns-nodelocaldns", zones="."}
+kubedns_dnsmasq_hits{job="kubedns-dns"}
+kubedns_dnsmasq_misses{job="kubedns-dns"}
 ```
 
 <br>
@@ -461,15 +432,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/2.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/1.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/3.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/4.webp" width="750" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/2.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -487,15 +454,11 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/5.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/3.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/6.webp" width="1200" caption="Prometheus 監控指標" >}}
-
-<br>
-
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/7.webp" width="750" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/4.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -529,19 +492,19 @@ kubectl patch daemonset node-local-dns -n kube-system --type='strategic' -p '{"s
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/8.webp" width="450" caption="測試結果" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/5.webp" width="450" caption="測試結果" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/9.webp" width="500" caption="會卡住，除非 NodeLocal DNSCache 恢復" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/6.webp" width="500" caption="只要 NodeLocal DNSCache 故障解析就會卡住，等到恢復，就能繼續正常運作" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/10.webp" width="1200" caption="Prometheus 監控指標" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/7.webp" width="800" caption="模擬 NodeLocal DNSCache 故障" >}}
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/11.webp" width="750" caption="資源監控" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/8.webp" width="1200" caption="Prometheus 監控指標" >}}
 
 <br>
 
@@ -559,6 +522,8 @@ kubectl patch daemonset node-local-dns -n kube-system --type='strategic' -p '{"s
 使用 k6 測試 KubeDNS + NodeLocal DNSCache 模式下 IP 跟 DNS 的差異
 
 相關程式可以參考：[https://github.com/880831ian/gke-dns](https://github.com/880831ian/gke-dns)
+
+這邊測試的 Node 是用 e2-medium 而非 c3d-standard-4
 
 <br>
 
@@ -623,7 +588,15 @@ IP (avg=168.01ms / 3071 RPS)、DNS (avg=168.14ms / 3018 RPS)
 
 <br>
 
-{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/nodelocal-dnscache-cloud-dns.webp" width="650" caption="Cloud DNS + NodeLocal DNSCache 架構圖<br>[https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane](https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane)" >}}
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/nodelocal-dnscache-cloud-dns.webp" width="650" caption="Cloud DNS + NodeLocal DNSCache 流程圖<br>[https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane](https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane)" >}}
+
+<br>
+
+由於官方流程圖有些細節沒有揭露的完成，我們有額外詢問 Google TAM，並畫出以下流程圖，Google TAM 也確認流程正確
+
+<br>
+
+{{< figure src="/gcp/gke-cloud-dns-nodelocaldnscache/nodelocal-dnscache-cloud-dns-flow.webp" width="1200" caption="自己重新畫的 Cloud DNS + NodeLocal DNSCache 流程圖" >}}
 
 <br>
 

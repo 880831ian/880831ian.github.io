@@ -19,7 +19,7 @@ sidebar:
 >}}
 {{< card
   link="gke-cloud-dns-nodelocaldnscache"
-  title="GKE Cloud DNS + NodeLocal DNSCache 運作測試"
+  title="GKE DNS 使用 Cloud DNS + NodeLocal DNSCache 運作測試"
   subtitle="發布日期：2025-08-08"
   image="/gcp/gke-cloud-dns-nodelocaldnscache/cover.webp"
 >}}

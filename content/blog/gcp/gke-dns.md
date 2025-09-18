@@ -24,13 +24,13 @@ tags:
 
 最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 [Pod 出現 cURL error 6: Could not resolve host](../../kubernetes/pod-curl-error-6-could-not-resolve-host)，此篇文章再來回顧以及整理，可以依照情境測試後的結論以及注意事項，來選擇適合 GKE DNS 組合：
 
-[GKE KubeDNS 運作測試](../gke-kubedns/)
+[GKE DNS 使用 KubeDNS 運作測試](../gke-kubedns/)
 
-[GKE KubeDNS + NodeLocal DNSCache 運作測試](../gke-kubedns-nodelocaldnscache/)
+[GKE DNS 使用 KubeDNS + NodeLocal DNSCache 運作測試](../gke-kubedns-nodelocaldnscache/)
 
-[GKE Cloud DNS 運作測試](../gke-cloud-dns/)
+[GKE DNS 使用 Cloud DNS 運作測試](../gke-cloud-dns/)
 
-[GKE Cloud DNS + NodeLocal DNSCache 運作測試](../gke-cloud-dns-nodelocaldnscache/)
+[GKE DNS 使用 Cloud DNS + NodeLocal DNSCache 運作測試](../gke-cloud-dns-nodelocaldnscache/)
 
 <br>
 
