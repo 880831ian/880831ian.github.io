@@ -104,3 +104,41 @@ tags:
 {{< figure src="/gcp/gke-dns/3.webp" width="600" caption="" >}}
 
 <br>
+
+## 結論
+
+我們上面進行測試的內容，是為了選出 4 種在 GKE DNS 比較好的一個選型，最終考慮：
+
+- 服務的可控性 (能夠自己管理 KubeDNS 以及建立 NodeLocal DNSCache)
+
+- 服務的穩定性 (服務若異常可以快速恢復，且不需要依靠 GCP 協助)
+
+- 服務的監控性 (能夠監控 KubeDNS 以及 NodeLocal DNSCache)
+
+- 額外產生的費用 & 人力成本等 (使用 Cloud DNS 會有額外成本)
+
+我們公司最終選型為：GKE 內使用 <b>KubeDNS + NodeLocal DNSCache</b>
+
+<br>
+
+補充：
+
+在測試過程中發現，我們使用的是 nslookup 並搭配 busybox image 基底測試，中間有換成 alpine 並安裝 bind-tools 發現在 KubeDNS + NodeLocal DNSCache 將 NodeLocal DNSCache 用壞時，會無法正常解析，或是解析速度會下降很多，我們推測是跟底層的 C 語言 lib 有關。
+
+
+
+下面提供幾個最終可能會導致 DNS 解析有差異的因素，會需要再去考慮以及測試：
+
+- 系統底層 C 語言 lib 選用：glibc / msul
+
+- 程式 lib 選用 (例如 Golang)：net.http / goresty
+
+- 連線方式：短 / 長連線
+
+- 晶片架構：amd / arm
+
+- Golang 是否 Build 開啟 CGO_ENABLED 等等
+
+<br>
+
+我們上述的選型主要考慮的不是 KubeDNS 或是 NodeLocal DNSCache 故障等異常情形 (這個異常是可以透過監控以及好的維運設定改善的)，而是上面那四點綜合評估下來的結論
