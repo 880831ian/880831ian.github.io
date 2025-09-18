@@ -1425,35 +1425,32 @@ alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 GKE 適用的 Cloud DNS：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw&lt;/a>&lt;/p></description></item><item><title>GKE KubeDNS 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-kubedns/</link><pubDate>Mon, 04 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-kubedns/</guid><description>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 GKE 適用的 Cloud DNS：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw&lt;/a>&lt;/p></description></item><item><title>GKE DNS 使用 KubeDNS 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-kubedns/</link><pubDate>Mon, 04 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-kubedns/</guid><description>
 &lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host" >Pod 出現 cURL error 6: Could not resolve host&lt;/a>，此篇文章測試的是： KubeDNS 的運作。&lt;/p>
 &lt;br>
-&lt;p>先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml" target="_blank" rel="noopener">程式連結&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml" target="_blank" rel="noopener">程式連結&lt;/a>，會分別測試&lt;/p>
+&lt;p>首先，先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml" target="_blank" rel="noopener">程式連結&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml" target="_blank" rel="noopener">程式連結&lt;/a>，會分別測試&lt;/p>
 &lt;ol>
 &lt;li>
 &lt;p>&lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" >叢集內部 cluster.local&lt;/a> (nginx-svc.default.svc.cluster.local)&lt;/p>
 &lt;/li>
 &lt;li>
-&lt;p>&lt;a href="#internal-dns-cloud-dns-private" >Internal DNS (Cloud DNS Private)&lt;/a> (aaa.test-audit.com.)&lt;/p>
+&lt;p>&lt;a href="#internal-dns-cloud-dns-private" >internal-dns 使用 cloud dns private&lt;/a> (aaa.test-audit.com)&lt;/p>
 &lt;/li>
 &lt;li>
 &lt;p>&lt;a href="#%e5%a4%96%e9%83%a8-dns-ifconfigme" >外部 dns&lt;/a> (ifconfig.me)&lt;/p>
 &lt;/li>
 &lt;/ol>
-&lt;p>並使用腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod&lt;/p>
+&lt;p>並使用 nslookup 腳本進行確認回傳 DNS 解析，每一次測試時，都會重新啟動 KubeDNS Pod&lt;/p>
 &lt;p>相關程式以及 Prometheus、Grafana 的設定可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
 &lt;br>
 &lt;h2>叢集內部 cluster.local&lt;span class="hx-absolute -hx-mt-20" id="叢集內部-clusterlocal">&lt;/span>
 &lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/1.webp" width="750">
-&lt;/figure>
-&lt;br>
 &lt;ul>
 &lt;li>相關 Prometheus 監控指標：&lt;/li>
 &lt;/ul>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -1478,7 +1475,7 @@ title="Copy code"
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">}&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>DOMAIN&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;nginx-svc.default.svc.cluster.local&amp;#34;&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;10.36.17.113&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>EXPECTED_IP&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;10.36.16.255&amp;#34;&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>START_TIME&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>get_taiwan_time&lt;span style="color:#66d9ef">)&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">10000&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>SUCCESS_COUNT&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">0&lt;/span>
@@ -1512,27 +1509,21 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>10.36.17.113 是 nginx-svc Cluster IP&lt;/p>
+&lt;p>10.36.16.255 是 nginx-svc 的 Cluster IP&lt;/p>
 &lt;p>需要先確認 &lt;code>nginx-svc&lt;/code> 的 IP 是多少，然後修改腳本中的 &lt;code>EXPECTED_IP&lt;/code> 變數。&lt;/p>
 &lt;br>
 &lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/2.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/1.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/3.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/2.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/4.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
@@ -1547,55 +1538,34 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/5.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/3.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/4.webp"
+alt="KubeDNS 關成 0 顆，過一陣子後開始噴錯" width="500">&lt;figcaption>
+&lt;p>KubeDNS 關成 0 顆，過一陣子後開始噴錯&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/5.webp"
+alt="因為 KubeDNS Pod 不會馬上關掉，所以還能夠解析 DNS" width="700">&lt;figcaption>
+&lt;p>因為 KubeDNS Pod 不會馬上關掉，所以還能夠解析 DNS&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/6.webp"
-alt="KubeDNS 關成 0 顆" width="500">&lt;figcaption>
-&lt;p>KubeDNS 關成 0 顆&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/7.webp"
-alt="因為 Pod 不會馬上關掉，所以還能夠解析 DNS" width="500">&lt;figcaption>
-&lt;p>因為 Pod 不會馬上關掉，所以還能夠解析 DNS&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/8.webp"
-alt="切換回來就正常可以解析" width="500">&lt;figcaption>
-&lt;p>切換回來就正常可以解析&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/9.webp"
-alt="進入下指令查看錯誤訊息" width="500">&lt;figcaption>
-&lt;p>進入下指令查看錯誤訊息&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/10.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/cluster-dns/11.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
 &lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 7234 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，可以看到有額外測試，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
-&lt;br>
-&lt;br>
-從 Prometheus 可以發現，kubedns_dnsmasq_hits 在 15:48 開始飆高，與 2000 筆切換時間差不多，後面就因為 KubeDNS 關掉，導致沒有 metrics&lt;/p>&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 8733 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -1608,15 +1578,12 @@ alt="設定 cloud dns private" width="600">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/2.webp" width="750">
-&lt;/figure>
-&lt;br>
 &lt;ul>
 &lt;li>相關 Prometheus 監控指標：&lt;/li>
 &lt;/ul>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -1680,28 +1647,22 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本-1">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/3.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/2.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/4.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/3.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/5.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
 &lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 kubedns_dnsmasq_hits hit 有持續上升&lt;/p>&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 KubeDNS 內的指標 kubedns_dnsmasq_hits hit 有持續上升&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -1709,60 +1670,45 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/6.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/4.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/5.webp"
+alt="KubeDNS 關成 0 顆，過一陣子後開始噴錯" width="450">&lt;figcaption>
+&lt;p>KubeDNS 關成 0 顆，過一陣子後開始噴錯&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/6.webp"
+alt="因為 KubeDNS Pod 不會馬上關掉，所以還能夠解析 DNS" width="700">&lt;figcaption>
+&lt;p>因為 KubeDNS Pod 不會馬上關掉，所以還能夠解析 DNS&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/7.webp"
-alt="關閉 pod 時間" width="450">&lt;figcaption>
-&lt;p>關閉 pod 時間&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/8.webp"
-alt="因為 pod 關閉開始失敗" width="450">&lt;figcaption>
-&lt;p>因為 pod 關閉開始失敗&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/9.webp"
-alt="解析恢復" width="450">&lt;figcaption>
-&lt;p>解析恢復&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/10.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/internal-dns/11.webp"
-alt="資源監控" width="750">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
 &lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 4847 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS， 最後再將 KubeDNS 切成 1 顆後，就正常可以解析了&lt;/p>&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 7130 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
 &lt;h2>外部 DNS (ifconfig.me)&lt;span class="hx-absolute -hx-mt-20" id="外部-dns-ifconfigme">&lt;/span>
 &lt;a href="#%e5%a4%96%e9%83%a8-dns-ifconfigme" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/1.webp" width="750">
-&lt;/figure>
-&lt;br>
 &lt;ul>
 &lt;li>相關 Prometheus 監控指標：&lt;/li>
 &lt;/ul>
 &lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kube-dns-nodelocaldns-kube-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_hits&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubedns_dnsmasq_misses&lt;span style="color:#f92672">{&lt;/span>job&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#34;kubedns-dns&amp;#34;&lt;/span>&lt;span style="color:#f92672">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
 &lt;button
 class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
 title="Copy code"
@@ -1826,28 +1772,36 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx-absolute -hx-mt-20" id="測試腳本-2">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/2.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/1.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/3.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/2.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/4.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
 &lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 kubedns_dnsmasq_hits hit 有持續上升，且有比較特別的現象是 叢集內部 cluster.local 跟 internal-dns kubedns_dnsmasq_misses 會跟 kubedns_dnsmasq_hits 差不多，但外部 DNS卻不會 (但目前網路上沒有相關的 metrics 資訊)&lt;/p>&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>可以觀察 KubeDNS 內的指標 kubedns_dnsmasq_hits hit 有持續上升，且有比較特別的現象是 叢集內部 cluster.local 跟 internal-dns kubedns_dnsmasq_misses 會跟 kubedns_dnsmasq_hits 差不多，但外部 DNS 卻不會
+&lt;br>&lt;br>
+cluster 內 / cloud DNS private zone 流程會是
+&lt;br>
+Pod → dnsmasq (miss) → kubedns 回答 → dnsmasq cache → 下次 hit
+&lt;br>
+所以會是 N hit + N miss
+&lt;br>&lt;br>
+外部 domain 流程會是
+&lt;br>
+Pod → kubedns → upstream → dnsmasq 只 cache 回應，不算 miss
+&lt;br>
+加上 dnsmasq 本身會為不同類型的查詢（例如 A/AAAA 或 CNAME chain）各記一次 hit
+&lt;br>
+所以會是 2N hit，0 miss&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -1855,40 +1809,34 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/5.webp"
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/3.webp"
 alt="測試結果" width="450">&lt;figcaption>
 &lt;p>測試結果&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/4.webp"
+alt="KubeDNS 關成 0 顆，過一陣子後開始噴錯" width="500">&lt;figcaption>
+&lt;p>KubeDNS 關成 0 顆，過一陣子後開始噴錯&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/5.webp"
+alt="因為 KubeDNS Pod 不會馬上關掉，所以還能夠解析 DNS" width="700">&lt;figcaption>
+&lt;p>因為 KubeDNS Pod 不會馬上關掉，所以還能夠解析 DNS&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/6.webp"
-alt="強制刪除，所以馬上無法解析" width="500">&lt;figcaption>
-&lt;p>強制刪除，所以馬上無法解析&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/7.webp"
-alt="因為是刪除，不是切成 0 顆，所以他馬上又長一顆出來，就恢復正常" width="500">&lt;figcaption>
-&lt;p>因為是刪除，不是切成 0 顆，所以他馬上又長一顆出來，就恢復正常&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/8.webp"
 alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/external-dns/9.webp"
-alt="資源監控" width="900">&lt;figcaption>
-&lt;p>資源監控&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
 &lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-green-200 hx-bg-green-100 hx-text-green-900 dark:hx-border-green-200/30 dark:hx-bg-green-900/30 dark:hx-text-green-200">
 &lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
 &lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，這次強制刪除 pod，所以在 2110 筆的時候就會失敗，但因為這次不是將 pod 關成 0 顆，他會馬上再長一顆新的，所以約 2123 就正常了，中間時間大約是 7 秒左右，就正常可以解析了&lt;/p>&lt;/div>
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 8934 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -1897,6 +1845,7 @@ alt="資源監控" width="900">&lt;figcaption>
 &lt;br>
 &lt;p>使用 k6 測試 kube dns 模式下 IP 跟 DNS 的差異&lt;/p>
 &lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns" target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;/a>&lt;/p>
+&lt;p>這邊測試的 Node 是用 e2-medium 而非 c3d-standard-4&lt;/p>
 &lt;br>
 &lt;h3>第一次測試&lt;span class="hx-absolute -hx-mt-20" id="第一次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=137.2ms / 4080 RPS)、DNS (avg=140.4ms / 4024 RPS)&lt;/p>
@@ -1965,12 +1914,53 @@ alt="DNS 第四次測試" width="1000">&lt;figcaption>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 KubeDNS 的模式下，對於 KubeDNS 的依賴性極高，只要壞掉，不管任何的解析(叢集內、internal-dns、外部 dns)都會失效。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/kubeDNS.webp"
-alt="GKE KubeDNS" width="700">&lt;figcaption>
-&lt;p>GKE KubeDNS&lt;/p>
+alt="GKE KubeDNS 流程圖" width="700">&lt;figcaption>
+&lt;p>GKE KubeDNS 流程圖&lt;/p>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;p>由於官方流程圖有些細節沒有揭露的完成，我們有額外詢問 Google TAM，並畫出以下流程圖，Google TAM 也確認流程正確&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/kubeDNS-flow.webp"
+alt="自己重新畫的 GKE KubeDNS 流程圖" width="1200">&lt;figcaption>
+&lt;p>自己重新畫的 GKE KubeDNS 流程圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>以下是我們與 Google 討論的內容：&lt;/p>
+&lt;p>我們：&lt;/p>
+&lt;p>圖中的 metadata server 是畫在 GKE Cluster 層內，與 Kube DNS 上游伺服器 (kube-dns svc) 以及 Kube DNS 在同一層。而 Kube DNS + NodeLocal DNSCache 版本架構圖中的 metadata server 則是被標示在Worker Node 裡面，這兩者實質上歸屬與位置皆不同是正確的嗎？為何會這樣？&lt;/p>
+&lt;br>
+&lt;p>Google：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>metadata server 是存在每一台 VM 上面&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>如果是 Kube DNS，請求流向是 application pod -&amp;gt; kube-dns svc -&amp;gt; 隨機 kube-dns pod，如果 kube-dns 沒答案，跳轉該 kube-dns pod 上面的 VM/worker node 的 metadata server&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>(情境2)如果是 node-local-dns，請求流向會是 application pod -&amp;gt; node-local-dns pod&lt;/p>
+&lt;ol>
+&lt;li>如果是 cluster.local 就會轉發到 kube-dns&lt;/li>
+&lt;li>如果有設定 stubDomain 就轉發到設定的 DNS&lt;/li>
+&lt;li>如果是其他的則轉發這台 VM/pod 的 metadata server&lt;/li>
+&lt;/ol>
+&lt;/li>
+&lt;/ol>
+&lt;p>&amp;ndash;&lt;/p>
+&lt;p>我們補充詢問：&lt;/p>
+&lt;p>附上的圖是 KubeDNS 的請求解析圖，我們知道 Metadata Server 是在每一個 VM (Worker Node 上)，只是圖上範例是將 Metadata Server 放到 GKE Cluster 的 Scope 內，而不是在一個 Worker Node，因為情境2. 的 KubeDNS + NodeLocal DNSCache 是將 Metadata Server 放到 Worker Node 裡面，而不是 GKE Cluster，想確認是不是 KubeDNS 請求解析圖在這一塊比較沒有畫清楚呢？&lt;/p>
+&lt;br>
+Google 回覆：
+&lt;p>KubeDNS Only：所有請求都會先到 kube-dns pod，如果是 cluster 之外的會轉發到 kube-dns pod 上面的 VM/worker node 的 metadata server，不是每一台 worker。&lt;/p>
+&lt;p>KubeDNS + node-local-dns 如果不是 cluster.svc.local 就會直接轉發到該台 worker 的 metadata 了&lt;/p>
+&lt;p>因此用到的 Metadata server 的 worker 不太一樣，一個是指會用到 kube-dns pod 上面的 VM，一個是全部 VM/worker 都用到&lt;/p>
+&lt;p>同意您說的 &amp;ldquo;圖上範例是將 Metadata Server 放到 GKE Cluster 的 Scope 內&amp;rdquo; 可能會有點誤導&lt;/p>
+&lt;p>您畫的圖示意是正確的&lt;/p>
+&lt;p>&amp;ndash;&lt;/p>
+&lt;br>
 &lt;p>另外也可以從官方文件中得知 KubeDNS 的 &lt;code>/etc/resolv.conf&lt;/code> 設定值，可以知道 Pod 最開始使用的 DNS 解析 Server 是誰。&lt;/p>
+&lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns/resolv.webp"
 alt="/etc/resolv.conf 設定值 服務探索和 DNS /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;p>/etc/resolv.conf 設定值 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value" target="_blank" rel="noopener">服務探索和 DNS /etc/resolv.conf&lt;/a>&lt;/p>
