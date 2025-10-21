@@ -101,6 +101,12 @@ layout: hextra-home
   image="/docker/dockerhub-pull-ratelimit/cover.webp"
 >}}
 {{< card
+  link="blog/aws/aws-ami-migrate-other-account"
+  title="AWS Amazon Machine Images (AMIs) 轉移給其他 AWS 帳號"
+  subtitle="發布日期：2025-02-06"
+  image="/aws/aws-ami-migrate-other-account/cover.webp"
+>}}
+{{< card
   link="blog/gcp/gcp-artifact-registry-docker-auth"
   title="如何為 CI/CD 配置 GCP Artifact Registry 的 Docker 認證"
   subtitle="發布日期：2024-12-26"

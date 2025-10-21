@@ -30,6 +30,12 @@ sidebar:
   image="/aws/aws-ecr-permissions/cover.webp"
 >}}
 {{< card
+  link="aws-ami-migrate-other-account"
+  title="AWS Amazon Machine Images (AMIs) 轉移給其他 AWS 帳號"
+  subtitle="發布日期：2025-02-06"
+  image="/aws/aws-ami-migrate-other-account/cover.webp"
+>}}
+{{< card
   link="aws-cni-failed-to-assign-ip"
   title="AWS EKS Pod 出現 aws-cni failed to assign an IP address to container 錯誤"
   subtitle="發布日期：2024-12-11"
