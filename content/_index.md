@@ -95,6 +95,12 @@ layout: hextra-home
   image="/kubernetes/k8s-node-log-stdout-logrotate/cover.webp"
 >}}
 {{< card
+  link="blog/docker/dockerhub-pull-ratelimit"
+  title="Docker Image Pull Rate Limit 說明 + 掃描腳本"
+  subtitle="發布日期：2025-02-24"
+  image="/docker/dockerhub-pull-ratelimit/cover.webp"
+>}}
+{{< card
   link="blog/aws/aws-cni-failed-to-assign-ip"
   title="AWS EKS Pod 出現 aws-cni failed to assign an IP address to container 錯誤"
   subtitle="發布日期：2024-12-11"

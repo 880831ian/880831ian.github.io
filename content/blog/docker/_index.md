@@ -12,6 +12,12 @@ sidebar:
 
 {{< cards >}}
 {{< card
+  link="dockerhub-pull-ratelimit"
+  title="Docker Image Pull Rate Limit 說明 + 掃描腳本"
+  subtitle="發布日期：2025-02-24"
+  image="/docker/dockerhub-pull-ratelimit/cover.webp"
+>}}
+{{< card
   link="prometheus-grafana-docker"
   title="使用 Prometheus 和 Grafana 打造監控預警系統 (Docker 篇)"
   subtitle="發布日期：2022-05-18"
