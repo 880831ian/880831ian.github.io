@@ -1,0 +1,165 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – CI/CD</title><link>https://pin-yi.me/tags/ci/cd/</link><description>Recent content in CI/CD on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Thu, 26 Dec 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/ci/cd/index.xml" rel="self" type="application/rss+xml"/><item><title>如何為 CI/CD 配置 GCP Artifact Registry 的 Docker 認證</title><link>https://pin-yi.me/blog/gcp/gcp-artifact-registry-docker-auth/</link><pubDate>Thu, 26 Dec 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-artifact-registry-docker-auth/</guid><description>
+&lt;h2>說明&lt;span class="hx-absolute -hx-mt-20" id="說明">&lt;/span>
+&lt;a href="#%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>當我們在 CI 階段，會將打包的 image 丟到 Repositories，我們選擇 GCP 的 Artifact Registry，就會需要有 GCP 相關權限，可以推到 Repositories 上。&lt;/p>
+&lt;br>
+&lt;p>那我們通常會有兩種做法：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>使用 gcloud 的 image，並在 GitLab CICD Variables 塞入對應的 SA Key (當然要給他能上傳 Artifact Registry 權限)，但這個方法在跑 CI 時，會需要拉 gcloud 的 image 會比較花時間。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>先產生好已經驗證過的 &lt;code>$HOME/.docker/config.json&lt;/code>，也放到 GitLab CICD Variables，讓 CI 動作時，可以拿來驗證可以直接 push 到 Repositories 上。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>(當然還有第三種方式，之後再來介紹)&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>那我們這篇就來說明第二種方式，要怎麼產生 &lt;code>$HOME/.docker/config.json&lt;/code> 來驗證呢？&lt;/p>
+&lt;p>如果本機有 Docker 可以先看看自己檔案內容，應該會長得像下面這樣&lt;/p>
+&lt;br>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;auths&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;asia-east1-docker.pkg.dev&amp;#34;&lt;/span>: {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;credsStore&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;desktop&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;credHelpers&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;asia-docker.pkg.dev&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcloud&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;asia-east1-docker.pkg.dev&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcloud&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;asia.gcr.io&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcloud&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;gcr.io&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcloud&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;marketplace.gcr.io&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcloud&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;staging-k8s.gcr.io&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcloud&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;us.gcr.io&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcloud&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> },
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;currentContext&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;desktop-linux&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>可以看到 &lt;code>auths&lt;/code> 的 &lt;code>asia-east1-docker.pkg.dev&lt;/code> 是空的，然後在下面有 &lt;code>credHelpers&lt;/code> &lt;code>&amp;quot;asia-east1-docker.pkg.dev&amp;quot;: &amp;quot;gcloud&amp;quot;,&lt;/code> 就代表 Docker 在嘗試連接這些 Registry 時，會通過 gcloud 命令行工具來生成和管理憑證，但這樣又會需要使用 gcloud 來驗證 QQ&lt;/p>
+&lt;br>
+&lt;p>因此我們需要自己來打造我們的 Config xDD，我們要先準備好有權限的 SA Key，如下：
+(有將其中 Key 以及 project 亂改了，不用擔心)&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;type&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;service_account&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;project_id&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;gcp-20435107-111&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;private_key_id&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;096bd873ba49ba348946eff2202199330fd89fbb&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;private_key&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiZ+MUvg\n9xqkVFzKpjrEE2o/L5c7XeciSoAvAF757WFWXJvPWyG48LWNE5PGy+kXo0TBWBm7\n96pgugJVAgMBAAECggEAJTTBRiRSd2Wv6T0HLolqX1xDgU6SFL7bEtub+mtq7C2b\naInTkGe8Iol0VDbysFbAEx/wQpK5a2RPUQK/QHVCkMiV13yX75OTFl3IRMoqRjmT\nHhg88ncpY4yVmUuR0dSY9asdP4hIupSe9SYq58Uu6f8wE1UhzoF6k3SsxuePKU1K7EPG3UPtFIwvc2zS0du7h\n49WUrZkzLwf/HvfUAfmbio0JdY+wEzN4lgdYD1ApEQKBgQDx4s5Znp3YBuI1rafP\n0Hrdu/5dtM1rSSP4LA6+C97fGj3N4KC1hh+6rVmr2xC3YTnhYv1uaVsbbV676Ssr\n2fBYNNqbLfzMkip4TPhg7g/rggihj5uhtui3rgyicgbgyiy\n1oJNVzYR2Q4Ay8RAne1eqdyFfQKBgQC32mKIIDBjGk/B/4g1TXEnJYJuarM72ast\nlUnvoI42FK/RJdepDdh6b+EhvAgTQD0CuJO8FE2L6/lf+LglJAzJEC8ua3PWZrS6\n2tUGd56Om9GVAtbGhvDrCprPXtN4o0ouqfRXCiKCTF0jip6t9WoCETXjvrQYN5JN\nP7WKmL2nuQKBgQDkrS20YFaNkwRtBv2tZEWkN0SlRnclxIHy74QIe6R6e46Ogpys\nwF5i19v8syA8nfhgcntx1LzDU0TKlgewb1vfqCg7qOBkbpMkJHB1AtuE+Fzr4xgi\nAyglexLgvro9o2LPbVBUPlVE5en7YVvidvm9MIP3n6KzcfDZvfRZGHFY6QKBgQCT\n7kfxt9S3KOib8/uox9MP6IJ2TaxBr/aoCsMe6FUE9sgwxP4trFJO0c6X0i+9Labp\nlZJpdvyeZRSWQA4K9GLFNRyBgTwHe0RYRNO7DGyr2nxcJZiizNj0hefiiy4kl16N\nBXrwvdredItMmbDrz9eoKijuQvettKknNuffyN5xIQKBgCe++4G6OVW6LxrY+ggm\nxRGb5p55b7RPkj2Sr1OtqsOA1PDffuBjmowOQ9atwaMotV38vFU2tMEN1A2HCtaR\n4a01Heg1jiCHyZ7KgAxkvzovxcm8KQEtgDfRKj7/5b0BWubRb5tc+yGFOiLMShRD\nBjqH9JHeNGTn5BkrcH+mWSs7\n-----END PRIVATE KEY-----\n&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;client_email&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;aaa-test@gcp-20435107-111.iam.gserviceaccount.com&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;client_id&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;102880852862346945795&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;auth_uri&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;https://accounts.google.com/o/oauth2/auth&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;token_uri&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;https://oauth2.googleapis.com/token&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;auth_provider_x509_cert_url&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;https://www.googleapis.com/oauth2/v1/certs&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;client_x509_cert_url&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;https://www.googleapis.com/robot/v1/metadata/x509/ian-test%40gcp-20435107-111.iam.gserviceaccount.com&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;universe_domain&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;googleapis.com&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>使用 Token 來產生 Docker Config&lt;span class="hx-absolute -hx-mt-20" id="使用-token-來產生-docker-config">&lt;/span>
+&lt;a href="#%e4%bd%bf%e7%94%a8-token-%e4%be%86%e7%94%a2%e7%94%9f-docker-config" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ol>
+&lt;li>
+&lt;p>在本機下 &lt;code>gcloud auth activate-service-account --key-file=&amp;lt;檔案名稱&amp;gt;&lt;/code>，先將自己電腦的 gcloud 切換成 SA 帳號&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>接著我們把 token 印出來 (已經刪除其中 token 內容)&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>gcloud auth print-access-token
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ya29.c.c0ASRK0GZLLHHYbVgq_fzR2cIC01O9V-gUDB8Wxmt8X71SHEwYvDbFm4Pw4Y6snMS1XG2_a4M0-bY8cIV8tNnUCRv0Yxb-a38AJWLnreGpBj0fKMAsELhMSnQE1TRkdUiaLj4GV4JDXWROfYtBzGiqxeK89ZyzHGOpc4x0n_41ZBImgR8S1BhFQATYiFID7tqtuVdogZ2Ud74uOhZVvbicm86W_8hS4kipb8yyfF-IQ4uYuvXw4RrzRd9tuc5a_U7t5mWy7sfY1ZWbh3lkjfakxenRgqlVt6Xaj2SBiyYpaOBVuVjVynXtkS2gMBcIcdpkOehbZMU_t8MVBuUqst4Fm8iBQXrhROfgcQslnwhi2wWWyZWs7-VBaMO2mzkh2rFwyF9Fgzhw8spMt_XO4jn9R5zMe-IMB7fltyjvQx319dJBBQYX3eZJhzpJ36d-Brpgkb604mx8z_QtIIg5nBerR-g_avSptzRYk4e9QVz_xJdQmMSk7ojM0VY0wUXzUxFzBVgIsinq-hIeIgaIo6ld0b5I28qzIXzuj9nVdM2J5rfro6puVvydu45YeO1hntfzB7o65fBe8beFmUwuj5jI2XjimJkxv44JyZSY_JFv-lJQlz6uYt46cBboa0VcSW3l2YxWIoF-m9i&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol start="3">
+&lt;li>然後下以下指令，把上面拿到的 token 塞入，並轉成 base64 (前面要多帶 oauth2accesstoken:)&lt;/li>
+&lt;/ol>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>echo -n &lt;span style="color:#e6db74">&amp;#34;oauth2accesstoken:&amp;lt;token&amp;gt;&amp;#34;&lt;/span> | base64&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol start="4">
+&lt;li>最後將這串經過 base64 的字串，帶入 Docker config 中&lt;/li>
+&lt;/ol>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;auths&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;asia-east1-docker.pkg.dev&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;auth&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;&amp;lt;base64 後的 token&amp;gt;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>就完成啦！只是這個 token 會有個缺點，它有一小時的有效期限，所以拿來當 CI 專用的 Cofing 不太適合。&lt;/p>
+&lt;br>
+&lt;h2>使用 SA Key 來產生 Docker Config&lt;span class="hx-absolute -hx-mt-20" id="使用-sa-key-來產生-docker-config">&lt;/span>
+&lt;a href="#%e4%bd%bf%e7%94%a8-sa-key-%e4%be%86%e7%94%a2%e7%94%9f-docker-config" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ol>
+&lt;li>
+&lt;p>在本機下 &lt;code>printf &amp;quot;_json_key:%s&amp;quot; &amp;quot;$(cat &amp;lt;key 的檔案&amp;gt;)&amp;quot; | base64&lt;/code>，將 SA Key 帶入，並轉成 base64 (前面改帶 &lt;code>_json_key:&lt;/code>)&lt;/p>
+&lt;p>(為什麼要用 printf 是因為如果本機是用 zsh echo 會把 Key 裡面的 \n 直接換行，就會導致憑證出現問題)&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;ol start="2">
+&lt;li>接著把這串字串，帶入 Docker Config 中產生的 base64，在放到底下的 JSON 裡面&lt;/li>
+&lt;/ol>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;auths&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;asia-east1-docker.pkg.dev&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;auth&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;&amp;lt;base64 後的 token&amp;gt;&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>就完成啦！這個方式就不會有時間限制的問題，可以直接放到 CI/CD 裡面使用。&lt;/p></description></item></channel></rss>
