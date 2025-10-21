@@ -1,4 +1,121 @@
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Amazon Web Services</title><link>https://pin-yi.me/blog/aws/</link><description>Recent content in Amazon Web Services on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/aws/index.xml" rel="self" type="application/rss+xml"/><item><title>手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！</title><link>https://pin-yi.me/blog/aws/aws-assuming-roles-tool-introduce/</link><pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-assuming-roles-tool-introduce/</guid><description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Amazon Web Services</title><link>https://pin-yi.me/blog/aws/</link><description>Recent content in Amazon Web Services on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/aws/index.xml" rel="self" type="application/rss+xml"/><item><title>AWS SSO Profile 設定介紹</title><link>https://pin-yi.me/blog/aws/aws-sso-profile-introduce/</link><pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-sso-profile-introduce/</guid><description>
+&lt;p>之前有介紹過 &lt;a href="../aws-cli/" >設定 AWS CLI 以及 AWS CLI 指令說明&lt;/a>，大家應該已經知道要怎麼安裝 AWS CLI，以及設定 AWS IAM User 的 Access Key。&lt;/p>
+&lt;p>而這次要介紹的是導入 AWS Organizations 以及 AWS IAM Identity Center(SSO) 後，要如何設定 AWS SSO Profile，用來存取 AWS Organizations 中的各個 AWS Account 以及對應的 Permission Set。&lt;/p>
+&lt;br>
+&lt;h2>aws configure sso 設定&lt;span class="hx-absolute -hx-mt-20" id="aws-configure-sso-設定">&lt;/span>
+&lt;a href="#aws-configure-sso-%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>步驟也很簡單，首先可以使用 AWS CLI 的 &lt;code>aws configure sso&lt;/code> 指令來設定 SSO Profile，這個指令會引導你完成整個設定。&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws configure sso&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>系統會要求你輸入一些資訊，例如 SSO Session 的名稱、SSO 的起始 URL、SSO 區域等等。&lt;/p>
+&lt;p>會像是下方圖片一樣，出現一個連結，也會自動幫你開瀏覽器，要你登入 AWS IAM Identity Center 來進行驗證。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/1.webp"
+alt="設定 aws configure sso" width="650">&lt;figcaption>
+&lt;p>設定 aws configure sso&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>瀏覽器開啟後，如果有登入完畢，會需要授予 Applications and AWS accounts 權限：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/2.webp" width="450">
+&lt;/figure>
+&lt;br>
+&lt;p>看到這個畫面，接著回到終端機，系統會要求你選擇要存取的 AWS Account 以及對應的 Permission Set：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/3.webp" width="350">
+&lt;/figure>
+&lt;br>
+&lt;p>會跳出一個選單，讓你選擇要存取的 AWS Account。你可以使用上下鍵來選擇，然後按下 Enter 鍵來確認。&lt;/p>
+&lt;p>這邊會協助建立一個新的 Profile，並且會自動填入相關的資訊。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/4.webp"
+alt="選擇 AWS Account" width="650">&lt;figcaption>
+&lt;p>選擇 AWS Account&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>接著，選擇這個 AWS Account 後，如果有不同的 Permission Set，你可以再選擇對應的 Permission Set：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/5.webp"
+alt="設定 Permission Set" width="650">&lt;figcaption>
+&lt;p>設定 Permission Set&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>最後如果跳出這個畫面，就代表已經設定完成了！&lt;/p>
+&lt;p>可以使用以下指令來確認是否有設定成功：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws sts get-caller-identity --profile &amp;lt;your-profile-name&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/6.webp"
+alt="設定 aws configure sso 完成" width="650">&lt;figcaption>
+&lt;p>設定 aws configure sso 完成&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>檢視設定的 Profile&lt;span class="hx-absolute -hx-mt-20" id="檢視設定的-profile">&lt;/span>
+&lt;a href="#%e6%aa%a2%e8%a6%96%e8%a8%ad%e5%ae%9a%e7%9a%84-profile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們也可以來看一下 &lt;code>~/.aws/config&lt;/code> 檔案，裡面會有剛剛設定的 Profile 資訊：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-ini" data-lang="ini">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">[profile AdministratorAccess-72XXXXXXXXX0]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_session&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">test&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_account_id&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">72XXXXXXXXX0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_role_name&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">AdministratorAccess&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">region&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">ap-southeast-1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">output&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">json&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">[sso-session test]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_start_url&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">https://d-XXXXXXX.awsapps.com/start/#&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_region&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">ap-southeast-1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_registration_scopes&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">sso:account:access&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到會有兩個區塊，分別是 sso-session 以及剛剛設定的 Profile。&lt;/p>
+&lt;p>sso-session：
+會記錄 SSO 的起始 URL、SSO 區域以及 SSO 的註冊範圍。&lt;/p>
+&lt;p>Profile 區塊：
+則是記錄使用哪一個 SSO Session、AWS Account ID、Permission Set 以及預設的區域和輸出格式。&lt;/p>
+&lt;p>那我們通常只有一個 SSO Session，然後有多個 AWS Account，所以有多個 Profile，如果每個 AWS Account 都有不同的 Permission Set，就會有更多的 Profile。&lt;/p>
+&lt;br>
+&lt;p>那假設你想要手動輸入 SSO Profile 的話，也可以直接在 &lt;code>~/.aws/config&lt;/code> 檔案中新增一個 Profile 區塊，並填入對應的 AWS Account ID、Permission Set 以及 SSO Session 名稱，就可以囉。&lt;/p>
+&lt;br>
+&lt;h2>aws configure sso-session&lt;span class="hx-absolute -hx-mt-20" id="aws-configure-sso-session">&lt;/span>
+&lt;a href="#aws-configure-sso-session" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>或是你也可以使用 &lt;code>aws configure sso-session&lt;/code> 指令來設定 SSO Session，基本上流程跟 &lt;code>aws configure sso&lt;/code> 類似，但就不會協助設定後面的 Profile。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/7.webp"
+alt="設定 aws configure sso-session" width="650">&lt;figcaption>
+&lt;p>設定 aws configure sso-session&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>那我們在使用 Profile 的時候，可以直接在指令後面多加上 &lt;code>--profile &amp;lt;your-profile-name&amp;gt;&lt;/code> 來指定要使用的 Profile。
+但這個方式很麻煩，所以我們下一篇會介紹「&lt;a href="../aws-assuming-roles-tool-introduce/" >手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！&lt;/a>」這個工具，可以讓你更方便地管理以及切換多個 AWS Profile。&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 AWS CLI 設定 IAM Identity Center 驗證：&lt;a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html&lt;/a>&lt;/p></description></item><item><title>手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！</title><link>https://pin-yi.me/blog/aws/aws-assuming-roles-tool-introduce/</link><pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-assuming-roles-tool-introduce/</guid><description>
 &lt;p>由於 AWS 的服務越來越多，很多時候我們需要在不同的 AWS Account 之間切換來操作，不管是使用單純使用 IAM User 產生 Access Key，或是用 AWS SSO，都會需要頻繁的切換 AWS Profile，如果 AWS SSO 每一個 Account 還有不同的 Permission Set，那就更麻煩了。&lt;/p>
 &lt;p>因此如果有一套好用的工具，可以讓我們更方便的切換 AWS Profile，那就太棒了！&lt;/p>
 &lt;p>今天就來介紹一個這樣的工具，叫做 Granted。&lt;/p>
@@ -182,124 +299,7 @@ alt="開啟 AWS 服務頁面" width="1000">&lt;figcaption>
 &lt;p>可以快速開啟的資源清單可以參考：&lt;a href="https://github.com/fwdcloudsec/granted/blob/main/pkg/console/service_map.go" target="_blank" rel="noopener">https://github.com/fwdcloudsec/granted/blob/main/pkg/console/service_map.go&lt;/a>&lt;/p>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Granted 官方網站：&lt;a href="https://granted.dev/" target="_blank" rel="noopener">https://granted.dev/&lt;/a>&lt;/p></description></item><item><title>AWS SSO Profile 設定介紹</title><link>https://pin-yi.me/blog/aws/aws-sso-profile-introduce/</link><pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-sso-profile-introduce/</guid><description>
-&lt;p>之前有介紹過 &lt;a href="../aws-cli/" >設定 AWS CLI 以及 AWS CLI 指令說明&lt;/a>，大家應該已經知道要怎麼安裝 AWS CLI，以及設定 AWS IAM User 的 Access Key。&lt;/p>
-&lt;p>而這次要介紹的是導入 AWS Organizations 以及 AWS IAM Identity Center(SSO) 後，要如何設定 AWS SSO Profile，用來存取 AWS Organizations 中的各個 AWS Account 以及對應的 Permission Set。&lt;/p>
-&lt;br>
-&lt;h2>aws configure sso 設定&lt;span class="hx-absolute -hx-mt-20" id="aws-configure-sso-設定">&lt;/span>
-&lt;a href="#aws-configure-sso-%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>步驟也很簡單，首先可以使用 AWS CLI 的 &lt;code>aws configure sso&lt;/code> 指令來設定 SSO Profile，這個指令會引導你完成整個設定。&lt;/p>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws configure sso&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-&lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-title="Copy code"
->
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>系統會要求你輸入一些資訊，例如 SSO Session 的名稱、SSO 的起始 URL、SSO 區域等等。&lt;/p>
-&lt;p>會像是下方圖片一樣，出現一個連結，也會自動幫你開瀏覽器，要你登入 AWS IAM Identity Center 來進行驗證。&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/1.webp"
-alt="設定 aws configure sso" width="650">&lt;figcaption>
-&lt;p>設定 aws configure sso&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>瀏覽器開啟後，如果有登入完畢，會需要授予 Applications and AWS accounts 權限：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/2.webp" width="450">
-&lt;/figure>
-&lt;br>
-&lt;p>看到這個畫面，接著回到終端機，系統會要求你選擇要存取的 AWS Account 以及對應的 Permission Set：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/3.webp" width="350">
-&lt;/figure>
-&lt;br>
-&lt;p>會跳出一個選單，讓你選擇要存取的 AWS Account。你可以使用上下鍵來選擇，然後按下 Enter 鍵來確認。&lt;/p>
-&lt;p>這邊會協助建立一個新的 Profile，並且會自動填入相關的資訊。&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/4.webp"
-alt="選擇 AWS Account" width="650">&lt;figcaption>
-&lt;p>選擇 AWS Account&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>接著，選擇這個 AWS Account 後，如果有不同的 Permission Set，你可以再選擇對應的 Permission Set：&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/5.webp"
-alt="設定 Permission Set" width="650">&lt;figcaption>
-&lt;p>設定 Permission Set&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>最後如果跳出這個畫面，就代表已經設定完成了！&lt;/p>
-&lt;p>可以使用以下指令來確認是否有設定成功：&lt;/p>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws sts get-caller-identity --profile &amp;lt;your-profile-name&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-&lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-title="Copy code"
->
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/6.webp"
-alt="設定 aws configure sso 完成" width="650">&lt;figcaption>
-&lt;p>設定 aws configure sso 完成&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;h3>檢視設定的 Profile&lt;span class="hx-absolute -hx-mt-20" id="檢視設定的-profile">&lt;/span>
-&lt;a href="#%e6%aa%a2%e8%a6%96%e8%a8%ad%e5%ae%9a%e7%9a%84-profile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們也可以來看一下 &lt;code>~/.aws/config&lt;/code> 檔案，裡面會有剛剛設定的 Profile 資訊：&lt;/p>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
-&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-ini" data-lang="ini">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">[profile AdministratorAccess-72XXXXXXXXX0]&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_session&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">test&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_account_id&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">72XXXXXXXXX0&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_role_name&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">AdministratorAccess&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">region&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">ap-southeast-1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">output&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">json&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">[sso-session test]&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_start_url&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">https://d-XXXXXXX.awsapps.com/start/#&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_region&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">ap-southeast-1&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_registration_scopes&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">sso:account:access&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
-&lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
-title="Copy code"
->
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;/button>
-&lt;/div>
-&lt;/div>
-&lt;p>可以看到會有兩個區塊，分別是 sso-session 以及剛剛設定的 Profile。&lt;/p>
-&lt;p>sso-session：
-會記錄 SSO 的起始 URL、SSO 區域以及 SSO 的註冊範圍。&lt;/p>
-&lt;p>Profile 區塊：
-則是記錄使用哪一個 SSO Session、AWS Account ID、Permission Set 以及預設的區域和輸出格式。&lt;/p>
-&lt;p>那我們通常只有一個 SSO Session，然後有多個 AWS Account，所以有多個 Profile，如果每個 AWS Account 都有不同的 Permission Set，就會有更多的 Profile。&lt;/p>
-&lt;br>
-&lt;p>那假設你想要手動輸入 SSO Profile 的話，也可以直接在 &lt;code>~/.aws/config&lt;/code> 檔案中新增一個 Profile 區塊，並填入對應的 AWS Account ID、Permission Set 以及 SSO Session 名稱，就可以囉。&lt;/p>
-&lt;br>
-&lt;h2>aws configure sso-session&lt;span class="hx-absolute -hx-mt-20" id="aws-configure-sso-session">&lt;/span>
-&lt;a href="#aws-configure-sso-session" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>或是你也可以使用 &lt;code>aws configure sso-session&lt;/code> 指令來設定 SSO Session，基本上流程跟 &lt;code>aws configure sso&lt;/code> 類似，但就不會協助設定後面的 Profile。&lt;/p>
-&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/7.webp"
-alt="設定 aws configure sso-session" width="650">&lt;figcaption>
-&lt;p>設定 aws configure sso-session&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;br>
-&lt;p>那我們在使用 Profile 的時候，可以直接在指令後面多加上 &lt;code>--profile &amp;lt;your-profile-name&amp;gt;&lt;/code> 來指定要使用的 Profile。
-但這個方式很麻煩，所以我們下一篇會介紹「&lt;a href="../aws-assuming-roles-tool-introduce/" >手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！&lt;/a>」這個工具，可以讓你更方便地管理以及切換多個 AWS Profile。&lt;/p>
-&lt;br>
-&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 AWS CLI 設定 IAM Identity Center 驗證：&lt;a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html" target="_blank" rel="noopener">https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html&lt;/a>&lt;/p></description></item><item><title>如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account EKS 使用</title><link>https://pin-yi.me/blog/aws/aws-ecr-permissions/</link><pubDate>Wed, 25 Jun 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-ecr-permissions/</guid><description>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Granted 官方網站：&lt;a href="https://granted.dev/" target="_blank" rel="noopener">https://granted.dev/&lt;/a>&lt;/p></description></item><item><title>如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account EKS 使用</title><link>https://pin-yi.me/blog/aws/aws-ecr-permissions/</link><pubDate>Wed, 25 Jun 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-ecr-permissions/</guid><description>
 &lt;p>這篇主要是因為公司目前的 AWS 架構，會將各單位的系統依照產品、環境給拆分，但有時候部署，總會有一些共用的 Image。
 在這之前，我們需要一個一個將相同的 Image 搬到每個 AWS Account 的 ECR，當時就在想，是否可以直接共用 ECR 給同一個 AWS Organization 的其他 AWS Account 使用 (當然也不要用 Public ECR 來避免安全性問題)。&lt;/p>
 &lt;br>
@@ -416,7 +416,130 @@ alt="Pod 成功啟動" width="1200">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;p>這樣就完成了如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account 使用的設定。&lt;/p></description></item><item><title>AWS EKS Pod 出現 aws-cni failed to assign an IP address to container 錯誤</title><link>https://pin-yi.me/blog/aws/aws-cni-failed-to-assign-ip/</link><pubDate>Wed, 11 Dec 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-cni-failed-to-assign-ip/</guid><description>
+&lt;p>這樣就完成了如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account 使用的設定。&lt;/p></description></item><item><title>AWS Amazon Machine Images (AMIs) 轉移給其他 AWS 帳號</title><link>https://pin-yi.me/blog/aws/aws-ami-migrate-other-account/</link><pubDate>Thu, 06 Feb 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-ami-migrate-other-account/</guid><description>
+&lt;p>想要研究是否可以把已經包好的 AWS AMI 轉移到其他 AWS 帳號使用，故有此篇文章來說明如何操作。&lt;/p>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-blue-200 hx-bg-blue-100 hx-text-blue-900 dark:hx-border-blue-200/30 dark:hx-bg-blue-900/30 dark:hx-text-blue-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>下方會有兩個不同的 AWS 帳號來說明&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>分別是：A 帳號 6517xxxxxx02，會負責產生 AMI 並將 AMI 分享給 B 帳號 ; B 帳號 1205xxxxxx13，則是接收 AMI 的帳號&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol>
+&lt;li>我們先到 A 帳號 (6517xxxxxx02) 上，選擇要的 EC2 Instances 建立 AMI，確認一下建立的 AMI 以及 Snapshots 是否都 Available 或是 Completed。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ami-migrate-other-account/1.webp"
+alt="確認 A 帳號的 AMI 和 Snapshots" width="1200">&lt;figcaption>
+&lt;p>確認 A 帳號的 AMI 和 Snapshots&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-flex-col hx-rounded-lg hx-border hx-py-4 hx-px-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-indigo-200 hx-bg-indigo-100 hx-text-indigo-900 dark:hx-border-indigo-200/30 dark:hx-bg-indigo-900/30 dark:hx-text-indigo-200">
+&lt;p class="hx-flex hx-items-center hx-font-medium">&lt;svg height=16px class="hx-inline-block hx-align-middle hx-mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>注意&lt;/p>
+&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
+&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;p>這邊說明一下，AWS 的 AMI 是基於 EC2 的 Snapshots 來創建的。AMI 實際上是包含了一組快照的元數據，這些快照代表了你 EC2 實例的磁碟（包括根磁碟和附加磁碟）的完整映像。這樣，當你創建 AMI 時，它會捕獲這些磁碟的狀態和數據，並用於後續的還原或啟動新的實例。&lt;br>&lt;br>
+請記得在一開始建立 EC2 選擇 Volumes 時，如果選擇 Encryption，則無法跨帳號分享加密 AMI (除非也把 KMS 也分享)&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol start="2">
+&lt;li>點擊要分享的 AMI，按下右鍵，選擇 Edit AMI permissions &amp;gt; 找到 Shared accounts，按下 Add accout ID，輸入接收方 B 帳號 (1205xxxxxx13)，最後點儲存變更。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ami-migrate-other-account/2.webp"
+alt="分享 AMI 的設定畫面" width="1200">&lt;figcaption>
+&lt;p>分享 AMI 的設定畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="3">
+&lt;li>就會顯示 &lt;code>Successfully updated permissions for &amp;lt;ami id&amp;gt;&lt;/code>，接著我們切換到 B 帳號 (1205xxxxxx13) 的 AMI，就可以看到它囉，如果沒看到，記得切換成 Private image (預設會是 Owned by me)&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ami-migrate-other-account/3.webp"
+alt="確認 B 帳號的 AMI" width="700">&lt;figcaption>
+&lt;p>確認 B 帳號的 AMI&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="4">
+&lt;li>接著點擊 demo-shard-ami 這個從 A 帳號 (6517xxxxxx02) 來的 AMI (可以從後面 Source 看到) 右鍵，選擇 Copy AMI，就可以來複製 AMI，可以針對自己需求，調整相關名稱、描述等。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ami-migrate-other-account/4.webp"
+alt="複製 AMI 的設定畫面" width="1200">&lt;figcaption>
+&lt;p>複製 AMI 的設定畫面&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="5">
+&lt;li>但當你點擊完後，會發現出現這個錯誤，它說沒有權限來儲存這個 AMI，那是為什麼呢？還記得上面說的 AMI 它還需要 Snapshots 搭配使用，所以我們也需要再將 Snapshots 分享給 B 帳號 (1205xxxxxx13)，才可以正常複製歐。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ami-migrate-other-account/5.webp"
+alt="複製 AMI 出現權限錯誤" width="1200">&lt;figcaption>
+&lt;p>複製 AMI 出現權限錯誤&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="6">
+&lt;li>那我們再切回去 A 帳號 (6517xxxxxx02) 的 Snapshots，點擊右鍵選擇 Snapshot settings &amp;gt; 選擇 Modify permissions。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ami-migrate-other-account/6.webp"
+alt="設定 Snapshots 的分享權限" width="850">&lt;figcaption>
+&lt;p>設定 Snapshots 的分享權限&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="7">
+&lt;li>就跟分享 AMI 一樣，輸入要分享的 B 帳號 (1205xxxxxx13)，按下 Modify permissions，回到 B 帳號 (1205xxxxxx13) 確認是否出現此 Snapshots。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ami-migrate-other-account/7.webp"
+alt="設定 Snapshots 的分享權限" width="1200">&lt;figcaption>
+&lt;p>設定 Snapshots 的分享權限&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="8">
+&lt;li>確認有後，我們就重複上面的第四點，我 AMI 複製的名稱取為 demo-share-ami-b-accout-copy，按下儲存，就可以看到複製成功囉。當然同樣的，也會同時建立新的 Snapshots。&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ami-migrate-other-account/8.webp"
+alt="測試複製 AMI 是否正常" width="1200">&lt;figcaption>
+&lt;p>測試複製 AMI 是否正常&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;hr>
+&lt;br>
+&lt;p>我們來測試一下，如果從 A 帳號 (6517xxxxxx02) 把分享的 AMI 移除，會發生什麼事情？一樣可以參考第四點，只是變成將分享的帳號給 Remove 掉，就可以發現 B 帳號 (1205xxxxxx13) 的 AMI 不見了&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ami-migrate-other-account/9.webp"
+alt="B 帳號的 AMI 沒有看到 A 帳號分享的 AMI" width="1200">&lt;figcaption>
+&lt;p>B 帳號的 AMI 沒有看到 A 帳號分享的 AMI&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>所以這也代表，如果代理商將帳號收回，原本分享的 AMI 就會失效，後面就不能用它來建立新的 EC2，但如果是已經啟動當中的 EC2，則不會受到影響。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ami-migrate-other-account/10.webp"
+alt="已啟動的 EC2，不受影響" width="900">&lt;figcaption>
+&lt;p>已啟動的 EC2，不受影響&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>那如果把 A 帳號 (6517xxxxxx02) 把分享的 Snapshots 移除，會發生什麼事情？一樣可參考第七點，將分享的帳號給 Remove 掉，回到 B 帳號 (1205xxxxxx13) 查看，Snapshots 當下還會存在一段時間，過一陣子就才不見了，推測應該跟 Volume Size 有關係。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ami-migrate-other-account/11.webp"
+alt="移除 Snapshots 會過一段時間才消失" width="900">&lt;figcaption>
+&lt;p>移除 Snapshots 會過一段時間才消失&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br></description></item><item><title>AWS EKS Pod 出現 aws-cni failed to assign an IP address to container 錯誤</title><link>https://pin-yi.me/blog/aws/aws-cni-failed-to-assign-ip/</link><pubDate>Wed, 11 Dec 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-cni-failed-to-assign-ip/</guid><description>
 &lt;p>此文章是我在公司擔任架構師，在負責稽核資源使用時，有發現有同仁的 AWS EKS node_group 資源開太大 (開發環境使用 2xlarge 機器規格)，所以先手動從 UI 去調整 Node 的機器規格 (RD 未提供建立時的 Terraform 版控)，從 m7g.2xlarge 先改成 m7g.large。&lt;/p>
 &lt;p>但由於同仁是用 Terraform 來建置整座 EKS + node_group，有 Launch Templates 以及 Auto Scaling Groups 等元件，能調整機器規格的只能從 Launch Templates 以及 Auto Scaling Groups，但 Launch Templates 沒辦法編輯 (只能新增、刪除)，當時為了想要先快速的減少花費，因此先直接調整 Auto Scaling Groups 的 Node 機器規格。&lt;/p>
 &lt;br>
