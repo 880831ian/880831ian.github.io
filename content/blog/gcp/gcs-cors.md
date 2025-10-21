@@ -1,7 +1,7 @@
 ---
 title: "GCS Bucket CORS 錯誤解決方法"
 type: docs
-weight: 9989
+weight: 9988
 description: GCS Bucket CORS 錯誤解決方法
 images:
   - gcp/gcs-cors/og.webp

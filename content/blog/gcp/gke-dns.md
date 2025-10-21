@@ -1,7 +1,7 @@
 ---
 title: "GKE DNS 相關注意事項及結論"
 type: docs
-weight: 9984
+weight: 9982
 description: GKE DNS 相關注意事項及結論
 images:
   - gcp/gke-cloud-dns-nodelocaldnscache/og.webp

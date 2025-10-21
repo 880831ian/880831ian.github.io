@@ -1,7 +1,7 @@
 ---
 title: "GCP Load Balancer 介紹"
 type: docs
-weight: 9988
+weight: 9987
 description: GCP Load Balancer 介紹
 images:
   - gcp/gcp-lb-introduce/og.webp

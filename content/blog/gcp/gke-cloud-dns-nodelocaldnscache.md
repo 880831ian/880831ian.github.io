@@ -1,7 +1,7 @@
 ---
 title: "GKE DNS 使用 Cloud DNS + NodeLocal DNSCache 運作測試"
 type: docs
-weight: 9985
+weight: 9983
 description: GKE DNS 使用 Cloud DNS + NodeLocal DNSCache 運作測試
 images:
   - gcp/gke-cloud-dns-nodelocaldnscache/og.webp

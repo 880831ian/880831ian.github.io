@@ -1,7 +1,7 @@
 ---
 title: "GKE DNS 使用 KubeDNS 運作測試"
 type: docs
-weight: 9986
+weight: 9985
 description: GKE DNS 使用 KubeDNS 運作測試
 images:
   - gcp/gke-kubedns/og.webp

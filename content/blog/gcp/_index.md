@@ -54,6 +54,12 @@ sidebar:
   image="/gcp/gcs-cors/cover.webp"
 >}}
 {{< card
+  link="gcp-artifact-registry-docker-auth"
+  title="如何為 CI/CD 配置 GCP Artifact Registry 的 Docker 認證"
+  subtitle="發布日期：2024-12-26"
+  image="/gcp/gcp-artifact-registry-docker-auth/cover.webp"
+>}}
+{{< card
   link="gke-local-ephemeral-storage"
   title="Google Kubernetes Engine Local ephemeral storage 計算方式"
   subtitle="發布日期：2024-09-02"

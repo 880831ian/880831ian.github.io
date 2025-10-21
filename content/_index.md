@@ -101,6 +101,12 @@ layout: hextra-home
   image="/docker/dockerhub-pull-ratelimit/cover.webp"
 >}}
 {{< card
+  link="blog/gcp/gcp-artifact-registry-docker-auth"
+  title="如何為 CI/CD 配置 GCP Artifact Registry 的 Docker 認證"
+  subtitle="發布日期：2024-12-26"
+  image="/gcp/gcp-artifact-registry-docker-auth/cover.webp"
+>}}
+{{< card
   link="blog/aws/aws-cni-failed-to-assign-ip"
   title="AWS EKS Pod 出現 aws-cni failed to assign an IP address to container 錯誤"
   subtitle="發布日期：2024-12-11"

@@ -1,7 +1,7 @@
 ---
 title: "GKE DNS 使用 Cloud DNS 運作測試"
 type: docs
-weight: 9986
+weight: 9984
 description: GKE DNS 使用 Cloud DNS 運作測試
 images:
   - gcp/gke-cloud-dns/og.webp
