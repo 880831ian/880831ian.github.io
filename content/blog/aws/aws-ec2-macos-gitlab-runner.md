@@ -1,7 +1,7 @@
 ---
 title: "在 AWS EC2 macOS 上安裝 Gitlab-Runner 注意事項"
 type: docs
-weight: 9983
+weight: 9982
 description: 在 AWS EC2 macOS 上安裝 Gitlab-Runner 注意事項
 images:
   - aws/aws-ec2-macos-gitlab-runner/og.webp

@@ -12,6 +12,12 @@ sidebar:
 
 {{< cards >}}
 {{< card
+  link="aws-ssm-ec2-rds-elasticacahe-msk-scp"
+  title="AWS SSM 連線到 EC2、打通 RDS & Elasticache & MSK 到本機、使用 SCP 傳送檔案/拉取遠端檔案到本機"
+  subtitle="發布日期：2025-07-22"
+  image="/aws/aws-ssm-ec2-rds-elasticacahe-msk-scp/cover.webp"
+>}}
+{{< card
   link="aws-assuming-roles-tool-introduce"
   title="手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！"
   subtitle="發布日期：2025-07-06"
@@ -46,6 +52,12 @@ sidebar:
   title="AWS Amazon Machine Images (AMIs) 轉移給其他 AWS 帳號"
   subtitle="發布日期：2025-02-06"
   image="/aws/aws-ami-migrate-other-account/cover.webp"
+>}}
+{{< card
+  link="aws-ssm-macos-ec2-vnc-gui"
+  title="透過 AWS SSM 連線至 macOS EC2 並啟用 VNC 遠端桌面 GUI"
+  subtitle="發布日期：2025-01-03"
+  image="/aws/aws-ssm-macos-ec2-vnc-gui/cover.webp"
 >}}
 {{< card
   link="aws-cni-failed-to-assign-ip"

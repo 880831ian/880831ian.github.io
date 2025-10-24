@@ -1,7 +1,7 @@
 ---
 title: "AWS SSO Profile 設定介紹"
 type: docs
-weight: 9980
+weight: 9979
 description: AWS SSO Profile 設定介紹
 images:
   - aws/aws-sso-profile-introduce/og.webp

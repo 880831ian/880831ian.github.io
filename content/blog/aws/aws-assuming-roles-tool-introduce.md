@@ -1,7 +1,7 @@
 ---
 title: "手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！"
 type: docs
-weight: 9979
+weight: 9978
 description: 手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！
 images:
   - aws/aws-assuming-roles-tool-introduce/og.webp

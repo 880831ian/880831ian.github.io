@@ -1,7 +1,7 @@
 ---
 title: "AWS Amazon Machine Images (AMIs) 轉移給其他 AWS 帳號"
 type: docs
-weight: 9984
+weight: 9983
 description: AWS Amazon Machine Images (AMIs) 轉移給其他 AWS 帳號
 images:
   - aws/aws-ami-migrate-other-account/og.webp

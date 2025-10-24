@@ -1,7 +1,7 @@
 ---
 title: "跨不同 VPC 資源使用 EFS"
 type: docs
-weight: 9982
+weight: 9981
 description: 跨不同 VPC 資源使用 EFS
 images:
   - aws/aws-cross-vpc-efs/og.webp
