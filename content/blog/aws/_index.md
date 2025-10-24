@@ -30,6 +30,18 @@ sidebar:
   image="/aws/aws-ecr-permissions/cover.webp"
 >}}
 {{< card
+  link="aws-cross-vpc-efs"
+  title="跨不同 VPC 資源使用 EFS"
+  subtitle="發布日期：2025-02-27"
+  image="/aws/aws-cross-vpc-efs/cover.webp"
+>}}
+{{< card
+  link="aws-ec2-macos-gitlab-runner"
+  title="在 AWS EC2 macOS 上安裝 Gitlab-Runner"
+  subtitle="發布日期：2025-02-25"
+  image="/aws/aws-ec2-macos-gitlab-runner/cover.webp"
+>}}
+{{< card
   link="aws-ami-migrate-other-account"
   title="AWS Amazon Machine Images (AMIs) 轉移給其他 AWS 帳號"
   subtitle="發布日期：2025-02-06"

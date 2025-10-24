@@ -1,7 +1,7 @@
 ---
 title: "如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account EKS 使用"
 type: docs
-weight: 9982
+weight: 9981
 description: 如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account EKS 使用
 images:
   - aws/aws-ecr-permissions/og.webp

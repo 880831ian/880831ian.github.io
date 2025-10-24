@@ -95,6 +95,18 @@ layout: hextra-home
   image="/kubernetes/k8s-node-log-stdout-logrotate/cover.webp"
 >}}
 {{< card
+  link="blog/aws/aws-cross-vpc-efs"
+  title="跨不同 VPC 資源使用 EFS"
+  subtitle="發布日期：2025-02-27"
+  image="/aws/aws-cross-vpc-efs/cover.webp"
+>}}
+{{< card
+  link="blog/aws/aws-ec2-macos-gitlab-runner"
+  title="在 AWS EC2 macOS 上安裝 Gitlab-Runner"
+  subtitle="發布日期：2025-02-25"
+  image="/aws/aws-ec2-macos-gitlab-runner/cover.webp"
+>}}
+{{< card
   link="blog/docker/dockerhub-pull-ratelimit"
   title="Docker Image Pull Rate Limit 說明 + 掃描腳本"
   subtitle="發布日期：2025-02-24"
