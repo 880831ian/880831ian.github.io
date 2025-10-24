@@ -1,0 +1,197 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – RDS</title><link>https://pin-yi.me/tags/rds/</link><description>Recent content in RDS on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Tue, 22 Jul 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/rds/index.xml" rel="self" type="application/rss+xml"/><item><title>AWS SSM 連線到 EC2、打通 RDS &amp; Elasticache &amp; MSK 到本機、使用 SCP 傳送檔案/拉取遠端檔案到本機</title><link>https://pin-yi.me/blog/aws/aws-ssm-ec2-rds-elasticacahe-msk-scp/</link><pubDate>Tue, 22 Jul 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-ssm-ec2-rds-elasticacahe-msk-scp/</guid><description>
+&lt;p>AWS Systems Manager Agent (SSM Agent) 是 Amazon 軟體，在 Amazon Elastic Compute Cloud (Amazon EC2) 執行個體、邊緣裝置、內部部署伺服器和虛擬機器上執行&lt;/p>
+&lt;br>
+&lt;p>SSM 就跟 GCP 的 IAP 類似，可以直接連線到 EC2 內，不需要在使用 SSH 等方式連線，那使用 SSM 有幾個前提：&lt;/p>
+&lt;ol>
+&lt;li>
+&lt;p>需要先安裝 AWS CLI，以及相關的 configure 設定，詳細可以參考：
+&lt;a href="../aws-sso-profile-introduce" >AWS SSO Profile 設定介紹&lt;/a>、&lt;a href="../aws-assuming-roles-tool-introduce" >手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！&lt;/a>&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>節點必須為受管節點，這表示機器上已安裝 SSM Agent，且代理程式可以與 Systems Manager 服務進行通訊。(大多數的 AMI 都有預先安裝 SSM Agnet，詳細可以參考：&lt;a href="https://docs.aws.amazon.com/zh_tw/systems-manager/latest/userguide/ami-preinstalled-agent.html" target="_blank" rel="noopener">尋找預先安裝了 SSM Agent的 AMIs - AWS Systems Manager&lt;/a> )&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>需要有對應的權限，這邊的權限有兩種：一個是操作的 IAM User，以及被連線的 EC2 IAM Role。操作的 IAM User 需要有 &lt;code>ssm:StartSession&lt;/code> 相關權限，EC2 IAM Role 則是需要被賦予 &lt;code>AmazonSSMManagedInstanceCore&lt;/code>。&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>電腦本機有需要安裝 Session Manager plugin，詳細安裝步驟請參考：&lt;a href="https://docs.aws.amazon.com/systems-manager/latest/userguide/install-plugin-macos-overview.html" target="_blank" rel="noopener">Install the Session Manager plugin on macOS - AWS Systems Manager &lt;/a>(如果使用下方腳本，會自動檢查是否安裝，沒有也會自動安裝)，如果沒有裝此 plugin，就會出現權限錯誤提示 (&lt;code>because no identity-based policy allows the ssm:TerminateSession action&lt;/code>)。&lt;/p>
+&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>SSM 除了連線到 EC2 以外，還有其他的功能，可以透過 EC2 去連線 AWS 上的其他資源，例如：RDS 跟 Elasticache。在之後會建議都會透過 EC2 當作跳板機去連線，讓 RD 自行於本地選擇工具來操作，而不會直接將這些工具建立在線上服務。&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>連線到對應的 EC2 instances&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws ssm start-session --target &lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>instance_id&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ul>
+&lt;li>連線 EC2 後，進到 root / 目錄&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws ssm start-session --target &lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>instance_id&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span> --document-name &lt;span style="color:#e6db74">&amp;#34;AWS-StartInteractiveCommand&amp;#34;&lt;/span> --parameters &lt;span style="color:#e6db74">&amp;#39;{&amp;#34;command&amp;#34;:[&amp;#34;sudo -i;cd /&amp;#34;]}&amp;#39;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ul>
+&lt;li>透過 EC2 連線到 RDS or Elasticache or MSK&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws ssm start-session &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --target &lt;span style="color:#e6db74">&amp;#34;i-0ad1b308da085aaa4&amp;#34;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --document-name &lt;span style="color:#e6db74">&amp;#34;AWS-StartPortForwardingSessionToRemoteHost&amp;#34;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --parameters &lt;span style="color:#e6db74">&amp;#34;{\&amp;#34;host\&amp;#34;:[\&amp;#34;&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>host&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\&amp;#34;], \&amp;#34;portNumber\&amp;#34;:[\&amp;#34;&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>service_port&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\&amp;#34;], \&amp;#34;localPortNumber\&amp;#34;:[\&amp;#34;&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>local_port&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">\&amp;#34;]}&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>&lt;code>${host}&lt;/code>：帶入 Elasticache Route53 private-dns 網址&lt;/p>
+&lt;p>&lt;code>${service_port}&lt;/code>：如果是 RDS 預設是 3306，如果是 Elasticache 預設是 6379&lt;/p>
+&lt;p>&lt;code>${local_port}&lt;/code>：本機使用的 Port，只要不衝突就可以使用，在使用自己習慣的工具去連線 &lt;code>127.0.0.1:${local_port}&lt;/code>&lt;/p>
+&lt;br>
+&lt;p>如果連線上有錯誤，可能會是對應的 RDS or Elasticache SG 沒有開給該跳板機&lt;/p>
+&lt;p>MSK 由於其架構較為特殊，會額外安裝 kafka-proxy 來代理連線到叢集，詳細可以參考：&lt;a href="https://github.com/grepplabs/kafka-proxy" target="_blank" rel="noopener">GitHub - grepplabs/kafka-proxy: Proxy connections to Kafka cluster. Connect through SOCKS Proxy, HTTP Proxy or to cluster running in Kubernetes.&lt;/a>&lt;/p>
+&lt;p>(建議使用下方腳本進行操作，下方腳本會連 SSM + kafka-proxy 都ㄧ併完成)&lt;/p>
+&lt;br>
+&lt;ul>
+&lt;li>將本機檔案傳送到 EC2 / 從 EC2 複製檔案到本機&lt;/li>
+&lt;/ul>
+&lt;p>這個需求在傳大量檔案的時候會很方便，但由於 SSM 沒有自己的傳送檔案相關指令，所以我們統一使用 SCP 來傳送傳送檔案。&lt;/p>
+&lt;p>使用 SCP 則會需要先設定 KEY 到 EC2 機器上，這樣會有點麻煩，因此參考 AWS 官方文件，我們會使用 &lt;code>aws ec2-instance-connect send-ssh-public-key&lt;/code> 指令來將 public-key 傳送到 EC2 上，可以快速的省下先 SSM 進去機器，設定好 KEY，也因為透過 &lt;code>send-ssh-public-key&lt;/code> 只有 60s，所以不會有 &lt;code>authorized_keys&lt;/code> 不好管理的問題，詳細說明可以參考：&lt;a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html#ec2-instance-connect-connecting-aws-cli" target="_blank" rel="noopener">https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html#ec2-instance-connect-connecting-aws-cli&lt;/a>、&lt;a href="https://docs.aws.amazon.com/zh_tw/systems-manager/latest/userguide/session-manager-getting-started-enable-ssh-connections.html" target="_blank" rel="noopener">步驟 8：(選用) 透過 Session Manager 允許和控制 SSH 連線的許可 - AWS Systems Manager&lt;/a>&lt;/p>
+&lt;br>
+&lt;ol>
+&lt;li>需要額外新增以下的 SSH 設定檔，讓 SCP 可以透過 SSM 執行&lt;/li>
+&lt;/ol>
+&lt;p>SSH 組態檔案通常位於 ~/.ssh/config&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e"># SSH over Session Manager&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Host i-* mi-*
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ProxyCommand sh -c &lt;span style="color:#e6db74">&amp;#34;aws ssm start-session --target %h --document-name AWS-StartSSHSession --parameters &amp;#39;portNumber=%p&amp;#39;&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>(如果使用下方腳本，會自動檢查是否設定，沒有也會自動設定)&lt;/p>
+&lt;br>
+&lt;ol start="2">
+&lt;li>建立 SSH 公私金鑰檔案，並調整權限&lt;/li>
+&lt;/ol>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>ssh-keygen -f ssm&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>(ssm 為範例，會產生 ssm 跟 ssm.pub)&lt;/p>
+&lt;br>
+&lt;ol start="3">
+&lt;li>使用 &lt;code>send-ssh-public-key&lt;/code> 將 SSH 公鑰推到 &lt;a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html" target="_blank" rel="noopener">instance metadata&lt;/a>，只會保留 60s，會需要 &lt;code>ec2-instance-connect:SendSSHPublicKey&lt;/code> 權限&lt;/li>
+&lt;/ol>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>aws ec2-instance-connect send-ssh-public-key &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --region &lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>region&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --availability-zone &lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>zone&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --instance-id &lt;span style="color:#e6db74">&amp;#34;&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>instance_id&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --instance-os-user root &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --ssh-public-key &lt;span style="color:#e6db74">&amp;#34;file://&lt;/span>&lt;span style="color:#e6db74">${&lt;/span>ssh_pub_key&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74">&amp;#34;&lt;/span> &lt;span style="color:#ae81ff">\
+&lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#ae81ff">&lt;/span> --no-cli-pager&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>&lt;code>${region}&lt;/code>：EC2 機器的 Region&lt;/p>
+&lt;p>&lt;code>${zone}&lt;/code>：EC2 機器的 zone&lt;/p>
+&lt;p>&lt;code>${instance_id}&lt;/code>：傳送的 EC2 機器&lt;/p>
+&lt;p>&lt;code>${ssh_pub_key}&lt;/code>：公鑰路徑，例如上面的 &lt;code>/Users/$(whoami)/.ssh/ssm.pub&lt;/code>&lt;/p>
+&lt;br>
+&lt;p>有回傳 Success: true 就代表成功，接著就可以嘗試下 SCP 指令將檔案傳給 EC2，或是從 EC2 複製檔案出來，這邊以 SCP 將檔案傳給 EC2 為例：&lt;/p>
+&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>scp -o &lt;span style="color:#e6db74">&amp;#34;IdentitiesOnly=yes&amp;#34;&lt;/span> -i &lt;span style="color:#e6db74">${&lt;/span>ssh_priv_key&lt;span style="color:#e6db74">}&lt;/span> &lt;span style="color:#e6db74">${&lt;/span>local_path&lt;span style="color:#e6db74">}&lt;/span> root@&lt;span style="color:#e6db74">${&lt;/span>instance_id&lt;span style="color:#e6db74">}&lt;/span>:&lt;span style="color:#e6db74">${&lt;/span>remote_path&lt;span style="color:#e6db74">}&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;button
+class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+title="Copy code"
+>
+&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>&lt;code>${ssh_priv_key}&lt;/code>：私鑰路徑，需要跟前面傳送給 EC2 是同一把&lt;/p>
+&lt;p>&lt;code>${local_path}&lt;/code>：本地要傳送的檔案路徑&lt;/p>
+&lt;p>&lt;code>${instance_id}&lt;/code>：傳送的 EC2 機器&lt;/p>
+&lt;p>&lt;code>${remote_path}&lt;/code>：EC2 機器的檔案路徑&lt;/p>
+&lt;br>
+&lt;h2>執行腳本&lt;span class="hx-absolute -hx-mt-20" id="執行腳本">&lt;/span>
+&lt;a href="#%e5%9f%b7%e8%a1%8c%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>為了方便大家快速執行，有將上面提到的指令寫成腳本，讓大家可以用選擇及輸入的方式來使用&lt;/p>
+&lt;p>腳本連結：&lt;a href="https://github.com/880831ian/aws-ssm-ec2-rds-elasticacahe-msk-scp" target="_blank" rel="noopener">https://github.com/880831ian/aws-ssm-ec2-rds-elasticacahe-msk-scp&lt;/a>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-ec2-rds-elasticacahe-msk-scp/1.webp"
+alt="腳本使用" width="450">&lt;figcaption>
+&lt;p>腳本使用&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>MSK 比較特別，會額外安裝套件&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-ec2-rds-elasticacahe-msk-scp/2.webp"
+alt="MSK 安裝詢問" width="1200">&lt;figcaption>
+&lt;p>MSK 安裝詢問&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>輸入對應的 Broker 清單，會自動轉發&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-ec2-rds-elasticacahe-msk-scp/3.webp"
+alt="轉發 Broker" width="1000">&lt;figcaption>
+&lt;p>轉發 Broker&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>會跳出能在本機連線的 IP 以及 Port&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-ec2-rds-elasticacahe-msk-scp/4.webp"
+alt="本機連線 IP" width="1000">&lt;figcaption>
+&lt;p>本機連線 IP&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-connect-methods.html#ec2-instance-connect-connecting-aws-cli" target="_blank" rel="noopener">Connect to a Linux instance using EC2 Instance Connect&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://docs.aws.amazon.com/zh_tw/systems-manager/latest/userguide/session-manager-getting-started-enable-ssh-connections.html" target="_blank" rel="noopener">透過 Session Manager 允許和控制 SSH 連線的許可&lt;/a>&lt;/p></description></item></channel></rss>
