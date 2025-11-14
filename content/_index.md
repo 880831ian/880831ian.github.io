@@ -3,19 +3,19 @@ title: "哈囉 歡迎來到 Pin-Yi の 部落格"
 layout: hextra-home
 ---
 
-<div class="hx-mt-6 hx-mb-6">
+<div class="hx:mt-6 hx:mb-6">
 {{< hextra/hero-headline >}}
   哈囉 歡迎來到 Pin-Yi の 部落格
 {{< /hextra/hero-headline >}}
 </div>
 
-<div class="hx-mb-12">
+<div class="hx:mb-12">
 {{< hextra/hero-subtitle >}}
-  下方有所有的文章清單(依照發布時間排序)，也可以使用右上角的搜尋功能來找尋相關文章。
+  下方有所有的文章清單(依照發布時間排序)，也可以使用右上角的搜尋功能來找到相關文章。
 {{< /hextra/hero-subtitle >}}
 </div>
 
-<div class="hx-mb-6">
+<div class="hx:mb-6">
 {{< hextra/hero-button text="我是誰 (́◉◞౪◟◉‵)" link="about" >}}
 </div>
 

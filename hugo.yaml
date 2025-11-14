@@ -31,7 +31,22 @@ menu:
       url: "https://uptime.pin-yi.me/"
     - identifier: about
       name: 關於我
+      weight: 4
+    - name: "自我介紹"
+      parent: about
       pageRef: /about
+      weight: 1
+    - name: "Resume 履歷 (中文)"
+      parent: about
+      url: "/about/resume-tw.pdf"
+      weight: 2
+    - name: "Resume 履歷 (英文)"
+      parent: about
+      url: "/about/resume-en.pdf"
+      weight: 3
+    - name: "個人介紹 PPT (面試用)"
+      parent: about
+      url: "https://resume.pin-yi.me"
       weight: 4
     - name: Search
       weight: 5
@@ -49,6 +64,10 @@ menu:
         icon: linkedin
 
 params:
+  banner:
+    key: "announcement"
+    message: "歡迎來到 [PIN-YI](https://pin-yi.me) の 部落格  🎉"
+  externalLinkDecoration: true
   navbar:
     displayTitle: true
     displayLogo: true
@@ -59,6 +78,8 @@ params:
 
   page:
     width: full
+    tabs:
+      sync: true
 
   theme:
     # light | dark | system
@@ -93,3 +114,6 @@ params:
 services:
   googleAnalytics:
     ID: G-VY0HEQXXJQ
+
+outputs:
+  home: [html, llms]
