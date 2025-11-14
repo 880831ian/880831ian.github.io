@@ -232,7 +232,8 @@ alt="Granted" width="1000">&lt;figcaption>
 &lt;/ol>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
 &lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>brew tap common-fate/granted
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>brew install granted&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>brew install granted
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>brew install common-fate/granted/granted &lt;span style="color:#75715e"># 2025/11/14 更新 (原因請看下方)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
@@ -245,6 +246,32 @@ title="Copy code"
 &lt;p>（如果其他作業系統，請參考 &lt;a href="https://docs.commonfate.io/granted/getting-started/"target="_blank" rel="noopener">Granted 官方網站&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 的安裝說明）&lt;/p>
+&lt;br>
+&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-purple-200 hx:bg-purple-100 hx:text-purple-900 hx:dark:border-purple-200/30 hx:dark:bg-purple-900/30 hx:dark:text-purple-200">
+&lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2">&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>&lt;/div>
+&lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">&lt;p>2025/11/14 更新：&lt;br>
+剛好在更新 &lt;a href="https://github.com/880831ian/mac-install-kit/blob/master/install.sh"target="_blank" rel="noopener">mac-install-kit&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> 一鍵安裝腳本時發現，使用 &lt;code>brew install granted&lt;/code> 安裝好後，沒辦法下 &lt;code>assume&lt;/code> 指令，之前都是正常的&lt;br>
+深入研究後發現，應該是因為原本維護 Granted 的 Common Fate 即將解散，&lt;a href="https://www.commonfate.io/blog/winding-down"target="_blank" rel="noopener">相關公告可以點我查看&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>，要轉移給 fwd:cloudsec，&lt;a href="https://github.com/fwdcloudsec/granted"target="_blank" rel="noopener">fwdcloudsec Granted Repo 連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>，猜測是官網已經有點久沒更新，或是再維護 tap 的時候尚未討論好&lt;br>
+此問題會在 v0.38 版本的時候會出現 (v0.37 正常)，查看ㄧ下 Common Fate Slack 發現，也有人遇到相同問題，目前的解決辦法是：改使用 &lt;code>brew install common-fate/granted/granted&lt;/code> 來安裝，詳細請參考：&lt;a href="https://github.com/fwdcloudsec/granted/discussions/897"target="_blank" rel="noopener">What&amp;rsquo;s going on with Homebrew? #897&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-assuming-roles-tool-introduce/slack.webp"
+alt="Slack 討論串" width="500">&lt;figcaption>
+&lt;p>Slack 討論串&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;/div>
+&lt;/div>
+&lt;/div>
 &lt;br>
 &lt;ol start="2">
 &lt;li>安裝完成後，使用以下指令確定 Granted 已經安裝成功：&lt;/li>
