@@ -36,10 +36,26 @@ Granted 是一個用來管理多個 AWS Account 的工具，它可以讓你更�
 ```bash
 brew tap common-fate/granted
 brew install granted
+brew install common-fate/granted/granted # 2025/11/14 更新 (原因請看下方)
 ```
 
 （如果其他作業系統，請參考 [Granted 官方網站](https://docs.commonfate.io/granted/getting-started/) 的安裝說明）
 
+<br>
+
+{{< callout type="important" >}} 
+  2025/11/14 更新：<br>
+  剛好在更新 [mac-install-kit](https://github.com/880831ian/mac-install-kit/blob/master/install.sh) 一鍵安裝腳本時發現，使用 `brew install granted` 安裝好後，沒辦法下 `assume` 指令，之前都是正常的<br>
+  深入研究後發現，應該是因為原本維護 Granted 的 Common Fate 即將解散，[相關公告可以點我查看](https://www.commonfate.io/blog/winding-down)，要轉移給 fwd:cloudsec，[fwdcloudsec Granted Repo 連結](https://github.com/fwdcloudsec/granted)，猜測是官網已經有點久沒更新，或是再維護 tap 的時候尚未討論好<br>
+  此問題會在 v0.38 版本的時候會出現 (v0.37 正常)，查看ㄧ下 Common Fate Slack 發現，也有人遇到相同問題，目前的解決辦法是：改使用 `brew install common-fate/granted/granted` 來安裝，詳細請參考：[What's going on with Homebrew? #897](https://github.com/fwdcloudsec/granted/discussions/897)
+
+  <br>
+  
+  {{< figure src="/aws/aws-assuming-roles-tool-introduce/slack.webp" width="500" caption="Slack 討論串" >}}
+
+  <br>
+
+{{< /callout >}}
 
 <br>
 

@@ -66,7 +66,7 @@ menu:
 params:
   banner:
     key: "announcement"
-    message: "歡迎來到 [PIN-YI](https://pin-yi.me) の 部落格  🎉"
+    message: "📢 [文章更新公告] [手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！](/blog/aws/aws-assuming-roles-tool-introduce/) 有更新內容呦，歡迎點擊前方連結前往查看 💙"
   externalLinkDecoration: true
   navbar:
     displayTitle: true
