@@ -1,7 +1,9 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – GCS</title><link>https://pin-yi.me/tags/gcs/</link><description>Recent content in GCS on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Tue, 18 Mar 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/gcs/index.xml" rel="self" type="application/rss+xml"/><item><title>GCS Bucket CORS 錯誤解決方法</title><link>https://pin-yi.me/blog/gcp/gcs-cors/</link><pubDate>Tue, 18 Mar 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcs-cors/</guid><description>
 &lt;p>最近公司有需求需要透過前端去打 GCS Bucket 的檔案，但會遇到 CORS 錯誤，所以寫一篇來記錄此問題的解決方法。&lt;/p>
 &lt;br>
-&lt;p>有先簡單寫一個前端頁面，可以透過 Axios 去打後端，詳細程式可以&lt;a href="https://github.com/880831ian/gcs-cors" target="_blank" rel="noopener">點我查看&lt;/a>，我們也另外建立一個公開的 GCS Bucket，並放一個測試用的 JSON 檔案
+&lt;p>有先簡單寫一個前端頁面，可以透過 Axios 去打後端，詳細程式可以&lt;a href="https://github.com/880831ian/gcs-cors"target="_blank" rel="noopener">點我查看&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>，我們也另外建立一個公開的 GCS Bucket，並放一個測試用的 JSON 檔案
 (都有附在此專案中)。&lt;/p>
 &lt;br>
 &lt;ul>
@@ -43,9 +45,15 @@ alt="發現 CORS 錯誤" width="550">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;p>因為我們從 http://localhost:8080 要打到 &lt;a href="https://storage.googleapis.com/ian-test-demo/hello.json" target="_blank" rel="noopener">https://storage.googleapis.com/ian-test-demo/hello.json&lt;/a> ，觸發了瀏覽器的 CORS 限制，所以導致噴錯，CORS 的說明詳細可以直接參考：&lt;a href="https://www.explainthis.io/zh-hant/swe/what-is-cors" target="_blank" rel="noopener">https://www.explainthis.io/zh-hant/swe/what-is-cors&lt;/a>&lt;/p>
+&lt;p>因為我們從 http://localhost:8080 要打到 &lt;a href="https://storage.googleapis.com/ian-test-demo/hello.json"target="_blank" rel="noopener">https://storage.googleapis.com/ian-test-demo/hello.json&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> ，觸發了瀏覽器的 CORS 限制，所以導致噴錯，CORS 的說明詳細可以直接參考：&lt;a href="https://www.explainthis.io/zh-hant/swe/what-is-cors"target="_blank" rel="noopener">https://www.explainthis.io/zh-hant/swe/what-is-cors&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
 &lt;br>
-&lt;p>那要怎麼解決呢，&lt;a href="https://cloud.google.com/storage/docs/using-cors#command-line" target="_blank" rel="noopener">根據 Google 文件&lt;/a>，我們需要為 Bucket 配置 cors 設定&lt;/p>
+&lt;p>那要怎麼解決呢，&lt;a href="https://cloud.google.com/storage/docs/using-cors#command-line"target="_blank" rel="noopener">根據 Google 文件&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>，我們需要為 Bucket 配置 cors 設定&lt;/p>
 &lt;br>
 &lt;p>我們可以先下此指令來查看該 bucket 是否有設定 cors： &lt;code>gcloud storage buckets describe gs://ian-test-demo --format=&amp;quot;default(cors_config)&amp;quot;&lt;/code>&lt;/p>
 &lt;br>
@@ -58,7 +66,7 @@ alt="gcloud 指令查看 cors 設定" width="550">&lt;figcaption>
 &lt;p>如果還沒設定就會顯示 null&lt;/p>
 &lt;br>
 &lt;p>那我們先來寫一下 cors 的設定檔案&lt;/p>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
 &lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>[
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;origin&amp;#34;&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;*&amp;#34;&lt;/span>],
@@ -66,13 +74,13 @@ alt="gcloud 指令查看 cors 設定" width="550">&lt;figcaption>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;responseHeader&amp;#34;&lt;/span>: [&lt;span style="color:#e6db74">&amp;#34;Content-Type&amp;#34;&lt;/span>, &lt;span style="color:#e6db74">&amp;#34;Authorization&amp;#34;&lt;/span>],
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;maxAgeSeconds&amp;#34;&lt;/span>: &lt;span style="color:#ae81ff">30&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>]&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>]&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
 &lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
 >
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -103,6 +111,10 @@ alt="移除 CORS 設定" width="550">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>參考&lt;span class="hx-absolute -hx-mt-20" id="參考">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://cloud.google.com/storage/docs/using-cors#command-line" target="_blank" rel="noopener">Set up and view CORS configurations&lt;/a>&lt;/p>
-&lt;p>&lt;a href="https://cloud.google.com/storage/docs/cors-configurations" target="_blank" rel="noopener">CORS configuration examples&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;h2>參考&lt;span class="hx:absolute hx:-mt-20" id="參考">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://cloud.google.com/storage/docs/using-cors#command-line"target="_blank" rel="noopener">Set up and view CORS configurations&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://cloud.google.com/storage/docs/cors-configurations"target="_blank" rel="noopener">CORS configuration examples&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

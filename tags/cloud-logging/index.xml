@@ -1,6 +1,6 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Cloud Logging</title><link>https://pin-yi.me/tags/cloud-logging/</link><description>Recent content in Cloud Logging on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Sun, 30 Jul 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/cloud-logging/index.xml" rel="self" type="application/rss+xml"/><item><title>如何過濾 GCP LOG，減少 Cloud Logging API 的花費</title><link>https://pin-yi.me/blog/gcp/gcp-log-reduce-cloud-logging-api/</link><pubDate>Sun, 30 Jul 2023 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-log-reduce-cloud-logging-api/</guid><description>
 &lt;p>當我們使用 GCP 的 Cloud Logging 服務來查看 Log 時，有時候會有一些我們不需要顯示出來的，或是從來都不會去查詢的 Log，再者是 GCP 本身的錯誤導致大量噴錯的 Log ，這些 Log 都會導致 Cloud Logging 的費用增加。&lt;/p>
-&lt;h2>介紹 Cloud Logging&lt;span class="hx-absolute -hx-mt-20" id="介紹-cloud-logging">&lt;/span>
+&lt;h2>介紹 Cloud Logging&lt;span class="hx:absolute hx:-mt-20" id="介紹-cloud-logging">&lt;/span>
 &lt;a href="#%e4%bb%8b%e7%b4%b9-cloud-logging" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先來簡單說一下 Cloud Logging 這項服務的基本架構，請看圖：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/overview.webp"
@@ -11,7 +11,7 @@ alt="Cloud Logging 基本架構" width="800">&lt;figcaption>
 &lt;br>
 &lt;p>可以看到 Logs Data 會透過 API 再經過 _Default log sink (router) 存到相應命名的 log bucket (預設配置)，圖中 _Required 以及 _Default 的 log sink 都是 GCP 自動創建的接收器，下面簡述一下它們的區別：&lt;/p>
 &lt;br>
-&lt;h3>_Required 日誌儲存桶&lt;span class="hx-absolute -hx-mt-20" id="_required-日誌儲存桶">&lt;/span>
+&lt;h3>_Required 日誌儲存桶&lt;span class="hx:absolute hx:-mt-20" id="_required-日誌儲存桶">&lt;/span>
 &lt;a href="#_required-%e6%97%a5%e8%aa%8c%e5%84%b2%e5%ad%98%e6%a1%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Cloud Logging 會將以下類型的 Log 存到 _Required 儲存桶&lt;/p>
 &lt;ol>
 &lt;li>
@@ -26,7 +26,7 @@ alt="Cloud Logging 基本架構" width="800">&lt;figcaption>
 &lt;/ol>
 &lt;p>Cloud Logging 會將 _Required 儲存桶 Log 保留 400 天，無法調整該期限，且無法修改或刪除 _Required 儲存桶，也沒辦法停用 _Required log sink 接受器路由到 _Required 儲存桶的設定。&lt;/p>
 &lt;br>
-&lt;h3>_Default 日誌儲存桶&lt;span class="hx-absolute -hx-mt-20" id="_default-日誌儲存桶">&lt;/span>
+&lt;h3>_Default 日誌儲存桶&lt;span class="hx:absolute hx:-mt-20" id="_default-日誌儲存桶">&lt;/span>
 &lt;a href="#_default-%e6%97%a5%e8%aa%8c%e5%84%b2%e5%ad%98%e6%a1%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>只要不是存在 _Required 日誌儲存桶的 Log 就會透過 _Default log sink 接受器路由到 _Default 儲存桶。&lt;/p>
 &lt;p>除非有另外配置自定義設定， 否則 _Default 日誌儲存桶 Log 只會保留 30 天，也一樣無法刪除 _Default 日誌儲存桶。此外 Cloud Logging 的費用是以存在 _Default 日誌儲存桶來計算。&lt;/p>
 &lt;br>
@@ -51,11 +51,13 @@ alt="Cloud Logging 基本架構" width="800">&lt;figcaption>
 &lt;/tr>
 &lt;/tbody>
 &lt;/table>
-&lt;p>查看該專案使用的 Cloud Logging API 費用：&lt;a href="https://console.cloud.google.com/apis/api/logging.googleapis.com/cost" target="_blank" rel="noopener">https://console.cloud.google.com/apis/api/logging.googleapis.com/cost&lt;/a>&lt;/p>
+&lt;p>查看該專案使用的 Cloud Logging API 費用：&lt;a href="https://console.cloud.google.com/apis/api/logging.googleapis.com/cost"target="_blank" rel="noopener">https://console.cloud.google.com/apis/api/logging.googleapis.com/cost&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
 &lt;br>
-&lt;h2>過濾 Log&lt;span class="hx-absolute -hx-mt-20" id="過濾-log">&lt;/span>
+&lt;h2>過濾 Log&lt;span class="hx:absolute hx:-mt-20" id="過濾-log">&lt;/span>
 &lt;a href="#%e9%81%8e%e6%bf%be-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那現在知道 Cloud Logging 的架構，那當我們遇到需要過濾 Log 時，我們可以使用以下步驟來過濾以節省 Cloud Logging API 費用：&lt;/p>
-&lt;h3>範例說明&lt;span class="hx-absolute -hx-mt-20" id="範例說明">&lt;/span>
+&lt;h3>範例說明&lt;span class="hx:absolute hx:-mt-20" id="範例說明">&lt;/span>
 &lt;a href="#%e7%af%84%e4%be%8b%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>這次範例是 google 在 2023/07/06 所發佈的 Service Health，當 GKE 版本大於 1.24 以上，就會噴&lt;/p>
 &lt;ol>
 &lt;li>
@@ -69,11 +71,13 @@ alt="Cloud Logging 基本架構" width="800">&lt;figcaption>
 &lt;/li>
 &lt;/ol>
 &lt;p>這三種類型的錯誤 Log，在等待官方修復前，官方的建議是先將他給過濾掉，避免一直刷噴錢 ┐(´д`)┌&lt;/p>
-&lt;p>附上當時的 Service Health 連結：&lt;a href="https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE" target="_blank" rel="noopener">https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE&lt;/a>&lt;/p>
+&lt;p>附上當時的 Service Health 連結：&lt;a href="https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE"target="_blank" rel="noopener">https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
 &lt;br>
 &lt;p>我們在上面架構圖有說到，Log 會透過 log sink 路由到 bucket，所以我們要將過濾條件加在 log router 上：&lt;/p>
-&lt;div class="steps hx-ml-4 hx-mb-12 ltr:hx-border-l rtl:hx-border-r hx-border-gray-200 ltr:hx-pl-6 rtl:hx-pr-6 dark:hx-border-neutral-800 [counter-reset:step]">
-&lt;h3>選擇 Log Router&lt;span class="hx-absolute -hx-mt-20" id="選擇-log-router">&lt;/span>
+&lt;div class="hextra-steps hx:ml-4 hx:mb-12 hx:ltr:border-l hx:rtl:border-r hx:border-gray-200 hx:ltr:pl-6 hx:rtl:pr-6 hx:dark:border-neutral-800 [counter-reset:step]">
+&lt;h3>選擇 Log Router&lt;span class="hx:absolute hx:-mt-20" id="選擇-log-router">&lt;/span>
 &lt;a href="#%e9%81%b8%e6%93%87-log-router" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/1.webp"
 alt="選擇 Log Router" width="550">&lt;figcaption>
@@ -81,7 +85,7 @@ alt="選擇 Log Router" width="550">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>選擇 Log Router Sinks&lt;span class="hx-absolute -hx-mt-20" id="選擇-log-router-sinks">&lt;/span>
+&lt;h3>選擇 Log Router Sinks&lt;span class="hx:absolute hx:-mt-20" id="選擇-log-router-sinks">&lt;/span>
 &lt;a href="#%e9%81%b8%e6%93%87-log-router-sinks" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>選擇 _Default 的 Log Router Sinks，點選右邊按鈕的 Edit Sink&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/2.webp"
@@ -90,8 +94,10 @@ alt="選擇 _Default 的 Log Router Sinks">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>設定 Sink details&lt;span class="hx-absolute -hx-mt-20" id="設定-sink-details">&lt;/span>
-&lt;a href="#%e8%a8%ad%e5%ae%9a-sink-details" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>第一個是 details，可以輸入說明，這邊輸入：google 有 bug 會噴大量的意外 LOG，怕費用飆高，先用官方建議的來過濾 LOG，詳細可以看： &lt;a href="https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE" target="_blank" rel="noopener">https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE&lt;/a>&lt;/p>
+&lt;h3>設定 Sink details&lt;span class="hx:absolute hx:-mt-20" id="設定-sink-details">&lt;/span>
+&lt;a href="#%e8%a8%ad%e5%ae%9a-sink-details" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>第一個是 details，可以輸入說明，這邊輸入：google 有 bug 會噴大量的意外 LOG，怕費用飆高，先用官方建議的來過濾 LOG，詳細可以看： &lt;a href="https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE"target="_blank" rel="noopener">https://status.cloud.google.com/incidents/y5XvpyBXFhsphSt4DfiE&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/3.webp"
 alt="輸入 Sink details 說明">&lt;figcaption>
@@ -99,7 +105,7 @@ alt="輸入 Sink details 說明">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>選擇 Sink Service 跟 Bucket&lt;span class="hx-absolute -hx-mt-20" id="選擇-sink-service-跟-bucket">&lt;/span>
+&lt;h3>選擇 Sink Service 跟 Bucket&lt;span class="hx:absolute hx:-mt-20" id="選擇-sink-service-跟-bucket">&lt;/span>
 &lt;a href="#%e9%81%b8%e6%93%87-sink-service-%e8%b7%9f-bucket" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接著 sink 服務選擇 Logging bucket，以及對應儲存的 log bucket (這邊基本上都是預設)&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/4.webp"
@@ -108,7 +114,7 @@ alt="選擇 Logging bucket">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>設定 include Log&lt;span class="hx-absolute -hx-mt-20" id="設定-include-log">&lt;/span>
+&lt;h3>設定 include Log&lt;span class="hx:absolute hx:-mt-20" id="設定-include-log">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a-include-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>選擇那些可以被 include 到 sink 接收器的 LOG 格式 (這邊基本上都是預設)&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/5.webp"
@@ -117,7 +123,7 @@ alt="預設的 LOG 格式">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>設定 filter Log&lt;span class="hx-absolute -hx-mt-20" id="設定-filter-log">&lt;/span>
+&lt;h3>設定 filter Log&lt;span class="hx:absolute hx:-mt-20" id="設定-filter-log">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a-filter-log" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>這邊就是我們要輸入過濾的地方，先點擊 ADD EXCLUSION，輸入過濾的名稱，以及過濾的內容格式，我們輸入 google 在 Service Health 所提供的格式，最後按下 UPDATE SINK&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/6.webp"
@@ -126,7 +132,7 @@ alt="新增要過濾的 LOG 格式">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>設定完成&lt;span class="hx-absolute -hx-mt-20" id="設定完成">&lt;/span>
+&lt;h3>設定完成&lt;span class="hx:absolute hx:-mt-20" id="設定完成">&lt;/span>
 &lt;a href="#%e8%a8%ad%e5%ae%9a%e5%ae%8c%e6%88%90" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>等待更新完成，就可以看到我們已經在接收器上設定好過濾條件囉～&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/7.webp"
@@ -135,7 +141,7 @@ alt="查看詳細接收器設定">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h3>檢查 Log 是否過濾成功&lt;span class="hx-absolute -hx-mt-20" id="檢查-log-是否過濾成功">&lt;/span>
+&lt;h3>檢查 Log 是否過濾成功&lt;span class="hx:absolute hx:-mt-20" id="檢查-log-是否過濾成功">&lt;/span>
 &lt;a href="#%e6%aa%a2%e6%9f%a5-log-%e6%98%af%e5%90%a6%e9%81%8e%e6%bf%be%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>最後再檢查一下 Log 是不是沒有收到該錯誤的 Log 內容&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-log-reduce-cloud-logging-api/8.webp"
@@ -145,5 +151,7 @@ alt="檢查 LOG 是否不會再出現">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;/div>
-&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Routing and storage overview &lt;a href="https://cloud.google.com/logging/docs/routing/overview" target="_blank" rel="noopener">https://cloud.google.com/logging/docs/routing/overview&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Routing and storage overview &lt;a href="https://cloud.google.com/logging/docs/routing/overview"target="_blank" rel="noopener">https://cloud.google.com/logging/docs/routing/overview&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

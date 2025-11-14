@@ -1,0 +1,158 @@
+# PIN-YI
+
+> <no value>
+
+
+## 介紹與聲明
+
+### Amazon Web Services
+- [AWS SSM 連線到 EC2、打通 RDS & Elasticache & MSK 到本機、使用 SCP 傳送檔案/拉取遠端檔案到本機](https://pin-yi.me/blog/aws/aws-ssm-ec2-rds-elasticacahe-msk-scp/): AWS Systems Manager Agent (SSM Agent) 是 Amazon 軟體，在 Amazon Elastic Compute Cloud (Amazon EC2) 執行個體、邊 … - Published 2025-07-22
+- [手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！](https://pin-yi.me/blog/aws/aws-assuming-roles-tool-introduce/): 由於 AWS 的服務越來越多，很多時候我們需要在不同的 AWS Account 之間切換來操作，不管是使用單純使用 IAM User 產生 Access Key，或是用 AWS SSO，都會需要頻繁的 … - Published 2025-07-06
+- [AWS SSO Profile 設定介紹](https://pin-yi.me/blog/aws/aws-sso-profile-introduce/): 之前有介紹過 設定 AWS CLI 以及 AWS CLI 指令說明，大家應該已經知道要怎麼安裝 AWS CLI，以及設定 AWS IAM User 的 Access Key。 … - Published 2025-07-06
+- [如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account EKS 使用](https://pin-yi.me/blog/aws/aws-ecr-permissions/): 這篇主要是因為公司目前的 AWS 架構，會將各單位的系統依照產品、環境給拆分，但有時候部署，總會有一些共用的 Image。 在這之前，我們需要一個一個將相同的 Image 搬到每個 AWS … - Published 2025-06-25
+- [跨不同 VPC 資源使用 EFS](https://pin-yi.me/blog/aws/aws-cross-vpc-efs/): EFS 在設計上，Mount targets 只支援單一 VPC 的 Subnet 來連線，有研究一下，如果有情境需要跨 VPC 使用同一座 EFS 需要怎麼調整設定。
+首先，EFS … - Published 2025-02-27
+- [在 AWS EC2 macOS 上安裝 Gitlab-Runner 注意事項](https://pin-yi.me/blog/aws/aws-ec2-macos-gitlab-runner/): 會寫此文章主要原因是公司會需要打包多個 IOS APP，之前是使用 github 來進行打包，但因為費用以及管理問題，所以想測試改用 AWS 的 EC2 macOS 來當作 Runner。 … - Published 2025-02-25
+- [AWS Amazon Machine Images (AMIs) 轉移給其他 AWS 帳號](https://pin-yi.me/blog/aws/aws-ami-migrate-other-account/): 想要研究是否可以把已經包好的 AWS AMI 轉移到其他 AWS 帳號使用，故有此篇文章來說明如何操作。
+下方會有兩個不同的 AWS 帳號來說明
+分別是：A 帳號 6517xxxxxx02， … - Published 2025-02-06
+- [透過 AWS SSM 連線至 macOS EC2 並啟用 VNC 遠端桌面 GUI](https://pin-yi.me/blog/aws/aws-ssm-macos-ec2-vnc-gui/): 名詞說明 AWS：Amazon Web Services 亞馬遜的雲端服務
+SSM：AWS Systems Manager 可以透過 AWS 直接連上內部 VPC 的機器 (不需要在 public … - Published 2025-01-03
+- [AWS EKS Pod 出現 aws-cni failed to assign an IP address to container 錯誤](https://pin-yi.me/blog/aws/aws-cni-failed-to-assign-ip/): 此文章是我在公司擔任架構師，在負責稽核資源使用時，有發現有同仁的 AWS EKS node_group 資源開太大 (開發環境使用 2xlarge 機器規格)，所以先手動從 UI 去調整 Node 的 … - Published 2024-12-11
+- [Amazon Virtual Private Cloud (VPC) 介紹](https://pin-yi.me/blog/aws/vpc-introduce/): 此篇單純是我自己學習 AWS VPC 的筆記，主要是為了熟悉 AWS 的 VPC，了解 VPC 包含哪些元件，以及如何建立 VPC、設定 VPC 等等。
+武功秘笈 文章主要參考：AWS CSA … - Published 2024-09-02
+- [如何使用 MFA Token 驗證 AWS CLI](https://pin-yi.me/blog/aws/cli-mfa/): 會有這一篇文章也是跟 Identity and Access Management (IAM) 介紹 一樣，在測試 eksctl 建立 EKS 時，發現一直噴錯，說我沒有權限，但我去看我的 IAM … - Published 2024-08-01
+- [Elastic Kubernetes Service (EKS) 介紹](https://pin-yi.me/blog/aws/eks-introduce/): 由於公司政策調整，除了原先的 Google Cloud Platform (GCP) 之外，我們也開始使用 AWS 服務，其中包括了 EKS (Elastic Kubernetes Service)。 … - Published 2024-07-26
+- [Identity and Access Management (IAM) 介紹](https://pin-yi.me/blog/aws/iam-introduce/): 先來說一下為什麼會寫這篇文章，主要是在寫跟測試 Elastic Kubernetes Service (EKS) 介紹 文章時，想要用 eksctl 來建立 EKS， … - Published 2024-07-26
+- [設定 AWS CLI 以及 AWS CLI 指令說明](https://pin-yi.me/blog/aws/aws-cli/): 介紹 AWS CLI 是用於使用 AWS 服務的命令列工具。它也用於對 IAM 使用者或角色進行身份驗證，以便從本機電腦存取 Amazon EKS 叢集和其他 AWS 資源。若要從命令列在 AWS 中 … - Published 2024-07-26
+
+### Google Cloud Platform
+- [GKE DNS 相關注意事項及結論](https://pin-yi.me/blog/gcp/gke-dns/): 一樣先前情提要：
+最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比 … - Published 2025-08-12
+- [GKE DNS 使用 Cloud DNS + NodeLocal DNSCache 運作測試](https://pin-yi.me/blog/gcp/gke-cloud-dns-nodelocaldnscache/): 最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需 … - Published 2025-08-08
+- [GKE DNS 使用 Cloud DNS 運作測試](https://pin-yi.me/blog/gcp/gke-cloud-dns/): 最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需 … - Published 2025-08-06
+- [GKE DNS 使用 KubeDNS 運作測試](https://pin-yi.me/blog/gcp/gke-kubedns/): 最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需 … - Published 2025-08-04
+- [GKE DNS 使用 KubeDNS + NodeLocal DNSCache 運作測試](https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/): 最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需 … - Published 2025-08-01
+- [GCP Load Balancer 介紹](https://pin-yi.me/blog/gcp/gcp-lb-introduce/): 最近公司在導入 Multi-Zone，有發現大量的跨域費用產生，主要是不同 Cluster 或是 Cluster 跟 VM 之間的跨域流量，與 Google TAM 討論， … - Published 2025-05-26
+- [GCS Bucket CORS 錯誤解決方法](https://pin-yi.me/blog/gcp/gcs-cors/): 最近公司有需求需要透過前端去打 GCS Bucket 的檔案，但會遇到 CORS 錯誤，所以寫一篇來記錄此問題的解決方法。
+有先簡單寫一個前端頁面，可以透過 Axios 去打後端， … - Published 2025-03-18
+- [如何為 CI/CD 配置 GCP Artifact Registry 的 Docker 認證](https://pin-yi.me/blog/gcp/gcp-artifact-registry-docker-auth/): 說明 當我們在 CI 階段，會將打包的 image 丟到 Repositories，我們選擇 GCP 的 Artifact Registry，就會需要有 GCP 相關權限， … - Published 2024-12-26
+- [Google Kubernetes Engine Local ephemeral storage 計算方式](https://pin-yi.me/blog/gcp/gke-local-ephemeral-storage/): 此文章主要針對 Google Kubernetes Engine Local ephemeral storage 的計算方式來做介紹。
+前情提要 為什麼會突然在看這個主題呢？ … - Published 2024-09-02
+- [GCP Prometheus Samples Ingested 計算方式及如何減少費用](https://pin-yi.me/blog/gcp/gcp-prometheus-sample-ingested-calculate/): 最近在優化公司帳單費用，發現公司有幾個 project 裡面的 Prometheus Samples Ingested 費用很高，此文章會針對費用如何計算以及如何去減少費用來做說明。 … - Published 2024-07-10
+- [GCP Memorystore HA 高可用性 failover 測試](https://pin-yi.me/blog/gcp/gcp-memorystore-failover/): 此文章主要針對 GCP Memorystore failover 來做測試，測試 Memorystore 高可用性 (HA) 在標準 Standard Tier failover 故障轉移需要多久，以 … - Published 2024-07-02
+- [如何過濾 GCP LOG，減少 Cloud Logging API 的花費](https://pin-yi.me/blog/gcp/gcp-log-reduce-cloud-logging-api/): 當我們使用 GCP 的 Cloud Logging 服務來查看 Log 時，有時候會有一些我們不需要顯示出來的，或是從來都不會去查詢的 Log，再者是 GCP 本身的錯誤導致大量噴錯的 Log ， … - Published 2023-07-30
+- [Google Kubernetes Engine CronJob 會有短暫時間沒有執行 Job](https://pin-yi.me/blog/gcp/gke-cronjob-not-working/): 前陣子公司建立在 Google Kubernetes Engine 叢集上的 CronJob 服務會有短暫時間沒有執行 Job。先前情提要一下，此 CronJob 的設定是每分鐘都會執行 (圖一)，所 … - Published 2023-02-10
+- [Google Cloud Platform (GCP) - Cloud Build](https://pin-yi.me/blog/gcp/cloud-build/): 跟大家介紹一下今天的主題 Cloud Build，Cloud Build 可以幫我們做持續建構、測試和部署，我們可以把它想成簡易版的 Jenkins，從整個映像檔案打包到部署，也就幾分鐘的事情，且內建 … - Published 2022-07-06
+- [Google Cloud Platform (GCP) - Cloud Source Repositories](https://pin-yi.me/blog/gcp/cloud-source-repositories/): 跟大家介紹一下今天的主題 Cloud Source Repositories，聽到 Source Repositories 是不是感覺跟什麼東西很像呀，沒錯，就跟我們的 GitHub or … - Published 2022-07-03
+- [Google Cloud Platform (GCP) - Container Registry](https://pin-yi.me/blog/gcp/container-registry/): 跟大家介紹一下今天的主題 Container Registry，Container Registry 是儲存、管理和保護 Docker 容器映像檔的存放區， … - Published 2022-07-01
+- [Google Cloud Platform (GCP) - Compute Engine](https://pin-yi.me/blog/gcp/compute-engine/): 跟大家介紹一下今天的主題 Google Compute Engine(GCE)，GCE 是 Google Cloud 上的基礎架構服務 (IaaS)， … - Published 2022-06-29
+- [Google Cloud Platform (GCP) - IAM 與管理](https://pin-yi.me/blog/gcp/iam/): IAM 的全名是 Identity and Access Management，當我們藉由 IAM，可以授與特定 Google Cloud 資源的 精細 訪問權限，並防止對其他資源的訪問。疑！？為什麼 … - Published 2022-06-29
+
+### Kubernetes
+- [Kubernetes 開啟 Region 後，如何減少跨 Zone 網路費用](https://pin-yi.me/blog/kubernetes/k8s-open-region-how-to-reduce-cross-zone-costs/): 由於最近公司開始導入 Multi Zone 架構，這時候會出現一個問題，就是明明我是同一個 GKE，但因為有多個 Zone，導致開始會有一些跨 Zone 的網路傳輸費用產生 (每 Gib … - Published 2025-05-15
+- [K8s Node Log Stdout Logrotate 回收機制](https://pin-yi.me/blog/kubernetes/k8s-node-log-stdout-logrotate/): 我們知道可觀測性的三大支柱是 Log、Metics、Trace，其中 Log 是最基礎的一環，透過 Log 我們可以了解應用程式的運作狀況，當應用程式出現問題時，透過 Log 可以快速定位問題，進而解 … - Published 2025-03-12
+- [KubeDNS vs CoreDNS 比較](https://pin-yi.me/blog/kubernetes/kubedns-vs-coredns/): 前情提要：由於上一篇筆記 Pod 出現 cURL error 6: Could not resolve host 的後續規劃中，有提出我們想研究看看 Core DNS 來取代 Kube DNS，因此， … - Published 2024-07-23
+- [Pod 出現 cURL error 6: Could not resolve host](https://pin-yi.me/blog/kubernetes/pod-curl-error-6-could-not-resolve-host/): 此篇主要是來記錄一下在正式環境服務出現 cURL error 6: Could not resolve host 的問題，以及如何解決。
+問題發生 當天 RD 在公窗反應說，API 程式去打其他單位或 … - Published 2024-07-19
+- [正式環境上踩到 StatefulSet 的雷，拿到 P1 的教訓](https://pin-yi.me/blog/kubernetes/k8s-statefulset-podmanagementpolicy/): 此文章要來記錄一下前陣子在公司的正式環境踩到 StatefulSet 的雷，事情是這樣的，我們有些服務，是使用 StatefulSet 來建置，至於為什麼不用 Deployment，這個說來話長 (也 … - Published 2023-10-27
+- [部署 Pod 遇到 container veth name provided (eth0) already exists 錯誤](https://pin-yi.me/blog/kubernetes/pod-veth-name-provided-eth0-already-exists/): 此文章要來記錄一下公司同事在正式服務上遇到的問題，會詳細說明遇到事情的經過，以及開單詢問 google support 最後討論出的暫時解決的辦法：
+簡單列出正式站當下服務環境：
+gke master … - Published 2023-09-13
+- [Kubernetes (K8s) 自定義 PHP HorizontalPodAutoscaler (HPA) 指標](https://pin-yi.me/blog/kubernetes/gcp-k8s-hpa-php-custom-metrics/): 此篇要介紹 HorizontalPodAutoscaler 的自定義指標，K8s 內建的指標 (metrics) 只支援 CPU 以及 Memory，如果我們今天想要使用其他的指標來讓 HPA 擴縮 … - Published 2022-07-18
+- [Kubernetes (K8s) HorizontalPodAutoscaler (HPA) 原理與實作](https://pin-yi.me/blog/kubernetes/k8s-hpa/): 此篇是要介紹 HorizontalPodAutoscaler (HPA) 的原理以及實作內容，那我們先來說明一下 HorizontalPodAutoscaler 是什麼吧！ … - Published 2022-07-12
+- [用大型社區來介紹 Kubernetes 元件](https://pin-yi.me/blog/kubernetes/k8s-plain/): 前陣子對於 Kubernetes 部分內容還不是很清楚，在網路上閒逛的時候發現一篇很有趣的文章，標題是 『 給行銷跟業務的 Kubernetes 101 中翻中介紹 』，點進去後才發現，作者 Phil … - Published 2022-06-02
+- [Kubernetes (K8s) 搭配 EFK 實作 (Deployment、StatefulSet、DaemonSet)](https://pin-yi.me/blog/kubernetes/k8s-efk/): 這是我們 Kubernetes 文章的第三篇，此文章會紀錄我將 EFK 建在 Kubernetes 上面，最後也會統整實作過程中，可能會遇到的一些問題，讓大家在學習時，可以更有效率，不用 debug  … - Published 2022-05-10
+- [Kubernetes (K8s) 介紹 - 進階 (Service、Ingress、StatefulSet、Deployment、ReplicaSet、ConfigMap)](https://pin-yi.me/blog/kubernetes/k8s-advanced/): 前面我們在基本篇中，為了使 Pod 能夠與本機連線，使用了 port-forward，還有另一種方法就是今天要介紹的第一個主題：Service
+那我們會先複習一下 port-forward， … - Published 2022-05-03
+- [Kubernetes (K8s) 介紹 - 基本](https://pin-yi.me/blog/kubernetes/k8s/): 什麼是 Kubernetes (K8s)? Kubernetes 也可以叫 K8s，這個名稱來源希臘語，意思是舵手或是飛行員，所以我們可以看到它的 logo 是一個船舵的標誌，之所以叫 K8s … - Published 2022-04-28
+
+### Terraform
+- [如何導入 Terragrunt，Terragrunt 好處是什麼？](https://pin-yi.me/blog/terraform/terragrunt/): 我們接續上一篇的 如何將 Terraform 改寫成 module ? ，我們已經將 Terraform 改成 module 的方式來進行管理，但當我們要管理的資源越來越多，且有分不同的專案時，整個服 … - Published 2023-06-21
+- [如何將 Terraform 改寫成 module ?](https://pin-yi.me/blog/terraform/terraform-module/): 當我們要管理的資源越來越多後，會產生很多的 tf 檔案，假設我們現在有三個 gce 服務，會在以下三個不同環境上面運作，每個環境都會有我們之前學會的基本 tf 檔案(包含 provider.tf … - Published 2023-06-16
+- [Terraform 如何多人共同開發 (將 tfstate 存在後端)](https://pin-yi.me/blog/terraform/terraform-tfstate/): 此篇是接續上一篇 什麼是 IaC ? Terraform 又是什麼？ 的 Terraform 文章，我們在上一篇有提到 terraform apply 完後，會多一個檔案 *.tfstate，這個檔案 … - Published 2023-05-29
+- [使用 Terraform 建立 Google Kubernetes Engine](https://pin-yi.me/blog/terraform/terraform-gke/): 我們接續昨天的建立 Google Kubernetes Engine 文章，今天要來介紹的是如何用 Terraform 建立 Google Kubernetes Engine， … - Published 2022-11-29
+- [使用 Terraform 建立 Google Compute Engine](https://pin-yi.me/blog/terraform/terraform-gce/): 嗨嗨大家好，距離上一篇筆記又隔了 3 個月，最近公司有專案在忙，沒時間把上次提到的 Terraform 應用筆記寫完，現在他來拉～～～ 😂 我們這次的主題是使用 Terraform … - Published 2022-11-28
+- [什麼是 IaC ? Terraform 又是什麼？](https://pin-yi.me/blog/terraform/terraform/): 跟上一篇 Snyk 一樣，本系列也是去參加 DevOpsDay Taipei 2022 活動聽到各位產業大佬目前在使用的名詞以及技術，想說回家也充實一下自己，了解一下在 DevOpsDay … - Published 2022-09-26
+
+### Docker 相關
+- [Docker Image Pull Rate Limit 說明 + 掃描腳本](https://pin-yi.me/blog/docker/dockerhub-pull-ratelimit/): 背景說明 因 Docker 官方最近宣布從 2025 年 04 月 01 日開始，未經過驗證的帳戶 (一般來說，GKE 拉 Docker Hub 的 Image 都屬於這類)，會有對應的 Rate … - Published 2025-02-24
+- [使用 Prometheus 和 Grafana 打造監控預警系統 (Docker 篇)](https://pin-yi.me/blog/docker/prometheus-grafana-docker/): 還記得我們上次架設 EFK 來獲得容器的日誌嗎!? 身為一個 SRE 除了收集日誌外，還需要監控每個系統或是服務的運行狀況，並在警急情況即時通知相關人員作為應對處理。 … - Published 2022-05-18
+- [Docker 介紹 (如何使用 Docker-compose 建置 PHP+MySQl+Nginx 環境)](https://pin-yi.me/blog/docker/docker/): 什麼是 Docker ? Docker 是一種軟體平台，它可以快速建立、測試和部署應用程式。為什麼可以快速建立呢？因為 Docker 會將軟體封裝到名為『容器』的標準單位。其中會包含程式庫、系統工具、 … - Published 2022-03-14
+
+### Opentelemetry
+- [如何透過 OpenTelemetry 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上](https://pin-yi.me/blog/opentelemetry/opentelemetry-ingress-nginx-controller/): 由於最近公司想要導入 Datadog，在測試過程中順便導入 OpenTelemetry 來收集 Metrics 與 Traces 並送到 Datadog 上 ～
+🔥 這個範例比較特別， … - Published 2023-09-13
+- [什麼是 Opentelemetry？可觀測性 (Observability) 又是什麼？](https://pin-yi.me/blog/opentelemetry/opentelemetry-observability/): 在介紹 Opentelemetry 之前，我們要先了解一下目前軟體架構以及基礎設施的演進：
+軟體架構以及基礎設施的演進
+第一階段在軟體架構設計上較為簡單，不會有什麼特別需要拆分出來的程式，所以都是一整 … - Published 2023-09-06
+
+### 敏捷開發 (Agile)
+- [串接 Jira 工單自動化通知到 Google Chat](https://pin-yi.me/blog/agile/jira-to-google-chat/): 介紹 我們使用 Jira 的 Ticket 來當作工單，其他單位如果需要請 SRE 協助，都需要填寫此工單，我們的流程是以下：
+待審核 -&gt; SRE 已簽核 -&gt; 進行中 -&gt; (阻 … - Published 2024-08-06
+
+### Nginx
+- [Nginx Proxy Set Header 注意事項](https://pin-yi.me/blog/nginx/proxy-set-header/): 說明 在 Nginx 中，我們可以透過 proxy_set_header 來設定 header，這樣子可以讓我們在 proxy 的過程中，將一些 header 帶到後端的服務上，除了新增，也可以蓋掉前 … - Published 2024-08-06
+- [想使用 Nginx Upstream Proxy 到外部服務，並帶入對應的 header 該怎麼做？](https://pin-yi.me/blog/nginx/nginx-upstream-set-host-header/): 此文章要來記錄一下最近在公司服務入口遇到的一些小問題，以及解決的方法。簡單說明一下，我們的服務入口是用 Nginx 來當作 proxy server，將不同路徑或是 servername 導到對應的後 … - Published 2023-10-16
+- [Soketi WebSocket Server LOG 不定時出現 502 error 以及 connect() failed (111: Connection refused)](https://pin-yi.me/blog/nginx/soketi-log-502-error/): 此文章要來記錄一下 RD 同仁前陣子有反應使用 Soketi 這個 WebSocket Server 會不定時在 LOG 出現 502 error 錯誤訊息以及 connect() failed … - Published 2023-09-20
+
+### RD 使用的相關工具
+- [Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決](https://pin-yi.me/blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/): 先說結論 &hellip; EFK 真的好多雷 😆 我們今天又再度踩雷拉，這次又是炸的分身碎骨，花了 4 個多小時才找到原因，也有可能是小弟我跟 EFK 不是很熟 XD。就如標題所說，我在抽 Log  … - Published 2022-12-12
+- [Kibana 新增 index 索引時一直轉圈圈以及顯示 HTTP 403 Forbidden](https://pin-yi.me/blog/rd/kibana-create-index-forbidden/): 前幾天在工作使用 Kibana 時，想要新增一個新的索引，發現選擇索引並按下新增的按鈕，會一直轉圈圈，等了一陣子，使用開發工具 F12 查看，跳出了 HTTP 403 Forbidden，到底是什麼原 … - Published 2022-12-08
+- [用 EFK 收集容器日誌 (HAProxy、Redis Sentinel、Docker-compose)](https://pin-yi.me/blog/rd/redis-sentinel-docker-compose-haproxy-efk/): 前情提要：本篇是 用 HAProxy 對 Redis 做負載平衡 (Redis Sentinel、Docker-compose) 以及 Redis 哨兵模式 (Sentinel) … - Published 2022-04-22
+
+### Redis
+- [用 HAProxy 對 Redis 做負載平衡 (Redis Sentinel、Docker-compose)](https://pin-yi.me/blog/redis/redis-sentinel-docker-compose-haproxy/): 前情提要：本篇是 Redis 哨兵模式 (Sentinel) 搭配 Docker-compose 實作 的後續文章，主要會優化原本的程式碼，並加上 HAProxy 來做負載平衡！ … - Published 2022-04-22
+- [Redis 哨兵模式 (Sentinel) 搭配 Docker-compose 實作](https://pin-yi.me/blog/redis/redis-sentinel-docker-compose/): 什麼是 Redis 哨兵模式 (Sentinel) ? 有關 Redis 之前有寫一篇 Redis 的介紹文，有興趣可以去看看！
+Redis 提供非常實用的功能來讓我們實現多機的 in-memory  … - Published 2022-04-19
+- [Redis 介紹](https://pin-yi.me/blog/redis/redis-introduce/): 什麼是 Redis ? Redis 全名是 Remote Dictionary Server ，是快速的開源記憶體鍵值資料庫 (keys-value database)。
+由於 Redis 的回應時間 … - Published 2022-03-08
+
+### Git 或 CICD 相關
+- [如何啟用 GitLab 的 Package Registry 以及將儲存位置從伺服器改到 GCS 上](https://pin-yi.me/blog/git-or-cicd/gitlab-package-registry-to-gcs/): 今天接到一個案子，RD 部門之後想要使用 GitLab 的 Package Registry 功能來發布套件，且不想把它存在 GitLab 伺服器上，希望可以直接存到 GCP 的 Google … - Published 2022-12-29
+- [如何合併多個 commit，且推到遠端呢？](https://pin-yi.me/blog/git-or-cicd/git-merge-multiple-commit/): 當我們在使用 Git 時，常常修改完內容後，會推 commit 到 github or gitlab，在一個分支上開發久了， commit 會累積很多，很雜且很亂，所以我們可以試著將 commit 給 … - Published 2022-06-21
+- [部署 Laravel 於 Heroku 搭配 GitLab CI/CD](https://pin-yi.me/blog/git-or-cicd/laravel-gitlab-cicd-heroku/): 經過上一篇文章 如何從頭打造專屬的 GitLab CI/CD 的學習，讓我們了解到 GitLab CI/CD 的整個流程，接著我們本次要把 Laravel 給部署到 Heroku 透過 GitLab  … - Published 2022-05-26
+- [如何從頭打造專屬的 GitLab CI/CD](https://pin-yi.me/blog/git-or-cicd/gitlab-cicd/): 自從上次學完 Jenkins 及 Ansible CI/CD，就覺得 CI/CD 實在太酷了！能夠自動化的去持續整合 (Continuous Integration, CI) … - Published 2022-05-26
+- [Ansible 介紹與實作 (Inventory、Playbooks、Module、Template、Handlers)](https://pin-yi.me/blog/git-or-cicd/ansible/): 本篇文章是接續前面兩篇 Jenkins 及 Ansible IT 自動化 CI/CD 介紹 跟 使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot 文章，歡迎大家先去觀 … - Published 2022-05-16
+- [使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot](https://pin-yi.me/blog/git-or-cicd/jenkins-github-tg-bot/): 此文章是接續前面 Jenkins 及 Ansible IT 自動化 CI/CD 介紹 文章，此篇會實際安裝及實作 Jenkins，大家記得在學習前要先檢查自己的版本是否有新的更新！那我們開始囉 😘 … - Published 2022-05-16
+- [Jenkins 及 Ansible IT 自動化 CI/CD 介紹](https://pin-yi.me/blog/git-or-cicd/jenkins-ansible-it-cicd/): 在軟體開發領域中，IT 自動化 (automation) 及 持續整合 (Continuous Integration, CI) 、持續佈署 (Continuous Deployment,CD) … - Published 2022-05-11
+- [Git 介紹](https://pin-yi.me/blog/git-or-cicd/git-introduce/): 什麼是 Git ? 不管是不是工程師，只要常常需要使用電腦工作，每天一定都會新增、修改、刪除許多檔案，我們看到這張圖：
+很多人的電腦裡面都有這樣的內容
+這張圖是一個菜鳥工程師在整理檔案時的方法，因為每 … - Published 2022-04-15
+
+### 其他(還想不到分類)
+- [Bookstack 開源知識庫筆記平台安裝 (K8s + docker)](https://pin-yi.me/blog/other/bookstack/): 最近剛好有公司同事離職，想要把交接的資料給整理整理，雖然部門之前有架設專用的 wiki 給 RD 使用，但覺得介面沒有到很好用，於是就在網路上尋找，可以多人編輯的筆記系統，一開始有想過用 CodiMD … - Published 2023-04-07
+- [找出程式碼、開源套件、容器的安全漏洞工具 - Snyk](https://pin-yi.me/blog/other/snyk/): 前幾天有機會可以去參加 DevOpsDays Taipei 2022 活動，聽到了一門有關於如何將 Security 加入 DevOps - GitLab CI/CD with Snyk 的講座，覺得 … - Published 2022-09-20
+- [Linux 常用指令](https://pin-yi.me/blog/other/linux-command/): 因為最近在管理機器時，常常會使用各式各樣的指令來協助管理，所以把常用的指令依照不同類別整理在底下呦 😘
+網路類 查詢遠端 Port 是否開放 nc (netcat) nc (netcat)，可以讀取經 … - Published 2022-06-17
+- [清除 Linux 機器上的 Swap (Buff、Cache、Swap 比較)](https://pin-yi.me/blog/other/linux-clear-swap/): 今天在工作時，遇到機器的 Swap 超過預警值，需要手動去清除 Swap，那剛好就由這次機會來介紹要如何清除 Linux 機器上的 Swap，以及查詢 Linux 記憶體的使用狀況！ … - Published 2022-06-06
+
+### Golang
+- [用 Go 寫一個 Repository Restful API 的留言板 (gin、gorm 套件)](https://pin-yi.me/blog/golang/go-restful-api-repository-messageboard/): 本文章是使用 Go 來寫一個 Repository Restful API 的留言板，並且會使用 gin 以及 gorm (使用 Mysql)套件。
+建議可以先觀看 Go 介紹 文章來簡單學習 Go  … - Published 2022-03-27
+- [Go (Golang) 介紹](https://pin-yi.me/blog/golang/go-introduce/): 什麼是 Go ? Go 全名是 go programming language 又被稱為 Golang，是因為 go 這個詞太廣泛，不易搜尋，所以也可以叫 Golang。
+Go 是由 Google 開 … - Published 2022-03-21
+
+### Node.js
+- [用 Node.js寫一個 Repository Restful API 的留言板 (express、sequelize 套件)](https://pin-yi.me/blog/nodejs/nodejs-restful-api-repository-messageboard/): 本文章是使用 Node.js 來寫一個 Repository Restful API 的留言板，並且會使用 express 以及 sequelize (使用 Mysql)套件。 … - Published 2022-04-11
+- [Node.js 介紹](https://pin-yi.me/blog/nodejs/nodejs-introduce/): 什麼是 Node.js ? Node.js 是能夠在伺服器端運行 JavaScript 的開放原始碼、跨平台執行環境。
+Node.js 的出現，讓前端網站開發人員可以使用 JaveScript 來做後 … - Published 2022-03-30
+
+### PHP Laravel
+- [Laravel 進階 (內建會員系統、驗證 RESTful API 是否登入、使用 Repository 設計模式)](https://pin-yi.me/blog/php-laravel/laravel-advanced/): 本篇是 Laravel 介紹 的進階篇，由於有些說明介紹會沿用上一篇的內容，建議要先瀏覽過上一篇呦～ (可以從這裡下載最後程式碼！ )
+Laravel 內建會員系統 Laravel 這個框架，很方便的 … - Published 2022-03-08
+- [Laravel 介紹 (使用 Laravel 從零到有開發出一個留言板功能並搭配 RESTful API 來實現 CRUD)](https://pin-yi.me/blog/php-laravel/laravel/): 本文章會介紹什麼是 Laravel ，以及它有什麼特別之處，可以讓它在2015年被評為最受歡迎的 PHP 框架第一名，並說明為什麼要使用框架，最後實作一個留言板功能搭配 RESTful API … - Published 2022-03-02
+- [如何在 Nginx 下實作第一個 PHP 留言板 RESTful API](https://pin-yi.me/blog/php-laravel/nginx-php-restful-api/): 由於網路上文章幾乎都是使用 Apache 來實作第一個 PHP RESTful API，也比較沒有中文的介紹，剛好這次也還在學習，所以把學習的紀錄分享給大家，這次會搭配實作留言板來說明，那本次教學內容 … - Published 2022-02-24
+- [PHP 介紹](https://pin-yi.me/blog/php-laravel/php-introduce/): 1. PHP 是什麼 PHP 全名是超文本前處理器(Hypertext Preprocessor)，是一種開源的通用電腦手稿語言 根據W3Techs的報告，截至2021年9月，有78.9%網站都是使 … - Published 2022-02-22
+
+### 研討會 / 講座
+- [朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座](https://pin-yi.me/blog/conference-or-lecture/20240529-devops-introduce/): 講座資訊 時間：2024/05/29 19:00 - 21:00 地點：朝陽科技大學 &amp; Google Meet 線上連結 Google Developer Student Clubs 相關連 … - Published 2024-05-29
+
+
+## Root Pages
+- [專案成就](https://pin-yi.me/projects/): 快速將圖片轉成 webp 格式 (Shell Script)使用 Shell Script 快速將當前目錄下的所有圖片轉成 webp 格式，並且會自動移除原始圖片。 …
+- [關於我](https://pin-yi.me/about/): 哈囉大家好，我叫莊品毅 (CHUANG,PIN-YI)，也可以叫我 Ian，目前是一位 System Architect (SA) 工程師，負責規劃以及測試公司的系統架構，並且協助技術團隊解決系統相 …
+
+---
+Generated on 2025-11-14 07:35:49 UTC
+Site: https://pin-yi.me/

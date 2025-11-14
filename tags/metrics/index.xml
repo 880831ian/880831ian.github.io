@@ -1,6 +1,8 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Metrics</title><link>https://pin-yi.me/tags/metrics/</link><description>Recent content in Metrics on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Wed, 10 Jul 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/metrics/index.xml" rel="self" type="application/rss+xml"/><item><title>GCP Prometheus Samples Ingested 計算方式及如何減少費用</title><link>https://pin-yi.me/blog/gcp/gcp-prometheus-sample-ingested-calculate/</link><pubDate>Wed, 10 Jul 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-prometheus-sample-ingested-calculate/</guid><description>
 &lt;p>最近在優化公司帳單費用，發現公司有幾個 project 裡面的 Prometheus Samples Ingested 費用很高，此文章會針對費用如何計算以及如何去減少費用來做說明。&lt;/p>
-&lt;p>Prometheus Samples Ingested 就是 Prometheus 攝取的樣本數，因為上述幾個專案，我們都是使用 &lt;a href="https://cloud.google.com/stackdriver/docs/managed-prometheus" target="_blank" rel="noopener">Google Managed Prometheus (GMP)&lt;/a> 的方式來接 Metrics，所以可以先推測是 Metrics 導致此費用增加。&lt;/p>
+&lt;p>Prometheus Samples Ingested 就是 Prometheus 攝取的樣本數，因為上述幾個專案，我們都是使用 &lt;a href="https://cloud.google.com/stackdriver/docs/managed-prometheus"target="_blank" rel="noopener">Google Managed Prometheus (GMP)&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> 的方式來接 Metrics，所以可以先推測是 Metrics 導致此費用增加。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/1.webp"
 alt="Google 帳單 (project_1)" width="800">&lt;figcaption>
@@ -14,8 +16,10 @@ alt="Google 帳單 (project_2)" width="800">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>費用計算說明&lt;span class="hx-absolute -hx-mt-20" id="費用計算說明">&lt;/span>
-&lt;a href="#%e8%b2%bb%e7%94%a8%e8%a8%88%e7%ae%97%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們先來計算一下費用是不是正確，Prometheus Samples Ingested 的 SKU 是 A4E4-DF03-CDB6，可以透過&lt;a href="https://cloud.google.com/skus/?currency=USD&amp;amp;filter=A4E4-DF03-CDB6&amp;amp;hl=en" target="_blank" rel="noopener">這個頁面&lt;/a>來查詢：&lt;/p>
+&lt;h2>費用計算說明&lt;span class="hx:absolute hx:-mt-20" id="費用計算說明">&lt;/span>
+&lt;a href="#%e8%b2%bb%e7%94%a8%e8%a8%88%e7%ae%97%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們先來計算一下費用是不是正確，Prometheus Samples Ingested 的 SKU 是 A4E4-DF03-CDB6，可以透過&lt;a href="https://cloud.google.com/skus/?currency=USD&amp;amp;filter=A4E4-DF03-CDB6&amp;amp;hl=en"target="_blank" rel="noopener">這個頁面&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>來查詢：&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/3.webp"
 alt="Google Cloud Platform SKUs" width="800">&lt;figcaption>
@@ -27,7 +31,7 @@ alt="Google Cloud Platform SKUs" width="800">&lt;figcaption>
 &lt;ul>
 &lt;li>calc_metrics.sh&lt;/li>
 &lt;/ul>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
 &lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">#! /bin/bash
 &lt;/span>&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#75715e">&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">if&lt;/span> &lt;span style="color:#f92672">[[&lt;/span> $# -ne &lt;span style="color:#ae81ff">1&lt;/span> &lt;span style="color:#f92672">]]&lt;/span>; &lt;span style="color:#66d9ef">then&lt;/span>
@@ -72,13 +76,13 @@ alt="Google Cloud Platform SKUs" width="800">&lt;figcaption>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> cost&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#66d9ef">$(&lt;/span>echo &lt;span style="color:#e6db74">&amp;#34;scale=2; &lt;/span>&lt;span style="color:#e6db74">${&lt;/span>result&lt;span style="color:#e6db74">}&lt;/span>&lt;span style="color:#e6db74"> * 0.024 / 1000000&amp;#34;&lt;/span> | bc&lt;span style="color:#66d9ef">)&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">fi&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;費用：&lt;/span>$cost&lt;span style="color:#e6db74"> USD&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>echo &lt;span style="color:#e6db74">&amp;#34;費用：&lt;/span>$cost&lt;span style="color:#e6db74"> USD&amp;#34;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
 &lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
 >
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
@@ -93,7 +97,9 @@ alt="用腳本檢查金額是否與帳單一樣" width="500">&lt;figcaption>
 &lt;br>
 &lt;p>計算完與實際的帳單費用差不多，接著我們可以打開 GCP 的 Metrics Management 來查看一下，我們用了哪些 Metrics 導致費用這麼高。&lt;/p>
 &lt;p>以下以 project_1 為例：&lt;/p>
-&lt;p>打開 &lt;a href="https://console.cloud.google.com/monitoring/metrics-management" target="_blank" rel="noopener">Metrics Management&lt;/a> 後，將時間選擇前 30 天(30d)，與上面帳單選擇一樣，接著可以看到 Billable samples ingested 這邊，這裡就是指我們 30 天總共收了多少筆的 samples，也可以把他理解收了多少筆的 Metrics。也可以看到底下表格的 Samples billable volume 可以透過排序知道是誰使用最多。這邊的 B 代表 10 億，也就是 1000000000，所以我們上個月收了 1066 多億筆的 samples。&lt;/p>
+&lt;p>打開 &lt;a href="https://console.cloud.google.com/monitoring/metrics-management"target="_blank" rel="noopener">Metrics Management&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> 後，將時間選擇前 30 天(30d)，與上面帳單選擇一樣，接著可以看到 Billable samples ingested 這邊，這裡就是指我們 30 天總共收了多少筆的 samples，也可以把他理解收了多少筆的 Metrics。也可以看到底下表格的 Samples billable volume 可以透過排序知道是誰使用最多。這邊的 B 代表 10 億，也就是 1000000000，所以我們上個月收了 1066 多億筆的 samples。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/5.webp"
 alt="查看 Metrics Management" width="800">&lt;figcaption>
@@ -111,7 +117,7 @@ alt="查看 Metrics Management" width="550">&lt;figcaption>
 &lt;br>
 &lt;p>所以可以得知，帳單 Prometheus Samples Ingested 這個 SKU 會這麼高就是這邊的 &lt;b>Billable samples ingested&lt;/b> 所導致，那我們現在可以依照下面的表格 Metrics 知道是哪個 Metrics 花錢最兇，在針對這些 Metrics 來進行調整，以達到減少費用的目的。&lt;/p>
 &lt;br>
-&lt;h2>如何減少花費&lt;span class="hx-absolute -hx-mt-20" id="如何減少花費">&lt;/span>
+&lt;h2>如何減少花費&lt;span class="hx:absolute hx:-mt-20" id="如何減少花費">&lt;/span>
 &lt;a href="#%e5%a6%82%e4%bd%95%e6%b8%9b%e5%b0%91%e8%8a%b1%e8%b2%bb" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們可以從上面的表中知道，是 &lt;code>phpfpm_process_state/gauge&lt;/code> 這個 metric，總共收了 30.71 B 也就是大約 1842.60 美元的花費是裡面最高的。所以我們就先這對如何減少這個 metric 來做說明：&lt;/p>
 &lt;p>要先知道 &lt;code>phpfpm_process_state/gauge&lt;/code> 這個 metric 是怎麼來的呢？&lt;/p>
 &lt;p>首先我們可以從 metric 名稱知道它是 phpfpm 的 process 狀態。我們有開啟 Cluster 的 Managed Service for Prometheus，來使用 Google 管理的 Prometheus (GMP)， 並在服務上面設定 &lt;code>phpfpm-exporter&lt;/code>，並使用 PodMonitoring 來將 Pod 上的 metrics 接到 GMP 上。&lt;/p>
@@ -162,7 +168,9 @@ alt="phpfpm status" width="700">&lt;figcaption>
 &lt;p>剛剛提到的 PodMonitoring interval 的秒數，在 project_1 的 PodMonitoring 設定間隔是 60s，所以上面才不需要另外乘，但像是 project_1 的秒數都是 5s，所以我們還需要再多乘上 12 (60/5) 才是我們在 GCP 的 Metrics explorer 看到每分鐘的數量。&lt;/p>
 &lt;br>
 &lt;p>因此，我們可以得知費用會跟 process (範例的 metrics)、裡面的 metrics 有幾個、Pod 數量、 PodMonitoring 間隔時間有關，跟 Google 的文件說明也是一樣的&lt;/p>
-&lt;p>&lt;a href="https://cloud.google.com/stackdriver/pricing?hl=zh-tw#pricing_examples_samples" target="_blank" rel="noopener">https://cloud.google.com/stackdriver/pricing?hl=zh-tw#pricing_examples_samples&lt;/a>&lt;/p>
+&lt;p>&lt;a href="https://cloud.google.com/stackdriver/pricing?hl=zh-tw#pricing_examples_samples"target="_blank" rel="noopener">https://cloud.google.com/stackdriver/pricing?hl=zh-tw#pricing_examples_samples&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/12.webp" width="700">
 &lt;/figure>
@@ -170,8 +178,10 @@ alt="phpfpm status" width="700">&lt;figcaption>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gcp-prometheus-sample-ingested-calculate/13.webp" width="700">
 &lt;/figure>
 &lt;br>
-&lt;p>所以要減少費用，可以調整上述影響 metrics 數量的變因，另一種方式就是，針對需要收集哪些 metrics 來做過濾，可以參考此文件：&lt;a href="https://cloud.google.com/stackdriver/docs/managed-prometheus/setup-managed" target="_blank" rel="noopener">Get started with managed collection&lt;/a>，過濾不要的 metrics ，避免送到 GMP 上，而有多餘的費用，我們可以在 PodMonitoring 上去來過濾要送出 metrics，如下：&lt;/p>
-&lt;div class="hextra-code-block hx-relative hx-mt-6 first:hx-mt-0 hx-group/code">
+&lt;p>所以要減少費用，可以調整上述影響 metrics 數量的變因，另一種方式就是，針對需要收集哪些 metrics 來做過濾，可以參考此文件：&lt;a href="https://cloud.google.com/stackdriver/docs/managed-prometheus/setup-managed"target="_blank" rel="noopener">Get started with managed collection&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>，過濾不要的 metrics ，避免送到 GMP 上，而有多餘的費用，我們可以在 PodMonitoring 上去來過濾要送出 metrics，如下：&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
 &lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">monitoring.googleapis.com/v1&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">PodMonitoring&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
@@ -187,13 +197,13 @@ alt="phpfpm status" width="700">&lt;figcaption>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">metricRelabeling&lt;/span>:
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">action&lt;/span>: &lt;span style="color:#ae81ff">drop&lt;/span>
 &lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">regex&lt;/span>: &lt;span style="color:#ae81ff">phpfpm_process_state&lt;/span>
-&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sourceLabels&lt;/span>: [&lt;span style="color:#ae81ff">__name__]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx-opacity-0 hx-transition group-hover/code:hx-opacity-100 hx-flex hx-gap-1 hx-absolute hx-m-[11px] hx-right-0 hx-top-0">
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">sourceLabels&lt;/span>: [&lt;span style="color:#ae81ff">__name__]&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
 &lt;button
-class="hextra-code-copy-btn hx-group/copybtn hx-transition-all active:hx-opacity-50 hx-bg-primary-700/5 hx-border hx-border-black/5 hx-text-gray-600 hover:hx-text-gray-900 hx-rounded-md hx-p-1.5 dark:hx-bg-primary-300/10 dark:hx-border-white/10 dark:hx-text-gray-400 dark:hover:hx-text-gray-50"
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
 >
-&lt;div class="copy-icon group-[.copied]/copybtn:hx-hidden hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
-&lt;div class="success-icon hx-hidden group-[.copied]/copybtn:hx-block hx-pointer-events-none hx-h-4 hx-w-4">&lt;/div>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>

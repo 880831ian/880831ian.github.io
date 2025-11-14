@@ -7,7 +7,7 @@ alt="(圖一) CronJob schedule 時間為每分鐘執行" width="600">&lt;figcapt
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>問題發生以及問題原因&lt;span class="hx-absolute -hx-mt-20" id="問題發生以及問題原因">&lt;/span>
+&lt;h2>問題發生以及問題原因&lt;span class="hx:absolute hx:-mt-20" id="問題發生以及問題原因">&lt;/span>
 &lt;a href="#%e5%95%8f%e9%a1%8c%e7%99%bc%e7%94%9f%e4%bb%a5%e5%8f%8a%e5%95%8f%e9%a1%8c%e5%8e%9f%e5%9b%a0" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們使用 Google Cloud Platform 裡面的記錄功能，可以看到 (圖二)，在每分鐘執行的 Log 中，有短暫時間沒有執行 Job，但這個時間除了 CronJob 以外，其他的服務都是好的。&lt;/p>
 &lt;br>
 &lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cronjob-not-working/2.webp"
@@ -39,10 +39,10 @@ alt="(圖五) 有問題的叢集位置類型" width="450">&lt;figcaption>
 &lt;br>
 &lt;p>Google 的建議是可以考慮使用另一個 regional cluster，讓 master node 在更新時不會只在單一地區，或是一樣使用舊的 zonal cluster，透過設定 Maintenance window 或者 Maintenance exclusions 來降低服務受到 workload 的影響。參考資料 [2]&lt;/p>
 &lt;br>
-&lt;div class="hx-overflow-x-auto hx-mt-6 hx-flex hx-rounded-lg hx-border hx-py-2 ltr:hx-pr-4 rtl:hx-pl-4 contrast-more:hx-border-current contrast-more:dark:hx-border-current hx-border-orange-100 hx-bg-orange-50 hx-text-orange-800 dark:hx-border-orange-400/30 dark:hx-bg-orange-400/20 dark:hx-text-orange-300">
-&lt;div class="ltr:hx-pl-3 ltr:hx-pr-2 rtl:hx-pr-3 rtl:hx-pl-2">&lt;/div>
-&lt;div class="hx-w-full hx-min-w-0 hx-leading-7">
-&lt;div class="hx-mt-6 hx-leading-7 first:hx-mt-0">&lt;ol>
+&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
+&lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2">&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;/div>
+&lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">&lt;ol>
 &lt;li>
 &lt;p>就算把 node_pool 裡面的自動升級給停掉，也沒有辦法解決此問題！因為此 master control plane (也就是 master node) 的升級，不是 worker node 的 node pool 升級，是由 GKE 負責維護的，所以他們會定期升級 control plane，也沒辦法停止此類的升級。&lt;/p>
 &lt;/li>
@@ -54,7 +54,7 @@ alt="(圖五) 有問題的叢集位置類型" width="450">&lt;figcaption>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;h2>解決問題&lt;span class="hx-absolute -hx-mt-20" id="解決問題">&lt;/span>
+&lt;h2>解決問題&lt;span class="hx:absolute hx:-mt-20" id="解決問題">&lt;/span>
 &lt;a href="#%e8%a7%a3%e6%b1%ba%e5%95%8f%e9%a1%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>最後我們選擇將叢集給整個重建，來確保 CronJob 不會有沒有執行到的狀況發生，重建叢集跟搬服務的過程很辛苦的 😰 希望大家不要發生 QQ，最後我們來看一下重建完後，在 master control plane 更新的時候，還會不會有 CronJob 沒有執行的情況發生。&lt;/p>
 &lt;br>
 &lt;p>新叢集使用 regional cluster 來建立，在 2/1 也有 master control plane 的升級。 (圖六)&lt;/p>
@@ -78,6 +78,10 @@ alt="(圖八) 新叢集位置類型" width="450">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
-&lt;h2>參考資料&lt;span class="hx-absolute -hx-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>[1] Standard cluster upgrades：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades&lt;/a>&lt;/p>
-&lt;p>[2] maintenance-windows-and-exclusions：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions" target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions&lt;/a>&lt;/p></description></item></channel></rss>
+&lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>[1] Standard cluster upgrades：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/cluster-upgrades&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
+&lt;p>[2] maintenance-windows-and-exclusions：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/concepts/maintenance-windows-and-exclusions&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>
