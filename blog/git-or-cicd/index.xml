@@ -4,7 +4,7 @@
 &lt;h2>GitOps 定義&lt;span class="hx:absolute hx:-mt-20" id="gitops-定義">&lt;/span>
 &lt;a href="#gitops-%e5%ae%9a%e7%be%a9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們先來了解 GitOps 的定義&lt;/p>
 &lt;ol>
-&lt;li>開發團隊在程式碼管理、版本控制、CI/CD 自動化等流程，延伸至基礎設施（Infrastructure）與部署流程的操作框架&lt;/li>
+&lt;li>開發團隊將程式碼管理、CI/CD、自動化流程延伸至基礎設施與部署操作，形成統一的操作框架&lt;/li>
 &lt;li>將對系統的期望用「宣告式」方式來編寫成代碼，存放在 Git 儲存庫&lt;/li>
 &lt;li>在流程內，Git 儲存庫會是單一的真實來源，所有變更都透過 Git 提供、審查、合併，最後再透過自動化同步至運行環境&lt;/li>
 &lt;/ol>
@@ -54,9 +54,9 @@ alt="ArgoCD 架構圖" width="600">&lt;figcaption>
 &lt;ol>
 &lt;li>安裝及設定 ArgoCD&lt;/li>
 &lt;li>註冊要部署的 Cluster&lt;/li>
-&lt;li>串接 Git Repository&lt;/li>
-&lt;li>測試 CD&lt;/li>
-&lt;li>嘗試修改線上設定，觀察自動對齊&lt;/li>
+&lt;li>從 Git 倉庫建立應用程式&lt;/li>
+&lt;li>修改版控觀察自動部署&lt;/li>
+&lt;li>修改線上設定觀察自動對齊&lt;/li>
 &lt;/ol>
 &lt;br>
 &lt;p>以及此文章會使用 GKE 來進行測試，並提供相關版本讓大家參考&lt;/p>
@@ -136,7 +136,7 @@ alt="ArgoCD 預設沒有開放存取" width="1100">&lt;figcaption>
 &lt;h4>Service Type Load Balancer&lt;span class="hx:absolute hx:-mt-20" id="service-type-load-balancer">&lt;/span>
 &lt;a href="#service-type-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>將 Service 的 Type 改成 Load Balancer，可以使用以下指令&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
-&lt;div>&lt;pre>&lt;code>kubectl patch svc argocd-server -n argocd -p &amp;#39;{&amp;#34;spec&amp;#34;: {&amp;#34;type&amp;#34;: &amp;#34;LoadBalancer&amp;#34;}}&amp;#39;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl patch svc argocd-server -n argocd -p &lt;span style="color:#e6db74">&amp;#39;{&amp;#34;spec&amp;#34;: {&amp;#34;type&amp;#34;: &amp;#34;LoadBalancer&amp;#34;}}&amp;#39;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
@@ -148,7 +148,7 @@ title="Copy code"
 &lt;/div>
 &lt;p>並取得 IP 位置&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
-&lt;div>&lt;pre>&lt;code>kubectl get svc argocd-server -n argocd -o=jsonpath=&amp;#39;{.status.loadBalancer.ingress[0].ip}&amp;#39;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl get svc argocd-server -n argocd -o&lt;span style="color:#f92672">=&lt;/span>jsonpath&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#e6db74">&amp;#39;{.status.loadBalancer.ingress[0].ip}&amp;#39;&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
@@ -162,7 +162,7 @@ title="Copy code"
 &lt;h4>Port Forwarding 轉發&lt;span class="hx:absolute hx:-mt-20" id="port-forwarding-轉發">&lt;/span>
 &lt;a href="#port-forwarding-%e8%bd%89%e7%99%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>使用此指令就可以在本機上進行轉發&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
-&lt;div>&lt;pre>&lt;code>kubectl port-forward svc/argocd-server -n argocd 8080:443&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl port-forward svc/argocd-server -n argocd 8080:443&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
@@ -367,6 +367,294 @@ alt="透過 CLI 修改密碼" width="1200">&lt;figcaption>
 &lt;/figcaption>
 &lt;/figure>
 &lt;br>
+&lt;h2>註冊要部署的 Cluster&lt;span class="hx:absolute hx:-mt-20" id="註冊要部署的-cluster">&lt;/span>
+&lt;a href="#%e8%a8%bb%e5%86%8a%e8%a6%81%e9%83%a8%e7%bd%b2%e7%9a%84-cluster" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>這邊會是選填，原因是假設我們建立 ArgoCD 的 Cluster 本身也有服務需要做部署，可以直接透過 &lt;code>https://kubernetes.default.svc&lt;/code> 來連線，就不需要額外設定&lt;/p>
+&lt;p>但通常的做法都會是將 ArgoCD 獨立建立，然後透過 &lt;code>argocd cluster add CONTEXTNAME&lt;/code> 來設定，該指令會安裝一個 ServiceAccount (argocd-manager) 到 CONTEXTNAME 的 kube-system namespace 上，並將該 SA 綁定管理員層級的 ClusterRole，後續 ArgoCD 就會使用該 SA Token 來執行管理任務 (部署/監控)&lt;/p>
+&lt;p>但目前手上沒有其他叢集，所以這邊就不先實作&lt;/p>
+&lt;br>
+&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-blue-200 hx:bg-blue-100 hx:text-blue-900 hx:dark:border-blue-200/30 hx:dark:bg-blue-900/30 hx:dark:text-blue-200">
+&lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2">&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>&lt;/div>
+&lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">CONTEXTNAME 取得方式是需要先連上該叢集，接著下 &lt;code>kubectl config get-contexts -o name&lt;/code> 將顯示的 CONTEXTNAME 貼到指令中&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>從 Git 倉庫建立應用程式&lt;span class="hx:absolute hx:-mt-20" id="從-git-倉庫建立應用程式">&lt;/span>
+&lt;a href="#%e5%be%9e-git-%e5%80%89%e5%ba%ab%e5%bb%ba%e7%ab%8b%e6%87%89%e7%94%a8%e7%a8%8b%e5%bc%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>ArgoCD 核心結構說明&lt;span class="hx:absolute hx:-mt-20" id="argocd-核心結構說明">&lt;/span>
+&lt;a href="#argocd-%e6%a0%b8%e5%bf%83%e7%b5%90%e6%a7%8b%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來，我們看到官方的教學要我們設定 Applications，那我們就需要先了解一下 ArgoCD 裡面有兩個核心結構 Project 跟 Application&lt;/p>
+&lt;ul>
+&lt;li>
+&lt;p>Project
+用來定義邊界：允許的來源、或是允許的目的地、允許的資源總類等等，作用就是限制與治理&lt;/p>
+&lt;/li>
+&lt;li>
+&lt;p>Application
+用來定義同步的單元：來源 Git、渲染方式、部署的目的地、同步策略，作用是執行與落地&lt;/p>
+&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-blue-200 hx:bg-blue-100 hx:text-blue-900 hx:dark:border-blue-200/30 hx:dark:bg-blue-900/30 hx:dark:text-blue-200">
+&lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2">&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>&lt;/div>
+&lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">Application 渲染方式是指 ArgoCD 在取到 Git 內的資料後，如何把這些資料轉換成最終要套用到 Kubernetes 的 純 YAML manifests，ArgoCD 不直接吃「原始設定格式」，它一定要先渲染（render）成標準 K8s YAML，才會進行同步&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>那我們後續說明會先以建立 Application 為主，然而官方的教學是使用 CLI 或是 UI 來建立，那我這邊會使用大家常用的方式，也就是 yaml 來定義 Application，所以想要先測試 CLI or UI 可以先去做官方教學的內容 &lt;a href="https://argo-cd.readthedocs.io/en/stable/getting_started/#6-create-an-application-from-a-git-repository"target="_blank" rel="noopener">Create An Application From A Git Repository&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
+&lt;br>
+&lt;p>那我們開始前，需要先有 Git 倉庫，以及對應的 K8s 設定，好方便後續進行 Demo&lt;/p>
+&lt;p>那我們後面示範的程式都會放在 &lt;a href="https://github.com/880831ian/argocd-introduce#"target="_blank" rel="noopener">880831ian/argocd-introduce&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> 裡面，歡迎大家使用它來測試，由於我們的 Git 倉庫是開放的，所以不需要額外設定 Key 來去訪問，那當然 ArgoCD 也支援先設定好相關的內容&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/11.webp"
+alt="ArgoCD UI 查看設定內 Repositories" width="800">&lt;figcaption>
+&lt;p>ArgoCD UI 查看設定內 Repositories&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>Demo Repo 目錄結構&lt;span class="hx:absolute hx:-mt-20" id="demo-repo-目錄結構">&lt;/span>
+&lt;a href="#demo-repo-%e7%9b%ae%e9%8c%84%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們先來看 &lt;a href="https://github.com/880831ian/argocd-introduce#"target="_blank" rel="noopener">Demo Repo&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> 裡面的目錄架構&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>pin-yi:argocd-introduce/ git:&lt;span style="color:#f92672">(&lt;/span>main&lt;span style="color:#f92672">)&lt;/span> ✗ $ tree -L &lt;span style="color:#ae81ff">1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── application.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── grpc-ingress.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── helm-nginx-demo
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── http-ingress.yaml
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>├── README.md
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>└── yaml-nginx-demo&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ul>
+&lt;li>application.yaml：用來定義 ArgoCD 的 Application 設定，裡面會包含一般 yaml 跟 helm&lt;/li>
+&lt;li>grpc-ingress.yaml：是前面在連線 API Server 的 ingress yaml 檔案&lt;/li>
+&lt;li>helm-nginx-demo/：裡面有用 helm 寫一個簡單的 nginx 服務 (由 yaml-nginx-demo 轉換成 helm)&lt;/li>
+&lt;li>http-ingress.yaml：是前面在連線 API Server 的 ingress yaml 檔案&lt;/li>
+&lt;li>yaml-nginx-demo/：裡面有用 yaml 寫一個簡單的 nginx 服務&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>我們接下來看 application.yaml 裡面寫了什麼&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">argoproj.io/v1alpha1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Application&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">yaml-nginx-demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">namespace&lt;/span>: &lt;span style="color:#ae81ff">argocd&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">project&lt;/span>: &lt;span style="color:#ae81ff">default&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">source&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">repoURL&lt;/span>: &lt;span style="color:#ae81ff">https://github.com/880831ian/argocd-introduce.git&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">targetRevision&lt;/span>: &lt;span style="color:#ae81ff">main&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">path&lt;/span>: &lt;span style="color:#ae81ff">yaml-nginx-demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">destination&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">server&lt;/span>: &lt;span style="color:#ae81ff">https://kubernetes.default.svc&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">namespace&lt;/span>: &lt;span style="color:#ae81ff">default&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">syncPolicy&lt;/span>: {}
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>---
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">argoproj.io/v1alpha1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Application&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">helm-nginx-demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">namespace&lt;/span>: &lt;span style="color:#ae81ff">argocd&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">project&lt;/span>: &lt;span style="color:#ae81ff">default&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">source&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">repoURL&lt;/span>: &lt;span style="color:#ae81ff">https://github.com/880831ian/argocd-introduce.git&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">targetRevision&lt;/span>: &lt;span style="color:#ae81ff">main&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">path&lt;/span>: &lt;span style="color:#ae81ff">helm-nginx-demo&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">destination&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">server&lt;/span>: &lt;span style="color:#ae81ff">https://kubernetes.default.svc&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">namespace&lt;/span>: &lt;span style="color:#ae81ff">default&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">syncPolicy&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">automated&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">prune&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">selfHeal&lt;/span>: &lt;span style="color:#66d9ef">true&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這裡面其實包含了兩個 Application，分別是給 yaml 使用的 yaml-nginx-demo 以及改用 helm 的 helm-nginx-demo&lt;/p>
+&lt;p>來說明一下這個設定的意思是什麼：&lt;/p>
+&lt;p>metadata 的 name 跟 namespace 就是該 ArgoCD 的 CRD Application 所在的 namespace 跟 name&lt;/p>
+&lt;p>spec 底下有：&lt;/p>
+&lt;ul>
+&lt;li>project：指定 Project 的名稱，如果沒有指定，就會使用 default (這個 Project 也就是上面結構說的定義邊界功能)&lt;/li>
+&lt;li>source：指定 Git 倉庫的設定，包含 Git 倉庫的 URL、目標版本分支、要同步的目錄&lt;/li>
+&lt;li>destination：指定要同步到的目標集群的設定，包含集群的 URL、命名空間&lt;/li>
+&lt;li>syncPolicy：指定同步策略&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>那其實仔細看，兩個設定其實差不多，就只有 name 跟 path 還有 syncPolicy 不同，其他都差不多，那這邊要特別提到 syncPolicy，這個也是 ArgoCD 的精髓&lt;/p>
+&lt;p>syncPolicy 在 yaml 的 Application，我們沒有去設定，有就是代表它不會有自動化的流程，都需要透過手動方式去觸發，例如有推新的版本，需要到 ArgoCD 去觸發 Sync 動作，才會把 K8s 設定實際部署到環境上&lt;/p>
+&lt;p>那在 helm 這邊，我們有設定 automated，他還有額外的兩個參數分別是：&lt;/p>
+&lt;ul>
+&lt;li>prune：比對 Git 與叢集實際狀態，移除叢集中那些「Git 已經不存在的資源」。用途在於保持宣告式一致性，不讓多餘物件殘留。&lt;/li>
+&lt;li>selfHeal：比對 Git 與叢集實際狀態，當叢集中的資源被手動修改、漂移或遭到外部調整時，自動將其強制校正回 Git 宣告內容。&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h3>部署 Application 設定&lt;span class="hx:absolute hx:-mt-20" id="部署-application-設定">&lt;/span>
+&lt;a href="#%e9%83%a8%e7%bd%b2-application-%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>因此有這兩個設定後，我們等等就可以來觀察是否正常運作～&lt;/p>
+&lt;br>
+&lt;p>那我們了解了 Application 的設定，就可以開始部署了，可以使用以下指令來 apply 該 CRD&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl apply -f application.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>部署上去後，可以觀察一下 Cluster 內 CRD (CustomResourceDefinition)、在 default 的 deployment 服務以及 ArgoCD UI 上面的變化&lt;/p>
+&lt;br>
+&lt;p>進入到 ArgoCD 的 Application CRD 後，會看到有兩個 Application 都有設定上去，只是兩個個狀態不同，一個是 Synced ; 另一個則是 OutOfSync，Deployment 部分，也只有 helm-nginx-demo 有部署上去&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/12.webp"
+alt="CRD (CustomResourceDefinition) 跟 default 的 deployment" width="1200">&lt;figcaption>
+&lt;p>CRD (CustomResourceDefinition) 跟 default 的 deployment&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>查看 UI 發現在 Application 頁面已經多了兩個，顯示的內容一個是綠色一個是黃色，狀態與 CRD 看得到ㄧ致&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/13.webp"
+alt="ArgoCD UI" width="1200">&lt;figcaption>
+&lt;p>ArgoCD UI&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>會有這個原因是因為我們剛剛有說，automated 設定，會影響服務同步的自動化流程，由於 helm 有設定 selfHeal，所以一部署，就會自動化完成，而 yaml 則就需要手動來觸發 sync&lt;/p>
+&lt;br>
+&lt;p>我們從 UI 點進去查看一下兩者差異&lt;/p>
+&lt;br>
+&lt;p>可以看到 helm-nginx-demo 有成功部署，且狀態都有被 ArgoCD 抓到，下方也會顯示該 Repo 裡面的相關資源架構圖&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/14.webp"
+alt="helm-nginx-demo 成功部署" width="1200">&lt;figcaption>
+&lt;p>helm-nginx-demo 成功部署&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>那 yaml-nginx-demo 則是因為沒有自動化，所以都卡在 OutOfSync 狀態&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/15.webp"
+alt="yaml-nginx-demo 卡在 OutOfSync" width="900">&lt;figcaption>
+&lt;p>yaml-nginx-demo 卡在 OutOfSync&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>我們現在使用 UI 來觸發 yaml-nginx-demo Sync，會看到一些設定，我們先勾選 PRUNE，下方檔案保持不變，並按下 SYNCHRONIZE，其餘設定可以到 &lt;a href="https://argo-cd.readthedocs.io/en/latest/user-guide/sync-options/"target="_blank" rel="noopener">Sync Options&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> 查看&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/16.webp"
+alt="手動同步" width="560">&lt;figcaption>
+&lt;p>手動同步&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>就可以發現 yaml-nginx-demo 更新囉～&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/17.webp"
+alt="yaml-nginx-demo 狀態變成 synced" width="1200">&lt;figcaption>
+&lt;p>yaml-nginx-demo 狀態變成 synced&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>修改版控觀察自動部署&lt;span class="hx:absolute hx:-mt-20" id="修改版控觀察自動部署">&lt;/span>
+&lt;a href="#%e4%bf%ae%e6%94%b9%e7%89%88%e6%8e%a7%e8%a7%80%e5%af%9f%e8%87%aa%e5%8b%95%e9%83%a8%e7%bd%b2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>接下來，我們已經完成 Application 設定後，我們來模擬後續有更新 K8s 版控 (&lt;a href="https://github.com/880831ian/argocd-introduce/commit/2c86357ea41150d92d413a2465aeeda515887c58"target="_blank" rel="noopener">調整 helm-nginx-demo、yaml-nginx-demo comfigmap worker_connections 數量&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>)，他的自動部署會長怎樣：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/18.webp"
+alt="helm-nginx-demo 偵測到就會自動更新" width="1200">&lt;figcaption>
+&lt;p>helm-nginx-demo 偵測到就會自動更新&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/19.webp"
+alt="yaml-nginx-demo 由於沒有自動同步，則一樣會卡在 OutOfSync，可以點擊 diff 來查看異動的差異" width="1200">&lt;figcaption>
+&lt;p>yaml-nginx-demo 由於沒有自動同步，則一樣會卡在 OutOfSync，可以點擊 diff 來查看異動的差異&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>修改線上設定觀察自動對齊&lt;span class="hx:absolute hx:-mt-20" id="修改線上設定觀察自動對齊">&lt;/span>
+&lt;a href="#%e4%bf%ae%e6%94%b9%e7%b7%9a%e4%b8%8a%e8%a8%ad%e5%ae%9a%e8%a7%80%e5%af%9f%e8%87%aa%e5%8b%95%e5%b0%8d%e9%bd%8a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>最後再來測試一下，假設我們不小心，或是在維運過程有去調整線上的設定，那這樣會導致線上跟版控不同，因此我們來模擬看看調整線上設定後(調整 Replica 數量)，是否會有自動對齊：&lt;/p>
+&lt;p>使用指令：&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl scale deployment &amp;lt;deployment name&amp;gt; --replicas&lt;span style="color:#f92672">=&lt;/span>&lt;span style="color:#ae81ff">3&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/20.webp"
+alt="調整發現，數量沒有變化" width="600">&lt;figcaption>
+&lt;p>調整發現，數量沒有變化&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/helm.gif"
+alt="可以看到，其實調整當下有變成 3 顆，但因為 helm 有設定 automated，所以馬上就會以版控為主給覆蓋設定" width="1200">&lt;figcaption>
+&lt;p>可以看到，其實調整當下有變成 3 顆，但因為 helm 有設定 automated，所以馬上就會以版控為主給覆蓋設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/21.webp"
+alt="調整線上 Replica 設定成功" width="600">&lt;figcaption>
+&lt;p>調整線上 Replica 設定成功&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/yaml.gif"
+alt="可以看到，調整設定後，就會維持 3 個，且出現 OutOfSync" width="1200">&lt;figcaption>
+&lt;p>可以看到，調整設定後，就會維持 3 個，且出現 OutOfSync&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>另外，如果部署 helm 有寫錯，再部署的時候也會噴錯提示呦～&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/22.webp"
+alt="顯示錯誤原因，且不會正常部署" width="1200">&lt;figcaption>
+&lt;p>顯示錯誤原因，且不會正常部署&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;br>
+&lt;h2>之後還可以做什麼？&lt;span class="hx:absolute hx:-mt-20" id="之後還可以做什麼">&lt;/span>
+&lt;a href="#%e4%b9%8b%e5%be%8c%e9%82%84%e5%8f%af%e4%bb%a5%e5%81%9a%e4%bb%80%e9%ba%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>本次的說明跟介紹就到這邊，ArgoCD 還是有很多東西沒有說到，因此我先設想一下之後還可以做哪些事情呢：&lt;/p>
+&lt;ol>
+&lt;li>透過 SSO 單一登入方式，整合原先常用的登入方式&lt;/li>
+&lt;li>權限控管&lt;/li>
+&lt;li>通知串接&lt;/li>
+&lt;li>監控系統&lt;/li>
+&lt;li>如何做到多 Cluster 管理&lt;/li>
+&lt;li>嘗試將 helmfile 透過外掛擴充到 ArgoCD 🤣，有找到相關文件，可以參考看看 &lt;a href="https://christianhuth.de/deploying-helm-charts-using-argocd-and-helmfile/"target="_blank" rel="noopener">Deploying Helm Charts using ArgoCD and Helmfile&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/li>
+&lt;/ol>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>What is ArgoCD (Youtube 影片)：&lt;a href="https://www.youtube.com/watch?v=p-kAqxuJNik"target="_blank" rel="noopener">https://www.youtube.com/watch?v=p-kAqxuJNik&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
