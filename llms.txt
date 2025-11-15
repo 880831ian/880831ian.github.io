@@ -109,6 +109,7 @@ Redis 提供非常實用的功能來讓我們實現多機的 in-memory  … - Pu
 由於 Redis 的回應時間 … - Published 2022-03-08
 
 ### Git 或 CICD 相關
+- [為 Kubernetes 而生的 GitOps 工具 - ArgoCD 介紹與說明](https://pin-yi.me/blog/git-or-cicd/argocd-introduce/): 最近在準備面試，有些公司有使用 ArgoCD，由於前公司在 CICD 工具只使用 GitLab CI，所以比較沒有接觸這塊，只知道他是 GitOps 導向的工具， … - Published 2025-11-15
 - [如何啟用 GitLab 的 Package Registry 以及將儲存位置從伺服器改到 GCS 上](https://pin-yi.me/blog/git-or-cicd/gitlab-package-registry-to-gcs/): 今天接到一個案子，RD 部門之後想要使用 GitLab 的 Package Registry 功能來發布套件，且不想把它存在 GitLab 伺服器上，希望可以直接存到 GCP 的 Google … - Published 2022-12-29
 - [如何合併多個 commit，且推到遠端呢？](https://pin-yi.me/blog/git-or-cicd/git-merge-multiple-commit/): 當我們在使用 Git 時，常常修改完內容後，會推 commit 到 github or gitlab，在一個分支上開發久了， commit 會累積很多，很雜且很亂，所以我們可以試著將 commit 給 … - Published 2022-06-21
 - [部署 Laravel 於 Heroku 搭配 GitLab CI/CD](https://pin-yi.me/blog/git-or-cicd/laravel-gitlab-cicd-heroku/): 經過上一篇文章 如何從頭打造專屬的 GitLab CI/CD 的學習，讓我們了解到 GitLab CI/CD 的整個流程，接著我們本次要把 Laravel 給部署到 Heroku 透過 GitLab  … - Published 2022-05-26
@@ -154,5 +155,5 @@ Laravel 內建會員系統 Laravel 這個框架，很方便的 … - Published 2
 - [關於我](https://pin-yi.me/about/): 哈囉大家好，我叫莊品毅 (CHUANG,PIN-YI)，也可以叫我 Ian，目前是一位 System Architect (SA) 工程師，負責規劃以及測試公司的系統架構，並且協助技術團隊解決系統相 …
 
 ---
-Generated on 2025-11-14 08:23:13 UTC
+Generated on 2025-11-15 06:53:14 UTC
 Site: https://pin-yi.me/

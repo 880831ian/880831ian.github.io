@@ -1,0 +1,383 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – ArgoCD</title><link>https://pin-yi.me/tags/argocd/</link><description>Recent content in ArgoCD on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Sat, 15 Nov 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/argocd/index.xml" rel="self" type="application/rss+xml"/><item><title>為 Kubernetes 而生的 GitOps 工具 - ArgoCD 介紹與說明</title><link>https://pin-yi.me/blog/git-or-cicd/argocd-introduce/</link><pubDate>Sat, 15 Nov 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/git-or-cicd/argocd-introduce/</guid><description>
+&lt;p>最近在準備面試，有些公司有使用 ArgoCD，由於前公司在 CICD 工具只使用 GitLab CI，所以比較沒有接觸這塊，只知道他是 GitOps 導向的工具，剛好趁這段時間來了解跟測試看看 ArgoCD，那我們開始囉～&lt;/p>
+&lt;br>
+&lt;h2>GitOps 定義&lt;span class="hx:absolute hx:-mt-20" id="gitops-定義">&lt;/span>
+&lt;a href="#gitops-%e5%ae%9a%e7%be%a9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先我們先來了解 GitOps 的定義&lt;/p>
+&lt;ol>
+&lt;li>開發團隊在程式碼管理、版本控制、CI/CD 自動化等流程，延伸至基礎設施（Infrastructure）與部署流程的操作框架&lt;/li>
+&lt;li>將對系統的期望用「宣告式」方式來編寫成代碼，存放在 Git 儲存庫&lt;/li>
+&lt;li>在流程內，Git 儲存庫會是單一的真實來源，所有變更都透過 Git 提供、審查、合併，最後再透過自動化同步至運行環境&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>那為什麼要採用 GitOps ?&lt;/p>
+&lt;ol>
+&lt;li>提高可追蹤性：因此每次的變更都會在 Git 留存紀錄，可以審核也可以 Rollback&lt;/li>
+&lt;li>減少手動操作導致的偏差：在一開始學習雲端時，一定會使用 UI 去點擊，但當功能越多，經過不同的人，有可能大家點出來的設定會不同，也減少人工在維運時的臨時變更，通常 GitOps 工具都會有支援 &lt;strong>持續對齊&lt;/strong> &amp;amp; &lt;strong>自我修正&lt;/strong> 的功能&lt;/li>
+&lt;li>加速部署流程：部署流程自動化後，可以更快、更可靠的將異動內容推向到測試、正式環境&lt;/li>
+&lt;li>一致性跨環境：由於程式都透過 Git 版控，在不同環境下都可以維持一致&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;h2>那 ArgoCD 是什麼？&lt;span class="hx:absolute hx:-mt-20" id="那-argocd-是什麼">&lt;/span>
+&lt;a href="#%e9%82%a3-argocd-%e6%98%af%e4%bb%80%e9%ba%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們從&lt;a href="https://argo-cd.readthedocs.io/en/stable/"target="_blank" rel="noopener">官網的標題跟說明&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>就可以知道，他是設計給 Kubernetes 的宣告式 GitOps CD 工具&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/argocd-ui.webp"
+alt="ArgoCD 的概述介紹圖" width="800">&lt;figcaption>
+&lt;p>ArgoCD 的概述介紹圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h3>ArgoCD 的功能&lt;span class="hx:absolute hx:-mt-20" id="argocd-的功能">&lt;/span>
+&lt;a href="#argocd-%e7%9a%84%e5%8a%9f%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
+&lt;li>自動化部署到指定的目標環境&lt;/li>
+&lt;li>支援多種組態管理/模板工具（Kustomize、Helm、Jsonnet、純 YAML）&lt;/li>
+&lt;li>能夠管理和部署到多個集群&lt;/li>
+&lt;li>支援 SSO 登入整合 (OIDC、OAuth2、GitHub、GitLab)&lt;/li>
+&lt;li>用於多租戶基於 Role 的 RBAC 政策&lt;/li>
+&lt;li>可以任意回滾到 Git repository 提交的程式設定&lt;/li>
+&lt;li>資源健康狀況分析&lt;/li>
+&lt;li>自動配置飄移檢測以及可視化介面&lt;/li>
+&lt;li>Webhook 整合（GitHub、BitBucket、GitLab）&lt;/li>
+&lt;li>PreSync、Sync、PostSync 鉤子，用於支援複雜的應用程式部署（例如藍綠部署和金絲雀升級）&lt;/li>
+&lt;li>應用程式事件以及 API 呼叫的 Audit 追蹤以及 Prometheus metrics&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/argocd_architecture.webp"
+alt="ArgoCD 架構圖" width="600">&lt;figcaption>
+&lt;p>ArgoCD 架構圖&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h2>環境說明 &amp;amp; 本次目標&lt;span class="hx:absolute hx:-mt-20" id="環境說明--本次目標">&lt;/span>
+&lt;a href="#%e7%92%b0%e5%a2%83%e8%aa%aa%e6%98%8e--%e6%9c%ac%e6%ac%a1%e7%9b%ae%e6%a8%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那我們上面知道他有哪些功能了，那我們來設定本次文章想要實作的目標有哪些&lt;/p>
+&lt;ol>
+&lt;li>安裝及設定 ArgoCD&lt;/li>
+&lt;li>註冊要部署的 Cluster&lt;/li>
+&lt;li>串接 Git Repository&lt;/li>
+&lt;li>測試 CD&lt;/li>
+&lt;li>嘗試修改線上設定，觀察自動對齊&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;p>以及此文章會使用 GKE 來進行測試，並提供相關版本讓大家參考&lt;/p>
+&lt;ul>
+&lt;li>GKE Version：v1.33.5-gke.1125000&lt;/li>
+&lt;li>ArgoCD Version：v3.2.0&lt;/li>
+&lt;li>Ingress Nginx Controller Version：v1.9.5&lt;/li>
+&lt;li>Cert-Manager Version：v1.13.3&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;h2>安裝及設定 ArgoCD&lt;span class="hx:absolute hx:-mt-20" id="安裝及設定-argocd">&lt;/span>
+&lt;a href="#%e5%ae%89%e8%a3%9d%e5%8f%8a%e8%a8%ad%e5%ae%9a-argocd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>根據官網的說明，需要先有幾個必要條件&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/1.webp"
+alt="ArgoCD 使用必要條件" width="650">&lt;figcaption>
+&lt;p>ArgoCD 使用必要條件&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>因為是 K8s 所以一定要安裝 K8s 的工具 Kubectl，以及有 Kubeconfig 存放 K8s 的連線資訊，最後有寫到 CoreDNS 是因為 ArgoCD 會需要確保 K8s 內有 DNS 服務提供 Pod 解析到其他 Service 名稱 (如果是 GKE 預設就會安裝好，像是測試用的 microk8s 或是 EKS 就要記得安裝)&lt;/p>
+&lt;br>
+&lt;ol>
+&lt;li>使用文件的安裝指令，以及先建立好 namespace&lt;/li>
+&lt;/ol>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl create namespace argocd
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/2.webp"
+alt="ArgoCD 會安裝蠻多東西" width="750">&lt;figcaption>
+&lt;p>ArgoCD 會安裝蠻多東西&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-blue-200 hx:bg-blue-100 hx:text-blue-900 hx:dark:border-blue-200/30 hx:dark:bg-blue-900/30 hx:dark:text-blue-200">
+&lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2">&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>&lt;/div>
+&lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">要注意，上面的安裝 yaml 的 ClusterRole 有寫死 namespace，所以如果要更換 namespace 記得也需要調整設定&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol start="2">
+&lt;li>本機也要安裝 ArgoCD CLI，用來操作 ArgoCD 的工具&lt;/li>
+&lt;/ol>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>brew install argocd&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h3>連線 API Server&lt;span class="hx:absolute hx:-mt-20" id="連線-api-server">&lt;/span>
+&lt;a href="#%e9%80%a3%e7%b7%9a-api-server" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol start="3">
+&lt;li>接下來我們要存取 ArgoCD 的 API Server，但在預設的設定，API Server 沒有暴露外部 IP 位置，所以想要存取，有以下幾種方式&lt;/li>
+&lt;/ol>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/3.webp"
+alt="ArgoCD 預設沒有開放存取" width="1100">&lt;figcaption>
+&lt;p>ArgoCD 預設沒有開放存取&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;h4>Service Type Load Balancer&lt;span class="hx:absolute hx:-mt-20" id="service-type-load-balancer">&lt;/span>
+&lt;a href="#service-type-load-balancer" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>將 Service 的 Type 改成 Load Balancer，可以使用以下指令&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;pre>&lt;code>kubectl patch svc argocd-server -n argocd -p &amp;#39;{&amp;#34;spec&amp;#34;: {&amp;#34;type&amp;#34;: &amp;#34;LoadBalancer&amp;#34;}}&amp;#39;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>並取得 IP 位置&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;pre>&lt;code>kubectl get svc argocd-server -n argocd -o=jsonpath=&amp;#39;{.status.loadBalancer.ingress[0].ip}&amp;#39;&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h4>Port Forwarding 轉發&lt;span class="hx:absolute hx:-mt-20" id="port-forwarding-轉發">&lt;/span>
+&lt;a href="#port-forwarding-%e8%bd%89%e7%99%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>使用此指令就可以在本機上進行轉發&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;pre>&lt;code>kubectl port-forward svc/argocd-server -n argocd 8080:443&lt;/code>&lt;/pre>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h4>ingress 入口&lt;span class="hx:absolute hx:-mt-20" id="ingress-入口">&lt;/span>
+&lt;a href="#ingress-%e5%85%a5%e5%8f%a3" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>需要設定 ArgoCD 與 Ingress，詳細可以參考 &lt;a href="https://argo-cd.readthedocs.io/en/stable/operator-manual/ingress/"target="_blank" rel="noopener">Ingress Configuration&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> 文件，&lt;strong>那本次測試會使用此方式來進行&lt;/strong>&lt;/p>
+&lt;br>
+&lt;p>那因為 ArgoCD API Server 會同時執行 gRPC 給 CLI、HTTP/HTTPS 給 UI，官方文件有提到兩種做法，那我們這邊就選擇 SSL Termination at Ingress Controller，將 gRPC 跟 HTTP/HTTPS 分兩個 ingress 入口 (因為一個 ingress 只支援一個 protocol)，並停用 TLS。&lt;/p>
+&lt;br>
+&lt;ol>
+&lt;li>首先，我們要先調整 argocd-server Deployment 設定停用 TLS&lt;/li>
+&lt;/ol>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>kubectl -n argocd edit deployment argocd-server&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>然後找到 containers 的 args 在後面加上 &lt;code>--insecure&lt;/code>，如下圖：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/4.webp"
+alt="調整 API Server 設定" width="550">&lt;figcaption>
+&lt;p>調整 API Server 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>最後更新完，檢查一下設定是否有設定上去&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/5.webp"
+alt="檢查 API Server 設定" width="600">&lt;figcaption>
+&lt;p>檢查 API Server 設定&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ol start="2">
+&lt;li>新增兩個 ingress yaml，分別給 HTTP/HTTPS 跟 gPRC (這邊會用到 cert-manager 跟 ingress nginx controller，請先記得安裝好)&lt;/li>
+&lt;/ol>
+&lt;ul>
+&lt;li>http-ingress.yaml&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">networking.k8s.io/v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Ingress&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">argocd-server-http-ingress&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">namespace&lt;/span>: &lt;span style="color:#ae81ff">argocd&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">annotations&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cert-manager.io/cluster-issuer&lt;/span>: &lt;span style="color:#ae81ff">pin-yi-letsencrypt&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">nginx.ingress.kubernetes.io/force-ssl-redirect&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;true&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">nginx.ingress.kubernetes.io/backend-protocol&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;HTTP&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ingressClassName&lt;/span>: &lt;span style="color:#ae81ff">pin-yi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">rules&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">http&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">paths&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">path&lt;/span>: &lt;span style="color:#ae81ff">/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pathType&lt;/span>: &lt;span style="color:#ae81ff">Prefix&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">backend&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">service&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">argocd-server&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">port&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">http&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">host&lt;/span>: &lt;span style="color:#ae81ff">argocd.pin-yi.me&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tls&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">hosts&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">argocd.pin-yi.me&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">secretName&lt;/span>: &lt;span style="color:#ae81ff">argocd-ingress-http&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ul>
+&lt;li>grpc-ingress.yaml&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">networking.k8s.io/v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Ingress&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">argocd-server-grpc-ingress&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">namespace&lt;/span>: &lt;span style="color:#ae81ff">argocd&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">annotations&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">cert-manager.io/cluster-issuer&lt;/span>: &lt;span style="color:#ae81ff">pin-yi-letsencrypt&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">nginx.ingress.kubernetes.io/backend-protocol&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;GRPC&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">ingressClassName&lt;/span>: &lt;span style="color:#ae81ff">pin-yi&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">rules&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">http&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">paths&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">path&lt;/span>: &lt;span style="color:#ae81ff">/&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">pathType&lt;/span>: &lt;span style="color:#ae81ff">Prefix&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">backend&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">service&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">argocd-server&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">port&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">https&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">host&lt;/span>: &lt;span style="color:#ae81ff">grpc-argocd.pin-yi.me&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">tls&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">hosts&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#ae81ff">grpc-argocd.pin-yi.me&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">secretName&lt;/span>: &lt;span style="color:#ae81ff">argocd-ingress-grpc&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;ul>
+&lt;li>cert-manager.io/cluster-issuer 是用 cert-manager 需補上，與官網範例不同&lt;/li>
+&lt;li>ingressClassName 跟 host、tls.host 都需要改成自己要的 Domain、secretName 換成要儲存 TLS 的 secret&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>這個切換到 DNS 將 Domain 先指向到 ingress nginx 的 LB IP 上，最後再部署兩個 yaml，並觀察一下 ingress 狀況&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/6.webp"
+alt="設定 DNS 解析" width="850">&lt;figcaption>
+&lt;p>設定 DNS 解析&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>都沒問題後，理論上就可以用瀏覽器開啟 &lt;a href="https://argocd.pin-yi.me"target="_blank" rel="noopener">https://argocd.pin-yi.me&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> (HTTP 範例)，或是使用剛剛安裝好的 argocd 指令透過 CLI 連線 &lt;a href="https://grpc-argocd.pin-yi.me"target="_blank" rel="noopener">https://grpc-argocd.pin-yi.me&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> (gRPC 範例)&lt;/p>
+&lt;br>
+&lt;h2>登入 ArgoCD&lt;span class="hx:absolute hx:-mt-20" id="登入-argocd">&lt;/span>
+&lt;a href="#%e7%99%bb%e5%85%a5-argocd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那要怎麼登入呢？ArgoCD 預設的帳號是 admin，初始化的密碼需要透過以下指令顯示：&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>argocd admin initial-password -n argocd&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-amber-200 hx:bg-amber-100 hx:text-amber-900 hx:dark:border-amber-200/30 hx:dark:bg-amber-900/30 hx:dark:text-amber-200">
+&lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2">&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>&lt;/svg>&lt;/div>
+&lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">它會以明文方式存在 argocd namespace 的 argocd-initial-admin-secret secret password 欄位，建議改完密碼後將該 secret 刪除&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/7.webp"
+alt="查看初始密碼" width="1100">&lt;figcaption>
+&lt;p>查看初始密碼&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;ul>
+&lt;li>UI 登入&lt;/li>
+&lt;/ul>
+&lt;p>打開 &lt;a href="https://argocd.pin-yi.me"target="_blank" rel="noopener">https://argocd.pin-yi.me&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> 輸入帳號密碼登入&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/8.webp"
+alt="UI 登入" width="1100">&lt;figcaption>
+&lt;p>UI 登入&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;ul>
+&lt;li>CLI 登入&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>指令後面 Server 使用 &lt;code>grpc-argocd.pin-yi.me&lt;/code> 輸入帳號密碼登入&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/9.webp"
+alt="CLI 登入" width="650">&lt;figcaption>
+&lt;p>CLI 登入&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;p>最後記得再使用 &lt;code>argocd account update-password&lt;/code> 來修改密碼，就完成初始化的安裝跟設定囉(密碼也有長度限制喔)&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/git-or-cicd/argocd-introduce/10.webp"
+alt="透過 CLI 修改密碼" width="1200">&lt;figcaption>
+&lt;p>透過 CLI 修改密碼&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>What is ArgoCD (Youtube 影片)：&lt;a href="https://www.youtube.com/watch?v=p-kAqxuJNik"target="_blank" rel="noopener">https://www.youtube.com/watch?v=p-kAqxuJNik&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
+&lt;p>GitOps 方法論是什麼東東？GitOps 的工作流程是什麼：&lt;a href="https://dongdonggcp.com/2024/12/02/what-is-gitops-methodolity-what-is-gitops-process/"target="_blank" rel="noopener">https://dongdonggcp.com/2024/12/02/what-is-gitops-methodolity-what-is-gitops-process/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
+&lt;p>ArgoCD 的規劃與實踐：&lt;a href="https://medium.com/ikala-tech/argocd-%E7%9A%84%E8%A6%8F%E5%8A%83%E8%88%87%E5%AF%A6%E8%B8%90-93ed88303585"target="_blank" rel="noopener">https://medium.com/ikala-tech/argocd-%E7%9A%84%E8%A6%8F%E5%8A%83%E8%88%87%E5%AF%A6%E8%B8%90-93ed88303585&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
+&lt;p>Argo CD 官網：&lt;a href="https://argo-cd.readthedocs.io/en/stable/"target="_blank" rel="noopener">https://argo-cd.readthedocs.io/en/stable/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>
