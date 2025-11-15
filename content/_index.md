@@ -23,6 +23,12 @@ layout: hextra-home
 
 {{< hextra/feature-grid cols=4 >}}
 {{< card
+  link="blog/git-or-cicd/argocd-introduce"
+  title="為 Kubernetes 而生的 GitOps 工具 - ArgoCD 介紹與說明"
+  subtitle="發布日期：2025-11-15"
+  image="/git-or-cicd/argocd-introduce/cover.webp"
+>}}
+{{< card
   link="blog/gcp/gke-dns"
   title="GKE DNS 相關注意事項及結論"
   subtitle="發布日期：2025-08-12"

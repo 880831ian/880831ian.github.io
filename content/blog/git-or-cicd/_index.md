@@ -12,6 +12,12 @@ sidebar:
 
 {{< cards >}}
 {{< card
+  link="argocd-introduce"
+  title="為 Kubernetes 而生的 GitOps 工具 - ArgoCD 介紹與說明"
+  subtitle="發布日期：2025-11-15"
+  image="/git-or-cicd/argocd-introduce/cover.webp"
+>}}
+{{< card
   link="gitlab-package-registry-to-gcs"
   title="如何啟用 GitLab 的 Package Registry 以及將儲存位置從伺服器改到 GCS 上"
   subtitle="發布日期：2022-12-29"
