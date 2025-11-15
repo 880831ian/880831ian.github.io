@@ -66,7 +66,7 @@ menu:
 params:
   banner:
     key: "announcement"
-    message: "📢 [文章更新公告] [手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！](/blog/aws/aws-assuming-roles-tool-introduce/) 有更新內容呦，歡迎點擊前方連結前往查看 💙"
+    message: "📢 [文章新增公告] 新增 [為 Kubernetes 而生的 GitOps 工具 - ArgoCD 介紹與說明](/blog/git-or-cicd/argocd-introduce/) 文章，歡迎點擊前方連結前往查看 💙<br>目前 Blog 頁籤支援折疊側邊欄功能，在閱讀文章會更方便，歡迎多加利用 💪"
   externalLinkDecoration: true
   navbar:
     displayTitle: true
