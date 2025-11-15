@@ -1,9 +1,111 @@
-aside.hextra-sidebar-container.hx\:flex.hx\:flex-col.hx\:print\:hidden.hx\:md\:top-16.hx\:md\:max-w-96.hx\:md\:self-start.hx\:max-md\:\[transform\:translate3d\(0\,-100\%\,0\)\].md\:sticky {
-  width: 25%;
+@media (min-width: 768px) {
+  aside.hextra-sidebar-container.hx\:flex.hx\:flex-col.hx\:print\:hidden.hx\:md\:top-16.hx\:md\:max-w-96.hx\:md\:self-start.hx\:max-md\:\[transform\:translate3d\(0\,-100\%\,0\)\].md\:sticky {
+    width: 25% !important;
+    max-width: none !important;
+    transition: width 0.3s ease, margin 0.3s ease;
+    position: relative;
+  }
+
+  aside.hextra-sidebar-container.collapsed {
+    width: 0 !important;
+    margin: 0 !important;
+    overflow: hidden;
+  }
 }
+
+.sidebar-toggle-btn {
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.sidebar-toggle-btn svg {
+  transition: transform 0.3s ease;
+}
+
+.sidebar-toggle-btn.collapsed svg {
+  transform: rotate(180deg);
+}
+
+.sidebar-toggle-btn.collapsed .sidebar-toggle-text::before {
+  content: "展開側邊欄";
+}
+
+.sidebar-toggle-btn:not(.collapsed) .sidebar-toggle-text::before {
+  content: "折疊";
+}
+
+.sidebar-expand-btn {
+  position: fixed;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 50;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: none;
+  border-radius: 0 8px 8px 0;
+  padding: 12px 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+
+.sidebar-expand-btn:hover {
+  background: rgba(0, 0, 0, 0.9);
+  padding-right: 10px;
+}
+
+.sidebar-expand-btn:hover::after {
+  content: "展開側邊欄";
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin-left: 8px;
+  font-size: 14px;
+}
+
+.sidebar-expand-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+aside.hextra-sidebar-container.collapsed ~ .sidebar-expand-btn {
+  display: block;
+}
+
+@media (max-width: 767px) {
+  .sidebar-toggle-btn {
+    display: none !important;
+  }
+  .sidebar-expand-btn {
+    display: none !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1400px) {
+  aside.hextra-sidebar-container.hx\:flex.hx\:flex-col.hx\:print\:hidden.hx\:md\:top-16.hx\:md\:max-w-96.hx\:md\:self-start.hx\:max-md\:\[transform\:translate3d\(0\,-100\%\,0\)\].md\:sticky {
+    width: 0 !important;
+    margin: 0 !important;
+    overflow: hidden;
+  }
+  
+  aside.hextra-sidebar-container.collapsed {
+    width: 0 !important;
+  }
+}
+
 .max-w-6xl {
   max-width: 120rem;
 }
+
 .code-block .filename {
   color: #ffff;
 }

@@ -1,6 +1,7 @@
 ---
 title: 關於我
 toc: false
+layout: wide
 ---
 
 <img src="/images/logo.webp" width="350" />

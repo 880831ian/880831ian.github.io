@@ -50,6 +50,12 @@
 
   {{ if or hugo.IsMultilingual $displayThemeToggle }}
     <div class="{{ $switchesClass }} {{ with hugo.IsMultilingual }}hx:justify-end{{ end }} hx:sticky hx:bottom-0 hx:max-h-(--menu-height) hx:bg-white hx:dark:bg-dark hx:mx-4 hx:py-4 hx:shadow-[0_-12px_16px_#fff] hx:flex hx:items-center hx:gap-2 hx:border-gray-200 hx:dark:border-neutral-800 hx:dark:shadow-[0_-12px_16px_#111] hx:contrast-more:border-neutral-400 hx:contrast-more:shadow-none hx:contrast-more:dark:shadow-none hx:border-t" data-toggle-animation="show">
+      <button class="sidebar-toggle-btn hx:flex hx:items-center hx:gap-2 hx:rounded hx:px-2 hx:py-1.5 hx:text-sm hx:transition-colors hx:bg-transparent hx:text-gray-600 hover:hx:bg-gray-100 hover:hx:text-gray-900 hx:dark:text-gray-400 hx:dark:hover:bg-primary-100/5 hx:dark:hover:text-gray-50" aria-label="折疊側邊欄" title="折疊側邊欄">
+        <svg fill="none" viewBox="0 0 24 24" stroke="currentColor" class="hx:h-5 hx:w-5">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7"></path>
+        </svg>
+        <span class="sidebar-toggle-text">側邊欄</span>
+      </button>
       {{- with hugo.IsMultilingual -}}
         {{- partial "language-switch" (dict "context" $context "grow" true) -}}
         {{- with $displayThemeToggle }}{{ partial "theme-toggle" (dict "hideLabel" true "location" "bottom-right") }}{{ end -}}
@@ -61,6 +67,86 @@
     </div>
   {{- end -}}
 </aside>
+
+{{- if not $disableSidebar -}}
+<button class="sidebar-expand-btn" aria-label="展開側邊欄" title="展開側邊欄">
+  <svg fill="none" viewBox="0 0 24 24" stroke="currentColor">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+  </svg>
+</button>
+{{- end -}}
+
+<script>
+(function() {
+  // 只在桌面版執行折疊功能
+  if (window.innerWidth < 768) return;
+  
+  const sidebar = document.querySelector('.hextra-sidebar-container');
+  const toggleBtn = document.querySelector('.sidebar-toggle-btn');
+  const expandBtn = document.querySelector('.sidebar-expand-btn');
+  
+  if (!sidebar) return;
+
+  // 從 localStorage 讀取儲存的狀態
+  const savedState = localStorage.getItem('sidebar-collapsed');
+  const isSmallScreen = window.innerWidth <= 1400;
+  
+  // 初始化狀態：小螢幕自動折疊，或使用儲存的狀態
+  if (savedState === 'true' || (savedState === null && isSmallScreen)) {
+    sidebar.classList.add('collapsed');
+    if (toggleBtn) toggleBtn.classList.add('collapsed');
+  } else {
+    if (toggleBtn) toggleBtn.classList.remove('collapsed');
+  }
+
+  // 切換 sidebar 的函數
+  function toggleSidebar() {
+    sidebar.classList.toggle('collapsed');
+    if (toggleBtn) toggleBtn.classList.toggle('collapsed');
+    
+    // 儲存狀態
+    const isCollapsed = sidebar.classList.contains('collapsed');
+    localStorage.setItem('sidebar-collapsed', isCollapsed);
+  }
+
+  // 綁定折疊按鈕
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', toggleSidebar);
+  }
+
+  // 綁定展開按鈕
+  if (expandBtn) {
+    expandBtn.addEventListener('click', toggleSidebar);
+  }
+
+  // 監聽視窗大小變化
+  let resizeTimer;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeTimer);
+    resizeTimer = setTimeout(function() {
+      // 如果切換到手機版，移除 collapsed 類別
+      if (window.innerWidth < 768) {
+        sidebar.classList.remove('collapsed');
+        if (toggleBtn) toggleBtn.classList.remove('collapsed');
+        return;
+      }
+      
+      const isSmallScreen = window.innerWidth <= 1400;
+      
+      // 只在沒有手動設定過的情況下自動調整
+      if (localStorage.getItem('sidebar-collapsed') === null) {
+        if (isSmallScreen && !sidebar.classList.contains('collapsed')) {
+          sidebar.classList.add('collapsed');
+          if (toggleBtn) toggleBtn.classList.add('collapsed');
+        } else if (!isSmallScreen && sidebar.classList.contains('collapsed')) {
+          sidebar.classList.remove('collapsed');
+          if (toggleBtn) toggleBtn.classList.remove('collapsed');
+        }
+      }
+    }, 250);
+  });
+})();
+</script>
 
 {{- define "sidebar-main" -}}
   {{ template "sidebar-tree" (dict "context" .context "level" 0 "page" .page "pageURL" .pageURL "toc" (.toc | default false)) }}
