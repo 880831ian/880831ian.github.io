@@ -201,7 +201,7 @@ kubectl -n argocd edit deployment argocd-server
 
 <br>
 
-2. 新增兩個 ingress yaml，分別給 HTTP/HTTPS 跟 gPRC (這邊會用到 cert-manager 跟 ingress nginx controller，請先記得安裝好)
+2. 新增兩個 ingress yaml，分別給 HTTP/HTTPS 跟 gRPC (這邊會用到 cert-manager 跟 ingress nginx controller，請先記得安裝好)
 
 - http-ingress.yaml
 
