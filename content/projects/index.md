@@ -6,6 +6,13 @@ layout: wide
 
 {{< cards >}}
 {{< card
+    link="https://sre.pin-yi.me/"
+    title="SRE 工具箱 (Web)"
+    subtitle="此工具集合了 SRE 日常會使用到的工具(平常都需要開啟很多的不同網站，故想要將所有功能整合在一個頁面)。"
+    image="/projects/sre.webp"
+    imageStyle="object-fit:cover; aspect-ratio:16/9;"
+>}}
+{{< card
     link="https://github.com/880831ian/image-to-webp"
     title="快速將圖片轉成 webp 格式 (Shell Script)"
     subtitle="使用 Shell Script 快速將當前目錄下的所有圖片轉成 webp 格式，並且會自動移除原始圖片。"
