@@ -151,9 +151,9 @@ Laravel 內建會員系統 Laravel 這個框架，很方便的 … - Published 2
 
 
 ## Root Pages
-- [專案成就](https://pin-yi.me/projects/): 快速將圖片轉成 webp 格式 (Shell Script)使用 Shell Script 快速將當前目錄下的所有圖片轉成 webp 格式，並且會自動移除原始圖片。 …
+- [專案成就](https://pin-yi.me/projects/): SRE 工具箱 (Web)此工具集合了 SRE 日常會使用到的工具(平常都需要開啟很多的不同網站，故想要將所有功能整合在一個頁面)。 快速將圖片轉成 webp 格式 (Shell Script) …
 - [關於我](https://pin-yi.me/about/): 哈囉大家好，我叫莊品毅 (CHUANG,PIN-YI)，也可以叫我 Ian，目前是一位 System Architect (SA) 工程師，負責規劃以及測試公司的系統架構，並且協助技術團隊解決系統相 …
 
 ---
-Generated on 2025-11-15 20:09:25 UTC
+Generated on 2025-11-16 17:53:05 UTC
 Site: https://pin-yi.me/

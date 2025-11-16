@@ -2666,7 +2666,7 @@ alt="檢查 API Server 設定" width="600">&lt;figcaption>
 &lt;/figure>
 &lt;br>
 &lt;ol start="2">
-&lt;li>新增兩個 ingress yaml，分別給 HTTP/HTTPS 跟 gPRC (這邊會用到 cert-manager 跟 ingress nginx controller，請先記得安裝好)&lt;/li>
+&lt;li>新增兩個 ingress yaml，分別給 HTTP/HTTPS 跟 gRPC (這邊會用到 cert-manager 跟 ingress nginx controller，請先記得安裝好)&lt;/li>
 &lt;/ol>
 &lt;ul>
 &lt;li>http-ingress.yaml&lt;/li>
