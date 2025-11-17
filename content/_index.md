@@ -23,6 +23,12 @@ layout: hextra-home
 
 {{< hextra/feature-grid cols=4 >}}
 {{< card
+  link="blog/security/vault-introduce"
+  title="統一機密、身份與加密的管理系統 - HashiCorp Vault 介紹與說明"
+  subtitle="發布日期：2025-11-17"
+  image="/security/vault-introduce/cover.webp"
+>}}
+{{< card
   link="blog/git-or-cicd/argocd-introduce"
   title="為 Kubernetes 而生的 GitOps 工具 - ArgoCD 介紹與說明"
   subtitle="發布日期：2025-11-15"
