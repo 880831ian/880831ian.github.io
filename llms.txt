@@ -96,6 +96,9 @@ gke master … - Published 2023-09-13
 - [想使用 Nginx Upstream Proxy 到外部服務，並帶入對應的 header 該怎麼做？](https://pin-yi.me/blog/nginx/nginx-upstream-set-host-header/): 此文章要來記錄一下最近在公司服務入口遇到的一些小問題，以及解決的方法。簡單說明一下，我們的服務入口是用 Nginx 來當作 proxy server，將不同路徑或是 servername 導到對應的後 … - Published 2023-10-16
 - [Soketi WebSocket Server LOG 不定時出現 502 error 以及 connect() failed (111: Connection refused)](https://pin-yi.me/blog/nginx/soketi-log-502-error/): 此文章要來記錄一下 RD 同仁前陣子有反應使用 Soketi 這個 WebSocket Server 會不定時在 LOG 出現 502 error 錯誤訊息以及 connect() failed … - Published 2023-09-20
 
+### 資安
+- [統一機密、身份與加密的管理系統 - HashiCorp Vault 介紹與說明](https://pin-yi.me/blog/security/vault-introduce/): 我們在現代的開發或是雲端管理，會有很多的 API 金鑰、Token、密碼、憑證 讓服務或是資源來去做驗證與授權，但有什麼工具能夠更好的存放這些金鑰呢？因此有了今天想要學習研究的主題 - … - Published 2025-11-17
+
 ### RD 使用的相關工具
 - [Fluentd-Server 出現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤解決](https://pin-yi.me/blog/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/): 先說結論 &hellip; EFK 真的好多雷 😆 我們今天又再度踩雷拉，這次又是炸的分身碎骨，花了 4 個多小時才找到原因，也有可能是小弟我跟 EFK 不是很熟 XD。就如標題所說，我在抽 Log  … - Published 2022-12-12
 - [Kibana 新增 index 索引時一直轉圈圈以及顯示 HTTP 403 Forbidden](https://pin-yi.me/blog/rd/kibana-create-index-forbidden/): 前幾天在工作使用 Kibana 時，想要新增一個新的索引，發現選擇索引並按下新增的按鈕，會一直轉圈圈，等了一陣子，使用開發工具 F12 查看，跳出了 HTTP 403 Forbidden，到底是什麼原 … - Published 2022-12-08
@@ -155,5 +158,5 @@ Laravel 內建會員系統 Laravel 這個框架，很方便的 … - Published 2
 - [關於我](https://pin-yi.me/about/): 哈囉大家好，我叫莊品毅 (CHUANG,PIN-YI)，也可以叫我 Ian，目前是一位 System Architect (SA) 工程師，負責規劃以及測試公司的系統架構，並且協助技術團隊解決系統相 …
 
 ---
-Generated on 2025-11-16 17:53:05 UTC
+Generated on 2025-11-17 08:50:16 UTC
 Site: https://pin-yi.me/
