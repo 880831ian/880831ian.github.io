@@ -130,7 +130,7 @@ GCP 成本優化實踐
 {{< card
   link="/about/resume-tw.pdf"
   title="中文版"
-  subtitle="最後上傳日期：2025-11-06"
+  subtitle="最後上傳日期：2025-11-18"
   image="/about/resume-tw.webp"
   target="_blank"
   tag="New" tagType="error"
@@ -138,7 +138,7 @@ GCP 成本優化實踐
 {{< card
   link="/about/resume-en.pdf"
   title="英文版"
-  subtitle="最後上傳日期：2025-11-06"
+  subtitle="最後上傳日期：2025-11-18"
   image="/about/resume-en.webp"
   tag="New" tagType="error"
 >}}
