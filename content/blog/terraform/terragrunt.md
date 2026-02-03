@@ -241,6 +241,28 @@ remote_state {
 }
 ```
 
+{{< callout type="important" >}}
+
+2026/02/03 資訊更新
+<br>
+最近剛好在新公司建立 Terragrunt，發現之前 Terragrunt 會在 init 時，如果沒有 gcs bucket 會詢問是否需要建立，但現在不行了，需要多加 flag 才會觸發新增 gcs bucket 的動作，指令以及截圖如下：
+
+```shell
+terragrunt plan --backend-bootstrap
+```
+
+<br>
+
+{{< figure src="/terraform/terragrunt/flag.webp" width="700" caption="原本執行方式 & 新增 flag 後成功建立" >}}
+
+<br>
+
+{{< figure src="/terraform/terragrunt/version.webp" width="700" caption="當前測試版本" >}}
+
+官方說明的文章連結：[https://terragrunt.gruntwork.io/docs/migrate/cli-redesign/#use-the-new-backend-capabilities](https://terragrunt.gruntwork.io/docs/migrate/cli-redesign/#use-the-new-backend-capabilities)
+
+{{< /callout >}}
+
 <br>
 
 ### 使用 generate 自動生成檔案
