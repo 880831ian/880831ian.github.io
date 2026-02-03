@@ -481,6 +481,41 @@ title="Copy code"
 &lt;/button>
 &lt;/div>
 &lt;/div>
+&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-purple-200 hx:bg-purple-100 hx:text-purple-900 hx:dark:border-purple-200/30 hx:dark:bg-purple-900/30 hx:dark:text-purple-200">
+&lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2">&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>&lt;/div>
+&lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">&lt;p>2026/02/03 資訊更新
+&lt;br>
+最近剛好在新公司建立 Terragrunt，發現之前 Terragrunt 會在 init 時，如果沒有 gcs bucket 會詢問是否需要建立，但現在不行了，需要多加 flag 才會觸發新增 gcs bucket 的動作，指令以及截圖如下：&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-shell" data-lang="shell">&lt;span style="display:flex;">&lt;span>terragrunt plan --backend-bootstrap&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terragrunt/flag.webp"
+alt="原本執行方式 &amp;amp; 新增 flag 後成功建立" width="700">&lt;figcaption>
+&lt;p>原本執行方式 &amp;amp; 新增 flag 後成功建立&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/terraform/terragrunt/version.webp"
+alt="當前測試版本" width="700">&lt;figcaption>
+&lt;p>當前測試版本&lt;/p>
+&lt;/figcaption>
+&lt;/figure>
+&lt;p>官方說明的文章連結：&lt;a href="https://terragrunt.gruntwork.io/docs/migrate/cli-redesign/#use-the-new-backend-capabilities"target="_blank" rel="noopener">https://terragrunt.gruntwork.io/docs/migrate/cli-redesign/#use-the-new-backend-capabilities&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
+&lt;/div>
+&lt;/div>
+&lt;/div>
 &lt;br>
 &lt;h3>使用 generate 自動生成檔案&lt;span class="hx:absolute hx:-mt-20" id="使用-generate-自動生成檔案">&lt;/span>
 &lt;a href="#%e4%bd%bf%e7%94%a8-generate-%e8%87%aa%e5%8b%95%e7%94%9f%e6%88%90%e6%aa%94%e6%a1%88" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在剛剛我們可以使用 generate 來自動 &lt;code>backend.tf&lt;/code> 檔案，那代表我們也可以把每個 &lt;code>provider.tf&lt;/code> 的內容，也透過 generate 來生成，如下：&lt;/p>
