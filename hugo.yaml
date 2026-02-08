@@ -66,7 +66,7 @@ menu:
 params:
   banner:
     key: "announcement"
-    message: "📢 [文章新增公告] 新增 [為 Kubernetes 而生的 GitOps 工具 - ArgoCD 介紹與說明](/blog/git-or-cicd/argocd-introduce/)、[統一機密、身份與加密的管理系統 - HashiCorp Vault 介紹與說明](/blog/security/vault-introduce/) 文章，歡迎點擊前方連結前往查看 💙<br>目前 Blog 頁籤支援折疊側邊欄功能，在閱讀文章會更方便，歡迎多加利用 💪"
+    message: "目前 Blog 頁籤支援折疊側邊欄功能，在閱讀文章會更方便，歡迎多加利用 💪"
   externalLinkDecoration: true
   navbar:
     displayTitle: true

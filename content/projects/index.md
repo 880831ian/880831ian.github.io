@@ -6,6 +6,13 @@ layout: wide
 
 {{< cards >}}
 {{< card
+    link="https://www.raycast.com/pin-yi/gcp-ip-search"
+    title="Google Cloud Platform IP Search (Raycast Extension)"
+    subtitle="一個 Raycast 擴充功能，能快速搜尋所有 Google Cloud Platform 專案的 IP 位址。"
+    image="/projects/raycast.webp"
+    imageStyle="object-fit:cover; aspect-ratio:16/9;"
+>}}
+{{< card
     link="https://sre.pin-yi.me/"
     title="SRE 工具箱 (Web)"
     subtitle="此工具集合了 SRE 日常會使用到的工具(平常都需要開啟很多的不同網站，故想要將所有功能整合在一個頁面)。"
