@@ -2,7 +2,7 @@
 &lt;p>我們在現代的開發或是雲端管理，會有很多的 API 金鑰、Token、密碼、憑證 讓服務或是資源來去做驗證與授權，但有什麼工具能夠更好的存放這些金鑰呢？因此有了今天想要學習研究的主題 - HashiCorp Vault&lt;/p>
 &lt;br>
 &lt;p>學習一個東西最快的方式，就我而言就是先看影片 😆
-這邊附上我一開始學習的參考影片 &lt;a href="https://www.youtube.com/watch?v=YU_rQz8emoE"target="_blank" rel="noopener">HashiCorp Vault on AWS &amp;amp; K8s - 雲端地端通吃的私鑰管理平台 【Webinar： HashiCorp Vault】| 歐立威科技&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+這邊附上我一開始學習的參考影片 &lt;a href="https://www.youtube.com/watch?v=YU_rQz8emoE"target="_blank" rel="noopener">HashiCorp Vault on AWS &amp;amp; K8s - 雲端地端通吃的私鑰管理平台 【Webinar： HashiCorp Vault】| 歐立威科技&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;p>可以先透過影片了解 Vault 的功用，他是怎麼去做驗證，以及他怎麼儲存資料，或是後面需要怎麼監控以及備份等初步的介紹，那看完影片後，我們就可以來看官方的介紹&lt;/p>
@@ -30,11 +30,8 @@
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/how-vault-works.webp"
-alt="Vault 的概述介紹圖" width="800">&lt;figcaption>
-&lt;p>Vault 的概述介紹圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/how-vault-works.webp" data-zoomable alt="Vault 的概述介紹圖" width="800"loading="lazy"
+/>&lt;figcaption>Vault 的概述介紹圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>工作原理&lt;span class="hx:absolute hx:-mt-20" id="工作原理">&lt;/span>
 &lt;a href="#%e5%b7%a5%e4%bd%9c%e5%8e%9f%e7%90%86" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Vault 的核心工作流程有四個階段：&lt;/p>
@@ -53,11 +50,8 @@ alt="Vault 的概述介紹圖" width="800">&lt;figcaption>
 &lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/vault-workflow-diagram.webp"
-alt="Vault 的概述介紹圖" width="600">&lt;figcaption>
-&lt;p>Vault 的概述介紹圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/vault-workflow-diagram.webp" data-zoomable alt="Vault 的概述介紹圖" width="600"loading="lazy"
+/>&lt;figcaption>Vault 的概述介紹圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>安裝 Valut&lt;span class="hx:absolute hx:-mt-20" id="安裝-valut">&lt;/span>
 &lt;a href="#%e5%ae%89%e8%a3%9d-valut" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們大概知道 Vault 它的用途，那接下來當然就是安裝起來玩玩看&lt;/p>
@@ -68,19 +62,21 @@ alt="Vault 的概述介紹圖" width="600">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>其他作業系統可以參考此篇文件：&lt;a href="https://developer.hashicorp.com/vault/install"target="_blank" rel="noopener">https://developer.hashicorp.com/vault/install&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>其他作業系統可以參考此篇文件：&lt;a href="https://developer.hashicorp.com/vault/install"target="_blank" rel="noopener">https://developer.hashicorp.com/vault/install&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;br>
 &lt;h2>使用 Dev 開發模式來測試 Valut&lt;span class="hx:absolute hx:-mt-20" id="使用-dev-開發模式來測試-valut">&lt;/span>
 &lt;a href="#%e4%bd%bf%e7%94%a8-dev-%e9%96%8b%e7%99%bc%e6%a8%a1%e5%bc%8f%e4%be%86%e6%b8%ac%e8%a9%a6-valut" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>由於我們還不熟悉 Vault 元件，所以我們先用 DEV 模式來測試以下內容：&lt;/p>
-&lt;p>(這邊會以維運角度來說明，如果開發者請查閱&lt;a href="https://developer.hashicorp.com/vault/docs/get-started/developer-qs"target="_blank" rel="noopener">開發者快速入門&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>(這邊會以維運角度來說明，如果開發者請查閱&lt;a href="https://developer.hashicorp.com/vault/docs/get-started/developer-qs"target="_blank" rel="noopener">開發者快速入門&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>，來讀取相關 Vault secret)&lt;/p>
 &lt;ul>
@@ -99,6 +95,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -109,19 +107,13 @@ title="Copy code"
 &lt;br>
 &lt;p>啟動後，可以發現跑了一堆東西&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/1.webp"
-alt="啟動 Vault" width="700">&lt;figcaption>
-&lt;p>啟動 Vault&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/1.webp" data-zoomable alt="啟動 Vault" width="700"loading="lazy"
+/>&lt;figcaption>啟動 Vault&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>最後有一個 WARNING 提示，告訴我們現在啟用的是開發者模式，且這個模式下 Vault 都運行在記憶體中，並用單一解封金鑰且自動幫我們解封，Root Token 會在 CLI 自動完成驗證&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/2.webp"
-alt="Vault DEV 環境提示" width="800">&lt;figcaption>
-&lt;p>Vault DEV 環境提示&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/2.webp" data-zoomable alt="Vault DEV 環境提示" width="800"loading="lazy"
+/>&lt;figcaption>Vault DEV 環境提示&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>那這邊有提到解封還有解封金鑰，我們後面會提到，所以這邊先跳過，大家先知道有這個東西就可以了，在上面圖片裡面也有所謂的解封金鑰 &lt;code>L7+kfL/Of/MW846XMFL7riPX5oyoW1SwZVk9T++i8A0=&lt;/code>，以及 Root Token &lt;code>hvs.cCF4zQJ4bRwYEzouk621CFJr&lt;/code>&lt;/p>
 &lt;br>
@@ -131,6 +123,8 @@ alt="Vault DEV 環境提示" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -139,25 +133,19 @@ title="Copy code"
 &lt;/div>
 &lt;p>後面就直接帶入 Root Token，如果不想要 export VAULT_ADDR，也可以在後面帶入 &lt;code>-address=&lt;/code> 參數&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/3.webp"
-alt="登入成功" width="650">&lt;figcaption>
-&lt;p>登入成功&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/3.webp" data-zoomable alt="登入成功" width="650"loading="lazy"
+/>&lt;figcaption>登入成功&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>可以發現登入後，他會幫我們寫入 Token 到本機的 &lt;code>$HOME/.vault-token&lt;/code>，所以後續操作才不需要重複登入，也這個建議只在開發環境使用，不然還是會有資安疑慮&lt;/p>
 &lt;br>
 &lt;p>另外 vault 也有 UI 可以使用，可以訪問 &lt;code>http://127.0.0.1:8200/ui&lt;/code>，選擇 Token 並帶入剛剛的 Root Token 即可登入，那我們後續說明基本上都會以 CLI 方式來說明，大家可以搭配 UI 來輔助查看設定內容&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/4.webp"
-alt="Vault UI 介面" width="1000">&lt;figcaption>
-&lt;p>Vault UI 介面&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/4.webp" data-zoomable alt="Vault UI 介面" width="1000"loading="lazy"
+/>&lt;figcaption>Vault UI 介面&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;br>
 &lt;h3>啟用身份驗證插件&lt;span class="hx:absolute hx:-mt-20" id="啟用身份驗證插件">&lt;/span>
-&lt;a href="#%e5%95%9f%e7%94%a8%e8%ba%ab%e4%bb%bd%e9%a9%97%e8%ad%89%e6%8f%92%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>那在 Vault 裡面支援了很多種的身份驗證機制，它控制使用者 / 工作機器對 Vault 的存取權限，例如 AppRole、GCP、AWS、GitHub 等等，詳細可以看：&lt;a href="https://developer.hashicorp.com/vault/docs/auth"target="_blank" rel="noopener">Auth methods&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%95%9f%e7%94%a8%e8%ba%ab%e4%bb%bd%e9%a9%97%e8%ad%89%e6%8f%92%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>那在 Vault 裡面支援了很多種的身份驗證機制，它控制使用者 / 工作機器對 Vault 的存取權限，例如 AppRole、GCP、AWS、GitHub 等等，詳細可以看：&lt;a href="https://developer.hashicorp.com/vault/docs/auth"target="_blank" rel="noopener">Auth methods&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;p>那上面每一種方法都需要被啟用才可以使用，那我們這邊先以最簡單的方式來驗證，也就是 username + password (userpass)，啟動指令：&lt;/p>
@@ -166,6 +154,8 @@ alt="Vault UI 介面" width="1000">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -173,11 +163,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/5.webp"
-alt="啟動 auth methods userpass" width="800">&lt;figcaption>
-&lt;p>啟動 auth methods userpass&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/5.webp" data-zoomable alt="啟動 auth methods userpass" width="800"loading="lazy"
+/>&lt;figcaption>啟動 auth methods userpass&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>啟動完成後，我們馬上來建立一個名為 pin-yi 的 User，密碼為 &lt;code>123qwe&lt;/code>，使用以下指令建立：&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
@@ -185,6 +172,8 @@ alt="啟動 auth methods userpass" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -203,6 +192,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -221,14 +212,11 @@ title="Copy code"
 &lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/6.webp"
-alt="建立 userpass user &amp;amp; 啟動 approle 及建立 demo-app-role" width="800">&lt;figcaption>
-&lt;p>建立 userpass user &amp;amp; 啟動 approle 及建立 demo-app-role&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/6.webp" data-zoomable alt="建立 userpass user &amp;amp; 啟動 approle 及建立 demo-app-role" width="800"loading="lazy"
+/>&lt;figcaption>建立 userpass user &amp;amp; 啟動 approle 及建立 demo-app-role&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>啟用鍵/值密鑰插件(KV)&lt;span class="hx:absolute hx:-mt-20" id="啟用鍵值密鑰插件kv">&lt;/span>
-&lt;a href="#%e5%95%9f%e7%94%a8%e9%8d%b5%e5%80%bc%e5%af%86%e9%91%b0%e6%8f%92%e4%bb%b6kv" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在 Vault 支援很多&lt;a href="https://developer.hashicorp.com/vault/docs/secrets"target="_blank" rel="noopener">密鑰引擎&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%95%9f%e7%94%a8%e9%8d%b5%e5%80%bc%e5%af%86%e9%91%b0%e6%8f%92%e4%bb%b6kv" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在 Vault 支援很多&lt;a href="https://developer.hashicorp.com/vault/docs/secrets"target="_blank" rel="noopener">密鑰引擎&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>，例如：Key Vaule (KV)、PKI (Certificates)、LDAP、GCP、AWS、SSH 等，依照需求選用對應的引擎來管理機密&lt;/p>
 &lt;p>那我們現在使用 Key/Vaule (KV) 來測試，使用以下指令啟動該插件：&lt;/p>
@@ -237,6 +225,8 @@ alt="建立 userpass user &amp;amp; 啟動 approle 及建立 demo-app-role" widt
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -248,11 +238,8 @@ title="Copy code"
 &lt;li>version 在 KV 有版本 1 跟 2&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/7.webp"
-alt="UI 顯示建立好的 secrets 使用 kv version 2 引擎" width="800">&lt;figcaption>
-&lt;p>UI 顯示建立好的 secrets 使用 kv version 2 引擎&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/7.webp" data-zoomable alt="UI 顯示建立好的 secrets 使用 kv version 2 引擎" width="800"loading="lazy"
+/>&lt;figcaption>UI 顯示建立好的 secrets 使用 kv version 2 引擎&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>儲存第一個機密&lt;span class="hx:absolute hx:-mt-20" id="儲存第一個機密">&lt;/span>
 &lt;a href="#%e5%84%b2%e5%ad%98%e7%ac%ac%e4%b8%80%e5%80%8b%e6%a9%9f%e5%af%86" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們已經有儲存機密的地方，路徑是 demo，那接下來我們就來儲存我們第一個機密吧，使用以下指令：&lt;/p>
@@ -264,6 +251,8 @@ alt="UI 顯示建立好的 secrets 使用 kv version 2 引擎" width="800">&lt;f
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -272,17 +261,11 @@ title="Copy code"
 &lt;/div>
 &lt;p>儲存完後，會顯示它儲存在哪一個路徑，以及相關的資訊，結果不小心手滑，多儲存了幾次，剛好可以觀察一下他的版本控制 😗&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/8.webp"
-alt="可以觀察 Version 數字不同" width="650">&lt;figcaption>
-&lt;p>可以觀察 Version 數字不同&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/8.webp" data-zoomable alt="可以觀察 Version 數字不同" width="650"loading="lazy"
+/>&lt;figcaption>可以觀察 Version 數字不同&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/9.webp"
-alt="使用 UI 到對應路徑查看儲存的 Secret" width="800">&lt;figcaption>
-&lt;p>使用 UI 到對應路徑查看儲存的 Secret&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/9.webp" data-zoomable alt="使用 UI 到對應路徑查看儲存的 Secret" width="800"loading="lazy"
+/>&lt;figcaption>使用 UI 到對應路徑查看儲存的 Secret&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>除此指外，我們再額外寫一個 api-keys 的機密，等等會使用到&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
@@ -293,6 +276,8 @@ alt="使用 UI 到對應路徑查看儲存的 Secret" width="800">&lt;figcaption
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -312,6 +297,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -325,6 +312,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -332,11 +321,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/10.webp"
-alt="建立 Policy &amp;amp; 設定 Policy 到 userpass 的 pin-yi user" width="650">&lt;figcaption>
-&lt;p>建立 Policy &amp;amp; 設定 Policy 到 userpass 的 pin-yi user&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/10.webp" data-zoomable alt="建立 Policy &amp;amp; 設定 Policy 到 userpass 的 pin-yi user" width="650"loading="lazy"
+/>&lt;figcaption>建立 Policy &amp;amp; 設定 Policy 到 userpass 的 pin-yi user&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>測試及驗證 Policy&lt;span class="hx:absolute hx:-mt-20" id="測試及驗證-policy">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e5%8f%8a%e9%a9%97%e8%ad%89-policy" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>耶，到了最後的驗證環節，我們要來測試看看，上面設定以及新增的內容是否可以正常運作&lt;/p>
@@ -348,6 +334,8 @@ alt="建立 Policy &amp;amp; 設定 Policy 到 userpass 的 pin-yi user" width="
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -355,11 +343,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/11.webp"
-alt="測試登入" width="900">&lt;figcaption>
-&lt;p>測試登入&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/11.webp" data-zoomable alt="測試登入" width="900"loading="lazy"
+/>&lt;figcaption>測試登入&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>可以看到，我已經可以改用 userpass method 來進行登入，登入完成後，也會更新 &lt;code>$HOME/.vault-token&lt;/code>，也可以改用代表 pin-yi 的 Token 來登入&lt;/p>
 &lt;br>
@@ -371,6 +356,8 @@ alt="測試登入" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -378,11 +365,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/12.webp"
-alt="測試 Policy" width="650">&lt;figcaption>
-&lt;p>測試 Policy&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/12.webp" data-zoomable alt="測試 Policy" width="650"loading="lazy"
+/>&lt;figcaption>測試 Policy&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>可以發現，由於我們的 kv-access-policy 允許 read 這個 &lt;code>demo/data/kv/uuid&lt;/code> 路徑，所以可以正常訪問，但 &lt;code>demo/kv/api-keys&lt;/code> 沒有設定，就會出現 403 沒有權限&lt;/p>
 &lt;br>
@@ -400,6 +384,8 @@ alt="測試 Policy" width="650">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -407,11 +393,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/13.webp"
-alt="建立好新的 Policy 跟綁到 demo-app-role 上" width="650">&lt;figcaption>
-&lt;p>建立好新的 Policy 跟綁到 demo-app-role 上&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/13.webp" data-zoomable alt="建立好新的 Policy 跟綁到 demo-app-role 上" width="650"loading="lazy"
+/>&lt;figcaption>建立好新的 Policy 跟綁到 demo-app-role 上&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接下來要切成 Role 來查看，但因為 Role 沒辦法像 userpass 那樣，會需要取得 role-id 以及 secret-id，最後產生 Token，以下指令：&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
@@ -423,6 +406,8 @@ alt="建立好新的 Policy 跟綁到 demo-app-role 上" width="650">&lt;figcapt
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -430,11 +415,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/14.webp"
-alt="approle 取得 Token" width="900">&lt;figcaption>
-&lt;p>approle 取得 Token&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/14.webp" data-zoomable alt="approle 取得 Token" width="900"loading="lazy"
+/>&lt;figcaption>approle 取得 Token&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>有拿到 Token 了，我們就可以像是最一開始用 Root Token 一樣登入，並測試一下兩個 kv 讀取狀態，以下指令：&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
@@ -442,6 +424,8 @@ alt="approle 取得 Token" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -449,17 +433,14 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/15.webp"
-alt="測試 Policy" width="650">&lt;figcaption>
-&lt;p>測試 Policy&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/15.webp" data-zoomable alt="測試 Policy" width="650"loading="lazy"
+/>&lt;figcaption>測試 Policy&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>可以發現，現在就可以正常讀取 kv/api-keys，但也不能讀取 kv/uuid，因為沒有設定權限&lt;/p>
 &lt;br>
 &lt;p>好啦到這邊，我們的開發環境測試流程就差不多結束啦，那這邊補一些前面有挖的坑：解封還有解封金鑰是什麼？&lt;/p>
 &lt;h2>解封還有解封金鑰是什麼？&lt;span class="hx:absolute hx:-mt-20" id="解封還有解封金鑰是什麼">&lt;/span>
-&lt;a href="#%e8%a7%a3%e5%b0%81%e9%82%84%e6%9c%89%e8%a7%a3%e5%b0%81%e9%87%91%e9%91%b0%e6%98%af%e4%bb%80%e9%ba%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們可以從官網文件 &lt;a href="https://developer.hashicorp.com/vault/docs/concepts/seal"target="_blank" rel="noopener">Seal/Unseal&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e8%a7%a3%e5%b0%81%e9%82%84%e6%9c%89%e8%a7%a3%e5%b0%81%e9%87%91%e9%91%b0%e6%98%af%e4%bb%80%e9%ba%bc" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們可以從官網文件 &lt;a href="https://developer.hashicorp.com/vault/docs/concepts/seal"target="_blank" rel="noopener">Seal/Unseal&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 中得知：&lt;/p>
 &lt;p>當我們初始化啟動 Vault Server 時，預設會是密封狀態，這個狀態下 Vault 能夠存取實體儲存 (Storage Backend) ，但無法解密其中的任何資料&lt;/p>
@@ -473,11 +454,8 @@ alt="測試 Policy" width="650">&lt;figcaption>
 &lt;p>當 Vault 解封後，會將加密密鑰存到記憶體，因此可以正常去加解密，而 Storage Backend 永遠都是儲存密文，因此之後要備份，其實只要備份該 Storage Backend，以及將解密金鑰帶入就可以解密了，就算 Storage Backend 被駭客拿到，如果沒有解密金鑰，也無法看到裡面的內容&lt;/p>
 &lt;p>這邊也來提一下 Vault 他的加密演算法，預設是使用 Shamir seals，他會產生多組密鑰，在解密時，需要輸入對應門檻的密鑰才可以解密，例如它產生 5 把，會需要輸入 3 把才可以正常解密，因此需要將這幾把密鑰分開存放&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/16.webp"
-alt="測試 Policy" width="650">&lt;figcaption>
-&lt;p>測試 Policy&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/16.webp" data-zoomable alt="測試 Policy" width="650"loading="lazy"
+/>&lt;figcaption>測試 Policy&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>那我們上面測試是用 DEV 開發環境，故只有產生一組密鑰，且已經自動解密，正式環境在服務建立初始化時，就需要先輸入對應的密鑰，若有重啟等也會因為存在記憶體的加密密鑰不見，而需要重新輸入&lt;/p>
 &lt;br>
@@ -492,6 +470,8 @@ alt="測試 Policy" width="650">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -499,11 +479,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/17.webp"
-alt="測試密封，觀察 Server 狀態" width="500">&lt;figcaption>
-&lt;p>測試密封，觀察 Server 狀態&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/17.webp" data-zoomable alt="測試密封，觀察 Server 狀態" width="500"loading="lazy"
+/>&lt;figcaption>測試密封，觀察 Server 狀態&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>可以看到密封后，Server 狀態的 Sealed 會從 false 變成 true，且無法進行其他的操作了&lt;/p>
 &lt;br>
@@ -515,6 +492,8 @@ alt="測試密封，觀察 Server 狀態" width="500">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -522,18 +501,15 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/18.webp"
-alt="解封並檢查功能" width="800">&lt;figcaption>
-&lt;p>解封並檢查功能&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/security/vault-introduce/18.webp" data-zoomable alt="解封並檢查功能" width="800"loading="lazy"
+/>&lt;figcaption>解封並檢查功能&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>可以發現就正常囉～&lt;/p>
 &lt;br>
 &lt;h2>Storage Backend&lt;span class="hx:absolute hx:-mt-20" id="storage-backend">&lt;/span>
 &lt;a href="#storage-backend" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Vault 可以選擇不同的 Storage Backend，用來放置加密後的內容&lt;/p>
 &lt;p>如果需要 HA 記得 Storage Backend 也需要確認是否支援&lt;/p>
-&lt;p>詳細的說明可以參考&lt;a href="https://developer.hashicorp.com/vault/docs/configuration/storage"target="_blank" rel="noopener">官方文件&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>詳細的說明可以參考&lt;a href="https://developer.hashicorp.com/vault/docs/configuration/storage"target="_blank" rel="noopener">官方文件&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> or 之後有時間再來更新內容 xD&lt;/p>
 &lt;br>
@@ -543,12 +519,12 @@ alt="解封並檢查功能" width="800">&lt;figcaption>
 &lt;p>所以需要啟用 rate limit 機制來保護 Vault，或是 app 取得 vault secret 後，在本地 cache，不要每次都去跟 vault 請求&lt;/p>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Vault Documentation：&lt;a href="https://developer.hashicorp.com/vault/docs"target="_blank" rel="noopener">https://developer.hashicorp.com/vault/docs&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Vault Documentation：&lt;a href="https://developer.hashicorp.com/vault/docs"target="_blank" rel="noopener">https://developer.hashicorp.com/vault/docs&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>HashiCorp Vault on AWS &amp;amp; K8s - 雲端地端通吃的私鑰管理平台 【Webinar： HashiCorp Vault】| 歐立威科技：&lt;a href="https://www.youtube.com/watch?v=YU_rQz8emoE"target="_blank" rel="noopener">https://www.youtube.com/watch?v=YU_rQz8emoE&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>HashiCorp Vault on AWS &amp;amp; K8s - 雲端地端通吃的私鑰管理平台 【Webinar： HashiCorp Vault】| 歐立威科技：&lt;a href="https://www.youtube.com/watch?v=YU_rQz8emoE"target="_blank" rel="noopener">https://www.youtube.com/watch?v=YU_rQz8emoE&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>從零開始的 30 天 Hashicorp Vault Workshop：&lt;a href="https://ithelp.ithome.com.tw/users/20120327/ironman/6764"target="_blank" rel="noopener">https://ithelp.ithome.com.tw/users/20120327/ironman/6764&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>從零開始的 30 天 Hashicorp Vault Workshop：&lt;a href="https://ithelp.ithome.com.tw/users/20120327/ironman/6764"target="_blank" rel="noopener">https://ithelp.ithome.com.tw/users/20120327/ironman/6764&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

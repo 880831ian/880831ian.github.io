@@ -3,11 +3,8 @@
 &lt;br>
 &lt;h2>EFK 結構&lt;span class="hx:absolute hx:-mt-20" id="efk-結構">&lt;/span>
 &lt;a href="#efk-%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>在開始之前我先簡單說一下我現在的 EFK 結構：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/1.png"
-alt="EFK 結構" width="900">&lt;figcaption>
-&lt;p>EFK 結構&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/1.png" data-zoomable alt="EFK 結構" width="900"loading="lazy"
+/>&lt;figcaption>EFK 結構&lt;/figcaption>&lt;/figure>
 &lt;p>現在的 EFK 結構如上圖，我在要抽 Log 的 Pod 中多塞一個 fluentd-bit container，將 fluentd-bit 與服務(例如 nginx) 的 log 掛相同路徑，讓 fluentd-bit 可以抽到服務 log，接著就透過 fluentd-server-svc 打到 fluentd-server pod，後面就是常見的 EFK 結構，就不多做說明。&lt;/p>
 &lt;br>
 &lt;h2>問題的出現&lt;span class="hx:absolute hx:-mt-20" id="問題的出現">&lt;/span>
@@ -32,6 +29,8 @@ alt="EFK 結構" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -51,6 +50,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -60,21 +61,15 @@ title="Copy code"
 &lt;br>
 &lt;p>接著在 Fluentd-Server Log 中發現 Fluent::Plugin::Elasticsearch Error 400 - Rejected by Elasticsearch 錯誤&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/2.png"
-alt="fluentd-server 跳出錯誤 LOG" width="1000">&lt;figcaption>
-&lt;p>fluentd-server 跳出錯誤 LOG&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/2.png" data-zoomable alt="fluentd-server 跳出錯誤 LOG" width="1000"loading="lazy"
+/>&lt;figcaption>fluentd-server 跳出錯誤 LOG&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;p>我到網路上搜尋，看看有沒有人有遇到跟我一樣的問題，發現在 &lt;a href="https://github.com/uken/fluent-plugin-elasticsearch/issues/467"target="_blank" rel="noopener">uken/fluent-plugin-elasticsearch&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>我到網路上搜尋，看看有沒有人有遇到跟我一樣的問題，發現在 &lt;a href="https://github.com/uken/fluent-plugin-elasticsearch/issues/467"target="_blank" rel="noopener">uken/fluent-plugin-elasticsearch&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 也有其他人有遇到同樣的問題&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/3.png"
-alt="uken/fluent-plugin-elasticsearch issus 詢問" width="1000">&lt;figcaption>
-&lt;p>uken/fluent-plugin-elasticsearch issus 詢問&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/fluentd-server-show-fluent-plugin-elasticsearch-error400/3.png" data-zoomable alt="uken/fluent-plugin-elasticsearch issus 詢問" width="1000"loading="lazy"
+/>&lt;figcaption>uken/fluent-plugin-elasticsearch issus 詢問&lt;/figcaption>&lt;/figure>
 &lt;p>有人說可能是 Elasticsearch 的 disk 滿了，也有人說是裝在 Fluentd-Server 的套件 fluent-plugin-elasticsearch 版本有問題，或是將 Elasticsearch 跟 Kibana index 刪除就可以，我有砍掉 index 再重新倒入 Log，還是會有問題。&lt;/p>
 &lt;p>一開始以為是 &lt;code>log_false&lt;/code> 跟 &lt;code>log_true&lt;/code> 的欄位不同，所以才會有這個問題發生（你看就知道我跟 EFK 不熟吧ＸＤ），所以有另外倒一些其他服務(欄位也不同)的 log 進去測試，發現是可以正常抽到，且 kibana 那邊會依照 es 提供的欄位自動新增，所以也不是欄位的問題，那最後的問題是什麼呢？&lt;/p>
 &lt;br>
@@ -83,7 +78,7 @@ alt="uken/fluent-plugin-elasticsearch issus 詢問" width="1000">&lt;figcaption>
 &lt;p>最後重新調整欄位的資料型態，就順利解決此次問題 ✌️✌️✌️&lt;/p>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Elasticsearch 400 error #467：&lt;a href="https://github.com/uken/fluent-plugin-elasticsearch/issues/467"target="_blank" rel="noopener">https://github.com/uken/fluent-plugin-elasticsearch/issues/467&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Elasticsearch 400 error #467：&lt;a href="https://github.com/uken/fluent-plugin-elasticsearch/issues/467"target="_blank" rel="noopener">https://github.com/uken/fluent-plugin-elasticsearch/issues/467&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>Kibana 新增 index 索引時一直轉圈圈以及顯示 HTTP 403 Forbidden</title><link>https://pin-yi.me/blog/rd/kibana-create-index-forbidden/</link><pubDate>Thu, 08 Dec 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/rd/kibana-create-index-forbidden/</guid><description>
 &lt;p>前幾天在工作使用 Kibana 時，想要新增一個新的索引，發現選擇索引並按下新增的按鈕，會一直轉圈圈，等了一陣子，使用開發工具 F12 查看，跳出了 HTTP 403 Forbidden，到底是什麼原因導致的呢！？我們一起看下去吧，會從問題的出現到問題原因再到如何解決問題，來仔細介紹，希望大家不要像我一樣踩到雷 🤣&lt;/p>
@@ -91,29 +86,20 @@ alt="uken/fluent-plugin-elasticsearch issus 詢問" width="1000">&lt;figcaption>
 &lt;h2>問題的出現&lt;span class="hx:absolute hx:-mt-20" id="問題的出現">&lt;/span>
 &lt;a href="#%e5%95%8f%e9%a1%8c%e7%9a%84%e5%87%ba%e7%8f%be" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;del>那天是個變冷的 12 月&lt;/del>，要幫 RD 同仁新增 Kibana 的索引時，照往常一樣輸入 Index pattern，按下一步，選擇 Configure settings ：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/1.webp"
-alt="輸入 Index pattern (圖片為範例，正常都是用 -* )" width="800">&lt;figcaption>
-&lt;p>輸入 Index pattern (圖片為範例，正常都是用 -* )&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/1.webp" data-zoomable alt="輸入 Index pattern (圖片為範例，正常都是用 -* )" width="800"loading="lazy"
+/>&lt;figcaption>輸入 Index pattern (圖片為範例，正常都是用 -* )&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>按下新增索引，他就開始無限的轉圈圈，有去查看 ElasticSearch 的 log，發現也沒有特別的錯誤訊息&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/2.webp"
-alt="新增索引後，一直轉圈圈" width="800">&lt;figcaption>
-&lt;p>新增索引後，一直轉圈圈&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/2.webp" data-zoomable alt="新增索引後，一直轉圈圈" width="800"loading="lazy"
+/>&lt;figcaption>新增索引後，一直轉圈圈&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接著想說打開開發者工具 F12 來看看，是卡在哪一個點，卻發現有幾個紅字寫著 HTTP 403 Forbidden&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/3.webp"
-alt="開發者工具網頁內容顯示 HTTP 403 Forbidden" width="800">&lt;figcaption>
-&lt;p>開發者工具網頁內容顯示 HTTP 403 Forbidden&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/3.webp" data-zoomable alt="開發者工具網頁內容顯示 HTTP 403 Forbidden" width="800"loading="lazy"
+/>&lt;figcaption>開發者工具網頁內容顯示 HTTP 403 Forbidden&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;p>想說為什麼會有 HTTP 403 Forbidden，之前也沒有看過類似的錯誤訊息，於是就開始在網路上亂晃，最後在同事的幫助下找到了一個跟我們情況很相似的文章 &lt;a href="https://www.cnblogs.com/caoweixiong/p/10972120.html"target="_blank" rel="noopener">Kibana 创建索引 POST 403 (forbidden) on create index&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>想說為什麼會有 HTTP 403 Forbidden，之前也沒有看過類似的錯誤訊息，於是就開始在網路上亂晃，最後在同事的幫助下找到了一個跟我們情況很相似的文章 &lt;a href="https://www.cnblogs.com/caoweixiong/p/10972120.html"target="_blank" rel="noopener">Kibana 创建索引 POST 403 (forbidden) on create index&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;br>
@@ -127,11 +113,8 @@ alt="開發者工具網頁內容顯示 HTTP 403 Forbidden" width="800">&lt;figca
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/4.webp"
-alt="索引只允許讀取的設定變成" width="900">&lt;figcaption>
-&lt;p>索引只允許讀取的設定變成&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/4.webp" data-zoomable alt="索引只允許讀取的設定變成" width="900"loading="lazy"
+/>&lt;figcaption>索引只允許讀取的設定變成&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>發現正如文章所說，是因為 read_only_allow_delete 的狀態變成了 &lt;code>true&lt;/code>，所以才沒辦法新增索引～&lt;/p>
 &lt;br>
@@ -151,6 +134,8 @@ alt="索引只允許讀取的設定變成" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -158,30 +143,21 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/5.webp"
-alt="Dev Tools 修改 Index 的狀態" width="600">&lt;figcaption>
-&lt;p>Dev Tools 修改 Index 的狀態&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/5.webp" data-zoomable alt="Dev Tools 修改 Index 的狀態" width="600"loading="lazy"
+/>&lt;figcaption>Dev Tools 修改 Index 的狀態&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>最後我們用 &lt;code>GET _settings&lt;/code> 檢查一下索引狀態是不是已經變回原本的了：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/6.webp"
-alt="索引只允許讀取的設定變成 false" width="900">&lt;figcaption>
-&lt;p>索引只允許讀取的設定變成 false&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/6.webp" data-zoomable alt="索引只允許讀取的設定變成 false" width="900"loading="lazy"
+/>&lt;figcaption>索引只允許讀取的設定變成 false&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>最後就可以順利新增索引拉 👍👍👍&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/7.webp"
-alt="順利新增索引" width="900">&lt;figcaption>
-&lt;p>順利新增索引&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/kibana-create-index-forbidden/7.webp" data-zoomable alt="順利新增索引" width="900"loading="lazy"
+/>&lt;figcaption>順利新增索引&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Kibana 创建索引 POST 403 (forbidden) on create index：&lt;a href="https://www.cnblogs.com/caoweixiong/p/10972120.html"target="_blank" rel="noopener">https://www.cnblogs.com/caoweixiong/p/10972120.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Kibana 创建索引 POST 403 (forbidden) on create index：&lt;a href="https://www.cnblogs.com/caoweixiong/p/10972120.html"target="_blank" rel="noopener">https://www.cnblogs.com/caoweixiong/p/10972120.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>用 EFK 收集容器日誌 (HAProxy、Redis Sentinel、Docker-compose)</title><link>https://pin-yi.me/blog/rd/redis-sentinel-docker-compose-haproxy-efk/</link><pubDate>Fri, 22 Apr 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/rd/redis-sentinel-docker-compose-haproxy-efk/</guid><description>
 &lt;p>前情提要：本篇是 &lt;a href="../../redis/redis-sentinel-docker-compose-haproxy/">用 HAProxy 對 Redis 做負載平衡 (Redis Sentinel、Docker-compose)&lt;/a>
@@ -203,25 +179,22 @@ alt="順利新增索引" width="900">&lt;figcaption>
 &lt;p>Filebeats 是一個輕量級收集本地 log 數據的方案，它僅能收集本地的 log，不能對 log 做處理，所以 Filebeats 通常會將 log 送到 Logstash 做進一步的處理。&lt;/p>
 &lt;p>那為什麼不直接使用 Logstash 來收集收集並處理 log 呢？&lt;/p>
 &lt;p>因為 Logstash 會消耗許多的記憶體，所以才會先透過 Filebeats 收集資料再傳給 Logstash 做處理。&lt;/p>
-&lt;p>另外 Filebeats、Logstash、Elasticsearch 和 Kibana 都是屬於同一家公司的開源項目：&lt;a href="https://www.elastic.co/guide/index.html"target="_blank" rel="noopener">https://www.elastic.co/guide/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>另外 Filebeats、Logstash、Elasticsearch 和 Kibana 都是屬於同一家公司的開源項目：&lt;a href="https://www.elastic.co/guide/index.html"target="_blank" rel="noopener">https://www.elastic.co/guide/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>而 Fluentd 則是另一家公司的開源項目：&lt;a href="https://docs.fluentd.org/"target="_blank" rel="noopener">https://docs.fluentd.org/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>而 Fluentd 則是另一家公司的開源項目：&lt;a href="https://docs.fluentd.org/"target="_blank" rel="noopener">https://docs.fluentd.org/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;p>那我們在這邊就使用 Fluentd 來做我們的 EFK 示範：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/efk.webp"
-alt="EFK 示意圖 EFK Stack: Elasticsearch, Fluentd and Kibana on Docker " width="700">&lt;figcaption>
-&lt;p>EFK 示意圖 &lt;a href="https://aesher9o1.medium.com/efk-stack-elasticsearch-fluentd-and-kibana-on-docker-be60597fa99"target="_blank" rel="noopener">EFK Stack: Elasticsearch, Fluentd and Kibana on Docker&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/efk.webp" data-zoomable alt="EFK 示意圖 [EFK Stack: Elasticsearch, Fluentd and Kibana on Docker](https://aesher9o1.medium.com/efk-stack-elasticsearch-fluentd-and-kibana-on-docker-be60597fa99)" width="700"loading="lazy"
+/>&lt;figcaption>EFK 示意圖 &lt;a href="https://aesher9o1.medium.com/efk-stack-elasticsearch-fluentd-and-kibana-on-docker-be60597fa99"target="_blank" rel="noopener">EFK Stack: Elasticsearch, Fluentd and Kibana on Docker&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>上面這張圖代表我們會有很多 Docker 容器的 log (也就是之前的 redis 以及其他 nginx 等的容器)，會先透過 Fluentd 收集並處理各容器的 log 在傳送到 Elasticsearch 集中儲存，再使用 Kibana 圖形化介面來查詢或檢索儲在 Elasticsearch 的 log。&lt;/p>
 &lt;br>
 &lt;h2>實作&lt;span class="hx:absolute hx:-mt-20" id="實作">&lt;/span>
-&lt;a href="#%e5%af%a6%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那接下來會使用 Docker-compose 實作 EFK 的 LOG 分析，&lt;a href="https://github.com/880831ian/docker-compose-redis-sentinel-haproxy-efk"target="_blank" rel="noopener">範例程式連結 點我&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%af%a6%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那接下來會使用 Docker-compose 實作 EFK 的 LOG 分析，&lt;a href="https://github.com/880831ian/docker-compose-redis-sentinel-haproxy-efk"target="_blank" rel="noopener">範例程式連結 點我&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 😘&lt;/p>
 &lt;p>版本資訊&lt;/p>
@@ -231,7 +204,7 @@ alt="EFK 示意圖 EFK Stack: Elasticsearch, Fluentd and Kibana on Docker " widt
 &lt;li>Nginx：1.20&lt;/li>
 &lt;li>PHP：7.4-fpm&lt;/li>
 &lt;li>Redis：6.2.6&lt;/li>
-&lt;li>HAProxy：HAProxy version 2.5.5-384c5c5 2022/03/14 - &lt;a href="https://haproxy.org/"target="_blank" rel="noopener">https://haproxy.org/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>HAProxy：HAProxy version 2.5.5-384c5c5 2022/03/14 - &lt;a href="https://haproxy.org/"target="_blank" rel="noopener">https://haproxy.org/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/li>
 &lt;li>Elasticsearch：8.1.3&lt;/li>
@@ -278,6 +251,8 @@ alt="EFK 示意圖 EFK Stack: Elasticsearch, Fluentd and Kibana on Docker " widt
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -332,6 +307,8 @@ flush_interval 1s
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -348,6 +325,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -412,6 +391,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -531,6 +512,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -547,6 +530,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -640,6 +625,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -650,21 +637,12 @@ title="Copy code"
 &lt;br>
 &lt;h2>測試&lt;span class="hx:absolute hx:-mt-20" id="測試">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們先用 docker-compose up 來啟動 efk/Docker-compose.yaml，接著再啟動 nginx_php_redis/Docker-compose.yaml，最後啟動 haproxy_sentinel/Docker-compose.yaml：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/efk-compose.webp"
-alt="啟動 efk/Docker-compose.yaml" width="700">&lt;figcaption>
-&lt;p>啟動 efk/Docker-compose.yaml&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/nginx-php-redis-compose.webp"
-alt="啟動 nginx_php_redis/Docker-compose.yaml" width="700">&lt;figcaption>
-&lt;p>啟動 nginx_php_redis/Docker-compose.yaml&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/haproxy-sentinel-compose.webp"
-alt="啟動 efk/Docker-compose.yaml" width="700">&lt;figcaption>
-&lt;p>啟動 efk/Docker-compose.yaml&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/efk-compose.webp" data-zoomable alt="啟動 efk/Docker-compose.yaml" width="700"loading="lazy"
+/>&lt;figcaption>啟動 efk/Docker-compose.yaml&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/nginx-php-redis-compose.webp" data-zoomable alt="啟動 nginx_php_redis/Docker-compose.yaml" width="700"loading="lazy"
+/>&lt;figcaption>啟動 nginx_php_redis/Docker-compose.yaml&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/haproxy-sentinel-compose.webp" data-zoomable alt="啟動 efk/Docker-compose.yaml" width="700"loading="lazy"
+/>&lt;figcaption>啟動 efk/Docker-compose.yaml&lt;/figcaption>&lt;/figure>
 &lt;p>(啟動 efk 時要等他跑完，因為他需要啟動一陣子，如果還沒等他啟動完畢就啟動下一個，會導致 fluentd 的 fluentd-address 尚未設定好，導致啟動錯誤)&lt;/p>
 &lt;br>
 &lt;p>這時候可以使用瀏覽器搜尋以下網址：&lt;/p>
@@ -672,50 +650,35 @@ alt="啟動 efk/Docker-compose.yaml" width="700">&lt;figcaption>
 &lt;li>&lt;code>test.com:5601&lt;/code>：Kibana GUI 頁面。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/gui.webp"
-alt="kibana 設定" width="1000">&lt;figcaption>
-&lt;p>kibana 設定&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/gui.webp" data-zoomable alt="kibana 設定" width="1000"loading="lazy"
+/>&lt;figcaption>kibana 設定&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>如果連線成功進來，就代表我們有安裝好 Elasticsearch 以及 kibana，那我們來做一些設定，讓我們可以在 kibana 上面看到 log。&lt;/p>
 &lt;p>先點選左邊的欄位，點選 &amp;ldquo;Stack Management&amp;rdquo; ，可以看到目前的 kibana 的版本，再點選左邊的 &amp;ldquo;Kibana &amp;gt; Date Views&amp;rdquo;：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/kibana.webp"
-alt="kibana 設定" width="1000">&lt;figcaption>
-&lt;p>kibana 設定&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/kibana.webp" data-zoomable alt="kibana 設定" width="1000"loading="lazy"
+/>&lt;figcaption>kibana 設定&lt;/figcaption>&lt;/figure>
 &lt;p>然後會跳出一個視窗點選 &amp;ldquo;Create data view&amp;rdquo;，在 name 欄位輸入 fluentd* (右側有 fluentd 加時間，代表我們接 fluentd 有成功)，按下 &amp;ldquo;Create data view&amp;rdquo;&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/fluentd.webp"
-alt="kibana 設定" width="1000">&lt;figcaption>
-&lt;p>kibana 設定&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/fluentd.webp" data-zoomable alt="kibana 設定" width="1000"loading="lazy"
+/>&lt;figcaption>kibana 設定&lt;/figcaption>&lt;/figure>
 &lt;p>接著點選左側的欄位，點選 &amp;ldquo;Analytics &amp;gt; Discover&amp;rdquo; ，就可以看到我們目前所有的 log 囉！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/fluentd-1.webp"
-alt="kibana 設定" width="1000">&lt;figcaption>
-&lt;p>kibana 設定&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/log.webp"
-alt="kibana Analytics &amp;gt; Discover" width="1000">&lt;figcaption>
-&lt;p>kibana Analytics &amp;gt; Discover&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/fluentd-1.webp" data-zoomable alt="kibana 設定" width="1000"loading="lazy"
+/>&lt;figcaption>kibana 設定&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/rd/redis-sentinel-docker-compose-haproxy-efk/log.webp" data-zoomable alt="kibana Analytics &amp;gt; Discover" width="1000"loading="lazy"
+/>&lt;figcaption>kibana Analytics &amp;gt; Discover&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>elastic 官網：&lt;a href="https://www.elastic.co/"target="_blank" rel="noopener">https://www.elastic.co/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>elastic 官網：&lt;a href="https://www.elastic.co/"target="_blank" rel="noopener">https://www.elastic.co/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>fluentd 官網：&lt;a href="https://www.fluentd.org/"target="_blank" rel="noopener">https://www.fluentd.org/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>fluentd 官網：&lt;a href="https://www.fluentd.org/"target="_blank" rel="noopener">https://www.fluentd.org/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Build the EFK system used for simulating logging server on Docker：&lt;a href="https://stackoverflow.com/questions/71155142/build-the-efk-system-used-for-simulating-logging-server-on-docker"target="_blank" rel="noopener">https://stackoverflow.com/questions/71155142/build-the-efk-system-used-for-simulating-logging-server-on-docker&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Build the EFK system used for simulating logging server on Docker：&lt;a href="https://stackoverflow.com/questions/71155142/build-the-efk-system-used-for-simulating-logging-server-on-docker"target="_blank" rel="noopener">https://stackoverflow.com/questions/71155142/build-the-efk-system-used-for-simulating-logging-server-on-docker&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>開源日誌管理方案ELK 和EFK 的區別：&lt;a href="https://wsgzao.github.io/post/efk/"target="_blank" rel="noopener">https://wsgzao.github.io/post/efk/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>開源日誌管理方案ELK 和EFK 的區別：&lt;a href="https://wsgzao.github.io/post/efk/"target="_blank" rel="noopener">https://wsgzao.github.io/post/efk/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

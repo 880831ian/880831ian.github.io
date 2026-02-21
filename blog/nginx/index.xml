@@ -15,6 +15,8 @@
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -46,6 +48,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -76,6 +80,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -90,11 +96,8 @@ title="Copy code"
 &lt;br>
 &lt;p>因爲 &lt;code>proxy_set_header&lt;/code> 是一個全域設定，它可以寫在 &lt;code>http&lt;/code>、&lt;code>server&lt;/code>、&lt;code>location&lt;/code> block 中，所以如果有多台 server 都需要帶同樣的 header，可以寫在 &lt;code>http&lt;/code> block 中。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/proxy-set-header/1.webp"
-alt="官方文件介紹 proxy_set_header" width="800">&lt;figcaption>
-&lt;p>官方文件介紹 proxy_set_header&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/proxy-set-header/1.webp" data-zoomable alt="官方文件介紹 proxy_set_header" width="800"loading="lazy"
+/>&lt;figcaption>官方文件介紹 proxy_set_header&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>&lt;b>但是&lt;/b> (っ・Д・)っ 如果原本的 &lt;code>location&lt;/code> 有設定 &lt;code>proxy_set_header&lt;/code>，那麼在 &lt;code>server&lt;/code> block 中的 &lt;code>proxy_set_header&lt;/code> &lt;b>是沒有辦法同時使用&lt;/b>，後端只會收到 &lt;code>location&lt;/code> 的 &lt;code>proxy_set_header&lt;/code>，所以要注意這個地方。&lt;/p>
 &lt;br>
@@ -121,6 +124,8 @@ alt="官方文件介紹 proxy_set_header" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -137,10 +142,10 @@ title="Copy code"
 &lt;p>&lt;b>只有當前層級沒有定義 &lt;code>proxy_set_header&lt;/code>，才會繼承上一層級，所以如果當前層級有定義，就繼承不到上一層級的設定。&lt;/b>&lt;/p>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>关于 proxy_set_header 的注意点：&lt;a href="https://keepmoving.ren/nginx/about-proxy-set-header/"target="_blank" rel="noopener">https://keepmoving.ren/nginx/about-proxy-set-header/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>关于 proxy_set_header 的注意点：&lt;a href="https://keepmoving.ren/nginx/about-proxy-set-header/"target="_blank" rel="noopener">https://keepmoving.ren/nginx/about-proxy-set-header/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Module ngx_http_proxy_module#proxy_set_header：&lt;a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header"target="_blank" rel="noopener">https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Module ngx_http_proxy_module#proxy_set_header：&lt;a href="https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header"target="_blank" rel="noopener">https://nginx.org/en/docs/http/ngx_http_proxy_module.html#proxy_set_header&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>想使用 Nginx Upstream Proxy 到外部服務，並帶入對應的 header 該怎麼做？</title><link>https://pin-yi.me/blog/nginx/nginx-upstream-set-host-header/</link><pubDate>Mon, 16 Oct 2023 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/nginx/nginx-upstream-set-host-header/</guid><description>
 &lt;p>此文章要來記錄一下最近在公司服務入口遇到的一些小問題，以及解決的方法。簡單說明一下，我們的服務入口是用 Nginx 來當作 proxy server，將不同路徑或是 servername 導到對應的後端程式，或是外部的服務上(例如 AWS cloudfront.net)，本篇要測試的是如果使用要同時使用 upstream 到外部服務，且需要帶 host header 該怎麼做。&lt;/p>
@@ -157,6 +162,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -179,6 +186,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -192,7 +201,7 @@ title="Copy code"
 &lt;br>
 &lt;h2>問題&lt;span class="hx:absolute hx:-mt-20" id="問題">&lt;/span>
 &lt;a href="#%e5%95%8f%e9%a1%8c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那如果我們使用 Nginx upstream 時，還想要同時帶 host 的 header 到後端該怎麼做呢？我們先來看一下目前的寫法：&lt;/p>
-&lt;p>( 測試範例是使用 docker 來模擬，可以參考程式碼 &amp;gt; &lt;a href="https://github.com/880831ian/nginx-upstream-set-host-header"target="_blank" rel="noopener">點我前往 github&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>( 測試範例是使用 docker 來模擬，可以參考程式碼 &amp;gt; &lt;a href="https://github.com/880831ian/nginx-upstream-set-host-header"target="_blank" rel="noopener">點我前往 github&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>，會有三個 nginx，其中一個是負責 proxy 的 nginx 名為 proxy，另外兩台是 upstream 後的服務，名為 upstream_server1、upstream_server2 )&lt;/p>
 &lt;br>
@@ -217,6 +226,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -226,13 +237,10 @@ title="Copy code"
 &lt;br>
 &lt;p>可以看到我們希望 Nginx 收到 request 是 &lt;code>/upstream_server&lt;/code> 時，將 request 轉發到 &lt;code>http://upstream_server&lt;/code>，而 &lt;code>upstream_server&lt;/code> 後面有兩個 server，並且在 proxy 時，帶入兩個不同的 host header。但如果真的這樣寫，可以達到我們想要得效果嗎？我們實際跑看看程式 (範例可以使用 nginx-old.conf)：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/nginx-upstream-set-host-header/1.webp"
-alt="nginx 原本寫法" width="800">&lt;figcaption>
-&lt;p>nginx 原本寫法&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/nginx-upstream-set-host-header/1.webp" data-zoomable alt="nginx 原本寫法" width="800"loading="lazy"
+/>&lt;figcaption>nginx 原本寫法&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;p>從上面的 LOG 可以發現，我們 call &lt;code>/upstream_server&lt;/code> 時，後端的 upstream_server1、upstream_server2 收到的 host 只會收到第一個設定的 Host，且服務會出現 400 Bad Request，查了一下網路文章，發現出現 400 Bad Request，可能跟 header 送太多資訊過去，詳細可以參考 &lt;a href="https://tools.wingzero.tw/article/sn/534"target="_blank" rel="noopener">解決網站出現 400 Bad Request 狀態的方法&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>從上面的 LOG 可以發現，我們 call &lt;code>/upstream_server&lt;/code> 時，後端的 upstream_server1、upstream_server2 收到的 host 只會收到第一個設定的 Host，且服務會出現 400 Bad Request，查了一下網路文章，發現出現 400 Bad Request，可能跟 header 送太多資訊過去，詳細可以參考 &lt;a href="https://tools.wingzero.tw/article/sn/534"target="_blank" rel="noopener">解決網站出現 400 Bad Request 狀態的方法&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>。&lt;/p>
 &lt;p>這邊推測應該是後端如果也是用 nginx 直接接收才會遇到 400 的問題，還好目前公司服務還是正常的 xDD，檢查一下後發現，其實後端根本沒有要求對應 header 才能接收(應該是對方忘記加上此限制)。&lt;/p>
@@ -280,6 +288,8 @@ alt="nginx 原本寫法" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -294,28 +304,22 @@ title="Copy code"
 &lt;br>
 &lt;p>最後我們來看一下實際執行的結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/nginx-upstream-set-host-header/2.webp"
-alt="使用多層的 nginx proxy 處理" width="800">&lt;figcaption>
-&lt;p>使用多層的 nginx proxy 處理&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/nginx-upstream-set-host-header/2.webp" data-zoomable alt="使用多層的 nginx proxy 處理" width="800"loading="lazy"
+/>&lt;figcaption>使用多層的 nginx proxy 處理&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Make nginx to pass hostname of the upstream when reverseproxying：&lt;a href="https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying"target="_blank" rel="noopener">https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Make nginx to pass hostname of the upstream when reverseproxying：&lt;a href="https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying"target="_blank" rel="noopener">https://serverfault.com/questions/598202/make-nginx-to-pass-hostname-of-the-upstream-when-reverseproxying&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>Soketi WebSocket Server LOG 不定時出現 502 error 以及 connect() failed (111: Connection refused)</title><link>https://pin-yi.me/blog/nginx/soketi-log-502-error/</link><pubDate>Wed, 20 Sep 2023 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/nginx/soketi-log-502-error/</guid><description>
 &lt;p>此文章要來記錄一下 RD 同仁前陣子有反應使用 Soketi 這個 WebSocket Server 會不定時在 LOG 出現 502 error 錯誤訊息以及 connect() failed (111: Connection refused) while connecting to upstream，雖然說服務使用上不會影響很大，但還是希望我們可以協助找出 502 的原因。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/1.webp"
-alt="出錯的 LOG" width="1200">&lt;figcaption>
-&lt;p>出錯的 LOG&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/1.webp" data-zoomable alt="出錯的 LOG" width="1200"loading="lazy"
+/>&lt;figcaption>出錯的 LOG&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;p>在開始找問題前，先簡單介紹一下 Soketi 是什麼東西好了，根據官網的說明，他是簡單、快速且有彈性的開源 WebSockets server，想要了解更多的可以到它&lt;a href="https://docs.soketi.app/"target="_blank" rel="noopener">官網&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>在開始找問題前，先簡單介紹一下 Soketi 是什麼東西好了，根據官網的說明，他是簡單、快速且有彈性的開源 WebSockets server，想要了解更多的可以到它&lt;a href="https://docs.soketi.app/"target="_blank" rel="noopener">官網&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>去查看。&lt;/p>
-&lt;p>另外會把程式碼相關放到 GitHub &amp;raquo; &lt;a href="https://github.com/880831ian/soketi-log-502-error"target="_blank" rel="noopener">點我前往&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>另外會把程式碼相關放到 GitHub &amp;raquo; &lt;a href="https://github.com/880831ian/soketi-log-502-error"target="_blank" rel="noopener">點我前往&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;br>
@@ -323,11 +327,8 @@ alt="出錯的 LOG" width="1200">&lt;figcaption>
 &lt;a href="#%e8%a7%a3%e6%b1%ba%e9%81%8e%e7%a8%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們可以看到上方錯誤 LOG 中，發現有出現 502 error 以及 connect() failed (111: Connection refused) while connecting to upstream，這兩個錯誤都是由 Nginx 所產生的，那我們先來理解一下，Nginx 與 Soketi 之間的關係。&lt;/p>
 &lt;p>在使用上，RD 的程式會打 Soketi 專用的 Subdomain 來使用這個 WebSocket 服務，而在我們的架構上，這個 Subdomain 會經過用 nginx proxy server，來轉發到 Soketi WebSocket Server (走 k8s svc)，設定檔如下圖：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/2.webp"
-alt="入口 nginx 設定" width="800">&lt;figcaption>
-&lt;p>入口 nginx 設定&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/2.webp" data-zoomable alt="入口 nginx 設定" width="800"loading="lazy"
+/>&lt;figcaption>入口 nginx 設定&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>然後會出現 &lt;code>connect() failed (111: Connection refused) while connecting to upstream&lt;/code> 的錯誤訊息，代表我們的 Nginx 設定少了一個重要的一行設定，就是 &lt;code>proxy_http_version 1.1;&lt;/code>，這個設定要讓 Nginx 作為 proxy 可以和 upstream 的後端服務也是用 keepalive，必須使用 http 1.1，但如果沒有設定預設是 1.0，也要記得設定 &lt;code>proxy_set_header Upgrade&lt;/code>、&lt;code>proxy_set_header Connection&lt;/code>。調整過後就變成：&lt;/p>
 &lt;br>
@@ -355,6 +356,8 @@ alt="入口 nginx 設定" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -393,6 +396,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -442,6 +447,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -449,11 +456,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/3.webp"
-alt="Pod 終止的過程" width="800">&lt;figcaption>
-&lt;p>Pod 終止的過程&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/3.webp" data-zoomable alt="Pod 終止的過程" width="800"loading="lazy"
+/>&lt;figcaption>Pod 終止的過程&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>壓測&lt;span class="hx:absolute hx:-mt-20" id="壓測">&lt;/span>
 &lt;a href="#%e5%a3%93%e6%b8%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>最後調整完，我們來測試看看是否在 Pod 自動重啟 or 更新 Deployment 的時候(並且有大量連線時)還會噴 502 error 或是 &lt;code>connect() failed (111: Connection refused)&lt;/code>，我們這邊使用 k6 來做 websocket 服務的壓測，有簡單寫一個壓測程式如下：&lt;/p>
@@ -462,7 +466,7 @@ alt="Pod 終止的過程" width="800">&lt;figcaption>
 &lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2">&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;/div>
 &lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
 &lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">&lt;p>k6 壓測&lt;/p>
-&lt;p>k6 是一個開源的壓測工具，可以用來測試 API、WebSocket、gRPC 等服務，可以到它的&lt;a href="https://k6.io/"target="_blank" rel="noopener">官網&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>k6 是一個開源的壓測工具，可以用來測試 API、WebSocket、gRPC 等服務，可以到它的&lt;a href="https://k6.io/"target="_blank" rel="noopener">官網&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>查看更多資訊。&lt;/p>
 &lt;p>MacOS 安裝方式：brew install k6&lt;/p>
@@ -494,6 +498,8 @@ alt="Pod 終止的過程" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -505,27 +511,21 @@ title="Copy code"
 &lt;br>
 &lt;p>執行 &lt;code>k6 run websocket.js&lt;/code> 後，就會開始壓測，可以看到會開始執行剛剛在上面提到 default 的動作：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/4.webp"
-alt="k6 壓測過程" width="800">&lt;figcaption>
-&lt;p>k6 壓測過程&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/4.webp" data-zoomable alt="k6 壓測過程" width="800"loading="lazy"
+/>&lt;figcaption>k6 壓測過程&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>等到跑完，就會告訴你 1000 筆裡面有多少的 http 101，這邊顯示 status is 101，就代表都是 101，代表都有連線成功，沒有出現 502 error 或是 &lt;code>connect() failed (111: Connection refused)&lt;/code> 的錯誤，這樣就代表我們的問題解決了。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/5.webp"
-alt="k6 壓測結果" width="800">&lt;figcaption>
-&lt;p>k6 壓測結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/nginx/soketi-log-502-error/5.webp" data-zoomable alt="k6 壓測結果" width="800"loading="lazy"
+/>&lt;figcaption>k6 壓測結果&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>[Nginx] 解決 connect() failed (111: Connection refused) while connecting to upstream：&lt;a href="https://wshs0713.github.io/posts/8c1276a7/"target="_blank" rel="noopener">https://wshs0713.github.io/posts/8c1276a7/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>[Nginx] 解決 connect() failed (111: Connection refused) while connecting to upstream：&lt;a href="https://wshs0713.github.io/posts/8c1276a7/"target="_blank" rel="noopener">https://wshs0713.github.io/posts/8c1276a7/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>WebSocket proxying：&lt;a href="http://nginx.org/en/docs/http/websocket.html"target="_blank" rel="noopener">http://nginx.org/en/docs/http/websocket.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>WebSocket proxying：&lt;a href="http://nginx.org/en/docs/http/websocket.html"target="_blank" rel="noopener">http://nginx.org/en/docs/http/websocket.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>day 10 Pod(3)-生命週期, 容器探測：&lt;a href="https://ithelp.ithome.com.tw/articles/10236314"target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10236314&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>day 10 Pod(3)-生命週期, 容器探測：&lt;a href="https://ithelp.ithome.com.tw/articles/10236314"target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10236314&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

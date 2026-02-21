@@ -3,27 +3,21 @@
 &lt;a href="#%e8%83%8c%e6%99%af%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>因 Docker 官方最近宣布從 2025 年 04 月 01 日開始，未經過驗證的帳戶 (一般來說，GKE 拉 Docker Hub 的 Image 都屬於這類)，會有對應的 Rate Limit 限制，需要盤點及建議不要直接使用 Docker Hub 的 Image，避免 Node 擴縮 (因為沒有 Image 暫存)、或是 ImagePullPolicy 是 IfNotPresent 情況，讓 Container 需要重新 Pull 大量的 Image 出現 429 錯誤，導致 Pod 啟動不了，造成線上問題。&lt;/p>
 &lt;p>另外 GKE Node 有設定 Mirror Registry，可以減少直接從 Docker Hub 拉取 Image 的次數，但還是建議大家把 Image 搬到 GAR (Artifact Registry) 或是其他的 Registry 上。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/5.webp"
-alt="GKE Node Mirror Registry" width="700">&lt;figcaption>
-&lt;p>GKE Node Mirror Registry&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/5.webp" data-zoomable alt="GKE Node Mirror Registry" width="700"loading="lazy"
+/>&lt;figcaption>GKE Node Mirror Registry&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-blue-200 hx:bg-blue-100 hx:text-blue-900 hx:dark:border-blue-200/30 hx:dark:bg-blue-900/30 hx:dark:text-blue-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>提醒&lt;/p>
 &lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
 &lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">&lt;p>因近期官方有再次調整時間，原本是公告 03/01，有往後延長，如後續又有延後，會在同步更新在此文件中。&lt;br>
-03/01 延長到 04/01 可以參考：&lt;a href="https://github.com/docker/docs/commit/d9eb2332f9581b0b7eac1c90606528707380bf85#diff-7c1db5bfcc9a88aeecd94d07fa2138f5709a9ba977b795f67516106ce3a977ba"target="_blank" rel="noopener">https://github.com/docker/docs/commit/d9eb2332f9581b0b7eac1c90606528707380bf85#diff-7c1db5bfcc9a88aeecd94d07fa2138f5709a9ba977b795f67516106ce3a977ba&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+03/01 延長到 04/01 可以參考：&lt;a href="https://github.com/docker/docs/commit/d9eb2332f9581b0b7eac1c90606528707380bf85#diff-7c1db5bfcc9a88aeecd94d07fa2138f5709a9ba977b795f67516106ce3a977ba"target="_blank" rel="noopener">https://github.com/docker/docs/commit/d9eb2332f9581b0b7eac1c90606528707380bf85#diff-7c1db5bfcc9a88aeecd94d07fa2138f5709a9ba977b795f67516106ce3a977ba&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/1.webp"
-alt="官方限制" width="900">&lt;figcaption>
-&lt;p>官方限制&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/1.webp" data-zoomable alt="官方限制" width="900"loading="lazy"
+/>&lt;figcaption>官方限制&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>目前限制是 &lt;b>Unauthenticated users 未經驗證的用戶，每個 IPv4 or IPv6 Subnet 一小時只能 Pull 10 次&lt;/b>，如果是免費帳號(需要登入)，則是一小時 100 次。&lt;/p>
 &lt;br>
@@ -127,6 +121,8 @@ alt="官方限制" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -135,25 +131,16 @@ title="Copy code"
 &lt;/div>
 &lt;br>
 &lt;h3>成果&lt;span class="hx:absolute hx:-mt-20" id="成果">&lt;/span>
-&lt;a href="#%e6%88%90%e6%9e%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/2.webp"
-alt="掃描結果範例" width="900">&lt;figcaption>
-&lt;p>掃描結果範例&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e6%88%90%e6%9e%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/2.webp" data-zoomable alt="掃描結果範例" width="900"loading="lazy"
+/>&lt;figcaption>掃描結果範例&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/3.webp"
-alt="掃描結果範例" width="900">&lt;figcaption>
-&lt;p>掃描結果範例&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/3.webp" data-zoomable alt="掃描結果範例" width="900"loading="lazy"
+/>&lt;figcaption>掃描結果範例&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/4.webp"
-alt="掃描結果範例" width="900">&lt;figcaption>
-&lt;p>掃描結果範例&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/4.webp" data-zoomable alt="掃描結果範例" width="900"loading="lazy"
+/>&lt;figcaption>掃描結果範例&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>參考文件&lt;span class="hx:absolute hx:-mt-20" id="參考文件">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e6%96%87%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>&lt;a href="https://docs.docker.com/docker-hub/usage/"target="_blank" rel="noopener">Docker Hub usage and limits&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e6%96%87%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>&lt;a href="https://docs.docker.com/docker-hub/usage/"target="_blank" rel="noopener">Docker Hub usage and limits&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

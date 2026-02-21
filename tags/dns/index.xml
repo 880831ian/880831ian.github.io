@@ -138,7 +138,7 @@
 &lt;td style="text-align: left">&lt;strong>KubeDNS&lt;/strong>&lt;/td>
 &lt;td style="text-align: left">對 KubeDNS 的依賴性極高。只要壞掉，所有解析都會失效&lt;/td>
 &lt;td style="text-align: left">GKE 預設設定，能快速使用&lt;/td>
-&lt;td style="text-align: left">容易出現單點故障，影響所有 DNS 解析。&lt;br>GKE KubeDNS 可以將 kube-dns-autoscaler configmap 納管進版控來調整 Pod 數量 (但沒辦法動態調整)&lt;br>Deployment 沒辦法調整，會被還原，因為有：addonmanager.kubernetes.io/mode=Reconcile 設定，由 GKE 維運 (&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/custom-kube-dns?hl=zh-tw"target="_blank" rel="noopener">也可以自建 DNS&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;td style="text-align: left">容易出現單點故障，影響所有 DNS 解析。&lt;br>GKE KubeDNS 可以將 kube-dns-autoscaler configmap 納管進版控來調整 Pod 數量 (但沒辦法動態調整)&lt;br>Deployment 沒辦法調整，會被還原，因為有：addonmanager.kubernetes.io/mode=Reconcile 設定，由 GKE 維運 (&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/custom-kube-dns?hl=zh-tw"target="_blank" rel="noopener">也可以自建 DNS&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>)&lt;/td>
 &lt;td style="text-align: left">KubeDNS 的 IP&lt;/td>
@@ -170,38 +170,38 @@
 &lt;h2>注意事項&lt;span class="hx:absolute hx:-mt-20" id="注意事項">&lt;/span>
 &lt;a href="#%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ol>
 &lt;li>測試 KubeDNS、KubeDNS + NodeLocal DNSCache、Cloud DNS、Cloud DNS + NodeLocal DNSCache 使用 K6 簡單進行壓測，會發現除了 Cloud DNS 以外，其他的 DNS 解析 RPS 不一定會慢於直接打 IP&lt;/li>
-&lt;li>如果有需求需要管理 KubeDNS Deployment 服務，可以參考：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/custom-kube-dns?hl=zh-tw"target="_blank" rel="noopener">自訂 kube-dns 部署作業&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>如果有需求需要管理 KubeDNS Deployment 服務，可以參考：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/custom-kube-dns?hl=zh-tw"target="_blank" rel="noopener">自訂 kube-dns 部署作業&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>，但會有相對的維運成本 (因為官方預設的沒辦法調整 Deployment，會因為 addonmanager.kubernetes.io/mode=Reconcile 被 GKE 還原)&lt;/li>
 &lt;li>所有只要經過 Cloud DNS 以及 Metadata Server (在 Node 上) 都會有 Cache 機制&lt;/li>
-&lt;li>將 GKE 叢集的 DNS 服務從 KubeDNS + NodeLocal DNSCache 換成 Cloud DNS + NodeLocal DNSCache，且此過程會導致舊節點無法解析網域，造成服務中斷，因此建議在維護期間執行，可以參考：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#dns-fails-dnscache"target="_blank" rel="noopener">從 kube-dns 遷移至 Cloud DNS 後，啟用 NodeLocal DNSCache 時 DNS 解析失敗&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>將 GKE 叢集的 DNS 服務從 KubeDNS + NodeLocal DNSCache 換成 Cloud DNS + NodeLocal DNSCache，且此過程會導致舊節點無法解析網域，造成服務中斷，因此建議在維護期間執行，可以參考：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#dns-fails-dnscache"target="_blank" rel="noopener">從 kube-dns 遷移至 Cloud DNS 後，啟用 NodeLocal DNSCache 時 DNS 解析失敗&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/li>
-&lt;li>在升級 GKE Cluster 時，因為會更新 KubeDNS，所以有可能會發生 DNS 解析失敗的情況，不管是否有開啟 NodeLocal DNSCache，都也可能發生 (通常只有一小部分節點會遇到 10%)，可以參考：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw#performance_limitations_with_kube-dns"target="_blank" rel="noopener">kube-dns 的效能限制&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>在升級 GKE Cluster 時，因為會更新 KubeDNS，所以有可能會發生 DNS 解析失敗的情況，不管是否有開啟 NodeLocal DNSCache，都也可能發生 (通常只有一小部分節點會遇到 10%)，可以參考：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/kube-dns?hl=zh-tw#performance_limitations_with_kube-dns"target="_blank" rel="noopener">kube-dns 的效能限制&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-dns/1.webp" width="600">
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-dns/1.webp" data-zoomable width="600"loading="lazy"
+/>&lt;/figure>
 &lt;br>
 &lt;ol start="6">
-&lt;li>將 GKE 叢集的 DNS 服務從 KubeDNS 換成 Cloud DNS VPC 範圍，必須在重建節點後才會生效，且此過程會導致舊節點無法解析網域，造成服務中斷，因此建議在維護期間執行，可以參考：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#enable-vpc-scope-existing"target="_blank" rel="noopener">在現有叢集啟用 VPC 範圍 DNS&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>將 GKE 叢集的 DNS 服務從 KubeDNS 換成 Cloud DNS VPC 範圍，必須在重建節點後才會生效，且此過程會導致舊節點無法解析網域，造成服務中斷，因此建議在維護期間執行，可以參考：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#enable-vpc-scope-existing"target="_blank" rel="noopener">在現有叢集啟用 VPC 範圍 DNS&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-dns/2.webp" width="600">
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-dns/2.webp" data-zoomable width="600"loading="lazy"
+/>&lt;/figure>
 &lt;br>
 &lt;ol start="7">
-&lt;li>如果已經建立 GKE Cloud DNS VPC 範圍的 Cluster，是沒辦法切換回 KubeDNS，只能重建 Cluster，可以參考：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#disable-cloud-dns"target="_blank" rel="noopener">停用 Cloud DNS for GKE&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>如果已經建立 GKE Cloud DNS VPC 範圍的 Cluster，是沒辦法切換回 KubeDNS，只能重建 Cluster，可以參考：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#disable-cloud-dns"target="_blank" rel="noopener">停用 Cloud DNS for GKE&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-dns/3.webp" width="600">
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-dns/3.webp" data-zoomable width="600"loading="lazy"
+/>&lt;/figure>
 &lt;br>
 &lt;h2>結論&lt;span class="hx:absolute hx:-mt-20" id="結論">&lt;/span>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們上面進行測試的內容，是為了選出 4 種在 GKE DNS 比較好的一個選型，最終考慮：&lt;/p>
@@ -245,9 +245,9 @@
 &lt;p>我們上述的選型主要考慮的不是 KubeDNS 或是 NodeLocal DNSCache 故障等異常情形 (這個異常是可以透過監控以及好的維運設定改善的)，而是上面那四點綜合評估下來的結論&lt;/p></description></item><item><title>GKE DNS 使用 Cloud DNS + NodeLocal DNSCache 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-cloud-dns-nodelocaldnscache/</link><pubDate>Fri, 08 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-cloud-dns-nodelocaldnscache/</guid><description>
 &lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host">Pod 出現 cURL error 6: Could not resolve host&lt;/a>，此篇文章測試的是： Cloud DNS + NodeLocal DNSCache 的運作。&lt;/p>
 &lt;br>
-&lt;p>首先，先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>首先，先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;/svg>&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>，會分別測試&lt;/p>
 &lt;ol>
@@ -262,27 +262,24 @@
 &lt;/li>
 &lt;/ol>
 &lt;p>並使用 nslookup 腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS、NodeLocal DNSCache Pod&lt;/p>
-&lt;p>相關程式以及 Prometheus、Grafana 的設定可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>相關程式以及 Prometheus、Grafana 的設定可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;br>
 &lt;p>在建立完 Cluster 後，可以先觀察在 Cloud DNS 是否新增的 Private Zone&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cloud-dns-nodelocaldnscache.webp" width="850">
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cloud-dns-nodelocaldnscache.webp" data-zoomable width="850"loading="lazy"
+/>&lt;/figure>
 &lt;br>
 &lt;p>由於裡面有很多的 Record，我們先搜尋下面會用到的 nginx-svc.default.svc.cluster.local 來當作範例&lt;/p>
 &lt;br>
 &lt;h2>叢集內部 cluster.local&lt;span class="hx:absolute hx:-mt-20" id="叢集內部-clusterlocal">&lt;/span>
 &lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>一樣會觀察 KubeDNS Pod Metrics，因為就算開啟 Cloud DNS 後，KubeDNS 還是會留著&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/1.webp"
-alt="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture " width="750">&lt;figcaption>
-&lt;p>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/1.webp" data-zoomable alt="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture" width="750"loading="lazy"
+/>&lt;figcaption>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>NodeLocal DNSCache Prometheus 監控設定參數：&lt;code>zones=&amp;quot;cluster.local.&amp;quot;&lt;/code>&lt;/p>
 &lt;br>
@@ -299,6 +296,8 @@ alt="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#a
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -348,6 +347,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -360,17 +361,11 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx:absolute hx:-mt-20" id="測試腳本">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/2.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/2.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/3.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/3.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -383,17 +378,11 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/4.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/4.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/5.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/5.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -412,6 +401,8 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -424,6 +415,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -433,23 +426,14 @@ title="Copy code"
 &lt;br>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/6.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/6.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/7.webp"
-alt="發現會卡住，直到手動下指令恢復 NodeLocal DNSCache" width="500">&lt;figcaption>
-&lt;p>發現會卡住，直到手動下指令恢復 NodeLocal DNSCache&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/7.webp" data-zoomable alt="發現會卡住，直到手動下指令恢復 NodeLocal DNSCache" width="500"loading="lazy"
+/>&lt;figcaption>發現會卡住，直到手動下指令恢復 NodeLocal DNSCache&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/8.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/cluster-dns/8.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -461,11 +445,8 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;h2>Internal DNS (Cloud DNS Private)&lt;span class="hx:absolute hx:-mt-20" id="internal-dns-cloud-dns-private">&lt;/span>
 &lt;a href="#internal-dns-cloud-dns-private" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先建立一個 cloud dns private，以下範例是 aaa.test-audit.com &amp;gt; 10.1.1.4，並將此 use VPC 與 GKE 的 VPC 打通&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/1.webp"
-alt="設定 cloud dns private" width="600">&lt;figcaption>
-&lt;p>設定 cloud dns private&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/1.webp" data-zoomable alt="設定 cloud dns private" width="600"loading="lazy"
+/>&lt;figcaption>設定 cloud dns private&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>NodeLocal DNSCache Prometheus 監控設定參數：&lt;code>zones=&amp;quot;.&amp;quot;&lt;/code>&lt;/p>
 &lt;br>
@@ -482,6 +463,8 @@ alt="設定 cloud dns private" width="600">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -531,6 +514,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -542,17 +527,11 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx:absolute hx:-mt-20" id="測試腳本-1">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/2.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/2.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/3.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/3.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -565,17 +544,11 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/4.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/4.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/5.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/5.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -594,6 +567,8 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -606,6 +581,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -615,29 +592,17 @@ title="Copy code"
 &lt;br>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/6.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/6.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/7.webp"
-alt="只要 NodeLocal DNSCache 故障解析就會卡住，等到恢復，就能繼續正常運作" width="500">&lt;figcaption>
-&lt;p>只要 NodeLocal DNSCache 故障解析就會卡住，等到恢復，就能繼續正常運作&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/7.webp" data-zoomable alt="只要 NodeLocal DNSCache 故障解析就會卡住，等到恢復，就能繼續正常運作" width="500"loading="lazy"
+/>&lt;figcaption>只要 NodeLocal DNSCache 故障解析就會卡住，等到恢復，就能繼續正常運作&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/8.webp"
-alt="模擬 NodeLocal DNSCache 故障" width="800&amp;#34;">&lt;figcaption>
-&lt;p>模擬 NodeLocal DNSCache 故障&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/8.webp" data-zoomable alt="模擬 NodeLocal DNSCache 故障" width="800&amp;#34;"loading="lazy"
+/>&lt;figcaption>模擬 NodeLocal DNSCache 故障&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/9.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/internal-dns/9.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -662,6 +627,8 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -711,6 +678,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -722,17 +691,11 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx:absolute hx:-mt-20" id="測試腳本-2">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/1.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/1.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/2.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/2.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -746,17 +709,11 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/3.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/3.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/4.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/4.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -775,6 +732,8 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -787,6 +746,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -796,29 +757,17 @@ title="Copy code"
 &lt;br>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/5.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/5.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/6.webp"
-alt="只要 NodeLocal DNSCache 故障解析就會卡住，等到恢復，就能繼續正常運作" width="500">&lt;figcaption>
-&lt;p>只要 NodeLocal DNSCache 故障解析就會卡住，等到恢復，就能繼續正常運作&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/6.webp" data-zoomable alt="只要 NodeLocal DNSCache 故障解析就會卡住，等到恢復，就能繼續正常運作" width="500"loading="lazy"
+/>&lt;figcaption>只要 NodeLocal DNSCache 故障解析就會卡住，等到恢復，就能繼續正常運作&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/7.webp"
-alt="模擬 NodeLocal DNSCache 故障" width="800">&lt;figcaption>
-&lt;p>模擬 NodeLocal DNSCache 故障&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/7.webp" data-zoomable alt="模擬 NodeLocal DNSCache 故障" width="800"loading="lazy"
+/>&lt;figcaption>模擬 NodeLocal DNSCache 故障&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/8.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/external-dns/8.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -831,7 +780,7 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#k6-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>額外在另一個 cluster 建立 nginx deployment 開 5 個 pod 以及 svc 改成 lb (L4)，然後在 cloud dns 的 test-audit-com 設定 nginx-lb-internal.test-audit.com 解析到內網的 svc (10.156.16.19)&lt;/p>
 &lt;br>
 &lt;p>使用 k6 測試 KubeDNS + NodeLocal DNSCache 模式下 IP 跟 DNS 的差異&lt;/p>
-&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;p>這邊測試的 Node 是用 e2-medium 而非 c3d-standard-4&lt;/p>
@@ -839,58 +788,34 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;h3>第一次測試&lt;span class="hx:absolute hx:-mt-20" id="第一次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=144.26ms / 3895 RPS)、DNS (avg=145.16ms / 3887 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/1.webp"
-alt="IP 第一次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第一次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/2.webp"
-alt="DNS 第一次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第一次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/1.webp" data-zoomable alt="IP 第一次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第一次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/2.webp" data-zoomable alt="DNS 第一次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第一次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>第二次測試&lt;span class="hx:absolute hx:-mt-20" id="第二次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=141.37ms / 3960 RPS)、DNS (avg=144.9ms / 3806 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/3.webp"
-alt="IP 第二次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第二次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/4.webp"
-alt="DNS 第二次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第二次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/3.webp" data-zoomable alt="IP 第二次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第二次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/4.webp" data-zoomable alt="DNS 第二次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第二次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>第三次測試&lt;span class="hx:absolute hx:-mt-20" id="第三次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=172.8ms / 2959 RPS)、DNS (avg=150.34ms / 3715 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/5.webp"
-alt="IP 第三次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第三次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/6.webp"
-alt="DNS 第三次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第三次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/5.webp" data-zoomable alt="IP 第三次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第三次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/6.webp" data-zoomable alt="DNS 第三次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第三次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>第四次測試&lt;span class="hx:absolute hx:-mt-20" id="第四次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e5%9b%9b%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=168.01ms / 3071 RPS)、DNS (avg=168.14ms / 3018 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/7.webp"
-alt="IP 第四次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第四次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/8.webp"
-alt="DNS 第四次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第四次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/7.webp" data-zoomable alt="IP 第四次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第四次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/k6/8.webp" data-zoomable alt="DNS 第四次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第四次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -903,47 +828,34 @@ alt="DNS 第四次測試" width="1000">&lt;figcaption>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 Cloud DNS + NodeLocal DNSCache 的模式下，不管是哪一個解析，不會使用到 KubeDNS，所以可以把 KubeDNS 關成 0 顆，避免浪費資源。&lt;/p>
 &lt;p>但是也可以發現當 NodeLocal DNSCache 只要發生問題，所有的解析都會有異常，所以不太建議使用 Cloud DNS + NodeLocal DNSCache 的模式&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/nodelocal-dnscache-cloud-dns.webp"
-alt="Cloud DNS &amp;#43; NodeLocal DNSCache 流程圖
-https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane " width="650">&lt;figcaption>
-&lt;p>Cloud DNS + NodeLocal DNSCache 流程圖&lt;br>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/nodelocal-dnscache-cloud-dns.webp" data-zoomable alt="Cloud DNS &amp;#43; NodeLocal DNSCache 流程圖&amp;lt;br&amp;gt;[https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane](https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane)" width="650"loading="lazy"
+/>&lt;figcaption>Cloud DNS + NodeLocal DNSCache 流程圖&lt;br>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>由於官方流程圖有些細節沒有揭露的完成，我們有額外詢問 Google TAM，並畫出以下流程圖，Google TAM 也確認流程正確&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/nodelocal-dnscache-cloud-dns-flow.webp"
-alt="自己重新畫的 Cloud DNS &amp;#43; NodeLocal DNSCache 流程圖" width="1200">&lt;figcaption>
-&lt;p>自己重新畫的 Cloud DNS + NodeLocal DNSCache 流程圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/nodelocal-dnscache-cloud-dns-flow.webp" data-zoomable alt="自己重新畫的 Cloud DNS &amp;#43; NodeLocal DNSCache 流程圖" width="1200"loading="lazy"
+/>&lt;figcaption>自己重新畫的 Cloud DNS + NodeLocal DNSCache 流程圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>另外也可以從官方文件中得知 KubeDNS + NodeLocal DNSCache 的 &lt;code>/etc/resolv.conf&lt;/code> 設定值，可以知道 Pod 最開始使用的 DNS 解析 Server 是誰。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/resolv.webp"
-alt="/etc/resolv.conf 設定值 服務探索和 DNS /etc/resolv.conf " width="800">&lt;figcaption>
-&lt;p>/etc/resolv.conf 設定值 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value"target="_blank" rel="noopener">服務探索和 DNS /etc/resolv.conf&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/resolv.webp" data-zoomable alt="/etc/resolv.conf 設定值 [服務探索和 DNS /etc/resolv.conf](https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value)" width="800"loading="lazy"
+/>&lt;figcaption>/etc/resolv.conf 設定值 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value"target="_blank" rel="noopener">服務探索和 DNS /etc/resolv.conf&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/config.webp"
-alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
-&lt;p>實際查看 /etc/resolv.conf&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns-nodelocaldnscache/config.webp" data-zoomable alt="實際查看 /etc/resolv.conf" width="800"loading="lazy"
+/>&lt;figcaption>實際查看 /etc/resolv.conf&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>搭配 Cloud DNS 使用 NodeLocal DNSCache：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>搭配 Cloud DNS 使用 NodeLocal DNSCache：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#cloud_dns_dataplane&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>GKE DNS 使用 Cloud DNS 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-cloud-dns/</link><pubDate>Wed, 06 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-cloud-dns/</guid><description>
 &lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host">Pod 出現 cURL error 6: Could not resolve host&lt;/a>，此篇文章測試的是： Cloud DNS 的運作。&lt;/p>
 &lt;br>
-&lt;p>首先，先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>首先，先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;/svg>&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>，會分別測試&lt;/p>
 &lt;ol>
@@ -958,27 +870,24 @@ alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;/li>
 &lt;/ol>
 &lt;p>並使用 nslookup 腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS Pod&lt;/p>
-&lt;p>相關程式以及 Prometheus、Grafana 的設定可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>相關程式以及 Prometheus、Grafana 的設定可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;br>
 &lt;p>在建立完 Cluster 後，可以先觀察在 Cloud DNS 是否新增的 Private Zone&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cloud-dns-private.webp" width="850">
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cloud-dns-private.webp" data-zoomable width="850"loading="lazy"
+/>&lt;/figure>
 &lt;br>
 &lt;p>由於裡面有很多的 Record，我們先搜尋下面會用到的 nginx-svc.default.svc.cluster.local 來當作範例&lt;/p>
 &lt;br>
 &lt;h2>叢集內部 cluster.local&lt;span class="hx:absolute hx:-mt-20" id="叢集內部-clusterlocal">&lt;/span>
 &lt;a href="#%e5%8f%a2%e9%9b%86%e5%85%a7%e9%83%a8-clusterlocal" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>一樣會觀察 KubeDNS Pod Metrics，因為就算開啟 Cloud DNS 後，KubeDNS 還是會留著&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/1.webp"
-alt="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture " width="750">&lt;figcaption>
-&lt;p>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/1.webp" data-zoomable alt="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture" width="750"loading="lazy"
+/>&lt;figcaption>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#architecture&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ul>
 &lt;li>相關 Prometheus 監控指標：&lt;/li>
@@ -989,6 +898,8 @@ alt="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw#a
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1038,6 +949,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1050,17 +963,11 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx:absolute hx:-mt-20" id="測試腳本">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/2.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/2.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/3.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/3.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1073,17 +980,11 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/4.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/4.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/5.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/cluster-dns/5.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1095,11 +996,8 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;h2>Internal DNS (Cloud DNS Private)&lt;span class="hx:absolute hx:-mt-20" id="internal-dns-cloud-dns-private">&lt;/span>
 &lt;a href="#internal-dns-cloud-dns-private" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先建立一個 cloud dns private，以下範例是 aaa.test-audit.com &amp;gt; 10.1.1.4，並將此 use VPC 與 GKE 的 VPC 打通&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/1.webp"
-alt="設定 cloud dns private" width="600">&lt;figcaption>
-&lt;p>設定 cloud dns private&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/1.webp" data-zoomable alt="設定 cloud dns private" width="600"loading="lazy"
+/>&lt;figcaption>設定 cloud dns private&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ul>
 &lt;li>相關 Prometheus 監控指標：&lt;/li>
@@ -1110,6 +1008,8 @@ alt="設定 cloud dns private" width="600">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1159,6 +1059,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1170,17 +1072,11 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx:absolute hx:-mt-20" id="測試腳本-1">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/2.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/2.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/3.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/3.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1193,17 +1089,11 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/4.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/4.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/5.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/internal-dns/5.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1223,6 +1113,8 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1272,6 +1164,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1283,17 +1177,11 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx:absolute hx:-mt-20" id="測試腳本-2">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/1.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/1.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/2.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/2.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1306,17 +1194,11 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/3.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/3.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/4.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/external-dns/4.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1329,7 +1211,7 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#k6-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>額外在另一個 cluster 建立 nginx deployment 開 5 個 pod 以及 svc 改成 lb (L4)，然後在 cloud dns 的 test-audit-com 設定 nginx-lb-internal.test-audit.com 解析到內網的 svc (10.156.16.16)&lt;/p>
 &lt;br>
 &lt;p>使用 k6 測試 kube dns 模式下 IP 跟 DNS 的差異&lt;/p>
-&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;p>這邊測試的 Node 是用 e2-medium 而非 c3d-standard-4&lt;/p>
@@ -1337,58 +1219,34 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;h3>第一次測試&lt;span class="hx:absolute hx:-mt-20" id="第一次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=179.06ms / 3479 RPS)、DNS (avg=191.56ms / 3348 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/1.webp"
-alt="IP 第一次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第一次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/2.webp"
-alt="DNS 第一次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第一次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/1.webp" data-zoomable alt="IP 第一次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第一次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/2.webp" data-zoomable alt="DNS 第一次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第一次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>第二次測試&lt;span class="hx:absolute hx:-mt-20" id="第二次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=193.67ms / 3322 RPS)、DNS (avg=302.73ms / 2430 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/3.webp"
-alt="IP 第二次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第二次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/4.webp"
-alt="DNS 第二次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第二次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/3.webp" data-zoomable alt="IP 第二次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第二次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/4.webp" data-zoomable alt="DNS 第二次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第二次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>第三次測試&lt;span class="hx:absolute hx:-mt-20" id="第三次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=174.94ms / 3529 RPS)、DNS (avg=253.71ms / 2761 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/5.webp"
-alt="IP 第三次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第三次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/6.webp"
-alt="DNS 第三次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第三次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/5.webp" data-zoomable alt="IP 第三次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第三次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/6.webp" data-zoomable alt="DNS 第三次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第三次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>第四次測試&lt;span class="hx:absolute hx:-mt-20" id="第四次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e5%9b%9b%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=227.56ms / 2971 RPS)、DNS (avg=316.07ms / 2361 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/7.webp"
-alt="IP 第四次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第四次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/8.webp"
-alt="DNS 第四次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第四次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/7.webp" data-zoomable alt="IP 第四次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第四次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/k6/8.webp" data-zoomable alt="DNS 第四次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第四次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1400,19 +1258,13 @@ alt="DNS 第四次測試" width="1000">&lt;figcaption>
 &lt;h2>結論&lt;span class="hx:absolute hx:-mt-20" id="結論">&lt;/span>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 Cloud DNS 的模式下，所有的 DNS 解析都會依靠 Cloud DNS，不會使用到 KubeDNS，所以可以把 KubeDNS 關成 0 顆，避免浪費資源。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/gke-cloud-dns-architecture.webp"
-alt="GKE Cloud DNS" width="700">&lt;figcaption>
-&lt;p>GKE Cloud DNS&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/gke-cloud-dns-architecture.webp" data-zoomable alt="GKE Cloud DNS" width="700"loading="lazy"
+/>&lt;figcaption>GKE Cloud DNS&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>由於官方流程圖有些細節沒有揭露的完成，我們有額外詢問 Google TAM，並畫出以下流程圖，Google TAM 也確認流程正確&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/gke-cloud-dns-architecture-flow.webp"
-alt="自己重新畫的 GKE Cloud DNS" width="1200">&lt;figcaption>
-&lt;p>自己重新畫的 GKE Cloud DNS&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/gke-cloud-dns-architecture-flow.webp" data-zoomable alt="自己重新畫的 GKE Cloud DNS" width="1200"loading="lazy"
+/>&lt;figcaption>自己重新畫的 GKE Cloud DNS&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>以下是我們與 Google 討論的內容：&lt;/p>
 &lt;p>我們：&lt;/p>
@@ -1448,29 +1300,23 @@ alt="自己重新畫的 GKE Cloud DNS" width="1200">&lt;figcaption>
 &lt;/ol>
 &lt;br>
 &lt;p>另外也可以從官方文件中得知 KubeDNS 的 &lt;code>/etc/resolv.conf&lt;/code> 設定值，可以知道 Pod 最開始使用的 DNS 解析 Server 是誰。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/resolv.webp"
-alt="/etc/resolv.conf 設定值 服務探索和 DNS /etc/resolv.conf " width="800">&lt;figcaption>
-&lt;p>/etc/resolv.conf 設定值 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value"target="_blank" rel="noopener">服務探索和 DNS /etc/resolv.conf&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/resolv.webp" data-zoomable alt="/etc/resolv.conf 設定值 [服務探索和 DNS /etc/resolv.conf](https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value)" width="800"loading="lazy"
+/>&lt;figcaption>/etc/resolv.conf 設定值 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value"target="_blank" rel="noopener">服務探索和 DNS /etc/resolv.conf&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/config.webp"
-alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
-&lt;p>實際查看 /etc/resolv.conf&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-cloud-dns/config.webp" data-zoomable alt="實際查看 /etc/resolv.conf" width="800"loading="lazy"
+/>&lt;figcaption>實際查看 /etc/resolv.conf&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 GKE 適用的 Cloud DNS：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 GKE 適用的 Cloud DNS：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/cloud-dns?hl=zh-tw&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>GKE DNS 使用 KubeDNS + NodeLocal DNSCache 運作測試</title><link>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</link><pubDate>Fri, 01 Aug 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gke-kubedns-nodelocaldnscache/</guid><description>
 &lt;p>最近在評估要將公司內的 EndPoint 都改成 Cloud DNS 的 Private Zone (打造內部的 internal dns 服務機制)，到時候 DNS 解析的請求會比以往還要多，所以需要先測試評估 GKE 內的 DNS 解析方案，避免再次發生 &lt;a href="../../kubernetes/pod-curl-error-6-could-not-resolve-host">Pod 出現 cURL error 6: Could not resolve host&lt;/a>，此篇文章測試的是： KubeDNS + NodeLocal DNSCache 的運作。&lt;/p>
 &lt;br>
-&lt;p>首先，先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>首先，先建立一個 dns-test pod &lt;a href="https://github.com/880831ian/gke-dns/blob/main/dns-test.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;/svg>&lt;/a> 以及 nginx 的 pod + svc &lt;a href="https://github.com/880831ian/gke-dns/blob/main/nginx.yaml"target="_blank" rel="noopener">程式連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>，會分別測試&lt;/p>
 &lt;ol>
@@ -1485,7 +1331,7 @@ alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;/li>
 &lt;/ol>
 &lt;p>並使用 nslookup 腳本進行確認回傳 DNS 解析，每一次測試都會重新建立 KubeDNS、NodeLocal DNSCache Pod&lt;/p>
-&lt;p>相關程式以及 Prometheus、Grafana 的設定可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>相關程式以及 Prometheus、Grafana 的設定可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;br>
@@ -1505,6 +1351,8 @@ alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1554,6 +1402,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1566,17 +1416,11 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx:absolute hx:-mt-20" id="測試腳本">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/1.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/1.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/2.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/2.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1589,35 +1433,20 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/3.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/3.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/4.webp"
-alt="第二輪才出現錯誤" width="500">&lt;figcaption>
-&lt;p>第二輪才出現錯誤&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/4.webp" data-zoomable alt="第二輪才出現錯誤" width="500"loading="lazy"
+/>&lt;figcaption>第二輪才出現錯誤&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/5.webp"
-alt="因為 KubeDNS 關成 0 顆，不會馬上關掉" width="700">&lt;figcaption>
-&lt;p>因為 KubeDNS 關成 0 顆，不會馬上關掉&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/5.webp" data-zoomable alt="因為 KubeDNS 關成 0 顆，不會馬上關掉" width="700"loading="lazy"
+/>&lt;figcaption>因為 KubeDNS 關成 0 顆，不會馬上關掉&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/6.webp"
-alt="將 KubeDNS 調整回來，就正常解析" width="500">&lt;figcaption>
-&lt;p>將 KubeDNS 調整回來，就正常解析&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/6.webp" data-zoomable alt="將 KubeDNS 調整回來，就正常解析" width="500"loading="lazy"
+/>&lt;figcaption>將 KubeDNS 調整回來，就正常解析&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/7.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/7.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1639,6 +1468,8 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1651,6 +1482,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1660,36 +1493,21 @@ title="Copy code"
 &lt;br>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/8.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/8.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>分別在 15:55:53 跟 15:57:04 下指令調整&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/9.webp"
-alt="模擬 NodeLocal DNSCache 故障" width="800">&lt;figcaption>
-&lt;p>模擬 NodeLocal DNSCache 故障&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/9.webp" data-zoomable alt="模擬 NodeLocal DNSCache 故障" width="800"loading="lazy"
+/>&lt;figcaption>模擬 NodeLocal DNSCache 故障&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/10.webp"
-alt="觀察調整讓 NodeLocal DNSCache 故障 Log" width="500">&lt;figcaption>
-&lt;p>觀察調整讓 NodeLocal DNSCache 故障 Log&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/10.webp" data-zoomable alt="觀察調整讓 NodeLocal DNSCache 故障 Log" width="500"loading="lazy"
+/>&lt;figcaption>觀察調整讓 NodeLocal DNSCache 故障 Log&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/11.webp"
-alt="觀察修正 NodeLocal DNSCache Log" width="500">&lt;figcaption>
-&lt;p>觀察修正 NodeLocal DNSCache Log&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/11.webp" data-zoomable alt="觀察修正 NodeLocal DNSCache Log" width="500"loading="lazy"
+/>&lt;figcaption>觀察修正 NodeLocal DNSCache Log&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/12.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/cluster-dns/12.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1707,11 +1525,8 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;h2>Internal DNS (Cloud DNS Private)&lt;span class="hx:absolute hx:-mt-20" id="internal-dns-cloud-dns-private">&lt;/span>
 &lt;a href="#internal-dns-cloud-dns-private" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>先建立一個 cloud dns private，以下範例是 aaa.test-audit.com &amp;gt; 10.1.1.4，並將此 use VPC 與 GKE 的 VPC 打通&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/1.webp"
-alt="設定 cloud dns private" width="600">&lt;figcaption>
-&lt;p>設定 cloud dns private&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/1.webp" data-zoomable alt="設定 cloud dns private" width="600"loading="lazy"
+/>&lt;figcaption>設定 cloud dns private&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>NodeLocal DNSCache Prometheus 監控設定參數：&lt;code>zones=&amp;quot;.&amp;quot;&lt;/code>&lt;/p>
 &lt;br>
@@ -1728,6 +1543,8 @@ alt="設定 cloud dns private" width="600">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1777,6 +1594,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1788,17 +1607,11 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx:absolute hx:-mt-20" id="測試腳本-1">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/2.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/2.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/3.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/3.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1811,23 +1624,14 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/4.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/4.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/5.webp"
-alt="因為 KubeDNS 關成 0 顆，不會馬上關掉" width="700">&lt;figcaption>
-&lt;p>因為 KubeDNS 關成 0 顆，不會馬上關掉&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/5.webp" data-zoomable alt="因為 KubeDNS 關成 0 顆，不會馬上關掉" width="700"loading="lazy"
+/>&lt;figcaption>因為 KubeDNS 關成 0 顆，不會馬上關掉&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/6.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/6.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1846,6 +1650,8 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1858,6 +1664,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1867,24 +1675,15 @@ title="Copy code"
 &lt;br>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/7.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/7.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>分別在 18:26:11 跟 18:28:03 下指令調整&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/8.webp"
-alt="模擬 NodeLocal DNSCache 故障" width="800">&lt;figcaption>
-&lt;p>模擬 NodeLocal DNSCache 故障&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/8.webp" data-zoomable alt="模擬 NodeLocal DNSCache 故障" width="800"loading="lazy"
+/>&lt;figcaption>模擬 NodeLocal DNSCache 故障&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/9.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/internal-dns/9.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1915,6 +1714,8 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1964,6 +1765,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1975,17 +1778,11 @@ title="Copy code"
 &lt;h3>測試腳本&lt;span class="hx:absolute hx:-mt-20" id="測試腳本-2">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6%e8%85%b3%e6%9c%ac-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/1.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/1.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/2.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/2.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -1998,23 +1795,14 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#%e6%a8%a1%e6%93%ac-kubedns-pod-%e7%95%b0%e5%b8%b8-2" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>接下來會在測試中，將 KubeDNS 調整到 0 顆，再開回去，觀察此模式對於 KubeDNS 的依賴&lt;/p>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/3.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/3.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/4.webp"
-alt="因為 KubeDNS 關成 0 顆，不會馬上關掉" width="700">&lt;figcaption>
-&lt;p>因為 KubeDNS 關成 0 顆，不會馬上關掉&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/4.webp" data-zoomable alt="因為 KubeDNS 關成 0 顆，不會馬上關掉" width="700"loading="lazy"
+/>&lt;figcaption>因為 KubeDNS 關成 0 顆，不會馬上關掉&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/5.webp"
-alt="Prometheus 監控指標" width="900">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/5.webp" data-zoomable alt="Prometheus 監控指標" width="900"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -2033,6 +1821,8 @@ alt="Prometheus 監控指標" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2045,6 +1835,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2054,24 +1846,15 @@ title="Copy code"
 &lt;br>
 &lt;p>測試結果：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/6.webp"
-alt="測試結果" width="450">&lt;figcaption>
-&lt;p>測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/6.webp" data-zoomable alt="測試結果" width="450"loading="lazy"
+/>&lt;figcaption>測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>分別在 19:52:28 跟 19:53:16 下指令調整&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/7.webp"
-alt="模擬 NodeLocal DNSCache 故障" width="800">&lt;figcaption>
-&lt;p>模擬 NodeLocal DNSCache 故障&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/7.webp" data-zoomable alt="模擬 NodeLocal DNSCache 故障" width="800"loading="lazy"
+/>&lt;figcaption>模擬 NodeLocal DNSCache 故障&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/8.webp"
-alt="Prometheus 監控指標" width="1200">&lt;figcaption>
-&lt;p>Prometheus 監控指標&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/external-dns/8.webp" data-zoomable alt="Prometheus 監控指標" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 監控指標&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -2090,7 +1873,7 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;a href="#k6-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>額外在另一個 cluster 建立 nginx deployment 開 5 個 pod 以及 svc 改成 lb (L4)，然後在 cloud dns 的 test-audit-com 設定 nginx-lb-internal.test-audit.com 解析到內網的 svc (10.156.17.230)&lt;/p>
 &lt;br>
 &lt;p>使用 k6 測試 KubeDNS + NodeLocal DNSCache 模式下 IP 跟 DNS 的差異&lt;/p>
-&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>相關程式可以參考：&lt;a href="https://github.com/880831ian/gke-dns"target="_blank" rel="noopener">https://github.com/880831ian/gke-dns&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;p>這邊測試的 Node 是用 e2-medium 而非 c3d-standard-4&lt;/p>
@@ -2098,58 +1881,34 @@ alt="Prometheus 監控指標" width="1200">&lt;figcaption>
 &lt;h3>第一次測試&lt;span class="hx:absolute hx:-mt-20" id="第一次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%b8%80%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=181.7ms / 3511 RPS)、DNS (avg=335.43ms / 2278 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/1.webp"
-alt="IP 第一次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第一次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/2.webp"
-alt="DNS 第一次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第一次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/1.webp" data-zoomable alt="IP 第一次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第一次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/2.webp" data-zoomable alt="DNS 第一次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第一次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>第二次測試&lt;span class="hx:absolute hx:-mt-20" id="第二次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%ba%8c%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=336.98ms / 2272 RPS)、DNS (avg=503.79ms / 1640 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/3.webp"
-alt="IP 第二次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第二次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/4.webp"
-alt="DNS 第二次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第二次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/3.webp" data-zoomable alt="IP 第二次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第二次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/4.webp" data-zoomable alt="DNS 第二次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第二次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>第三次測試&lt;span class="hx:absolute hx:-mt-20" id="第三次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e4%b8%89%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=128.9ms / 4310 RPS)、DNS (avg=129.23ms / 4310 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/5.webp"
-alt="IP 第三次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第三次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/6.webp"
-alt="DNS 第三次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第三次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/5.webp" data-zoomable alt="IP 第三次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第三次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/6.webp" data-zoomable alt="DNS 第三次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第三次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>第四次測試&lt;span class="hx:absolute hx:-mt-20" id="第四次測試">&lt;/span>
 &lt;a href="#%e7%ac%ac%e5%9b%9b%e6%ac%a1%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>IP (avg=149.5ms / 3965 RPS)、DNS (avg=133.73ms / 4230 RPS)&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/7.webp"
-alt="IP 第四次測試" width="1000">&lt;figcaption>
-&lt;p>IP 第四次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/8.webp"
-alt="DNS 第四次測試" width="1000">&lt;figcaption>
-&lt;p>DNS 第四次測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/7.webp" data-zoomable alt="IP 第四次測試" width="1000"loading="lazy"
+/>&lt;figcaption>IP 第四次測試&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/k6/8.webp" data-zoomable alt="DNS 第四次測試" width="1000"loading="lazy"
+/>&lt;figcaption>DNS 第四次測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>結論&lt;/p>
@@ -2161,22 +1920,15 @@ alt="DNS 第四次測試" width="1000">&lt;figcaption>
 &lt;h2>結論&lt;span class="hx:absolute hx:-mt-20" id="結論">&lt;/span>
 &lt;a href="#%e7%b5%90%e8%ab%96" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>可以發現，使用 KubeDNS + NodeLocal DNSCache 的模式下，對於 KubeDNS 的依賴性降低了很多，因為 NodeLocal DNSCache 會先做 cache hit，這樣就算 KubeDNS 異常（只有 cluster 內的，且 cache 失效才會影響），否則不會影響到 pod 的 DNS 解析。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/nodelocal-dns-cache-diagram.webp"
-alt="KubeDNS &amp;#43; NodeLocal DNSCache 流程圖
-https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture " width="650">&lt;figcaption>
-&lt;p>KubeDNS + NodeLocal DNSCache 流程圖&lt;br>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/nodelocal-dns-cache-diagram.webp" data-zoomable alt="KubeDNS &amp;#43; NodeLocal DNSCache 流程圖&amp;lt;br&amp;gt;[https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture](https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture)" width="650"loading="lazy"
+/>&lt;figcaption>KubeDNS + NodeLocal DNSCache 流程圖&lt;br>&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw#architecture&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>由於官方流程圖有些細節沒有揭露的完成，我們有額外詢問 Google TAM，並畫出以下流程圖，Google TAM 也確認流程正確&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/nodelocal-dns-cache-flow.webp"
-alt="自己重新畫的 GKE KubeDNS &amp;#43; NodeLocal DNSCache 流程圖" width="1200">&lt;figcaption>
-&lt;p>自己重新畫的 GKE KubeDNS + NodeLocal DNSCache 流程圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/nodelocal-dns-cache-flow.webp" data-zoomable alt="自己重新畫的 GKE KubeDNS &amp;#43; NodeLocal DNSCache 流程圖" width="1200"loading="lazy"
+/>&lt;figcaption>自己重新畫的 GKE KubeDNS + NodeLocal DNSCache 流程圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>以下是我們與 Google 討論的內容：&lt;/p>
 &lt;p>我們：&lt;/p>
@@ -2200,31 +1952,21 @@ alt="自己重新畫的 GKE KubeDNS &amp;#43; NodeLocal DNSCache 流程圖" widt
 &lt;br>
 &lt;p>這是 K8s 官方的 NodeLocalDNS 流程圖：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/nodelocaldns.webp"
-alt="Using NodeLocal DNSCache in Kubernetes Clusters
-https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram " width="600">&lt;figcaption>
-&lt;p>Using NodeLocal DNSCache in Kubernetes Clusters&lt;br>&lt;a href="https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram"target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/nodelocaldns.webp" data-zoomable alt="Using NodeLocal DNSCache in Kubernetes Clusters&amp;lt;br&amp;gt;[https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram](https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram)" width="600"loading="lazy"
+/>&lt;figcaption>Using NodeLocal DNSCache in Kubernetes Clusters&lt;br>&lt;a href="https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram"target="_blank" rel="noopener">https://kubernetes.io/docs/tasks/administer-cluster/nodelocaldns/#architecture-diagram&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>另外也可以從官方文件中得知 KubeDNS + NodeLocal DNSCache 的 &lt;code>/etc/resolv.conf&lt;/code> 設定值，可以知道 Pod 最開始使用的 DNS 解析 Server 是誰。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/resolv.webp"
-alt="/etc/resolv.conf 設定值 服務探索和 DNS /etc/resolv.conf " width="800">&lt;figcaption>
-&lt;p>/etc/resolv.conf 設定值 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value"target="_blank" rel="noopener">服務探索和 DNS /etc/resolv.conf&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/resolv.webp" data-zoomable alt="/etc/resolv.conf 設定值 [服務探索和 DNS /etc/resolv.conf](https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value)" width="800"loading="lazy"
+/>&lt;figcaption>/etc/resolv.conf 設定值 &lt;a href="https://cloud.google.com/kubernetes-engine/docs/concepts/service-discovery?hl=zh-tw#conf_value"target="_blank" rel="noopener">服務探索和 DNS /etc/resolv.conf&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/config.webp"
-alt="實際查看 /etc/resolv.conf" width="800">&lt;figcaption>
-&lt;p>實際查看 /etc/resolv.conf&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/gke-kubedns-nodelocaldnscache/config.webp" data-zoomable alt="實際查看 /etc/resolv.conf" width="800"loading="lazy"
+/>&lt;figcaption>實際查看 /etc/resolv.conf&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>設定 NodeLocal DNSCache：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>設定 NodeLocal DNSCache：&lt;a href="https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw"target="_blank" rel="noopener">https://cloud.google.com/kubernetes-engine/docs/how-to/nodelocal-dns-cache?hl=zh-tw&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

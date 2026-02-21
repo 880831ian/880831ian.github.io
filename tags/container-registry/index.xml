@@ -28,34 +28,22 @@
 &lt;br>
 &lt;p>上面有提到 Container Registry 其中一個特點就是掃描映像檔，會檢查有沒有奇怪的內容或是錯誤，讓我們在部署前可以先做檢查，底下是整個的流程圖：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/1.webp"
-alt="Container Registry 掃描流程圖" width="800">&lt;figcaption>
-&lt;p>Container Registry 掃描流程圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/1.webp" data-zoomable alt="Container Registry 掃描流程圖" width="800"loading="lazy"
+/>&lt;figcaption>Container Registry 掃描流程圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>我們可以延續上一篇文章 &lt;a href="https://pin-yi.me/blog/gcp/cloud-source-repositories/">Cloud Source Repositories&lt;/a> 來說明上面圖片，一開始先 commit 到 GCP 上，也可以把它當成 Cloud Source Repositories，就著透過會透過&lt;a href="https://pin-yi.me/blog/gcp/cloud-build/">下一篇要講的 Cloud Build&lt;/a> 來建置，並且掃描，如果沒有問題就會 Pubish 到 Container Registry 存放囉～&lt;/p>
 &lt;br>
 &lt;p>我們就簡單說明要怎麼查看我們的 Container Registry，點選則左側的 menu &amp;gt; 選擇 &lt;strong>Container Registry&lt;/strong> &amp;gt; 點擊 &lt;strong>映像檔&lt;/strong>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/2.webp"
-alt="Container Registry" width="350">&lt;figcaption>
-&lt;p>Container Registry&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/2.webp" data-zoomable alt="Container Registry" width="350"loading="lazy"
+/>&lt;figcaption>Container Registry&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>一開始可能沒有任何的資料夾，之後當我們 Build 時，可以新增特定的資料夾來放我們的映像檔，可以參考下方圖片：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/3.webp"
-alt="Container Registry 資料夾" width="750">&lt;figcaption>
-&lt;p>Container Registry 資料夾&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/3.webp" data-zoomable alt="Container Registry 資料夾" width="750"loading="lazy"
+/>&lt;figcaption>Container Registry 資料夾&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>進入該資料夾後，就可以看到裡面的映像檔案：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/4.webp"
-alt="Container Registry 映像檔" width="1000">&lt;figcaption>
-&lt;p>Container Registry 映像檔&lt;/p>
-&lt;/figcaption>
-&lt;/figure></description></item></channel></rss>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/container-registry/4.webp" data-zoomable alt="Container Registry 映像檔" width="1000"loading="lazy"
+/>&lt;figcaption>Container Registry 映像檔&lt;/figcaption>&lt;/figure></description></item></channel></rss>

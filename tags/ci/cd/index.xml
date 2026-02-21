@@ -2,7 +2,7 @@
 &lt;p>會寫此文章主要原因是公司會需要打包多個 IOS APP，之前是使用 github 來進行打包，但因為費用以及管理問題，所以想測試改用 AWS 的 EC2 macOS 來當作 Runner。&lt;/p>
 &lt;br>
 &lt;h2>建立 macOS Runner 機器&lt;span class="hx:absolute hx:-mt-20" id="建立-macos-runner-機器">&lt;/span>
-&lt;a href="#%e5%bb%ba%e7%ab%8b-macos-runner-%e6%a9%9f%e5%99%a8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>AWS 能夠建立 macOS 的 EC2 Instances，使用的 instance_type 會是 mac2.metal 或 mac1.metal，這兩種型號的差異可以參考 &lt;a href="https://aws.amazon.com/tw/ec2/instance-types/mac/"target="_blank" rel="noopener">AWS 官方文件&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%bb%ba%e7%ab%8b-macos-runner-%e6%a9%9f%e5%99%a8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>AWS 能夠建立 macOS 的 EC2 Instances，使用的 instance_type 會是 mac2.metal 或 mac1.metal，這兩種型號的差異可以參考 &lt;a href="https://aws.amazon.com/tw/ec2/instance-types/mac/"target="_blank" rel="noopener">AWS 官方文件&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>，且會需要使用專用主機(Dedicated Hosts)，這個專用主機開下去，只能 24 小時後才可以關閉。&lt;/p>
 &lt;p>IaC 上需要多設定 &lt;code>create_dedicated_host&lt;/code> 或 &lt;code>host_id&lt;/code>，下面說明兩個設定：&lt;/p>
@@ -18,11 +18,8 @@
 &lt;br>
 &lt;p>另外根據 instance_type 會需要選擇對應的 ami，例如：instance_type 是 mac2.metal，mac2.metal 是 arm 架構，就需要選擇 arm 的 ami，也要記得選對 OS 版本。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ec2-macos-gitlab-runner/1.webp"
-alt="不同的 instance_type 需要選擇對應的 AMI" width="1000">&lt;figcaption>
-&lt;p>不同的 instance_type 需要選擇對應的 AMI&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ec2-macos-gitlab-runner/1.webp" data-zoomable alt="不同的 instance_type 需要選擇對應的 AMI" width="1000"loading="lazy"
+/>&lt;figcaption>不同的 instance_type 需要選擇對應的 AMI&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>macOS EC2 注意事項&lt;span class="hx:absolute hx:-mt-20" id="macos-ec2-注意事項">&lt;/span>
 &lt;a href="#macos-ec2-%e6%b3%a8%e6%84%8f%e4%ba%8b%e9%a0%85" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>在測試的過程中，有發現一些 macOS EC2 的限制，提供給大家參加(有些上面有提到)：&lt;/p>
@@ -30,11 +27,8 @@ alt="不同的 instance_type 需要選擇對應的 AMI" width="1000">&lt;figcapt
 &lt;li>需要選擇 macOS 版本 (macOS Sequola、macOS Sonoma、macOS Ventura)&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ec2-macos-gitlab-runner/2.webp"
-alt="有不同的 OS 版本可以選擇" width="700">&lt;figcaption>
-&lt;p>有不同的 OS 版本可以選擇&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ec2-macos-gitlab-runner/2.webp" data-zoomable alt="有不同的 OS 版本可以選擇" width="700"loading="lazy"
+/>&lt;figcaption>有不同的 OS 版本可以選擇&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="2">
 &lt;li>只有兩種機器規格可以選擇，分別是：
@@ -54,11 +48,8 @@ alt="有不同的 OS 版本可以選擇" width="700">&lt;figcaption>
 &lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ec2-macos-gitlab-runner/3.webp"
-alt="會顯示無法使用 Spot VM" width="900">&lt;figcaption>
-&lt;p>會顯示無法使用 Spot VM&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ec2-macos-gitlab-runner/3.webp" data-zoomable alt="會顯示無法使用 Spot VM" width="900"loading="lazy"
+/>&lt;figcaption>會顯示無法使用 Spot VM&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="5">
 &lt;li>
@@ -78,11 +69,8 @@ alt="會顯示無法使用 Spot VM" width="900">&lt;figcaption>
 &lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ec2-macos-gitlab-runner/4.webp"
-alt="預設的 Disk 使用情況" width="900">&lt;figcaption>
-&lt;p>預設的 Disk 使用情況&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ec2-macos-gitlab-runner/4.webp" data-zoomable alt="預設的 Disk 使用情況" width="900"loading="lazy"
+/>&lt;figcaption>預設的 Disk 使用情況&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>安裝 Gitlab-Runner&lt;span class="hx:absolute hx:-mt-20" id="安裝-gitlab-runner">&lt;/span>
 &lt;a href="#%e5%ae%89%e8%a3%9d-gitlab-runner" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>需要切換到 ec2-user 內，並執行此腳本，記得要輸入大寫的單位名稱 (此為公司設計的命名規則，可以依照自己需求修改)&lt;/p>
@@ -129,6 +117,8 @@ alt="預設的 Disk 使用情況" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -142,6 +132,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -150,13 +142,10 @@ title="Copy code"
 &lt;/div>
 &lt;p>注意！不要使用 &lt;code>gitlab-runner start&lt;/code>，避免遇到 &lt;code>FATAL: Failed to start gitlab-runner: exit status 134&lt;/code> 錯誤&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ec2-macos-gitlab-runner/5.webp"
-alt="使用 start 會噴 134 錯誤" width="900">&lt;figcaption>
-&lt;p>使用 start 會噴 134 錯誤&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ec2-macos-gitlab-runner/5.webp" data-zoomable alt="使用 start 會噴 134 錯誤" width="900"loading="lazy"
+/>&lt;figcaption>使用 start 會噴 134 錯誤&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;p>這個問題官方文件也有說明，start 會需要 LaunchAgent，然後 LaunchAgent 需要先透過 GUI 登入才可以，官方文件：&lt;a href="https://docs.gitlab.com/runner/install/osx/#fatal-failed-to-start-gitlab-runner-exit-status-134-on-gitlab-runner-start-command"target="_blank" rel="noopener">Install GitLab Runner on macOS | GitLab Docs&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>這個問題官方文件也有說明，start 會需要 LaunchAgent，然後 LaunchAgent 需要先透過 GUI 登入才可以，官方文件：&lt;a href="https://docs.gitlab.com/runner/install/osx/#fatal-failed-to-start-gitlab-runner-exit-status-134-on-gitlab-runner-start-command"target="_blank" rel="noopener">Install GitLab Runner on macOS | GitLab Docs&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>如何為 CI/CD 配置 GCP Artifact Registry 的 Docker 認證</title><link>https://pin-yi.me/blog/gcp/gcp-artifact-registry-docker-auth/</link><pubDate>Thu, 26 Dec 2024 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/gcp-artifact-registry-docker-auth/</guid><description>
 &lt;h2>說明&lt;span class="hx:absolute hx:-mt-20" id="說明">&lt;/span>
@@ -198,6 +187,8 @@ alt="使用 start 會噴 134 錯誤" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -226,6 +217,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -250,6 +243,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -265,6 +260,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -286,6 +283,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -316,6 +315,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>

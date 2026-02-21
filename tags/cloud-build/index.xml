@@ -3,11 +3,8 @@
 &lt;br>
 &lt;p>我們今天文章，需要使用前幾天提到的 &lt;a href="https://pin-yi.me/blog/gcp/cloud-source-repositories/">Cloud Source Repositories&lt;/a> 、&lt;a href="https://pin-yi.me/blog/gcp/compute-engine/">Compute Engine&lt;/a>、&lt;a href="https://pin-yi.me/blog/gcp/container-registry/">Container Registry&lt;/a>，我們需要先透過 GitLab 將程式鏡像到 Cloud Source Repositories，再透過 Cloud Build 觸發將 GitLab 上面的 Dockerfile 建置到 Container Registry 中，再部署到 Compute Engine VM 上。大家可以參考流程圖，會更清楚今天的流程！那我們就開始囉 🥸&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/1.webp"
-alt="流程圖" width="1200">&lt;figcaption>
-&lt;p>流程圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/1.webp" data-zoomable alt="流程圖" width="1200"loading="lazy"
+/>&lt;figcaption>流程圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>Cloud Source Repositories 測試&lt;span class="hx:absolute hx:-mt-20" id="cloud-source-repositories-測試">&lt;/span>
 &lt;a href="#cloud-source-repositories-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>前面 GitLab 鏡像設定，請先參考上上篇 &lt;a href="https://pin-yi.me/blog/gcp/cloud-source-repositories/">Google Cloud Platform (GCP) - Cloud Source Repositories&lt;/a>，上上篇會帶大家從 GitLab 鏡像到 Cloud Source Repositories，所以我們就接續之前的內容，繼續往下開始學習吧～&lt;/p>
@@ -20,27 +17,21 @@ alt="流程圖" width="1200">&lt;figcaption>
 &lt;li>輸入觸發條件的名稱，事件可以設定我們要怎麼進行觸發，我們這邊先選擇 &lt;strong>推送至分支的版本&lt;/strong> 來觸發，在來源選擇上上篇建立好的 Cloud Source Repositories 存放區，分支版本我們先使用預設的 master，也就是推程式到 master 他會就觸發 Cloud Build：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/2.webp"
-alt="建立觸發條件 1" width="900">&lt;figcaption>
-&lt;p>建立觸發條件 1&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/2.webp" data-zoomable alt="建立觸發條件 1" width="900"loading="lazy"
+/>&lt;figcaption>建立觸發條件 1&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="3">
 &lt;li>設定類型我們選擇 Cloud Build 設定檔，他也是 Cloud Build 專用的設定檔，後面會帶大家寫一份 Cloud Build，位置當然是使用我們 Cloud Source Repositories 存放區，以及可以依照專案來修改 cloudbuild.yaml 放在專案的哪裡，最後都沒問題，就按下建立：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/3.webp"
-alt="建立觸發條件 2" width="900">&lt;figcaption>
-&lt;p>建立觸發條件 2&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/3.webp" data-zoomable alt="建立觸發條件 2" width="900"loading="lazy"
+/>&lt;figcaption>建立觸發條件 2&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>撰寫 cloudbuild.yaml 設定檔&lt;span class="hx:absolute hx:-mt-20" id="撰寫-cloudbuildyaml-設定檔">&lt;/span>
 &lt;a href="#%e6%92%b0%e5%af%ab-cloudbuildyaml-%e8%a8%ad%e5%ae%9a%e6%aa%94" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在開始建立檔案前，先來跟大家說說檔案內有哪些設定吧：&lt;/p>
 &lt;br>
 &lt;p>首先 Cloud Build 建構器是裝有常用的程式語言和工具的容器映像。我們可以配置 Cloud Build，讓建構器中運行特定命令，我舉個例子讓大家了解：&lt;/p>
-&lt;p>以下程式碼是來自 &lt;a href="https://hub.docker.com/search?q=&amp;amp;type=image"target="_blank" rel="noopener">Docker Hub&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>以下程式碼是來自 &lt;a href="https://hub.docker.com/search?q=&amp;amp;type=image"target="_blank" rel="noopener">Docker Hub&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 的 &lt;code>ubnutu&lt;/code> 映像檔中所執行的命令：&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
@@ -50,6 +41,8 @@ alt="建立觸發條件 2" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -122,6 +115,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -151,6 +146,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -177,6 +174,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -192,56 +191,41 @@ title="Copy code"
 &lt;li>當我們推送後，我們先檢查 Cloud Source Repositories 是否有成功從 GitLab 鏡像過來：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/4.webp"
-alt="Cloud Source Repositories" width="700">&lt;figcaption>
-&lt;p>Cloud Source Repositories&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/4.webp" data-zoomable alt="Cloud Source Repositories" width="700"loading="lazy"
+/>&lt;figcaption>Cloud Source Repositories&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="2">
 &lt;li>檢查看看 Container Registry 是否多了名為 &lt;code>ian-test&lt;/code> 的資料夾，且裡面有一個 tag 為 &lt;code>ian-nginx-test&lt;/code> 的映像檔：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/5.webp"
-alt="Container Registry" width="1000">&lt;figcaption>
-&lt;p>Container Registry&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/5.webp" data-zoomable alt="Container Registry" width="1000"loading="lazy"
+/>&lt;figcaption>Container Registry&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="3">
 &lt;li>檢查一下 Cloud Build 的觸發條件是不是在運作，最後成功可以看到類似下方圖片內容：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/6.webp"
-alt="Cloud Build 的觸發條件" width="1200">&lt;figcaption>
-&lt;p>Cloud Build 的觸發條件&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/6.webp" data-zoomable alt="Cloud Build 的觸發條件" width="1200"loading="lazy"
+/>&lt;figcaption>Cloud Build 的觸發條件&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="4">
 &lt;li>檢查 Compute Engine 的 VM 是否有成功被建立：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/7.webp"
-alt="Compute Engine" width="1200">&lt;figcaption>
-&lt;p>Compute Engine&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/7.webp" data-zoomable alt="Compute Engine" width="1200"loading="lazy"
+/>&lt;figcaption>Compute Engine&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="5">
 &lt;li>最後就是測試這個映像檔案，是不是我們所 Build 的，測試方法很簡單，我們剛剛在 Dockerfile 有複製我們自己寫的 index.html 檔案，去蓋掉原本 nginx 的預設檔，所以我們可以瀏覽上面圖片的外部 IP，就可以看到我們所改的頁面囉！&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/8.webp"
-alt="測試用 index.html" width="700">&lt;figcaption>
-&lt;p>測試用 index.html&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-build/8.webp" data-zoomable alt="測試用 index.html" width="700"loading="lazy"
+/>&lt;figcaption>測試用 index.html&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Cloud Builder：&lt;a href="https://cloud.google.com/build/docs/cloud-builders"target="_blank" rel="noopener">https://cloud.google.com/build/docs/cloud-builders&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Cloud Builder：&lt;a href="https://cloud.google.com/build/docs/cloud-builders"target="_blank" rel="noopener">https://cloud.google.com/build/docs/cloud-builders&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Day27 - 用 Cloud Build 實作 CI 部分：&lt;a href="https://ithelp.ithome.com.tw/articles/10224727"target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10224727&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Day27 - 用 Cloud Build 實作 CI 部分：&lt;a href="https://ithelp.ithome.com.tw/articles/10224727"target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10224727&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

@@ -1,6 +1,6 @@
 # PIN-YI
 
-> <no value>
+> 
 
 
 ## 介紹與聲明
@@ -84,8 +84,7 @@ gke master … - Published 2023-09-13
 - [如何透過 OpenTelemetry 來收集 Ingress Nginx Controller 的 Metrics 與 Traces 並送到 Datadog 上](https://pin-yi.me/blog/opentelemetry/opentelemetry-ingress-nginx-controller/): 由於最近公司想要導入 Datadog，在測試過程中順便導入 OpenTelemetry 來收集 Metrics 與 Traces 並送到 Datadog 上 ～
 🔥 這個範例比較特別， … - Published 2023-09-13
 - [什麼是 Opentelemetry？可觀測性 (Observability) 又是什麼？](https://pin-yi.me/blog/opentelemetry/opentelemetry-observability/): 在介紹 Opentelemetry 之前，我們要先了解一下目前軟體架構以及基礎設施的演進：
-軟體架構以及基礎設施的演進
-第一階段在軟體架構設計上較為簡單，不會有什麼特別需要拆分出來的程式，所以都是一整 … - Published 2023-09-06
+軟體架構以及基礎設施的演進 第一階段在軟體架構設計上較為簡單，不會有什麼特別需要拆分出來的程式，所以都是一整 … - Published 2023-09-06
 
 ### 敏捷開發 (Agile)
 - [串接 Jira 工單自動化通知到 Google Chat](https://pin-yi.me/blog/agile/jira-to-google-chat/): 介紹 我們使用 Jira 的 Ticket 來當作工單，其他單位如果需要請 SRE 協助，都需要填寫此工單，我們的流程是以下：
@@ -121,8 +120,7 @@ Redis 提供非常實用的功能來讓我們實現多機的 in-memory  … - Pu
 - [使用 Jenkins 設定 GitHub 觸發程序並通知 Telegram Bot](https://pin-yi.me/blog/git-or-cicd/jenkins-github-tg-bot/): 此文章是接續前面 Jenkins 及 Ansible IT 自動化 CI/CD 介紹 文章，此篇會實際安裝及實作 Jenkins，大家記得在學習前要先檢查自己的版本是否有新的更新！那我們開始囉 😘 … - Published 2022-05-16
 - [Jenkins 及 Ansible IT 自動化 CI/CD 介紹](https://pin-yi.me/blog/git-or-cicd/jenkins-ansible-it-cicd/): 在軟體開發領域中，IT 自動化 (automation) 及 持續整合 (Continuous Integration, CI) 、持續佈署 (Continuous Deployment,CD) … - Published 2022-05-11
 - [Git 介紹](https://pin-yi.me/blog/git-or-cicd/git-introduce/): 什麼是 Git ? 不管是不是工程師，只要常常需要使用電腦工作，每天一定都會新增、修改、刪除許多檔案，我們看到這張圖：
-很多人的電腦裡面都有這樣的內容
-這張圖是一個菜鳥工程師在整理檔案時的方法，因為每 … - Published 2022-04-15
+很多人的電腦裡面都有這樣的內容 這張圖是一個菜鳥工程師在整理檔案時的方法，因為每 … - Published 2022-04-15
 
 ### 其他(還想不到分類)
 - [Bookstack 開源知識庫筆記平台安裝 (K8s + docker)](https://pin-yi.me/blog/other/bookstack/): 最近剛好有公司同事離職，想要把交接的資料給整理整理，雖然部門之前有架設專用的 wiki 給 RD 使用，但覺得介面沒有到很好用，於是就在網路上尋找，可以多人編輯的筆記系統，一開始有想過用 CodiMD … - Published 2023-04-07
@@ -152,11 +150,12 @@ Laravel 內建會員系統 Laravel 這個框架，很方便的 … - Published 2
 ### 研討會 / 講座
 - [朝陽科技大學 - 安全前瞻：網站防護與 DevOps 技術講座](https://pin-yi.me/blog/conference-or-lecture/20240529-devops-introduce/): 講座資訊 時間：2024/05/29 19:00 - 21:00 地點：朝陽科技大學 &amp; Google Meet 線上連結 Google Developer Student Clubs 相關連 … - Published 2024-05-29
 
+## 時間軸
 
 ## Root Pages
 - [專案成就](https://pin-yi.me/projects/): Google Cloud Platform IP Search (Raycast Extension)一個 Raycast 擴充功能，能快速搜尋所有 Google Cloud Platform 專案 …
 - [關於我](https://pin-yi.me/about/): 哈囉大家好，我叫莊品毅 (CHUANG,PIN-YI)，也可以叫我 Ian，目前是一位 System Architect (SA) 工程師，負責規劃以及測試公司的系統架構，並且協助技術團隊解決系統相 …
 
 ---
-Generated on 2026-02-08 16:14:34 UTC
+Generated on 2026-02-21 17:56:41 UTC
 Site: https://pin-yi.me/

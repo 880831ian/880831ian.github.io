@@ -1,11 +1,8 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Cloud Source Repositories</title><link>https://pin-yi.me/tags/cloud-source-repositories/</link><description>Recent content in Cloud Source Repositories on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Sun, 03 Jul 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/cloud-source-repositories/index.xml" rel="self" type="application/rss+xml"/><item><title>Google Cloud Platform (GCP) - Cloud Source Repositories</title><link>https://pin-yi.me/blog/gcp/cloud-source-repositories/</link><pubDate>Sun, 03 Jul 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/gcp/cloud-source-repositories/</guid><description>
 &lt;p>跟大家介紹一下今天的主題 Cloud Source Repositories，聽到 Source Repositories 是不是感覺跟什麼東西很像呀，沒錯，就跟我們的 GitHub or GitLab 一樣，可以用來存放我們的程式碼的儲存庫，我們來看看官方怎麼介紹他吧：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/1.webp"
-alt="官方介紹 Cloud Source Repositories" width="800">&lt;figcaption>
-&lt;p>官方介紹 Cloud Source Repositories&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/1.webp" data-zoomable alt="官方介紹 Cloud Source Repositories" width="800"loading="lazy"
+/>&lt;figcaption>官方介紹 Cloud Source Repositories&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>很好歐，非常簡單明瞭 🤣，沒錯，Cloud Source Repositories 就是託管在 Google Cloud 上功能齊全(？)的私有 Git 儲存庫。為什麼會打一個問號呢？是因為他其實沒有那麼好用，所以我們通常的做法，還是會依靠 GitHab 或是 GitLab 來存放程式碼，再透過鏡像 (mirror) 的方式到 Google Cloud Source Repositories。 那我們就開始囉～&lt;/p>
 &lt;br>
@@ -13,11 +10,8 @@ alt="官方介紹 Cloud Source Repositories" width="800">&lt;figcaption>
 &lt;a href="#cloud-source-repositories-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>建立 GitLab Project&lt;span class="hx:absolute hx:-mt-20" id="建立-gitlab-project">&lt;/span>
 &lt;a href="#%e5%bb%ba%e7%ab%8b-gitlab-project" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>首先，我們用 GitLab 來當示範，如何透過鏡像 (mirror) 到 Cloud Source Repositories 上面，我們先在 GitLab 上建立一個 Project：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/2.webp"
-alt="建立 GitLab Project" width="800">&lt;figcaption>
-&lt;p>建立 GitLab Project&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/2.webp" data-zoomable alt="建立 GitLab Project" width="800"loading="lazy"
+/>&lt;figcaption>建立 GitLab Project&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>使用 gcloud 指令建立 Source Repo&lt;span class="hx:absolute hx:-mt-20" id="使用-gcloud-指令建立-source-repo">&lt;/span>
 &lt;a href="#%e4%bd%bf%e7%94%a8-gcloud-%e6%8c%87%e4%bb%a4%e5%bb%ba%e7%ab%8b-source-repo" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
@@ -28,6 +22,8 @@ alt="建立 GitLab Project" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -41,6 +37,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -56,6 +54,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -71,6 +71,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -81,48 +83,33 @@ title="Copy code"
 &lt;li>完成後，開啟 GCP 檢查一下是否有建立成功～點擊左側 menu &amp;gt; &lt;strong>Source Repositories&lt;/strong>，&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/3.webp"
-alt="開啟 Source Repositories" width="800">&lt;figcaption>
-&lt;p>開啟 Source Repositories&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/3.webp" data-zoomable alt="開啟 Source Repositories" width="800"loading="lazy"
+/>&lt;figcaption>開啟 Source Repositories&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/4.webp"
-alt="成功建立 Source Repositories" width="1000">&lt;figcaption>
-&lt;p>成功建立 Source Repositories&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/4.webp" data-zoomable alt="成功建立 Source Repositories" width="1000"loading="lazy"
+/>&lt;figcaption>成功建立 Source Repositories&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>將程式碼新增至存放區中&lt;span class="hx:absolute hx:-mt-20" id="將程式碼新增至存放區中">&lt;/span>
 &lt;a href="#%e5%b0%87%e7%a8%8b%e5%bc%8f%e7%a2%bc%e6%96%b0%e5%a2%9e%e8%87%b3%e5%ad%98%e6%94%be%e5%8d%80%e4%b8%ad" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;ol>
 &lt;li>我們要在這一步來設定鏡像 (mirror)，首先我們看剛剛上面建立好的 Source Repositories，其中有一個&lt;strong>手動產生的憑證&lt;/strong>，點選 &lt;strong>產生及儲存 Git 憑證&lt;/strong>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/5.webp"
-alt="產生及儲存 Git 憑證" width="650">&lt;figcaption>
-&lt;p>產生及儲存 Git 憑證&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/5.webp" data-zoomable alt="產生及儲存 Git 憑證" width="650"loading="lazy"
+/>&lt;figcaption>產生及儲存 Git 憑證&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="2">
 &lt;li>點完後會需要先登入你的 GCP 帳號，登入完後會出現以下內容：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/6.webp"
-alt="Configure Git" width="800">&lt;figcaption>
-&lt;p>Configure Git&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/6.webp" data-zoomable alt="Configure Git" width="800"loading="lazy"
+/>&lt;figcaption>Configure Git&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="3">
 &lt;li>接著把藍色框框內的輸入到終端機內&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/7.webp"
-alt="Configure Git" width="800">&lt;figcaption>
-&lt;p>Configure Git&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/7.webp" data-zoomable alt="Configure Git" width="800"loading="lazy"
+/>&lt;figcaption>Configure Git&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="4">
 &lt;li>接著請複製以下指令貼到終端機內，會生成憑證密碼：&lt;/li>
@@ -132,6 +119,8 @@ alt="Configure Git" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -139,11 +128,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/8.webp"
-alt="生成憑證密碼" width="800">&lt;figcaption>
-&lt;p>生成憑證密碼&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/8.webp" data-zoomable alt="生成憑證密碼" width="800"loading="lazy"
+/>&lt;figcaption>生成憑證密碼&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="5">
 &lt;li>接著請複製以下指令貼到終端機內，將用戶名存儲在 CSR_USER 環境變量中：&lt;/li>
@@ -154,6 +140,8 @@ alt="生成憑證密碼" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -161,11 +149,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/9.webp"
-alt="用戶名存儲在 CSR_USER 環境變量中" width="800">&lt;figcaption>
-&lt;p>用戶名存儲在 CSR_USER 環境變量中&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/9.webp" data-zoomable alt="用戶名存儲在 CSR_USER 環境變量中" width="800"loading="lazy"
+/>&lt;figcaption>用戶名存儲在 CSR_USER 環境變量中&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="6">
 &lt;li>接著請複製以下指令貼到終端機內，將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中 (repo name 要改成你在 gcp 上面的 repo)：&lt;/li>
@@ -175,6 +160,8 @@ alt="用戶名存儲在 CSR_USER 環境變量中" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -182,11 +169,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/10.webp"
-alt="將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中" width="800">&lt;figcaption>
-&lt;p>將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/10.webp" data-zoomable alt="將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中" width="800"loading="lazy"
+/>&lt;figcaption>將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="7">
 &lt;li>接著請複製以下指令貼到終端機內，將存儲庫的 URL（包括用戶名）印到終端機上：&lt;/li>
@@ -196,6 +180,8 @@ alt="將 GCP 存儲庫的 URL 存儲在 CSR_REPO 環境變量中" width="800">&l
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -203,11 +189,8 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/11.webp"
-alt="存儲庫的 URL（包括用戶名）印到終端機上" width="800">&lt;figcaption>
-&lt;p>存儲庫的 URL（包括用戶名）印到終端機上&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/11.webp" data-zoomable alt="存儲庫的 URL（包括用戶名）印到終端機上" width="800"loading="lazy"
+/>&lt;figcaption>存儲庫的 URL（包括用戶名）印到終端機上&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>經過上面操作，我們可以在第 4 步驟拿到密碼，以及在第 7 步驟拿到完整的 GCP URL，接著我們要到 GItLab Mirror 來設定鏡像。&lt;/p>
 &lt;br>
@@ -216,45 +199,33 @@ alt="存儲庫的 URL（包括用戶名）印到終端機上" width="800">&lt;fi
 &lt;li>先從右側 muen &amp;gt; 選擇 &lt;strong>Settings&lt;/strong> &amp;gt; 點選 &lt;strong>Repository&lt;/strong>，找到 &lt;strong>Mirroring repositories&lt;/strong>&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/12.webp"
-alt="GitLab Mirror 設定鏡像" width="800">&lt;figcaption>
-&lt;p>GitLab Mirror 設定鏡像&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/12.webp" data-zoomable alt="GitLab Mirror 設定鏡像" width="800"loading="lazy"
+/>&lt;figcaption>GitLab Mirror 設定鏡像&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="2">
 &lt;li>將剛剛拿到的 URL 以及密碼各別輸入 Git repository URL 以及 Password，記得要選擇 Mirror direction，因為我們是要將 gitlab 的鏡像到 GCP 的 Cloud Source Repositories，所以我們要選擇 &lt;strong>PUSH&lt;/strong>，最後按下 &lt;strong>Mirror repository&lt;/strong>：&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/13.webp"
-alt="GitLab Mirror 設定鏡像" width="800">&lt;figcaption>
-&lt;p>GitLab Mirror 設定鏡像&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/13.webp" data-zoomable alt="GitLab Mirror 設定鏡像" width="800"loading="lazy"
+/>&lt;figcaption>GitLab Mirror 設定鏡像&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>如果沒有跳出錯誤，基本上是沒有問題了！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/14.webp"
-alt="GitLab Mirror 檢查" width="800">&lt;figcaption>
-&lt;p>GitLab Mirror 檢查&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/14.webp" data-zoomable alt="GitLab Mirror 檢查" width="800"loading="lazy"
+/>&lt;figcaption>GitLab Mirror 檢查&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="3">
 &lt;li>就可以試著在 gitlab 上面推程式，看看有沒有跑到 Cloud Source Repositories 上面囉！&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/15.webp"
-alt="GitLab 推程式測試" width="800">&lt;figcaption>
-&lt;p>GitLab 推程式測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/gcp/cloud-source-repositories/15.webp" data-zoomable alt="GitLab 推程式測試" width="800"loading="lazy"
+/>&lt;figcaption>GitLab 推程式測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://cloud.google.com/source-repositories/docs"target="_blank" rel="noopener">Cloud Source Repositories documentation&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>&lt;a href="https://cloud.google.com/source-repositories/docs"target="_blank" rel="noopener">Cloud Source Repositories documentation&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>&lt;a href="https://cloud.google.com/architecture/mirroring-gitlab-repositories-to-cloud-source-repositories"target="_blank" rel="noopener">Mirroring GitLab repositories to Cloud Source Repositories&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>&lt;a href="https://cloud.google.com/architecture/mirroring-gitlab-repositories-to-cloud-source-repositories"target="_blank" rel="noopener">Mirroring GitLab repositories to Cloud Source Repositories&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

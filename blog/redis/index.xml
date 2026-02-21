@@ -8,16 +8,13 @@
 &lt;p>為了可以擴充服務，負載平衡成為主流的技術，這幾年雖然雲端與分散式儲存運算技術火紅，除非有特別的使用需求，不然在技術上負載均衡算是比較容易達成與掌握的技術。&lt;/p>
 &lt;p>負載平衡除了分流能力之外，有另一個很大的好處就是可以提供 High Availability，也就是傳說中的 HA 架構，好讓你一台機器掛了其他伺服器可以繼續服務，降低斷線率。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy.webp"
-alt="HAProxy 與 Reids Sentinel 示意圖 selcukusta/redis-sentinel-with-haproxy " width="700">&lt;figcaption>
-&lt;p>HAProxy 與 Reids Sentinel 示意圖 &lt;a href="https://github.com/selcukusta/redis-sentinel-with-haproxy"target="_blank" rel="noopener">selcukusta/redis-sentinel-with-haproxy&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy.webp" data-zoomable alt="HAProxy 與 Reids Sentinel 示意圖 [selcukusta/redis-sentinel-with-haproxy](https://github.com/selcukusta/redis-sentinel-with-haproxy)" width="700"loading="lazy"
+/>&lt;figcaption>HAProxy 與 Reids Sentinel 示意圖 &lt;a href="https://github.com/selcukusta/redis-sentinel-with-haproxy"target="_blank" rel="noopener">selcukusta/redis-sentinel-with-haproxy&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>實作&lt;span class="hx:absolute hx:-mt-20" id="實作">&lt;/span>
-&lt;a href="#%e5%af%a6%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那接下來會使用 Docker-compose 實作 Redis 哨兵模式 + HAProxy，&lt;a href="https://github.com/880831ian/docker-compose-redis-sentinel-haproxy"target="_blank" rel="noopener">範例程式連結 點我&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%af%a6%e4%bd%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那接下來會使用 Docker-compose 實作 Redis 哨兵模式 + HAProxy，&lt;a href="https://github.com/880831ian/docker-compose-redis-sentinel-haproxy"target="_blank" rel="noopener">範例程式連結 點我&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 😘&lt;/p>
 &lt;p>版本資訊&lt;/p>
@@ -27,7 +24,7 @@ alt="HAProxy 與 Reids Sentinel 示意圖 selcukusta/redis-sentinel-with-haproxy
 &lt;li>Nginx：1.20&lt;/li>
 &lt;li>PHP：7.4-fpm&lt;/li>
 &lt;li>Redis：6.2.6&lt;/li>
-&lt;li>HAProxy：HAProxy version 2.5.5-384c5c5 2022/03/14 - &lt;a href="https://haproxy.org/"target="_blank" rel="noopener">https://haproxy.org/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>HAProxy：HAProxy version 2.5.5-384c5c5 2022/03/14 - &lt;a href="https://haproxy.org/"target="_blank" rel="noopener">https://haproxy.org/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/li>
 &lt;/ul>
@@ -64,6 +61,8 @@ alt="HAProxy 與 Reids Sentinel 示意圖 selcukusta/redis-sentinel-with-haproxy
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -178,6 +177,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -238,6 +239,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -272,6 +275,8 @@ tcp-check expect string &amp;#43;OK&lt;/code>&lt;/pre>&lt;/div>&lt;div class="he
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -287,6 +292,8 @@ server redis3 redis3:6379 check inter 2000&lt;/code>&lt;/pre>&lt;/div>&lt;div cl
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -325,6 +332,8 @@ fastcgi_param SCRIPT_FILENAME /var/www/html$fastcgi_script_name;
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -347,6 +356,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -369,6 +380,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -389,6 +402,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -429,6 +444,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -505,6 +522,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -525,6 +544,8 @@ sentinel down-after-milliseconds mymaster 5000&lt;/code>&lt;/pre>&lt;/div>&lt;di
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -535,16 +556,10 @@ title="Copy code"
 &lt;br>
 &lt;h2>測試&lt;span class="hx:absolute hx:-mt-20" id="測試">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們先用 docker-compose up 來啟動 Docker-compose.yaml，接著再啟動 sentinel/Docker-compose.yaml：&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/yaml.webp"
-alt="啟動 Docker-compose.yaml" width="700">&lt;figcaption>
-&lt;p>啟動 Docker-compose.yaml&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/sentinel-yaml.webp"
-alt="啟動 sentinel/Docker-compose.yaml" width="700">&lt;figcaption>
-&lt;p>啟動 sentinel/Docker-compose.yaml&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/yaml.webp" data-zoomable alt="啟動 Docker-compose.yaml" width="700"loading="lazy"
+/>&lt;figcaption>啟動 Docker-compose.yaml&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/sentinel-yaml.webp" data-zoomable alt="啟動 sentinel/Docker-compose.yaml" width="700"loading="lazy"
+/>&lt;figcaption>啟動 sentinel/Docker-compose.yaml&lt;/figcaption>&lt;/figure>
 &lt;p>由於為了測試，有先將所有容器設定好 IP，就不會像上一篇文章一樣要去抓 IP ，才能啟動 Sentinel。&lt;/p>
 &lt;br>
 &lt;p>這時候可以使用瀏覽器搜尋以下網址：&lt;/p>
@@ -552,41 +567,26 @@ alt="啟動 sentinel/Docker-compose.yaml" width="700">&lt;figcaption>
 &lt;li>&lt;code>test.com:8404/redis&lt;/code>：HAProxy 監看平台(只取片段)。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404.webp"
-alt="HAProxy 監控平台" width="1200">&lt;figcaption>
-&lt;p>HAProxy 監控平台&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404.webp" data-zoomable alt="HAProxy 監控平台" width="1200"loading="lazy"
+/>&lt;figcaption>HAProxy 監控平台&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ul>
 &lt;li>&lt;code>test.com:8888/rw.php&lt;/code>：只會顯示 master，並且可讀可寫。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/rw.webp"
-alt="master (redis1)" width="600">&lt;figcaption>
-&lt;p>master (redis1)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/rw.webp" data-zoomable alt="master (redis1)" width="600"loading="lazy"
+/>&lt;figcaption>master (redis1)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ul>
 &lt;li>&lt;code>test.com:8888/r.php&lt;/code>：會顯示 master、slave，且可讀。&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r1.webp"
-alt="master (redis1)" width="600">&lt;figcaption>
-&lt;p>master (redis1)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r3.webp"
-alt="slave (redis2)" width="600">&lt;figcaption>
-&lt;p>slave (redis2)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r2.webp"
-alt="slave (redis3)" width="600">&lt;figcaption>
-&lt;p>slave (redis3)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r1.webp" data-zoomable alt="master (redis1)" width="600"loading="lazy"
+/>&lt;figcaption>master (redis1)&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r3.webp" data-zoomable alt="slave (redis2)" width="600"loading="lazy"
+/>&lt;figcaption>slave (redis2)&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r2.webp" data-zoomable alt="slave (redis3)" width="600"loading="lazy"
+/>&lt;figcaption>slave (redis3)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接下來可以執行：&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
@@ -613,6 +613,8 @@ alt="slave (redis3)" width="600">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -631,6 +633,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -639,59 +643,44 @@ title="Copy code"
 &lt;/div>
 &lt;p>可以看到 &lt;code>test.com:8404/redis&lt;/code> 原本綠色的 redis1 開始變成黃色，最後變成紅色：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-1.webp"
-alt="模擬中斷服務 HAProxy 監控平台" width="1200">&lt;figcaption>
-&lt;p>模擬中斷服務 HAProxy 監控平台&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-1.webp" data-zoomable alt="模擬中斷服務 HAProxy 監控平台" width="1200"loading="lazy"
+/>&lt;figcaption>模擬中斷服務 HAProxy 監控平台&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>最後可以看到 Redis Sentinel 作動，將 master 轉移到 redis3：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-2.webp"
-alt="模擬中斷服務 HAProxy 監控平台" width="1200">&lt;figcaption>
-&lt;p>模擬中斷服務 HAProxy 監控平台&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/haproxy8404-2.webp" data-zoomable alt="模擬中斷服務 HAProxy 監控平台" width="1200"loading="lazy"
+/>&lt;figcaption>模擬中斷服務 HAProxy 監控平台&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>這時候我們再去看 &lt;code>test.com:8888/rw.php&lt;/code> ，就會發現與剛剛的 master 不太一樣囉，因為已經變成 redis2 了！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/rw-1.webp"
-alt="master (redis2)" width="600">&lt;figcaption>
-&lt;p>master (redis2)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/rw-1.webp" data-zoomable alt="master (redis2)" width="600"loading="lazy"
+/>&lt;figcaption>master (redis2)&lt;/figcaption>&lt;/figure>
 &lt;p>代表我們 HAProxy 也有成功將 master 給顯示出來！&lt;/p>
 &lt;br>
 &lt;p>我們再去看 &lt;code>test.com:8888/r.php&lt;/code> ，就可以發現剩下 redis2 以及 redis 3 了，因為 redis1 被我們給暫停服務了，而且 redis2 變成 master！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r4.webp"
-alt="master (redis2)" width="600">&lt;figcaption>
-&lt;p>master (redis2)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r2.webp"
-alt="slave (redis3)" width="600">&lt;figcaption>
-&lt;p>slave (redis3)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r4.webp" data-zoomable alt="master (redis2)" width="600"loading="lazy"
+/>&lt;figcaption>master (redis2)&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose-haproxy/r2.webp" data-zoomable alt="slave (redis3)" width="600"loading="lazy"
+/>&lt;figcaption>slave (redis3)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>HAProxy 首頁：&lt;a href="http://www.haproxy.org/"target="_blank" rel="noopener">http://www.haproxy.org/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>HAProxy 首頁：&lt;a href="http://www.haproxy.org/"target="_blank" rel="noopener">http://www.haproxy.org/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>HAproxy的安裝設定及範例：&lt;a href="https://tw511.com/a/01/6959.html"target="_blank" rel="noopener">https://tw511.com/a/01/6959.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>HAproxy的安裝設定及範例：&lt;a href="https://tw511.com/a/01/6959.html"target="_blank" rel="noopener">https://tw511.com/a/01/6959.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>redis sentinel集群配置及haproxy配置：&lt;a href="https://www.cnblogs.com/tzm7614/p/5691912.html"target="_blank" rel="noopener">https://www.cnblogs.com/tzm7614/p/5691912.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>redis sentinel集群配置及haproxy配置：&lt;a href="https://www.cnblogs.com/tzm7614/p/5691912.html"target="_blank" rel="noopener">https://www.cnblogs.com/tzm7614/p/5691912.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>富人用 L4 Switch，窮人用 Linux HAProxy！：&lt;a href="https://blog.toright.com/posts/3967/%E5%AF%8C%E4%BA%BA%E7%94%A8-l4-switch%EF%BC%8C%E7%AA%AE%E4%BA%BA%E7%94%A8-linux-haproxy%EF%BC%81.html"target="_blank" rel="noopener">https://blog.toright.com/posts/3967/%E5%AF%8C%E4%BA%BA%E7%94%A8-l4-switch%EF%BC%8C%E7%AA%AE%E4%BA%BA%E7%94%A8-linux-haproxy%EF%BC%81.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>富人用 L4 Switch，窮人用 Linux HAProxy！：&lt;a href="https://blog.toright.com/posts/3967/%E5%AF%8C%E4%BA%BA%E7%94%A8-l4-switch%EF%BC%8C%E7%AA%AE%E4%BA%BA%E7%94%A8-linux-haproxy%EF%BC%81.html"target="_blank" rel="noopener">https://blog.toright.com/posts/3967/%E5%AF%8C%E4%BA%BA%E7%94%A8-l4-switch%EF%BC%8C%E7%AA%AE%E4%BA%BA%E7%94%A8-linux-haproxy%EF%BC%81.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>selcukusta/redis-sentinel-with-haproxy：&lt;a href="https://github.com/selcukusta/redis-sentinel-with-haproxy"target="_blank" rel="noopener">https://github.com/selcukusta/redis-sentinel-with-haproxy&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>selcukusta/redis-sentinel-with-haproxy：&lt;a href="https://github.com/selcukusta/redis-sentinel-with-haproxy"target="_blank" rel="noopener">https://github.com/selcukusta/redis-sentinel-with-haproxy&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>How to Enable Health Checks in HAProxy：&lt;a href="https://www.haproxy.com/blog/how-to-enable-health-checks-in-haproxy/"target="_blank" rel="noopener">https://www.haproxy.com/blog/how-to-enable-health-checks-in-haproxy/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>How to Enable Health Checks in HAProxy：&lt;a href="https://www.haproxy.com/blog/how-to-enable-health-checks-in-haproxy/"target="_blank" rel="noopener">https://www.haproxy.com/blog/how-to-enable-health-checks-in-haproxy/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>Redis 哨兵模式 (Sentinel) 搭配 Docker-compose 實作</title><link>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose/</link><pubDate>Tue, 19 Apr 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/redis/redis-sentinel-docker-compose/</guid><description>
 &lt;h2>什麼是 Redis 哨兵模式 (Sentinel) ?&lt;span class="hx:absolute hx:-mt-20" id="什麼是-redis-哨兵模式-sentinel-">&lt;/span>
@@ -706,11 +695,8 @@ alt="slave (redis3)" width="600">&lt;figcaption>
 &lt;p>我們這邊主要介紹哨兵模式 (Sentinel)，但主要也是由主從複製模式 (Master-Slave Replication) 修改而來：&lt;/p>
 &lt;p>哨兵模式就是用來監視 Redis 系統，哨兵會監控 Master 是否正常運作。如果遇到 Master 出現故障或是離線時，哨兵之間會開始判斷，直到我們所設定需達到的判斷數量後，哨兵會將其所屬的 Slave 變成 Master，並再將其他的 Slave 指向新的 Master。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal.webp"
-alt="哨兵模式 (Sentinel)" width="550">&lt;figcaption>
-&lt;p>哨兵模式 (Sentinel)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal.webp" data-zoomable alt="哨兵模式 (Sentinel)" width="550"loading="lazy"
+/>&lt;figcaption>哨兵模式 (Sentinel)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>監控&lt;span class="hx:absolute hx:-mt-20" id="監控">&lt;/span>
 &lt;a href="#%e7%9b%a3%e6%8e%a7" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>哨兵會和要監控的 Master 建立兩條連接，&lt;code>Cmd&lt;/code> 和 &lt;code>Pub/Sub&lt;/code>：&lt;/p>
@@ -740,7 +726,7 @@ alt="哨兵模式 (Sentinel)" width="550">&lt;figcaption>
 &lt;p>接著領頭哨兵會將舊的 Master 更新成新的 Master 的 Slave ，讓其恢復服務後以 Slave 的身份繼續運作。&lt;/p>
 &lt;br>
 &lt;h2>用 Docker 實作 Redis 哨兵模式&lt;span class="hx:absolute hx:-mt-20" id="用-docker-實作-redis-哨兵模式">&lt;/span>
-&lt;a href="#%e7%94%a8-docker-%e5%af%a6%e4%bd%9c-redis-%e5%93%a8%e5%85%b5%e6%a8%a1%e5%bc%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那接下來會使用 Docker 來實作 Redis 的哨兵模式，&lt;a href="https://github.com/880831ian/docker-compose-redis-sentinel"target="_blank" rel="noopener">範例程式連結 點我&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e7%94%a8-docker-%e5%af%a6%e4%bd%9c-redis-%e5%93%a8%e5%85%b5%e6%a8%a1%e5%bc%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那接下來會使用 Docker 來實作 Redis 的哨兵模式，&lt;a href="https://github.com/880831ian/docker-compose-redis-sentinel"target="_blank" rel="noopener">範例程式連結 點我&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 😘&lt;/p>
 &lt;p>版本資訊&lt;/p>
@@ -779,6 +765,8 @@ alt="哨兵模式 (Sentinel)" width="550">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -854,6 +842,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -894,6 +884,8 @@ fastcgi_param SCRIPT_FILENAME /var/www/html$fastcgi_script_name;
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -914,6 +906,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -935,6 +929,8 @@ sentinel failover-timeout mymaster 180000&lt;/code>&lt;/pre>&lt;/div>&lt;div cla
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -982,6 +978,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1026,6 +1024,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1063,6 +1063,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1074,17 +1076,11 @@ title="Copy code"
 &lt;h2>測試&lt;span class="hx:absolute hx:-mt-20" id="測試">&lt;/span>
 &lt;a href="#%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>我們先用 docker-compose up 來啟動 Docker-compose.yaml ，接著下 sh redis.sh 指令來查看各服務的 IP 位置以及目前角色：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/docker-compose-up-1.webp"
-alt="啟動 Docker-compose.yaml" width="650">&lt;figcaption>
-&lt;p>啟動 Docker-compose.yaml&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/docker-compose-up-1.webp" data-zoomable alt="啟動 Docker-compose.yaml" width="650"loading="lazy"
+/>&lt;figcaption>啟動 Docker-compose.yaml&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-1.webp"
-alt="使用 redis.sh 檢查目前 IP 及角色" width="650">&lt;figcaption>
-&lt;p>使用 redis.sh 檢查目前 IP 及角色&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-1.webp" data-zoomable alt="使用 redis.sh 檢查目前 IP 及角色" width="650"loading="lazy"
+/>&lt;figcaption>使用 redis.sh 檢查目前 IP 及角色&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接下來先修改 docker-volume/php/index.php&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
@@ -1109,6 +1105,8 @@ alt="使用 redis.sh 檢查目前 IP 及角色" width="650">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1119,11 +1117,8 @@ title="Copy code"
 &lt;br>
 &lt;p>可以瀏覽 &lt;code>test.com:8888&lt;/code> 是否有正常抓到 redis 的 master&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-1.webp"
-alt="test.com:8888 測試網站" width="650">&lt;figcaption>
-&lt;p>test.com:8888 測試網站&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-1.webp" data-zoomable alt="test.com:8888 測試網站" width="650"loading="lazy"
+/>&lt;figcaption>test.com:8888 測試網站&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>再來修改 sentinel 內的 sentinel(1、2、3).conf 檔案&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
@@ -1137,6 +1132,8 @@ sentinel failover-timeout mymaster 180000&lt;/code>&lt;/pre>&lt;/div>&lt;div cla
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1147,11 +1144,8 @@ title="Copy code"
 &lt;br>
 &lt;p>再啟動 sentinel/Docker-compose.yaml&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/docker-compose-up-2.webp"
-alt="啟動 Docker-compose.yaml" width="700">&lt;figcaption>
-&lt;p>啟動 Docker-compose.yaml&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/docker-compose-up-2.webp" data-zoomable alt="啟動 Docker-compose.yaml" width="700"loading="lazy"
+/>&lt;figcaption>啟動 Docker-compose.yaml&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接下來我們來模擬假設 Master 服務中斷後，sentinel 會發生什麼事情：&lt;/p>
 &lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
@@ -1159,6 +1153,8 @@ alt="啟動 Docker-compose.yaml" width="700">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1168,75 +1164,51 @@ title="Copy code"
 &lt;br>
 &lt;p>下完指令後，再使用 &lt;code>sh redis.sh&lt;/code> 來看看目前的 role 狀態：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-2.webp"
-alt="使用 redis.sh 檢查目前 IP 及角色" width="700">&lt;figcaption>
-&lt;p>使用 redis.sh 檢查目前 IP 及角色&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-2.webp" data-zoomable alt="使用 redis.sh 檢查目前 IP 及角色" width="700"loading="lazy"
+/>&lt;figcaption>使用 redis.sh 檢查目前 IP 及角色&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>發現已經抓不到 master IP 以及他的角色。&lt;/p>
 &lt;br>
 &lt;p>等待一下子後，重新下 &lt;code>sh redis.sh&lt;/code> 來看目前的 role 狀態：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-3.webp"
-alt="使用 redis.sh 檢查目前 IP 及角色" width="700">&lt;figcaption>
-&lt;p>使用 redis.sh 檢查目前 IP 及角色&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/redis-sh-3.webp" data-zoomable alt="使用 redis.sh 檢查目前 IP 及角色" width="700"loading="lazy"
+/>&lt;figcaption>使用 redis.sh 檢查目前 IP 及角色&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>就會發現已經將 master 轉移到原 slave1。&lt;/p>
 &lt;br>
 &lt;p>那我們來看一下 sentinel 在背後做了哪些事情：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-1.webp"
-alt="判斷是否主觀下線及客觀下線，並發起投票" width="1200">&lt;figcaption>
-&lt;p>判斷是否主觀下線及客觀下線，並發起投票&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-1.webp" data-zoomable alt="判斷是否主觀下線及客觀下線，並發起投票" width="1200"loading="lazy"
+/>&lt;figcaption>判斷是否主觀下線及客觀下線，並發起投票&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>可以看到三個哨兵都認為 master 為 主觀下線 (sdown)，這時 sentinel-2 就認定為 客觀下線 (odown)，並發起投票要求成為領頭哨兵。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-2.webp"
-alt="進行透票，確認誰當選" width="1200">&lt;figcaption>
-&lt;p>進行透票，確認誰當選&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-2.webp" data-zoomable alt="進行透票，確認誰當選" width="1200"loading="lazy"
+/>&lt;figcaption>進行透票，確認誰當選&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>我們可以看到 Sentinel2 和 Sentinel3 都投給 Sentinel2，所以最後 Sentinel2 當選。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-3.webp"
-alt="領頭哨兵選定新 master" width="1200">&lt;figcaption>
-&lt;p>領頭哨兵選定新 master&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-3.webp" data-zoomable alt="領頭哨兵選定新 master" width="1200"loading="lazy"
+/>&lt;figcaption>領頭哨兵選定新 master&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接著 sentinel2 選出 redis-slave1 (192.168.208.5:6379) 作為 Master ，並且使用 &lt;code>failover-state-send-slaveof-noone&lt;/code> 來將 redis-slave1 解除 Slave 狀態變成獨立的 master，隨後將 redis-slave1 升成 master。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-4.webp"
-alt="設定 master 並修改原 master 變成 slave" width="1200">&lt;figcaption>
-&lt;p>設定 master 並修改原 master 變成 slave&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/sentinal-4.webp" data-zoomable alt="設定 master 並修改原 master 變成 slave" width="1200"loading="lazy"
+/>&lt;figcaption>設定 master 並修改原 master 變成 slave&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>設定完新的 Master 後，Sentinel2 讓原本的 Master 轉為 Slave，並且讓 redis-slave2(192.168.208.6:6379) 指向新的 Master。最後 Sentinel1 和 Sentinel3 開始從 Sentinel2 取得設定然後更新自己的設定，至此整個故障轉移就完成了。&lt;/p>
 &lt;br>
 &lt;p>最後我們來看一下我們用 PHP 連線的測試：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-2.webp"
-alt="連線 master" width="700">&lt;figcaption>
-&lt;p>連線 master&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-2.webp" data-zoomable alt="連線 master" width="700"loading="lazy"
+/>&lt;figcaption>連線 master&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>就會發現，已經 slave1 變成現在的 master。&lt;/p>
 &lt;br>
 &lt;p>那我們最後把原本的 master 恢復，看看會發生什麼事情：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-3.webp"
-alt="連線 master" width="700">&lt;figcaption>
-&lt;p>連線 master&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/php-3.webp" data-zoomable alt="連線 master" width="700"loading="lazy"
+/>&lt;figcaption>連線 master&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>會發現因為該啟動 master，所以他還認為他是 master，但過一下下，在查看就正常顯示 slave1 為 master，舊的 master 就變成 slave。&lt;/p>
 &lt;br>
@@ -1245,16 +1217,13 @@ alt="連線 master" width="700">&lt;figcaption>
 &lt;/ul>
 &lt;p>在學習的時候，有發現啟動 sentinel 的時候，會跳出 &lt;code>WARNING: Sentinel was not able to save the new configuration on disk!!!: Permission denied&lt;/code> 錯誤訊息，後來再去翻 redis github 的 issus 才發現作者也有發現這個問題，且已經修復了，主要是權限的問題，以及要掛載目錄而非 conf 檔案。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/bug.webp"
-alt="redis WARNING 錯誤訊息 github issus " width="700">&lt;figcaption>
-&lt;p>redis WARNING 錯誤訊息 &lt;a href="https://github.com/redis/redis/issues/8172"target="_blank" rel="noopener">github issus&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-sentinel-docker-compose/bug.webp" data-zoomable alt="redis WARNING 錯誤訊息 [github issus](https://github.com/redis/redis/issues/8172)" width="700"loading="lazy"
+/>&lt;figcaption>redis WARNING 錯誤訊息 &lt;a href="https://github.com/redis/redis/issues/8172"target="_blank" rel="noopener">github issus&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Redis (六) - 主從複製、哨兵與叢集模式：&lt;a href="https://blog.tienyulin.com/redis-master-slave-replication-sentinel-cluster/"target="_blank" rel="noopener">https://blog.tienyulin.com/redis-master-slave-replication-sentinel-cluster/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Redis (六) - 主從複製、哨兵與叢集模式：&lt;a href="https://blog.tienyulin.com/redis-master-slave-replication-sentinel-cluster/"target="_blank" rel="noopener">https://blog.tienyulin.com/redis-master-slave-replication-sentinel-cluster/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>Redis 介紹</title><link>https://pin-yi.me/blog/redis/redis-introduce/</link><pubDate>Tue, 08 Mar 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/redis/redis-introduce/</guid><description>
 &lt;h2>什麼是 Redis ?&lt;span class="hx:absolute hx:-mt-20" id="什麼是-redis-">&lt;/span>
@@ -1282,6 +1251,8 @@ alt="redis WARNING 錯誤訊息 github issus " width="700">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1298,6 +1269,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1339,6 +1312,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1356,6 +1331,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1364,7 +1341,7 @@ title="Copy code"
 &lt;/div>
 &lt;br>
 &lt;p>接下來，我們都會在 Cli 視窗做測試，會詳細介紹每一個資料型態以及其適合情境。&lt;/p>
-&lt;p>後續會使用 Cli 畫面來做示範，但也有不錯的圖形化工具可以用於 redis 上 &lt;a href="https://github.com/qishibo/AnotherRedisDesktopManager"target="_blank" rel="noopener">AnotherRedisDesktopManager&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>後續會使用 Cli 畫面來做示範，但也有不錯的圖形化工具可以用於 redis 上 &lt;a href="https://github.com/qishibo/AnotherRedisDesktopManager"target="_blank" rel="noopener">AnotherRedisDesktopManager&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 大家可以去試用看看~&lt;/p>
 &lt;br>
@@ -1380,6 +1357,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1404,6 +1383,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1425,6 +1406,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1448,6 +1431,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1469,6 +1454,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1480,22 +1467,16 @@ title="Copy code"
 &lt;h5>字串型態適合場景&lt;span class="hx:absolute hx:-mt-20" id="字串型態適合場景">&lt;/span>
 &lt;a href="#%e5%ad%97%e4%b8%b2%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>字串(strings) 型態適合用於圖片快取 （使用binary）、累計次數、觀看累計次數&lt;/strong>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/string.webp"
-alt="String 適用場景圖" width="550">&lt;figcaption>
-&lt;p>String 適用場景圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/string.webp" data-zoomable alt="String 適用場景圖" width="550"loading="lazy"
+/>&lt;figcaption>String 適用場景圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h4>哈希 (Hashes)&lt;span class="hx:absolute hx:-mt-20" id="哈希-hashes">&lt;/span>
 &lt;a href="#%e5%93%88%e5%b8%8c-hashes" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>可以把他想像成二維陣列，應該會比較好理解，我網路上找了一張圖，應該會比較清楚！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/hash.webp"
-alt="Hashes 示意圖 (Redis 基本資料形態 )" width="500">&lt;figcaption>
-&lt;p>Hashes 示意圖 (&lt;a href="https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/"target="_blank" rel="noopener">Redis 基本資料形態&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/hash.webp" data-zoomable alt="Hashes 示意圖 ([Redis 基本資料形態](https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/))" width="500"loading="lazy"
+/>&lt;figcaption>Hashes 示意圖 (&lt;a href="https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/"target="_blank" rel="noopener">Redis 基本資料形態&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>Hashes 是用來存放一組相同性質的資料，這些資料 Hashes 或是物件的某一屬性，與 String 較為不同的是他可以取回單一個欄位資料，但 String 必須取回所有資料，單一個 Key 可以存放2^32 - 1的資料欄位，&lt;/p>
 &lt;p>他的資料型態有像是，一個 user001 裡面是一個 Hashes，Hashes 裡面又會存放 name、phone、gender ，我們來實際操作看看。&lt;/p>
@@ -1513,6 +1494,8 @@ alt="Hashes 示意圖 (Redis 基本資料形態 )" width="500">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1536,6 +1519,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1555,6 +1540,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1574,6 +1561,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1594,6 +1583,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1611,6 +1602,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1633,6 +1626,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1643,11 +1638,8 @@ title="Copy code"
 &lt;h5>哈希型態適合場景&lt;span class="hx:absolute hx:-mt-20" id="哈希型態適合場景">&lt;/span>
 &lt;a href="#%e5%93%88%e5%b8%8c%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>哈希(Hashes) 型態適合用於每次只需要取用一部分的資料&lt;/strong>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/hash-template.webp"
-alt="Hashes 適用場景圖" width="550">&lt;figcaption>
-&lt;p>Hashes 適用場景圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/hash-template.webp" data-zoomable alt="Hashes 適用場景圖" width="550"loading="lazy"
+/>&lt;figcaption>Hashes 適用場景圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h4>列表 (Lists)&lt;span class="hx:absolute hx:-mt-20" id="列表-lists">&lt;/span>
 &lt;a href="#%e5%88%97%e8%a1%a8-lists" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;h5>lpush、lrange&lt;span class="hx:absolute hx:-mt-20" id="lpushlrange">&lt;/span>
@@ -1666,6 +1658,8 @@ alt="Hashes 適用場景圖" width="550">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1689,6 +1683,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1708,6 +1704,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1731,6 +1729,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1741,11 +1741,8 @@ title="Copy code"
 &lt;h5>列表型態適合場景&lt;span class="hx:absolute hx:-mt-20" id="列表型態適合場景">&lt;/span>
 &lt;a href="#%e5%88%97%e8%a1%a8%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>列表(Lists) 型態適合用於文章列表或者資料分頁展示的應用&lt;/strong>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/list.webp"
-alt="Lists 適用場景圖" width="600">&lt;figcaption>
-&lt;p>Lists 適用場景圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/list.webp" data-zoomable alt="Lists 適用場景圖" width="600"loading="lazy"
+/>&lt;figcaption>Lists 適用場景圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h4>集合 (Sets)&lt;span class="hx:absolute hx:-mt-20" id="集合-sets">&lt;/span>
 &lt;a href="#%e9%9b%86%e5%90%88-sets" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>其實跟 Lists 一樣，就是資料的集合，只是 &lt;code>Sets&lt;/code> 多了一層限制，就是集合中的值不能重複，這邊會使用到 &lt;code>sadd&lt;/code>、&lt;code>smembers&lt;/code> 來對 &lt;code>Sets&lt;/code> 做儲存以及讀取。&lt;/p>
@@ -1760,6 +1757,8 @@ alt="Lists 適用場景圖" width="600">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1782,6 +1781,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1801,6 +1802,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1821,6 +1824,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1843,6 +1848,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1853,11 +1860,8 @@ title="Copy code"
 &lt;h5>集合型態適合場景&lt;span class="hx:absolute hx:-mt-20" id="集合型態適合場景">&lt;/span>
 &lt;a href="#%e9%9b%86%e5%90%88%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>集合(Sets) 型態適合用於文章中的Tag標籤、或是要排除相同資料&lt;/strong>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/set.webp"
-alt="Sets 適用場景圖" width="700">&lt;figcaption>
-&lt;p>Sets 適用場景圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/set.webp" data-zoomable alt="Sets 適用場景圖" width="700"loading="lazy"
+/>&lt;figcaption>Sets 適用場景圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h4>有序集合 (Zset)&lt;span class="hx:absolute hx:-mt-20" id="有序集合-zset">&lt;/span>
 &lt;a href="#%e6%9c%89%e5%ba%8f%e9%9b%86%e5%90%88-zset" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>故名思義，有序集合就是有排序的集合，Sorted Sets 結構會 &lt;strong>多一個數字值去為排序的權重&lt;/strong> 來決定先後順序，這邊會使用到 &lt;code>zadd&lt;/code> 、 &lt;code> zrangebyscore&lt;/code> 來對 &lt;code>Zset&lt;/code> 做儲存以及讀取。&lt;/p>
@@ -1878,6 +1882,8 @@ alt="Sets 適用場景圖" width="700">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1905,6 +1911,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1929,6 +1937,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1952,6 +1962,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1962,30 +1974,21 @@ title="Copy code"
 &lt;h5>有序集合型態適合場景&lt;span class="hx:absolute hx:-mt-20" id="有序集合型態適合場景">&lt;/span>
 &lt;a href="#%e6%9c%89%e5%ba%8f%e9%9b%86%e5%90%88%e5%9e%8b%e6%85%8b%e9%81%a9%e5%90%88%e5%a0%b4%e6%99%af" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>&lt;strong>有序集合(Zset) 型態適合用於需要有序排列的資料&lt;/strong>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/zset.webp"
-alt="Zset 適用場景圖" width="550">&lt;figcaption>
-&lt;p>Zset 適用場景圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/zset.webp" data-zoomable alt="Zset 適用場景圖" width="550"loading="lazy"
+/>&lt;figcaption>Zset 適用場景圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>發布訂閱 (PUB/SUB)&lt;span class="hx:absolute hx:-mt-20" id="發布訂閱-pubsub">&lt;/span>
 &lt;a href="#%e7%99%bc%e5%b8%83%e8%a8%82%e9%96%b1-pubsub" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Redis 發布訂閱 (pub/sub) 是一種消息通信模式，發送者 (pub) 發送消息，訂閱者 (sub) 接收消息。&lt;/p>
 &lt;p>Redis 客戶端可以使用 &lt;code>subscribe&lt;/code> 來訂閱任意數量的頻道。&lt;/p>
 &lt;p>下面這張圖是頻道1，以及訂閱這個頻道的三個用戶端分別是客戶端2、客戶端7、客戶端5&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/channel.webp"
-alt="Subscribe 示意圖" width="550">&lt;figcaption>
-&lt;p>Subscribe 示意圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/channel.webp" data-zoomable alt="Subscribe 示意圖" width="550"loading="lazy"
+/>&lt;figcaption>Subscribe 示意圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>當我們有新消息通過 &lt;code>publish&lt;/code> 指令發送給頻道1 ，這個消息就會被發送給有訂閱頻道1的三個客戶端。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/message.webp"
-alt="Publish 示意圖" width="550">&lt;figcaption>
-&lt;p>Publish 示意圖&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/redis/redis-introduce/message.webp" data-zoomable alt="Publish 示意圖" width="550"loading="lazy"
+/>&lt;figcaption>Publish 示意圖&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>我們來模擬一下吧 ! 先開兩個 Terminal 來執行 &lt;code>redis-cli&lt;/code> 一個當作發送(pub)，另一個當作接收(sub)。&lt;/p>
 &lt;p>我們先用第一個 Terminal 訂閱一個頻道 channel_1&lt;/p>
@@ -1998,6 +2001,8 @@ alt="Publish 示意圖" width="550">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2016,6 +2021,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2042,6 +2049,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2050,15 +2059,15 @@ title="Copy code"
 &lt;/div>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Redis 官網：&lt;a href="https://redis.io"target="_blank" rel="noopener">https://redis.io&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Redis 官網：&lt;a href="https://redis.io"target="_blank" rel="noopener">https://redis.io&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Redis：&lt;a href="https://aws.amazon.com/tw/redis/"target="_blank" rel="noopener">https://aws.amazon.com/tw/redis/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Redis：&lt;a href="https://aws.amazon.com/tw/redis/"target="_blank" rel="noopener">https://aws.amazon.com/tw/redis/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Redis 基本資料形態：&lt;a href="https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/"target="_blank" rel="noopener">https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Redis 基本資料形態：&lt;a href="https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/"target="_blank" rel="noopener">https://blog.judysocute.com/2020/10/04/redis-%E5%9F%BA%E6%9C%AC%E8%B3%87%E6%96%99%E5%BD%A2%E6%85%8B/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Redis 發布訂閱：&lt;a href="https://www.runoob.com/redis/redis-pub-sub.html"target="_blank" rel="noopener">https://www.runoob.com/redis/redis-pub-sub.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Redis 發布訂閱：&lt;a href="https://www.runoob.com/redis/redis-pub-sub.html"target="_blank" rel="noopener">https://www.runoob.com/redis/redis-pub-sub.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

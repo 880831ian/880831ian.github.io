@@ -3,27 +3,21 @@
 &lt;a href="#%e8%83%8c%e6%99%af%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>因 Docker 官方最近宣布從 2025 年 04 月 01 日開始，未經過驗證的帳戶 (一般來說，GKE 拉 Docker Hub 的 Image 都屬於這類)，會有對應的 Rate Limit 限制，需要盤點及建議不要直接使用 Docker Hub 的 Image，避免 Node 擴縮 (因為沒有 Image 暫存)、或是 ImagePullPolicy 是 IfNotPresent 情況，讓 Container 需要重新 Pull 大量的 Image 出現 429 錯誤，導致 Pod 啟動不了，造成線上問題。&lt;/p>
 &lt;p>另外 GKE Node 有設定 Mirror Registry，可以減少直接從 Docker Hub 拉取 Image 的次數，但還是建議大家把 Image 搬到 GAR (Artifact Registry) 或是其他的 Registry 上。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/5.webp"
-alt="GKE Node Mirror Registry" width="700">&lt;figcaption>
-&lt;p>GKE Node Mirror Registry&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/5.webp" data-zoomable alt="GKE Node Mirror Registry" width="700"loading="lazy"
+/>&lt;figcaption>GKE Node Mirror Registry&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-blue-200 hx:bg-blue-100 hx:text-blue-900 hx:dark:border-blue-200/30 hx:dark:bg-blue-900/30 hx:dark:text-blue-200">
 &lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>提醒&lt;/p>
 &lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
 &lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">&lt;p>因近期官方有再次調整時間，原本是公告 03/01，有往後延長，如後續又有延後，會在同步更新在此文件中。&lt;br>
-03/01 延長到 04/01 可以參考：&lt;a href="https://github.com/docker/docs/commit/d9eb2332f9581b0b7eac1c90606528707380bf85#diff-7c1db5bfcc9a88aeecd94d07fa2138f5709a9ba977b795f67516106ce3a977ba"target="_blank" rel="noopener">https://github.com/docker/docs/commit/d9eb2332f9581b0b7eac1c90606528707380bf85#diff-7c1db5bfcc9a88aeecd94d07fa2138f5709a9ba977b795f67516106ce3a977ba&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+03/01 延長到 04/01 可以參考：&lt;a href="https://github.com/docker/docs/commit/d9eb2332f9581b0b7eac1c90606528707380bf85#diff-7c1db5bfcc9a88aeecd94d07fa2138f5709a9ba977b795f67516106ce3a977ba"target="_blank" rel="noopener">https://github.com/docker/docs/commit/d9eb2332f9581b0b7eac1c90606528707380bf85#diff-7c1db5bfcc9a88aeecd94d07fa2138f5709a9ba977b795f67516106ce3a977ba&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/1.webp"
-alt="官方限制" width="900">&lt;figcaption>
-&lt;p>官方限制&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/1.webp" data-zoomable alt="官方限制" width="900"loading="lazy"
+/>&lt;figcaption>官方限制&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>目前限制是 &lt;b>Unauthenticated users 未經驗證的用戶，每個 IPv4 or IPv6 Subnet 一小時只能 Pull 10 次&lt;/b>，如果是免費帳號(需要登入)，則是一小時 100 次。&lt;/p>
 &lt;br>
@@ -127,6 +121,8 @@ alt="官方限制" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -135,51 +131,36 @@ title="Copy code"
 &lt;/div>
 &lt;br>
 &lt;h3>成果&lt;span class="hx:absolute hx:-mt-20" id="成果">&lt;/span>
-&lt;a href="#%e6%88%90%e6%9e%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/2.webp"
-alt="掃描結果範例" width="900">&lt;figcaption>
-&lt;p>掃描結果範例&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e6%88%90%e6%9e%9c" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/2.webp" data-zoomable alt="掃描結果範例" width="900"loading="lazy"
+/>&lt;figcaption>掃描結果範例&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/3.webp"
-alt="掃描結果範例" width="900">&lt;figcaption>
-&lt;p>掃描結果範例&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/3.webp" data-zoomable alt="掃描結果範例" width="900"loading="lazy"
+/>&lt;figcaption>掃描結果範例&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/4.webp"
-alt="掃描結果範例" width="900">&lt;figcaption>
-&lt;p>掃描結果範例&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/dockerhub-pull-ratelimit/4.webp" data-zoomable alt="掃描結果範例" width="900"loading="lazy"
+/>&lt;figcaption>掃描結果範例&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>參考文件&lt;span class="hx:absolute hx:-mt-20" id="參考文件">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e6%96%87%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>&lt;a href="https://docs.docker.com/docker-hub/usage/"target="_blank" rel="noopener">Docker Hub usage and limits&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e6%96%87%e4%bb%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>&lt;a href="https://docs.docker.com/docker-hub/usage/"target="_blank" rel="noopener">Docker Hub usage and limits&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>使用 Prometheus 和 Grafana 打造監控預警系統 (Docker 篇)</title><link>https://pin-yi.me/blog/docker/prometheus-grafana-docker/</link><pubDate>Wed, 18 May 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/docker/prometheus-grafana-docker/</guid><description>
 &lt;p>還記得我們上次架設 EFK 來獲得容器的日誌嗎!?
 身為一個 SRE 除了收集日誌外，還需要監控每個系統或是服務的運行狀況，並在警急情況即時通知相關人員作為應對處理。所以透過好的 Monitoring/Alert System 了解目前 Server 硬體系統狀況和整個 Service 的網路狀況是一件非常重要的一件事情。&lt;/p>
-&lt;p>在眾多的 Monitor 工具中，&lt;a href="https://prometheus.io/"target="_blank" rel="noopener">Prometheus&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>在眾多的 Monitor 工具中，&lt;a href="https://prometheus.io/"target="_blank" rel="noopener">Prometheus&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a> 是一個很方便且完善的監控預警框架 TSDB (Time Series Database) 時間序列資料庫，可以快速且容易的建立不同維度的指標 (Metrics) 和整合不同的 Alert Tool 以及資訊視覺化圖表的監控工具並提供自帶的 &lt;a href="https://prometheus.io/docs/prometheus/latest/querying/basics/"target="_blank" rel="noopener">PromQL&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;/svg>&lt;/a> 是一個很方便且完善的監控預警框架 TSDB (Time Series Database) 時間序列資料庫，可以快速且容易的建立不同維度的指標 (Metrics) 和整合不同的 Alert Tool 以及資訊視覺化圖表的監控工具並提供自帶的 &lt;a href="https://prometheus.io/docs/prometheus/latest/querying/basics/"target="_blank" rel="noopener">PromQL&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 進行 query 查詢。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/prometheus.webp"
-alt="Prometheus Logo" width="400">&lt;figcaption>
-&lt;p>Prometheus Logo&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/prometheus.webp" data-zoomable alt="Prometheus Logo" width="400"loading="lazy"
+/>&lt;figcaption>Prometheus Logo&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>我們先來看看 Prometheus 的架構圖，可以更了解 Prometheus 整體的定位：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/prometheus-architecture.webp"
-alt="Prometheus 架構圖 (圖片來源：使用 Prometheus 和 Grafana 打造 Flask Web App 監控預警系統 )" width="800">&lt;figcaption>
-&lt;p>Prometheus 架構圖 (圖片來源：&lt;a href="https://blog.techbridge.cc/2019/08/26/how-to-use-prometheus-grafana-in-flask-app/"target="_blank" rel="noopener">使用 Prometheus 和 Grafana 打造 Flask Web App 監控預警系統&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/prometheus-architecture.webp" data-zoomable alt="Prometheus 架構圖 (圖片來源：[使用 Prometheus 和 Grafana 打造 Flask Web App 監控預警系統](https://blog.techbridge.cc/2019/08/26/how-to-use-prometheus-grafana-in-flask-app/))" width="800"loading="lazy"
+/>&lt;figcaption>Prometheus 架構圖 (圖片來源：&lt;a href="https://blog.techbridge.cc/2019/08/26/how-to-use-prometheus-grafana-in-flask-app/"target="_blank" rel="noopener">使用 Prometheus 和 Grafana 打造 Flask Web App 監控預警系統&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol>
 &lt;li>
@@ -201,20 +182,17 @@ alt="Prometheus 架構圖 (圖片來源：使用 Prometheus 和 Grafana 打造 F
 &lt;br>
 &lt;p>Prometheus 可能在儲存擴展上比不上其他 Time Series Database，但在整合各種第三方的 Data Source 上十分方便，且在支援雲端服務和 Container 容器相關工具也十分友好。但在圖片的表現上就相較於單薄，所以會搭配我們接下來要介紹的 Grafanac 精美儀表板工具來進行資訊視覺化和圖表的呈現。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/grafana.webp"
-alt="Grafana Logo" width="400">&lt;figcaption>
-&lt;p>Grafana Logo&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/grafana.webp" data-zoomable alt="Grafana Logo" width="400"loading="lazy"
+/>&lt;figcaption>Grafana Logo&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>Grafana 是由 Grafana Lab 經營的一個非常精美的儀表板系統，可以整合各種不同的 Data Source，例如：Prometheus、Elasticsearch、MySQL、PostgreSQL 等。透過不同種指標 (Metrics) 呈現在 Dashboard 上。如果還是不太清楚，可以把 Prometheus Grafana 分別想成 Prometheus 是 EFK 的 Elasticsearch，Grafana 想成是 EFK 的 Kibana。&lt;/p>
 &lt;br>
-&lt;p>今天我們要透過 Docker-Compose 搭配 Nginx 實作一個簡單的 Web Service 範例，並整合 &lt;a href="https://prometheus.io/"target="_blank" rel="noopener">Prometheus&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>今天我們要透過 Docker-Compose 搭配 Nginx 實作一個簡單的 Web Service 範例，並整合 &lt;a href="https://prometheus.io/"target="_blank" rel="noopener">Prometheus&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a> 和 &lt;a href="https://grafana.com/"target="_blank" rel="noopener">Grafana&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;/svg>&lt;/a> 和 &lt;a href="https://grafana.com/"target="_blank" rel="noopener">Grafana&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 來建立一個 Web Service 監控預警系統。&lt;/p>
-&lt;p>此文章程式碼也會同步到 Github ，需要的也可以去查看歐！要記得先確定一下自己的版本 &lt;a href="https://github.com/880831ian/Prometheus-Grafana-Docker"target="_blank" rel="noopener">Github 程式碼連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>此文章程式碼也會同步到 Github ，需要的也可以去查看歐！要記得先確定一下自己的版本 &lt;a href="https://github.com/880831ian/Prometheus-Grafana-Docker"target="_blank" rel="noopener">Github 程式碼連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 😆&lt;/p>
 &lt;br>
@@ -222,21 +200,21 @@ alt="Grafana Logo" width="400">&lt;figcaption>
 &lt;a href="#%e7%89%88%e6%9c%ac%e8%b3%87%e8%a8%8a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
 &lt;li>macOS：11.6&lt;/li>
 &lt;li>Docker：Docker version 20.10.14, build a224086&lt;/li>
-&lt;li>Nginx：&lt;a href="https://hub.docker.com/layers/nginx/library/nginx/1.21.6/images/sha256-b495f952df67472c3598b260f4b2e2ba9b5a8b0af837575cf4369c95c8d8a215?context=explore"target="_blank" rel="noopener">1.21.6&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>Nginx：&lt;a href="https://hub.docker.com/layers/nginx/library/nginx/1.21.6/images/sha256-b495f952df67472c3598b260f4b2e2ba9b5a8b0af837575cf4369c95c8d8a215?context=explore"target="_blank" rel="noopener">1.21.6&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/li>
-&lt;li>Prometheus：&lt;a href="https://hub.docker.com/layers/prometheus/prom/prometheus/v2.35.0/images/sha256-4b86ad59abc67fa19a6e1618e936f3fd0f6ae13f49260da55a03eeca763a0fb5?context=explore"target="_blank" rel="noopener">v.2.35.0&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>Prometheus：&lt;a href="https://hub.docker.com/layers/prometheus/prom/prometheus/v2.35.0/images/sha256-4b86ad59abc67fa19a6e1618e936f3fd0f6ae13f49260da55a03eeca763a0fb5?context=explore"target="_blank" rel="noopener">v.2.35.0&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/li>
-&lt;li>nginx-prometheus-exporter：&lt;a href="https://hub.docker.com/layers/nginx-prometheus-exporter/nginx/nginx-prometheus-exporter/0.10/images/sha256-f2aa9848516ff4c9f4c6d5bcb758b0fab519eff644f526e4c9a17d3083b54dde?context=explore"target="_blank" rel="noopener">0.10&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>nginx-prometheus-exporter：&lt;a href="https://hub.docker.com/layers/nginx-prometheus-exporter/nginx/nginx-prometheus-exporter/0.10/images/sha256-f2aa9848516ff4c9f4c6d5bcb758b0fab519eff644f526e4c9a17d3083b54dde?context=explore"target="_blank" rel="noopener">0.10&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/li>
-&lt;li>Grafana：&lt;a href="https://hub.docker.com/layers/grafana/grafana/grafana/8.2.5/images/sha256-1a154d1161ed65eaf87368d08149a8bbcf9962ac03dd5ff639a6b9d468a77a36?context=explore"target="_blank" rel="noopener">8.2.5&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>Grafana：&lt;a href="https://hub.docker.com/layers/grafana/grafana/grafana/8.2.5/images/sha256-1a154d1161ed65eaf87368d08149a8bbcf9962ac03dd5ff639a6b9d468a77a36?context=explore"target="_blank" rel="noopener">8.2.5&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a> (最新版本是 8.5.2，但選擇 8.2.5，是因為 8.3.0 後 Alerting 沒有辦法附上圖片，詳細原因可以參考 &lt;a href="https://github.com/grafana/grafana/discussions/38030"target="_blank" rel="noopener">Add &amp;ldquo;include image&amp;rdquo; option into Grafana Alerting&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;/svg>&lt;/a> (最新版本是 8.5.2，但選擇 8.2.5，是因為 8.3.0 後 Alerting 沒有辦法附上圖片，詳細原因可以參考 &lt;a href="https://github.com/grafana/grafana/discussions/38030"target="_blank" rel="noopener">Add &amp;ldquo;include image&amp;rdquo; option into Grafana Alerting&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> )&lt;/li>
-&lt;li>grafana/grafana-image-renderer：&lt;a href="https://hub.docker.com/layers/grafana-image-renderer/grafana/grafana-image-renderer/3.4.2/images/sha256-fd9d7b764597e84e447e6c8440e44e18c9f74728e3928156ea92599fe6f19e7d?context=explore"target="_blank" rel="noopener">3.4.2&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>grafana/grafana-image-renderer：&lt;a href="https://hub.docker.com/layers/grafana-image-renderer/grafana/grafana-image-renderer/3.4.2/images/sha256-fd9d7b764597e84e447e6c8440e44e18c9f74728e3928156ea92599fe6f19e7d?context=explore"target="_blank" rel="noopener">3.4.2&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/li>
 &lt;/ul>
@@ -244,12 +222,13 @@ alt="Grafana Logo" width="400">&lt;figcaption>
 &lt;h2>檔案結構&lt;span class="hx:absolute hx:-mt-20" id="檔案結構">&lt;/span>
 &lt;a href="#%e6%aa%94%e6%a1%88%e7%b5%90%e6%a7%8b" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;div class="hextra-filetree hx:mt-6 hx:select-none hx:text-sm hx:text-gray-800 hx:dark:text-gray-300 not-prose">
 &lt;div class="hx:inline-block hx:rounded-lg hx:px-4 hx:py-2 hx:border hx:border-gray-200 hx:dark:border-neutral-800">
+&lt;ul class="hx:flex hx:flex-col">
 &lt;li class="hx:flex hx:list-none">
 &lt;span class="hx:inline-flex hx:cursor-default hx:items-center hx:py-1">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>&lt;/svg>&lt;span class="hx:ltr:ml-1 hx:rtl:mr-1">docker-compose.yaml&lt;/span>
 &lt;/span>
 &lt;/li>
 &lt;li class="hx:group hx:flex hx:list-none hx:flex-col">
-&lt;button class="hextra-filetree-folder hx:inline-flex hx:cursor-pointer hx:items-center hx:py-1 hx:hover:opacity-60">
+&lt;button class="hextra-filetree-folder hx:inline-flex hx:cursor-pointer hx:items-center hx:py-1 hx:hover:opacity-60" aria-expanded="true">
 &lt;span data-state="open" class="hx:data-[state=open]:hidden">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>&lt;/svg>&lt;/span>
 &lt;span data-state="open" class="hx:data-[state=closed]:hidden">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>&lt;/svg>&lt;/span>
 &lt;span class="hx:ltr:ml-1 hx:rtl:mr-1">nginx&lt;/span>
@@ -273,6 +252,7 @@ alt="Grafana Logo" width="400">&lt;figcaption>
 &lt;span class="hx:inline-flex hx:cursor-default hx:items-center hx:py-1">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>&lt;/svg>&lt;span class="hx:ltr:ml-1 hx:rtl:mr-1">test.sh&lt;/span>
 &lt;/span>
 &lt;/li>
+&lt;/ul>
 &lt;/div>
 &lt;/div>
 &lt;p>這是主要的結構，簡單說明一下：&lt;/p>
@@ -341,6 +321,8 @@ alt="Grafana Logo" width="400">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -361,6 +343,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -381,6 +365,8 @@ access_log off;
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -404,6 +390,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -424,6 +412,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -435,121 +425,82 @@ title="Copy code"
 &lt;h3>執行/測試&lt;span class="hx:absolute hx:-mt-20" id="執行測試">&lt;/span>
 &lt;a href="#%e5%9f%b7%e8%a1%8c%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>當我們都寫好設定檔後，在專案目錄下，也就是有 Docker-compose 路徑下，使用 &lt;code>docker-compose up -d&lt;/code> 來啟動容器：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_1.webp"
-alt="啟動容器" width="600">&lt;figcaption>
-&lt;p>啟動容器&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_1.webp" data-zoomable alt="啟動容器" width="600"loading="lazy"
+/>&lt;figcaption>啟動容器&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接下來我們依序檢查容器是否都有正常運作，開啟瀏覽器瀏覽 &lt;code>http://localhost:9113/metrics&lt;/code> 查看是否有出現跟下面圖片差不多的內容：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_2.webp"
-alt="檢查 Nginx 以及 nginx-prometheus-exporter 的設定" width="800">&lt;figcaption>
-&lt;p>檢查 Nginx 以及 nginx-prometheus-exporter 的設定&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_2.webp" data-zoomable alt="檢查 Nginx 以及 nginx-prometheus-exporter 的設定" width="800"loading="lazy"
+/>&lt;figcaption>檢查 Nginx 以及 nginx-prometheus-exporter 的設定&lt;/figcaption>&lt;/figure>
 &lt;p>如果有出現，恭喜你完成了 Nginx 以及 nginx-prometheus-exporter 的設定，我們將 Nginx 的 &lt;code>stub_status&lt;/code> 服務，透過 &lt;code>http://nginx:8080/stub_status&lt;/code> 讓 nginx-prometheus-exporter 可以抓到圖片中的這些指標 (Metrics)。&lt;/p>
 &lt;br>
 &lt;h4>Prometheus&lt;span class="hx:absolute hx:-mt-20" id="prometheus">&lt;/span>
 &lt;a href="#prometheus" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>接著我們瀏覽 &lt;code>http://localhost:9090/targets&lt;/code>，看看我們的 Prometheus 有沒有設定正確，抓到我們設定好的 targets：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_3.webp"
-alt="檢查 Prometheus targets" width="1200">&lt;figcaption>
-&lt;p>檢查 Prometheus targets&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_3.webp" data-zoomable alt="檢查 Prometheus targets" width="1200"loading="lazy"
+/>&lt;figcaption>檢查 Prometheus targets&lt;/figcaption>&lt;/figure>
 &lt;p>如果兩個出現的都是 &lt;font color='green'>綠色的 UP&lt;/font> 就代表正常有抓到資料囉！&lt;/p>
 &lt;br>
 &lt;p>那要怎麼測試才知道有抓到資料呢？我們可以先用 Prometheus 內建的圖形化介面來檢查，在瀏覽器瀏覽 &lt;code>http://localhost:9090/graph&lt;/code> 就可以看到下面的畫面：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_4.webp"
-alt="Prometheus 內建的圖形化介面" width="800">&lt;figcaption>
-&lt;p>Prometheus 內建的圖形化介面&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_4.webp" data-zoomable alt="Prometheus 內建的圖形化介面" width="800"loading="lazy"
+/>&lt;figcaption>Prometheus 內建的圖形化介面&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>我們選擇 &lt;code>Graph&lt;/code>，並在上面的搜尋欄，打上 &lt;code>nginx_connections_accepted&lt;/code> 按下右邊的 Execute 就會產生一張圖表，圖表裡面只有一條綠色的線，那這個線是什麼呢？它就是我們剛剛在 &lt;code>http://localhost:9113/metrics&lt;/code> 其中一個指標 (Metrics)，它代表 Nginx 接受用戶端連接總數量：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_5.webp"
-alt="Prometheus 內建的圖形化介面" width="1200">&lt;figcaption>
-&lt;p>Prometheus 內建的圖形化介面&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_5.webp" data-zoomable alt="Prometheus 內建的圖形化介面" width="1200"loading="lazy"
+/>&lt;figcaption>Prometheus 內建的圖形化介面&lt;/figcaption>&lt;/figure>
 &lt;p>這個功能就是把我們所收到的 Nginx 指標 (Metrics)，轉換成圖表讓我們可以知道他的變化。&lt;/p>
 &lt;br>
 &lt;p>為了更明顯的看出變化，這時候就要使用我所寫好的 &lt;code>test.sh&lt;/code> 腳本，使用 &lt;code>sh test.sh&lt;/code> 來執行，再回來觀察圖型是否變化：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_6.webp"
-alt="經過測試顯示的 nginx_connections_accepted 圖形" width="800">&lt;figcaption>
-&lt;p>經過測試顯示的 nginx_connections_accepted 圖形&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_6.webp" data-zoomable alt="經過測試顯示的 nginx_connections_accepted 圖形" width="800"loading="lazy"
+/>&lt;figcaption>經過測試顯示的 nginx_connections_accepted 圖形&lt;/figcaption>&lt;/figure>
 &lt;p>可以發現剛剛原本只有 1 個的連接數因為我們模擬總共跑了 10 次，所以連接數變成 11 了！&lt;/p>
 &lt;br>
 &lt;h4>Grafana&lt;span class="hx:absolute hx:-mt-20" id="grafana">&lt;/span>
 &lt;a href="#grafana" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>Prometheus 的圖形化比較單調，所以我們使用 Grafana 來美化我們的儀表板，瀏覽器瀏覽 &lt;code>http://localhost:3000/&lt;/code> ，可以看到一個登入頁面：帳號是 &lt;code>admin&lt;/code>，密碼是我們在環境變數中所設定的 &lt;code>pass&lt;/code>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_7.webp"
-alt="Grafana 登入頁面" width="1000">&lt;figcaption>
-&lt;p>Grafana 登入頁面&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_7.webp" data-zoomable alt="Grafana 登入頁面" width="1000"loading="lazy"
+/>&lt;figcaption>Grafana 登入頁面&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>登入後我們看到首頁，選擇 &lt;strong>Add your first data source&lt;/strong> 來新增資料來源：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_8.webp"
-alt="Grafana 新增資料來源" width="1000">&lt;figcaption>
-&lt;p>Grafana 新增資料來源&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_8.webp" data-zoomable alt="Grafana 新增資料來源" width="1000"loading="lazy"
+/>&lt;figcaption>Grafana 新增資料來源&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>選擇第一個 &lt;strong>Prometheus&lt;/strong>，我們到 HTTP 的 URL 設定 &lt;code>http://prometheus:9090&lt;/code> 其他設定在我們測試環境中，不需要去調整，滑到最下面按下 &lt;strong>Save &amp;amp; test&lt;/strong>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_9.webp"
-alt="Grafana 新增資料來源" width="1000">&lt;figcaption>
-&lt;p>Grafana 新增資料來源&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_9.webp" data-zoomable alt="Grafana 新增資料來源" width="1000"loading="lazy"
+/>&lt;figcaption>Grafana 新增資料來源&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接著我們要來設計我們的儀表板，在 Grafana 除了自己設計以外，還可以 Import 別人做好的儀表板。&lt;/p>
-&lt;p>我們點選左側欄位的 &lt;strong>＋&lt;/strong> 符號 &amp;gt; 裡面的 &lt;strong>Import&lt;/strong>，可以在這邊 Import 別人做好的儀表板，使用方式也很簡單，只需要先去 &lt;a href="https://grafana.com/grafana/dashboards/"target="_blank" rel="noopener">Grafana Labs dashboard&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>我們點選左側欄位的 &lt;strong>＋&lt;/strong> 符號 &amp;gt; 裡面的 &lt;strong>Import&lt;/strong>，可以在這邊 Import 別人做好的儀表板，使用方式也很簡單，只需要先去 &lt;a href="https://grafana.com/grafana/dashboards/"target="_blank" rel="noopener">Grafana Labs dashboard&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 裡面找到自己要使用的儀表板，右側會有一個 ID，把 ID 貼上我們的 Grafana 就 Import 成功囉！很神奇吧 XD&lt;/p>
-&lt;p>我們要使用的儀表板是別人已經做好的 &lt;a href="https://grafana.com/grafana/dashboards/12708"target="_blank" rel="noopener">NGINX exporter&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>我們要使用的儀表板是別人已經做好的 &lt;a href="https://grafana.com/grafana/dashboards/12708"target="_blank" rel="noopener">NGINX exporter&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>，它的 ID 是 &lt;code>12708&lt;/code>，把 ID 貼入後，按下 &lt;strong>Load&lt;/strong>，就會有 NGINX exporter 的基本資訊，我們在最下面的 Prometheus 選擇我們要使用的 data source，就是我們剛剛先設定好的
 &lt;strong>Prometheus&lt;/strong>，最後按下 &lt;strong>Import&lt;/strong>，就完成拉。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_10.webp"
-alt="Grafana 載入別人做好的儀表板" width="800">&lt;figcaption>
-&lt;p>Grafana 載入別人做好的儀表板&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_10.webp" data-zoomable alt="Grafana 載入別人做好的儀表板" width="800"loading="lazy"
+/>&lt;figcaption>Grafana 載入別人做好的儀表板&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>如果設定都沒有錯誤的話，應該可以看到下面這個畫面，最上面是監測 Nginx 服務的狀態，以及下方有不同的指標在顯示：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_11.webp"
-alt="Grafana 儀表板" width="1000">&lt;figcaption>
-&lt;p>Grafana 儀表板&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_11.webp" data-zoomable alt="Grafana 儀表板" width="1000"loading="lazy"
+/>&lt;figcaption>Grafana 儀表板&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接下來我們一次用 &lt;code>test.sh&lt;/code> 來測試一下是否有成功抓到資料：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_12.webp"
-alt="測試 Grafana 是否成功抓到資料" width="1000">&lt;figcaption>
-&lt;p>測試 Grafana 是否成功抓到資料&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_12.webp" data-zoomable alt="測試 Grafana 是否成功抓到資料" width="1000"loading="lazy"
+/>&lt;figcaption>測試 Grafana 是否成功抓到資料&lt;/figcaption>&lt;/figure>
 &lt;p>可以看到在我們使用完測試腳本後，在該時段的資料有明顯的不一樣，代表我們有成功抓到資料 😄&lt;/p>
 &lt;br>
 &lt;p>此外也可以將 Nginx 服務暫停，看看儀表板上方的 NGINX Status 狀態是否改變：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_13.webp"
-alt="測試暫停 Nginx 查看 Grafana 儀表板 NGINX Status" width="1000">&lt;figcaption>
-&lt;p>測試暫停 Nginx 查看 Grafana 儀表板 NGINX Status&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/run_13.webp" data-zoomable alt="測試暫停 Nginx 查看 Grafana 儀表板 NGINX Status" width="1000"loading="lazy"
+/>&lt;figcaption>測試暫停 Nginx 查看 Grafana 儀表板 NGINX Status&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h4>Alerting 警報&lt;span class="hx:absolute hx:-mt-20" id="alerting-警報">&lt;/span>
 &lt;a href="#alerting-%e8%ad%a6%e5%a0%b1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>當然除了監控以外，我們還需要有警報系統，因為我們不可能每天都一直盯著儀表板看哪裡有錯誤，所以我們要設定警報的規則，以及警報要發送到哪裡，接著我們一起看下去吧：&lt;/p>
@@ -557,64 +508,43 @@ alt="測試暫停 Nginx 查看 Grafana 儀表板 NGINX Status" width="1000">&lt;
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
 &lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2">&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>&lt;/svg>&lt;/div>
 &lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
-&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">怎麼使用 Telegram Bot：請參考這一篇 &lt;a href="https://pin-yi.me/blog/git-or-cicd/ansible/#ansible-%e7%99%bc%e9%80%81%e9%80%9a%e7%9f%a5%e5%88%b0-telegram-bot"target="_blank" rel="noopener">Ansible 介紹與實作 (Inventory、Playbooks、Module、Template、Handlers)&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">怎麼使用 Telegram Bot：請參考這一篇 &lt;a href="https://pin-yi.me/blog/git-or-cicd/ansible/#ansible-%e7%99%bc%e9%80%81%e9%80%9a%e7%9f%a5%e5%88%b0-telegram-bot"target="_blank" rel="noopener">Ansible 介紹與實作 (Inventory、Playbooks、Module、Template、Handlers)&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 來取得 BOT API Token 以及 Chat ID。&lt;/div>
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_1.webp"
-alt="Alerting 設定" width="1000">&lt;figcaption>
-&lt;p>Alerting 設定&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_1.webp" data-zoomable alt="Alerting 設定" width="1000"loading="lazy"
+/>&lt;figcaption>Alerting 設定&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_2.webp"
-alt="Alerting 測試結果" width="600">&lt;figcaption>
-&lt;p>Alerting 測試結果&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_2.webp" data-zoomable alt="Alerting 測試結果" width="600"loading="lazy"
+/>&lt;figcaption>Alerting 測試結果&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接著我們來設計一個屬於我們的控制板 (Panel)，順便幫他加上 Alerting，稍後也用 &lt;code>test.sh&lt;/code>，看看他會不會自動發出提醒到 Telegram Bot 😬&lt;/p>
 &lt;p>首先點選左側欄位的 &lt;strong>＋&lt;/strong> 符號 &amp;gt; 裡面的 Create，在選擇 &lt;strong>Add an empty panel&lt;/strong>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_3.webp"
-alt="Create Panel" width="800">&lt;figcaption>
-&lt;p>Create Panel&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_3.webp" data-zoomable alt="Create Panel" width="800"loading="lazy"
+/>&lt;figcaption>Create Panel&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>再 Query 的 &lt;strong>A&lt;/strong> Metrics browser 輸入 &lt;code>nginx_connections_accepted&lt;/code> 一樣來取得 Nginx 接受用戶端連接總數量的圖表，到右上角選擇 &lt;strong>Last 5 minutes&lt;/strong>，旁邊的圖型我們選擇 &lt;em>Graph (old)&lt;/em>，下面的 Title 可以修改一下這個圖表的名稱，最後按下 &lt;strong>Save&lt;/strong>，就可以看到我們建好一個控制板囉 🥳&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_4.webp"
-alt="設定 Panel" width="1200">&lt;figcaption>
-&lt;p>設定 Panel&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_4.webp" data-zoomable alt="設定 Panel" width="1200"loading="lazy"
+/>&lt;figcaption>設定 Panel&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接著我們來設定 Alert，可以看到剛剛在 &lt;strong>Query&lt;/strong> 旁邊有一個 Alert，點進去後按 &lt;strong>Create Alert&lt;/strong>，我們先修改 Evaluate every 後面的 For 改為 &lt;code>1m&lt;/code> (代表當數值超過我們所設定的閥值後，狀態會從 OK 變成 Pending，這時候還不會發送警報，會等待我們現在設定的 &lt;code>1m&lt;/code> 分鐘後，情況還是沒有好轉，才會發送通知)，再 Conditions 後面欄位加入 10 (我們所設定的閥值，代表 &lt;code>nginx_connections_accepted&lt;/code> 超過 10 就會進入 Pending 狀態)，往下滑 Notifications 的 &lt;strong>Send to&lt;/strong> 選擇我們上面所建立的 channels 名稱，按下 &lt;strong>Save&lt;/strong>。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_5.webp"
-alt="設定好 Alert 的控制板" width="800">&lt;figcaption>
-&lt;p>設定好 Alert 的控制板&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_5.webp" data-zoomable alt="設定好 Alert 的控制板" width="800"loading="lazy"
+/>&lt;figcaption>設定好 Alert 的控制板&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接著執行 &lt;code>test.sh&lt;/code> 兩次，讓 &lt;code>nginx_connections_accepted&lt;/code> 超過我們所設定的閥值，可以看到控制板超過 10 以上變成紅色：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_6.webp"
-alt="超過閥值，控制板變成紅色" width="800">&lt;figcaption>
-&lt;p>超過閥值，控制板變成紅色&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_6.webp" data-zoomable alt="超過閥值，控制板變成紅色" width="800"loading="lazy"
+/>&lt;figcaption>超過閥值，控制板變成紅色&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>接著等待幾分鐘後，狀態會從 OK 綠色變成黃色的 Pending，最後轉成紅色的 Alert，這時候 Telegram 就會收到通知囉 ❌&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_7.webp"
-alt="自動發送通知到 Telegram Bot，並附上控制板圖片" width="500">&lt;figcaption>
-&lt;p>自動發送通知到 Telegram Bot，並附上控制板圖片&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/prometheus-grafana-docker/alert_7.webp" data-zoomable alt="自動發送通知到 Telegram Bot，並附上控制板圖片" width="500"loading="lazy"
+/>&lt;figcaption>自動發送通知到 Telegram Bot，並附上控制板圖片&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;br>
 &lt;h2>Nginx 指標 (Metrics) 描述&lt;span class="hx:absolute hx:-mt-20" id="nginx-指標-metrics-描述">&lt;/span>
@@ -667,36 +597,33 @@ alt="自動發送通知到 Telegram Bot，並附上控制板圖片" width="500">
 &lt;/table>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 Prometheus 和 Grafana 打造 Flask Web App 監控預警系統：&lt;a href="https://blog.techbridge.cc/2019/08/26/how-to-use-prometheus-grafana-in-flask-app/"target="_blank" rel="noopener">https://blog.techbridge.cc/2019/08/26/how-to-use-prometheus-grafana-in-flask-app/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 Prometheus 和 Grafana 打造 Flask Web App 監控預警系統：&lt;a href="https://blog.techbridge.cc/2019/08/26/how-to-use-prometheus-grafana-in-flask-app/"target="_blank" rel="noopener">https://blog.techbridge.cc/2019/08/26/how-to-use-prometheus-grafana-in-flask-app/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Nginx Exporter 接入：&lt;a href="https://cloud.tencent.com/document/product/1416/56039"target="_blank" rel="noopener">https://cloud.tencent.com/document/product/1416/56039&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Nginx Exporter 接入：&lt;a href="https://cloud.tencent.com/document/product/1416/56039"target="_blank" rel="noopener">https://cloud.tencent.com/document/product/1416/56039&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>通過 nginx-prometheus-exporter 監控 nginx 指標：&lt;a href="https://maxidea.gitbook.io/k8s-testing/prometheus-he-grafana-de-dan-ji-bian-pai/tong-guo-nginxprometheusexporter-jian-kong-nginx"target="_blank" rel="noopener">https://maxidea.gitbook.io/k8s-testing/prometheus-he-grafana-de-dan-ji-bian-pai/tong-guo-nginxprometheusexporter-jian-kong-nginx&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>通過 nginx-prometheus-exporter 監控 nginx 指標：&lt;a href="https://maxidea.gitbook.io/k8s-testing/prometheus-he-grafana-de-dan-ji-bian-pai/tong-guo-nginxprometheusexporter-jian-kong-nginx"target="_blank" rel="noopener">https://maxidea.gitbook.io/k8s-testing/prometheus-he-grafana-de-dan-ji-bian-pai/tong-guo-nginxprometheusexporter-jian-kong-nginx&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>使用 nginx-prometheus-exporter 監控 nginx：&lt;a href="https://www.cnblogs.com/rongfengliang/p/13580534.html"target="_blank" rel="noopener">https://www.cnblogs.com/rongfengliang/p/13580534.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>使用 nginx-prometheus-exporter 監控 nginx：&lt;a href="https://www.cnblogs.com/rongfengliang/p/13580534.html"target="_blank" rel="noopener">https://www.cnblogs.com/rongfengliang/p/13580534.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>使用阿里雲 Prometheus 監控 Nginx（新版）：&lt;a href="https://help.aliyun.com/document_detail/171819.html?spm=5176.22414175.sslink.29.6c9e1df9DdpLPP"target="_blank" rel="noopener">https://help.aliyun.com/document_detail/171819.html?spm=5176.22414175.sslink.29.6c9e1df9DdpLPP&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>使用阿里雲 Prometheus 監控 Nginx（新版）：&lt;a href="https://help.aliyun.com/document_detail/171819.html?spm=5176.22414175.sslink.29.6c9e1df9DdpLPP"target="_blank" rel="noopener">https://help.aliyun.com/document_detail/171819.html?spm=5176.22414175.sslink.29.6c9e1df9DdpLPP&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Grafana Image Renderer：&lt;a href="https://grafana.com/grafana/plugins/grafana-image-renderer/"target="_blank" rel="noopener">https://grafana.com/grafana/plugins/grafana-image-renderer/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Grafana Image Renderer：&lt;a href="https://grafana.com/grafana/plugins/grafana-image-renderer/"target="_blank" rel="noopener">https://grafana.com/grafana/plugins/grafana-image-renderer/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>grafana 的 image render 设置：&lt;a href="https://blog.csdn.net/dandanfengyun/article/details/115346594"target="_blank" rel="noopener">https://blog.csdn.net/dandanfengyun/article/details/115346594&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>grafana 的 image render 设置：&lt;a href="https://blog.csdn.net/dandanfengyun/article/details/115346594"target="_blank" rel="noopener">https://blog.csdn.net/dandanfengyun/article/details/115346594&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>Docker 介紹 (如何使用 Docker-compose 建置 PHP+MySQl+Nginx 環境)</title><link>https://pin-yi.me/blog/docker/docker/</link><pubDate>Mon, 14 Mar 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/docker/docker/</guid><description>
 &lt;h2>什麼是 Docker ?&lt;span class="hx:absolute hx:-mt-20" id="什麼是-docker-">&lt;/span>
 &lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-docker-" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Docker 是一種軟體平台，它可以快速建立、測試和部署應用程式。為什麼可以快速建立呢？因為 Docker 會將軟體封裝到名為『容器』的標準單位。其中會包含程式庫、系統工具、程式碼、執行軟體所需的所有項目。
 剛剛有提到容器 (Container)，是一種虛擬化技術，它高效率虛擬化及易於遷移和擴展的特性，非常適合現代雲端的開發及佈署。那 Container 與傳統的虛擬機有什麼差別呢？我們來看看下面這張圖&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container-vm.webp"
-alt="Container 與 VM 的差異" width="700">&lt;figcaption>
-&lt;p>Container 與 VM 的差異&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container-vm.webp" data-zoomable alt="Container 與 VM 的差異" width="700"loading="lazy"
+/>&lt;figcaption>Container 與 VM 的差異&lt;/figcaption>&lt;/figure>
 &lt;p>可以看到 Container 是以應用程式為單位，而 VM 則是以作業系統為單位。Container 是一個封裝了相依性資源與應用程式的執行環境 ; VM 則是一個配置好 CPU、RAM 與 Storage 的作業系統，為了更好的做區別，我把 Container、VM 兩個差別用表格來說明～&lt;/p>
 &lt;table>
 &lt;thead>
@@ -794,9 +721,9 @@ alt="Container 與 VM 的差異" width="700">&lt;figcaption>
 &lt;/ul>
 &lt;br>
 &lt;h4>如何從倉庫取得映像檔&lt;span class="hx:absolute hx:-mt-20" id="如何從倉庫取得映像檔">&lt;/span>
-&lt;a href="#%e5%a6%82%e4%bd%95%e5%be%9e%e5%80%89%e5%ba%ab%e5%8f%96%e5%be%97%e6%98%a0%e5%83%8f%e6%aa%94" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們可以先到 &lt;a href="https://hub.docker.com/"target="_blank" rel="noopener">Docker hub&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%a6%82%e4%bd%95%e5%be%9e%e5%80%89%e5%ba%ab%e5%8f%96%e5%be%97%e6%98%a0%e5%83%8f%e6%aa%94" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們可以先到 &lt;a href="https://hub.docker.com/"target="_blank" rel="noopener">Docker hub&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a> 上面看看有什麼服務或程式想要下載來做使用 [ 詳細介紹會放到&lt;a href="https://pin-yi.me/docker/#%e5%80%89%e5%ba%ab-repository-1"target="_blank" rel="noopener">倉庫 (Repository) &lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;/svg>&lt;/a> 上面看看有什麼服務或程式想要下載來做使用 [ 詳細介紹會放到&lt;a href="https://pin-yi.me/docker/#%e5%80%89%e5%ba%ab-repository-1"target="_blank" rel="noopener">倉庫 (Repository) &lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>章節]，找到想要的服務，我們可以下 &lt;code>docker pull {要下載的服務、程式名稱}&lt;/code> ，我們這邊就先下載 Mysql 這個映像檔。&lt;/p>
 &lt;ul>
@@ -814,6 +741,8 @@ alt="Container 與 VM 的差異" width="700">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -825,11 +754,8 @@ title="Copy code"
 &lt;br>
 &lt;p>如果有標記 &lt;code>Official Image&lt;/code> 就代表是官方釋出的映像檔 ~ 在穩定性以及安全上更有保障，所以大家可以優先下載歐！&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/docker-image.webp"
-alt="Docker hub 下載 Image" width="900">&lt;figcaption>
-&lt;p>Docker hub 下載 Image&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/docker-image.webp" data-zoomable alt="Docker hub 下載 Image" width="900"loading="lazy"
+/>&lt;figcaption>Docker hub 下載 Image&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h4>管理本地主機上的映像檔&lt;span class="hx:absolute hx:-mt-20" id="管理本地主機上的映像檔">&lt;/span>
 &lt;a href="#%e7%ae%a1%e7%90%86%e6%9c%ac%e5%9c%b0%e4%b8%bb%e6%a9%9f%e4%b8%8a%e7%9a%84%e6%98%a0%e5%83%8f%e6%aa%94" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;h5>查看映像檔 (images)&lt;span class="hx:absolute hx:-mt-20" id="查看映像檔-images">&lt;/span>
@@ -843,6 +769,8 @@ alt="Docker hub 下載 Image" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -868,6 +796,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -884,6 +814,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -896,6 +828,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -922,6 +856,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -945,6 +881,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -971,6 +909,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1000,7 +940,7 @@ title="Copy code"
 &lt;p>因為 Docker 容器啟動時，默認會把容器內部第一個進程，作爲 docker 容器是否正常運行的依據，如果 docker 容器 pid = 1 到進程就掛了，docker 就會退出！&lt;/p>
 &lt;p>Docker 未執行自定義的 CMD 之前， Nginx 的 pid 是 1，執行到 CMD 之後，Nginx 就在後台運行，bash 或是 sh 的腳本就會變成 pid =1 。&lt;/p>
 &lt;p>所以一但執行完 CMD，Nginx 容器就會退出了，所以才需要加上 &lt;code>-g daemon off;&lt;/code>。&lt;/p>
-&lt;p>在 Nginx 官方的 &lt;a href="https://hub.docker.com/_/nginx"target="_blank" rel="noopener">Docker Repository&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>在 Nginx 官方的 &lt;a href="https://hub.docker.com/_/nginx"target="_blank" rel="noopener">Docker Repository&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 也有說明，在 Complex configuration 內。&lt;/p>
 &lt;/div>
@@ -1016,6 +956,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1040,6 +982,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1058,6 +1002,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1068,11 +1014,8 @@ title="Copy code"
 &lt;br>
 &lt;h3>容器 (Container)&lt;span class="hx:absolute hx:-mt-20" id="容器-container-1">&lt;/span>
 &lt;a href="#%e5%ae%b9%e5%99%a8-container-1" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們在介紹指令前，先來了解一下 Dockerfile、Docker Image、Docker Container 這三個的關係，可以先參考以下圖片&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container.webp"
-alt="容器 Container 組成" width="300">&lt;figcaption>
-&lt;p>容器 Container 組成&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container.webp" data-zoomable alt="容器 Container 組成" width="300"loading="lazy"
+/>&lt;figcaption>容器 Container 組成&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>我們在啟動 Container 時，會有這三個部分組成，最底層是映像檔 (Image)，這一層主要是透過撰寫 Dockerfile 之後 build 出來的 Docker Image，就像我們前面說的它是一個唯獨的檔案。執行啟動了 Docker Container，就會加上第二層，就是需要先 Init Container 的設定，例如是 hostname、環境變數、網路連接等系統設定，最後最上層再加上一層讓使用者可以在此層去讀寫資料。&lt;/p>
 &lt;br>
@@ -1085,6 +1028,8 @@ alt="容器 Container 組成" width="300">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1144,6 +1089,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1161,6 +1108,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1170,11 +1119,8 @@ title="Copy code"
 &lt;br>
 &lt;p>接著我們測試是否有把桌面 data 資料夾掛到容器的路徑，我們先在 data 新增一個 hello.html ，裡面隨意輸入，瀏覽一下 &lt;code>http://127.0.0.1:7777/hello.html&lt;/code> ，看看是否成功。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container-v.webp"
-alt="容器 Container -volume 測試" width="700">&lt;figcaption>
-&lt;p>容器 Container -volume 測試&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/container-v.webp" data-zoomable alt="容器 Container -volume 測試" width="700"loading="lazy"
+/>&lt;figcaption>容器 Container -volume 測試&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h5>顯示容器紀錄 (logs)&lt;span class="hx:absolute hx:-mt-20" id="顯示容器紀錄-logs">&lt;/span>
 &lt;a href="#%e9%a1%af%e7%a4%ba%e5%ae%b9%e5%99%a8%e7%b4%80%e9%8c%84-logs" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h5>&lt;p>想要看到我們執行 Container 的紀錄，可以使用 &lt;code>logs&lt;/code> 指令來顯示。&lt;/p>
@@ -1190,6 +1136,8 @@ alt="容器 Container -volume 測試" width="700">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1205,6 +1153,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1224,6 +1174,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1240,6 +1192,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1269,6 +1223,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1299,6 +1255,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1314,6 +1272,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1330,6 +1290,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1351,6 +1313,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1369,6 +1333,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1378,11 +1344,8 @@ title="Copy code"
 &lt;br>
 &lt;p>我們也登入 Docker hub 看一下，是不是真的上傳成功了～&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/repository.webp"
-alt="repository" width="1000">&lt;figcaption>
-&lt;p>repository&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/repository.webp" data-zoomable alt="repository" width="1000"loading="lazy"
+/>&lt;figcaption>repository&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>Docker 進階&lt;span class="hx:absolute hx:-mt-20" id="docker-進階">&lt;/span>
 &lt;a href="#docker-%e9%80%b2%e9%9a%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>本章節會分成三個常用功能來說明&lt;/p>
@@ -1397,7 +1360,7 @@ alt="repository" width="1000">&lt;figcaption>
 &lt;p>所以我們可以使用兩種方式來解決！&lt;/p>
 &lt;ol>
 &lt;li>在執行 &lt;code>docker run&lt;/code> 指令時加入 &lt;code>-v&lt;/code> 參數，將 Container 的檔案路徑映射到本地端的檔案路徑。&lt;/li>
-&lt;li>在撰寫 Dockerfile 時，加入 &lt;code>VOLUME&lt;/code> 指令，可以將資料存放在實體主機上。使用這個方法還要搭配我們介紹 &lt;a href="https://pin-yi.me/docker/#%e6%aa%a2%e6%9f%a5%e5%ae%b9%e5%99%a8%e7%8b%80%e6%85%8b-inspect"target="_blank" rel="noopener">Container 的狀態 &amp;gt; 檢查容器狀態 (inspect)&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>在撰寫 Dockerfile 時，加入 &lt;code>VOLUME&lt;/code> 指令，可以將資料存放在實體主機上。使用這個方法還要搭配我們介紹 &lt;a href="https://pin-yi.me/docker/#%e6%aa%a2%e6%9f%a5%e5%ae%b9%e5%99%a8%e7%8b%80%e6%85%8b-inspect"target="_blank" rel="noopener">Container 的狀態 &amp;gt; 檢查容器狀態 (inspect)&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> ，來查詢本地端檔案的存放路徑在哪。&lt;/li>
 &lt;/ol>
@@ -1413,6 +1376,8 @@ alt="repository" width="1000">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1430,6 +1395,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1438,7 +1405,7 @@ title="Copy code"
 &lt;/div>
 &lt;br>
 &lt;h4>Dockerfile VOLUME 使用&lt;span class="hx:absolute hx:-mt-20" id="dockerfile-volume-使用">&lt;/span>
-&lt;a href="#dockerfile-volume-%e4%bd%bf%e7%94%a8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們先打開上次的 &lt;a href="https://pin-yi.me/docker/#%e6%92%b0%e5%af%ab-dockerfile-%e6%98%a0%e5%83%8f%e6%aa%94"target="_blank" rel="noopener">Dockerfile&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#dockerfile-volume-%e4%bd%bf%e7%94%a8" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>我們先打開上次的 &lt;a href="https://pin-yi.me/docker/#%e6%92%b0%e5%af%ab-dockerfile-%e6%98%a0%e5%83%8f%e6%aa%94"target="_blank" rel="noopener">Dockerfile&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 檔案，在基礎映像檔資訊的底下使用 &lt;code>VOLUME&lt;/code> 指令，加入 storage 資料夾，再將 Image Build 起來，啟動 Container，在 /storage 裡面隨便新增資料，最後我們在用 &lt;code>docker inspect&lt;/code> 指令來找映射在本地端的路徑。&lt;/p>
 &lt;br>
@@ -1454,6 +1421,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1482,6 +1451,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1504,6 +1475,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1525,6 +1498,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1542,13 +1517,15 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>詳細內容可以參考 &lt;a href="https://stackoverflow.com/questions/38532483/where-is-var-lib-docker-on-mac-os-x"target="_blank" rel="noopener">Where is /var/lib/docker on Mac/OS X&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>詳細內容可以參考 &lt;a href="https://stackoverflow.com/questions/38532483/where-is-var-lib-docker-on-mac-os-x"target="_blank" rel="noopener">Where is /var/lib/docker on Mac/OS X&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>。&lt;/p>
 &lt;/div>
@@ -1566,6 +1543,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1582,6 +1561,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1601,6 +1582,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1617,6 +1600,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1647,6 +1632,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1660,6 +1647,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1674,6 +1663,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1687,6 +1678,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1703,6 +1696,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1717,6 +1712,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1736,17 +1733,16 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/host.webp"
-alt="host 網路模式" width="500">&lt;figcaption>
-&lt;p>host 網路模式&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/host.webp" data-zoomable alt="host 網路模式" width="500"loading="lazy"
+/>&lt;figcaption>host 網路模式&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h4>bridge&lt;span class="hx:absolute hx:-mt-20" id="bridge">&lt;/span>
 &lt;a href="#bridge" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>在執行 &lt;code>docker run&lt;/code> 指令時，在後面加入參數 &lt;code>--net=bridge&lt;/code> ，來測試 bridge 模式&lt;/p>
@@ -1755,6 +1751,8 @@ alt="host 網路模式" width="500">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1763,27 +1761,18 @@ title="Copy code"
 &lt;/div>
 &lt;br>
 &lt;p>docker 會新增一個虛擬網卡作為容器網路對外的出口，預設名稱為 &lt;code>docker0&lt;/code>，docker0 會跟本機的對外網卡(圖中的 &lt;code>eth0&lt;/code> )相連，藉此取得對外連線的能力，也因為每一個容器都會使用一個 veth device 與 docker0 相連，所以也具備對外連線的能力。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/host.webp"
-alt="bridge 網路模式" width="600">&lt;figcaption>
-&lt;p>bridge 網路模式&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/host.webp" data-zoomable alt="bridge 網路模式" width="600"loading="lazy"
+/>&lt;figcaption>bridge 網路模式&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h4>overlay&lt;span class="hx:absolute hx:-mt-20" id="overlay">&lt;/span>
 &lt;a href="#overlay" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>下圖是說明 Host1 實體主機裡面有 Container1，然後 Host2 實體主機裡面有 Container2，可以透過 Docker overlay 模式將 Container1 和 Container2 連接做溝通。另外還需要一個 Consol 來存連線的資料庫，在使用 overlay 時要先在 Docker 做設定，這樣才能存放 overlay 網路模式的連線資訊。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/overlay.webp"
-alt="overlay 網路模式" width="550">&lt;figcaption>
-&lt;p>overlay 網路模式&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/overlay.webp" data-zoomable alt="overlay 網路模式" width="550"loading="lazy"
+/>&lt;figcaption>overlay 網路模式&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h4>macvlan&lt;span class="hx:absolute hx:-mt-20" id="macvlan">&lt;/span>
 &lt;a href="#macvlan" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>macvlan 的原理就是在本機的網卡上虛擬出很多個子網卡，通過不同的 MAC 位置在數據鏈路層進行網路資料的轉發。&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/macvlan.webp"
-alt="macvlan 網路模式" width="450">&lt;figcaption>
-&lt;p>macvlan 網路模式&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/macvlan.webp" data-zoomable alt="macvlan 網路模式" width="450"loading="lazy"
+/>&lt;figcaption>macvlan 網路模式&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>Docker-compose&lt;span class="hx:absolute hx:-mt-20" id="docker-compose">&lt;/span>
 &lt;a href="#docker-compose" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們在執行多個容器時，需要重複的下 &lt;code>run&lt;/code> 指令來執行，以及容器與容器之間要做關聯也要記得每一個之間要怎麼連結，會變得很麻煩且不易管理，所以有了 &lt;code>docker-compose&lt;/code> 可以將多個容器組合起來，變成一個強大的功能。&lt;/p>
@@ -1792,7 +1781,7 @@ alt="macvlan 網路模式" width="450">&lt;figcaption>
 &lt;p>我們就直接來實作我們這次的標題，要使用 docker-compose 來整合 PHP MySQL Nginx 環境。&lt;/p>
 &lt;ol>
 &lt;li>我們先開啟一個資料夾，取名叫 &lt;code>docker-compose&lt;/code> ，來放置我們的 docker-compose 檔案&lt;/li>
-&lt;li>接著新增 &lt;code>docker-compose.yml&lt;/code> 檔案，要準備來撰寫我們的設定檔囉！ 由於內容有點長，所以我分段說明，(&lt;a href="https://github.com/880831ian/docker-compose-php-mysql-nginx"target="_blank" rel="noopener">這邊有放已經寫好的檔案歐&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>接著新增 &lt;code>docker-compose.yml&lt;/code> 檔案，要準備來撰寫我們的設定檔囉！ 由於內容有點長，所以我分段說明，(&lt;a href="https://github.com/880831ian/docker-compose-php-mysql-nginx"target="_blank" rel="noopener">這邊有放已經寫好的檔案歐&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>)&lt;/li>
 &lt;/ol>
@@ -1800,19 +1789,20 @@ alt="macvlan 網路模式" width="450">&lt;figcaption>
 &lt;p>&lt;strong>檔案目錄&lt;/strong>&lt;/p>
 &lt;div class="hextra-filetree hx:mt-6 hx:select-none hx:text-sm hx:text-gray-800 hx:dark:text-gray-300 not-prose">
 &lt;div class="hx:inline-block hx:rounded-lg hx:px-4 hx:py-2 hx:border hx:border-gray-200 hx:dark:border-neutral-800">
+&lt;ul class="hx:flex hx:flex-col">
 &lt;li class="hx:flex hx:list-none">
 &lt;span class="hx:inline-flex hx:cursor-default hx:items-center hx:py-1">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>&lt;/svg>&lt;span class="hx:ltr:ml-1 hx:rtl:mr-1">Docker-compose.yml&lt;/span>
 &lt;/span>
 &lt;/li>
 &lt;li class="hx:group hx:flex hx:list-none hx:flex-col">
-&lt;button class="hextra-filetree-folder hx:inline-flex hx:cursor-pointer hx:items-center hx:py-1 hx:hover:opacity-60">
+&lt;button class="hextra-filetree-folder hx:inline-flex hx:cursor-pointer hx:items-center hx:py-1 hx:hover:opacity-60" aria-expanded="true">
 &lt;span data-state="open" class="hx:data-[state=open]:hidden">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>&lt;/svg>&lt;/span>
 &lt;span data-state="open" class="hx:data-[state=closed]:hidden">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>&lt;/svg>&lt;/span>
 &lt;span class="hx:ltr:ml-1 hx:rtl:mr-1">docker-volume&lt;/span>
 &lt;/button>
 &lt;ul data-state="open" class="hx:ltr:pl-5 hx:rtl:pr-5 hx:data-[state=closed]:hidden">
 &lt;li class="hx:group hx:flex hx:list-none hx:flex-col">
-&lt;button class="hextra-filetree-folder hx:inline-flex hx:cursor-pointer hx:items-center hx:py-1 hx:hover:opacity-60">
+&lt;button class="hextra-filetree-folder hx:inline-flex hx:cursor-pointer hx:items-center hx:py-1 hx:hover:opacity-60" aria-expanded="true">
 &lt;span data-state="open" class="hx:data-[state=open]:hidden">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>&lt;/svg>&lt;/span>
 &lt;span data-state="open" class="hx:data-[state=closed]:hidden">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>&lt;/svg>&lt;/span>
 &lt;span class="hx:ltr:ml-1 hx:rtl:mr-1">html&lt;/span>
@@ -1831,7 +1821,7 @@ alt="macvlan 網路模式" width="450">&lt;figcaption>
 &lt;/ul>
 &lt;/li>
 &lt;li class="hx:group hx:flex hx:list-none hx:flex-col">
-&lt;button class="hextra-filetree-folder hx:inline-flex hx:cursor-pointer hx:items-center hx:py-1 hx:hover:opacity-60">
+&lt;button class="hextra-filetree-folder hx:inline-flex hx:cursor-pointer hx:items-center hx:py-1 hx:hover:opacity-60" aria-expanded="true">
 &lt;span data-state="open" class="hx:data-[state=open]:hidden">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>&lt;/svg>&lt;/span>
 &lt;span data-state="open" class="hx:data-[state=closed]:hidden">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>&lt;/svg>&lt;/span>
 &lt;span class="hx:ltr:ml-1 hx:rtl:mr-1">nginx&lt;/span>
@@ -1848,7 +1838,7 @@ alt="macvlan 網路模式" width="450">&lt;figcaption>
 &lt;/ul>
 &lt;/li>
 &lt;li class="hx:group hx:flex hx:list-none hx:flex-col">
-&lt;button class="hextra-filetree-folder hx:inline-flex hx:cursor-pointer hx:items-center hx:py-1 hx:hover:opacity-60">
+&lt;button class="hextra-filetree-folder hx:inline-flex hx:cursor-pointer hx:items-center hx:py-1 hx:hover:opacity-60" aria-expanded="true">
 &lt;span data-state="open" class="hx:data-[state=open]:hidden">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>&lt;/svg>&lt;/span>
 &lt;span data-state="open" class="hx:data-[state=closed]:hidden">&lt;svg width=1em xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M5 19a2 2 0 01-2-2V7a2 2 0 012-2h4l2 2h4a2 2 0 012 2v1M5 19h14a2 2 0 002-2v-5a2 2 0 00-2-2H9a2 2 0 00-2 2v5a2 2 0 01-2 2z"/>&lt;/svg>&lt;/span>
 &lt;span class="hx:ltr:ml-1 hx:rtl:mr-1">php&lt;/span>
@@ -1860,6 +1850,7 @@ alt="macvlan 網路模式" width="450">&lt;figcaption>
 &lt;/li>
 &lt;/ul>
 &lt;/li>
+&lt;/ul>
 &lt;/div>
 &lt;/div>
 &lt;br>
@@ -1871,13 +1862,15 @@ alt="macvlan 網路模式" width="450">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>可以看到一開頭，會先寫版本，這邊代表的是會使用 3.8 版本的設定檔，詳細版本對照可以參考 &lt;a href="https://docs.docker.com/compose/compose-file/compose-versioning/"target="_blank" rel="noopener">Compose file versions and upgrading&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>可以看到一開頭，會先寫版本，這邊代表的是會使用 3.8 版本的設定檔，詳細版本對照可以參考 &lt;a href="https://docs.docker.com/compose/compose-file/compose-versioning/"target="_blank" rel="noopener">Compose file versions and upgrading&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;p>services 可以設定用來啟動多的容器，裡面我們總共放了三個容器，分別是 nginx、php、mysql 。&lt;/p>
@@ -1895,6 +1888,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1919,6 +1914,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1944,6 +1941,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1953,34 +1952,31 @@ title="Copy code"
 &lt;p>mysql 使用的映像檔是 mysql 版本是 8.0.28，我們為了要保留資料庫的資料，所以將容器的 &lt;code>/var/lib/mysql&lt;/code> 映射到本地端 &lt;code>./docker-volume/mysql&lt;/code> 資料夾。&lt;/p>
 &lt;p>最後的環境變數，設定 root 帳號的登入密碼，以及要使用的資料庫、使用者的帳號、使用者的密碼。&lt;/p>
 &lt;br>
-&lt;p>最後在上面的 (&lt;a href="https://github.com/880831ian/docker-compose-php-mysql-nginx"target="_blank" rel="noopener">這邊有放已經寫好的檔案歐&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>最後在上面的 (&lt;a href="https://github.com/880831ian/docker-compose-php-mysql-nginx"target="_blank" rel="noopener">這邊有放已經寫好的檔案歐&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>) 裡面還有多一個 docker-volume/html 的資料夾，就是我們剛剛映射到本地端的資料夾，資料夾內已經放有連線測試的檔案，輸入網址 &lt;code>http://127.0.0.1:7777/index.php&lt;/code>，如果開啟後有顯示下方畫面，就代表我們成功用 docker-compose 將 PHP MySQL Nginx 整合再一起囉！&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/localhost-7777.webp"
-alt="測試是否成功用 docker-compose 整合 PHP MySQL Nginx" width="450">&lt;figcaption>
-&lt;p>測試是否成功用 docker-compose 整合 PHP MySQL Nginx&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/docker/docker/localhost-7777.webp" data-zoomable alt="測試是否成功用 docker-compose 整合 PHP MySQL Nginx" width="450"loading="lazy"
+/>&lt;figcaption>測試是否成功用 docker-compose 整合 PHP MySQL Nginx&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Docker 官網：&lt;a href="https://docs.docker.com/get-started/"target="_blank" rel="noopener">https://docs.docker.com/get-started/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Docker 官網：&lt;a href="https://docs.docker.com/get-started/"target="_blank" rel="noopener">https://docs.docker.com/get-started/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>什麼是 Docker？：&lt;a href="https://aws.amazon.com/tw/docker/"target="_blank" rel="noopener">https://aws.amazon.com/tw/docker/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>什麼是 Docker？：&lt;a href="https://aws.amazon.com/tw/docker/"target="_blank" rel="noopener">https://aws.amazon.com/tw/docker/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Docker－－從入門到實踐：&lt;a href="https://philipzheng.gitbook.io/docker_practice/#yuan-chu-chu-ji-can-kao-zi-liao"target="_blank" rel="noopener">https://philipzheng.gitbook.io/docker_practice/#yuan-chu-chu-ji-can-kao-zi-liao&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Docker－－從入門到實踐：&lt;a href="https://philipzheng.gitbook.io/docker_practice/#yuan-chu-chu-ji-can-kao-zi-liao"target="_blank" rel="noopener">https://philipzheng.gitbook.io/docker_practice/#yuan-chu-chu-ji-can-kao-zi-liao&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Dockerfile 建立自訂映像檔 — 架起網站快速又簡單（一）：&lt;a href="https://medium.com/@jackercleaninglab/dockerfile-%E5%BB%BA%E7%AB%8B%E8%87%AA%E8%A8%82%E6%98%A0%E5%83%8F%E6%AA%94-%E6%9E%B6%E8%B5%B7%E7%B6%B2%E7%AB%99%E5%BF%AB%E9%80%9F%E5%8F%88%E7%B0%A1%E5%96%AE-%E4%B8%80-22b2743f97b9"target="_blank" rel="noopener">https://medium.com/@jackercleaninglab/dockerfile-%E5%BB%BA%E7%AB%8B%E8%87%AA%E8%A8%82%E6%98%A0%E5%83%8F%E6%AA%94-%E6%9E%B6%E8%B5%B7%E7%B6%B2%E7%AB%99%E5%BF%AB%E9%80%9F%E5%8F%88%E7%B0%A1%E5%96%AE-%E4%B8%80-22b2743f97b9&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Dockerfile 建立自訂映像檔 — 架起網站快速又簡單（一）：&lt;a href="https://medium.com/@jackercleaninglab/dockerfile-%E5%BB%BA%E7%AB%8B%E8%87%AA%E8%A8%82%E6%98%A0%E5%83%8F%E6%AA%94-%E6%9E%B6%E8%B5%B7%E7%B6%B2%E7%AB%99%E5%BF%AB%E9%80%9F%E5%8F%88%E7%B0%A1%E5%96%AE-%E4%B8%80-22b2743f97b9"target="_blank" rel="noopener">https://medium.com/@jackercleaninglab/dockerfile-%E5%BB%BA%E7%AB%8B%E8%87%AA%E8%A8%82%E6%98%A0%E5%83%8F%E6%AA%94-%E6%9E%B6%E8%B5%B7%E7%B6%B2%E7%AB%99%E5%BF%AB%E9%80%9F%E5%8F%88%E7%B0%A1%E5%96%AE-%E4%B8%80-22b2743f97b9&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>用 30 天來介紹和使用 Docker：&lt;a href="https://ithelp.ithome.com.tw/users/20103456/ironman/1320"target="_blank" rel="noopener">https://ithelp.ithome.com.tw/users/20103456/ironman/1320&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>用 30 天來介紹和使用 Docker：&lt;a href="https://ithelp.ithome.com.tw/users/20103456/ironman/1320"target="_blank" rel="noopener">https://ithelp.ithome.com.tw/users/20103456/ironman/1320&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Docker 網路簡介：&lt;a href="https://godleon.github.io/blog/Docker/docker-network-overview/"target="_blank" rel="noopener">https://godleon.github.io/blog/Docker/docker-network-overview/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Docker 網路簡介：&lt;a href="https://godleon.github.io/blog/Docker/docker-network-overview/"target="_blank" rel="noopener">https://godleon.github.io/blog/Docker/docker-network-overview/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Docker-compose Giving static IP in network mode : bridge：&lt;a href="https://stackoverflow.com/questions/61949319/docker-compose-giving-static-ip-in-network-mode-bridge"target="_blank" rel="noopener">https://stackoverflow.com/questions/61949319/docker-compose-giving-static-ip-in-network-mode-bridge&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Docker-compose Giving static IP in network mode : bridge：&lt;a href="https://stackoverflow.com/questions/61949319/docker-compose-giving-static-ip-in-network-mode-bridge"target="_blank" rel="noopener">https://stackoverflow.com/questions/61949319/docker-compose-giving-static-ip-in-network-mode-bridge&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

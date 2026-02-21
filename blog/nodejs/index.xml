@@ -2,7 +2,7 @@
 &lt;p>本文章是使用 Node.js 來寫一個 Repository Restful API 的留言板，並且會使用 express 以及 sequelize (使用 Mysql)套件。&lt;/p>
 &lt;p>建議可以先觀看 &lt;a href="../nodejs-introduce/">Node.js 介紹&lt;/a> 文章來簡單學習 Node 語言。&lt;/p>
 &lt;p>&lt;a href="https://github.com/880831ian/node-restful-api-repository-messageboard"target="_blank" rel="noopener">範例程式連結 點我 😘
-&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;p>版本資訊&lt;/p>
@@ -47,6 +47,8 @@
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -113,6 +115,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -174,6 +178,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -222,6 +228,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -291,6 +299,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -311,6 +321,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -371,6 +383,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -412,6 +426,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -466,6 +482,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -519,6 +537,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -580,6 +600,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -616,6 +638,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -638,6 +662,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -673,6 +699,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -696,6 +724,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -730,6 +760,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -766,6 +798,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -793,6 +827,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -830,6 +866,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -888,6 +926,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -968,6 +1008,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -983,10 +1025,10 @@ title="Copy code"
 &lt;br>
 &lt;h2>常用指令 (sequelize-cli)&lt;span class="hx:absolute hx:-mt-20" id="常用指令-sequelize-cli">&lt;/span>
 &lt;a href="#%e5%b8%b8%e7%94%a8%e6%8c%87%e4%bb%a4-sequelize-cli" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ul>
-&lt;li>sequelize db:migrate：將資料表依照 up 內容執行(&lt;a href="https://pin-yi.me/node-restful-api-repository-messageboard/#migrations"target="_blank" rel="noopener">migrate 檔案&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>sequelize db:migrate：將資料表依照 up 內容執行(&lt;a href="https://pin-yi.me/node-restful-api-repository-messageboard/#migrations"target="_blank" rel="noopener">migrate 檔案&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>)。&lt;/li>
-&lt;li>sequelize db:migrate:undo:all：將資料表依照 down 內容執行(&lt;a href="https://pin-yi.me/node-restful-api-repository-messageboard/#migrations"target="_blank" rel="noopener">migrate 檔案&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;li>sequelize db:migrate:undo:all：將資料表依照 down 內容執行(&lt;a href="https://pin-yi.me/node-restful-api-repository-messageboard/#migrations"target="_blank" rel="noopener">migrate 檔案&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>)。&lt;/li>
 &lt;li>sequelize db:seed：產生假資料&lt;/li>
@@ -994,163 +1036,100 @@ title="Copy code"
 &lt;br>
 &lt;h2>Postman 測試&lt;span class="hx:absolute hx:-mt-20" id="postman-測試">&lt;/span>
 &lt;a href="#postman-%e6%b8%ac%e8%a9%a6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;h3>註冊 - 成功&lt;span class="hx:absolute hx:-mt-20" id="註冊---成功">&lt;/span>
-&lt;a href="#%e8%a8%bb%e5%86%8a---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/register-success.webp"
-alt="註冊 成功" width="700">&lt;figcaption>
-&lt;p>註冊 成功&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e8%a8%bb%e5%86%8a---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/register-success.webp" data-zoomable alt="註冊 成功" width="700"loading="lazy"
+/>&lt;figcaption>註冊 成功&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>註冊 - 失敗(無輸入)&lt;span class="hx:absolute hx:-mt-20" id="註冊---失敗無輸入">&lt;/span>
-&lt;a href="#%e8%a8%bb%e5%86%8a---%e5%a4%b1%e6%95%97%e7%84%a1%e8%bc%b8%e5%85%a5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/register-error-1.webp"
-alt="註冊 失敗(無輸入)" width="700">&lt;figcaption>
-&lt;p>註冊 失敗(無輸入)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e8%a8%bb%e5%86%8a---%e5%a4%b1%e6%95%97%e7%84%a1%e8%bc%b8%e5%85%a5" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/register-error-1.webp" data-zoomable alt="註冊 失敗(無輸入)" width="700"loading="lazy"
+/>&lt;figcaption>註冊 失敗(無輸入)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>註冊 - 失敗(已經註冊過)&lt;span class="hx:absolute hx:-mt-20" id="註冊---失敗已經註冊過">&lt;/span>
-&lt;a href="#%e8%a8%bb%e5%86%8a---%e5%a4%b1%e6%95%97%e5%b7%b2%e7%b6%93%e8%a8%bb%e5%86%8a%e9%81%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/register-error-2.webp"
-alt="註冊 失敗(已經註冊過)" width="700">&lt;figcaption>
-&lt;p>註冊 失敗(已經註冊過)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e8%a8%bb%e5%86%8a---%e5%a4%b1%e6%95%97%e5%b7%b2%e7%b6%93%e8%a8%bb%e5%86%8a%e9%81%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/register-error-2.webp" data-zoomable alt="註冊 失敗(已經註冊過)" width="700"loading="lazy"
+/>&lt;figcaption>註冊 失敗(已經註冊過)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>登入 - 成功&lt;span class="hx:absolute hx:-mt-20" id="登入---成功">&lt;/span>
-&lt;a href="#%e7%99%bb%e5%85%a5---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/login-success.webp"
-alt="登入 成功" width="700">&lt;figcaption>
-&lt;p>登入 成功&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e7%99%bb%e5%85%a5---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/login-success.webp" data-zoomable alt="登入 成功" width="700"loading="lazy"
+/>&lt;figcaption>登入 成功&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>登入 - 失敗&lt;span class="hx:absolute hx:-mt-20" id="登入---失敗">&lt;/span>
-&lt;a href="#%e7%99%bb%e5%85%a5---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/login-error.webp"
-alt="登入 失敗" width="700">&lt;figcaption>
-&lt;p>登入 失敗&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e7%99%bb%e5%85%a5---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/login-error.webp" data-zoomable alt="登入 失敗" width="700"loading="lazy"
+/>&lt;figcaption>登入 失敗&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>查詢全部留言 - 成功(無資料)&lt;span class="hx:absolute hx:-mt-20" id="查詢全部留言---成功無資料">&lt;/span>
-&lt;a href="#%e6%9f%a5%e8%a9%a2%e5%85%a8%e9%83%a8%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f%e7%84%a1%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/get-success-1.webp"
-alt="查詢留言 成功(無資料)" width="700">&lt;figcaption>
-&lt;p>查詢留言 成功(無資料)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e6%9f%a5%e8%a9%a2%e5%85%a8%e9%83%a8%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f%e7%84%a1%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/get-success-1.webp" data-zoomable alt="查詢留言 成功(無資料)" width="700"loading="lazy"
+/>&lt;figcaption>查詢留言 成功(無資料)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>查詢全部留言 - 成功(有資料)&lt;span class="hx:absolute hx:-mt-20" id="查詢全部留言---成功有資料">&lt;/span>
-&lt;a href="#%e6%9f%a5%e8%a9%a2%e5%85%a8%e9%83%a8%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f%e6%9c%89%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/get-success-2.webp"
-alt="查詢留言 成功(有資料)" width="700">&lt;figcaption>
-&lt;p>查詢留言 成功(有資料)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e6%9f%a5%e8%a9%a2%e5%85%a8%e9%83%a8%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f%e6%9c%89%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/get-success-2.webp" data-zoomable alt="查詢留言 成功(有資料)" width="700"loading="lazy"
+/>&lt;figcaption>查詢留言 成功(有資料)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>查詢{id}留言 - 成功&lt;span class="hx:absolute hx:-mt-20" id="查詢id留言---成功">&lt;/span>
-&lt;a href="#%e6%9f%a5%e8%a9%a2id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/get-id-success.webp"
-alt="查詢{id}留言 成功" width="700">&lt;figcaption>
-&lt;p>查詢{id}留言 成功&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e6%9f%a5%e8%a9%a2id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/get-id-success.webp" data-zoomable alt="查詢{id}留言 成功" width="700"loading="lazy"
+/>&lt;figcaption>查詢{id}留言 成功&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>查詢{id}留言 - 失敗&lt;span class="hx:absolute hx:-mt-20" id="查詢id留言---失敗">&lt;/span>
-&lt;a href="#%e6%9f%a5%e8%a9%a2id%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/get-error.webp"
-alt="查詢{id}留言 失敗" width="700">&lt;figcaption>
-&lt;p>查詢{id}留言 失敗&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e6%9f%a5%e8%a9%a2id%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/get-error.webp" data-zoomable alt="查詢{id}留言 失敗" width="700"loading="lazy"
+/>&lt;figcaption>查詢{id}留言 失敗&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>新增留言 - 成功&lt;span class="hx:absolute hx:-mt-20" id="新增留言---成功">&lt;/span>
-&lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/create.webp"
-alt="新增留言 成功" width="700">&lt;figcaption>
-&lt;p>新增留言 成功&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/create.webp" data-zoomable alt="新增留言 成功" width="700"loading="lazy"
+/>&lt;figcaption>新增留言 成功&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>新增留言 - 失敗&lt;span class="hx:absolute hx:-mt-20" id="新增留言---失敗">&lt;/span>
-&lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/create-error.webp"
-alt="新增留言 失敗" width="700">&lt;figcaption>
-&lt;p>新增留言 失敗&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e6%96%b0%e5%a2%9e%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/create-error.webp" data-zoomable alt="新增留言 失敗" width="700"loading="lazy"
+/>&lt;figcaption>新增留言 失敗&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>修改{id}留言 - 成功&lt;span class="hx:absolute hx:-mt-20" id="修改id留言---成功">&lt;/span>
-&lt;a href="#%e4%bf%ae%e6%94%b9id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/patch-success.webp"
-alt="修改 {id}留言 成功" width="700">&lt;figcaption>
-&lt;p>修改 {id}留言 成功&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e4%bf%ae%e6%94%b9id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/patch-success.webp" data-zoomable alt="修改 {id}留言 成功" width="700"loading="lazy"
+/>&lt;figcaption>修改 {id}留言 成功&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>修改{id}留言 - 失敗&lt;span class="hx:absolute hx:-mt-20" id="修改id留言---失敗">&lt;/span>
-&lt;a href="#%e4%bf%ae%e6%94%b9id%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/patch-error.webp"
-alt="修改 {id}留言 失敗" width="700">&lt;figcaption>
-&lt;p>修改 {id}留言 失敗&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e4%bf%ae%e6%94%b9id%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/patch-error.webp" data-zoomable alt="修改 {id}留言 失敗" width="700"loading="lazy"
+/>&lt;figcaption>修改 {id}留言 失敗&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>刪除{id}留言 - 成功&lt;span class="hx:absolute hx:-mt-20" id="刪除id留言---成功">&lt;/span>
-&lt;a href="#%e5%88%aa%e9%99%a4id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/delete.webp"
-alt="刪除 {id}留言 成功" width="700">&lt;figcaption>
-&lt;p>刪除 {id}留言 成功&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e5%88%aa%e9%99%a4id%e7%95%99%e8%a8%80---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/delete.webp" data-zoomable alt="刪除 {id}留言 成功" width="700"loading="lazy"
+/>&lt;figcaption>刪除 {id}留言 成功&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>刪除{id}留言 - 失敗&lt;span class="hx:absolute hx:-mt-20" id="刪除id留言---失敗">&lt;/span>
-&lt;a href="#%e5%88%aa%e9%99%a4id%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/delete-error.webp"
-alt="刪除 {id}留言 失敗" width="700">&lt;figcaption>
-&lt;p>刪除 {id}留言 失敗&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e5%88%aa%e9%99%a4id%e7%95%99%e8%a8%80---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/delete-error.webp" data-zoomable alt="刪除 {id}留言 失敗" width="700"loading="lazy"
+/>&lt;figcaption>刪除 {id}留言 失敗&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>新增回覆 - 成功&lt;span class="hx:absolute hx:-mt-20" id="新增回覆---成功">&lt;/span>
-&lt;a href="#%e6%96%b0%e5%a2%9e%e5%9b%9e%e8%a6%86---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-create.webp"
-alt="新增回覆 成功" width="700">&lt;figcaption>
-&lt;p>新增回覆 成功&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e6%96%b0%e5%a2%9e%e5%9b%9e%e8%a6%86---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-create.webp" data-zoomable alt="新增回覆 成功" width="700"loading="lazy"
+/>&lt;figcaption>新增回覆 成功&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>新增回覆 - 失敗&lt;span class="hx:absolute hx:-mt-20" id="新增回覆---失敗">&lt;/span>
-&lt;a href="#%e6%96%b0%e5%a2%9e%e5%9b%9e%e8%a6%86---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-create-error.webp"
-alt="新增回覆 失敗" width="700">&lt;figcaption>
-&lt;p>新增回覆 失敗&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e6%96%b0%e5%a2%9e%e5%9b%9e%e8%a6%86---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-create-error.webp" data-zoomable alt="新增回覆 失敗" width="700"loading="lazy"
+/>&lt;figcaption>新增回覆 失敗&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>修改{id}回覆 - 成功&lt;span class="hx:absolute hx:-mt-20" id="修改id回覆---成功">&lt;/span>
-&lt;a href="#%e4%bf%ae%e6%94%b9id%e5%9b%9e%e8%a6%86---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-patch-success.webp"
-alt="修改 {id}回覆 成功" width="700">&lt;figcaption>
-&lt;p>修改 {id}回覆 成功&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e4%bf%ae%e6%94%b9id%e5%9b%9e%e8%a6%86---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-patch-success.webp" data-zoomable alt="修改 {id}回覆 成功" width="700"loading="lazy"
+/>&lt;figcaption>修改 {id}回覆 成功&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>修改{id}回覆 - 失敗&lt;span class="hx:absolute hx:-mt-20" id="修改id回覆---失敗">&lt;/span>
-&lt;a href="#%e4%bf%ae%e6%94%b9id%e5%9b%9e%e8%a6%86---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-patch-error.webp"
-alt="修改 {id}回覆 失敗" width="700">&lt;figcaption>
-&lt;p>修改 {id}回覆 失敗&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e4%bf%ae%e6%94%b9id%e5%9b%9e%e8%a6%86---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-patch-error.webp" data-zoomable alt="修改 {id}回覆 失敗" width="700"loading="lazy"
+/>&lt;figcaption>修改 {id}回覆 失敗&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>刪除{id}回覆 - 成功&lt;span class="hx:absolute hx:-mt-20" id="刪除id回覆---成功">&lt;/span>
-&lt;a href="#%e5%88%aa%e9%99%a4id%e5%9b%9e%e8%a6%86---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-delete.webp"
-alt="刪除 {id}回覆 成功" width="700">&lt;figcaption>
-&lt;p>刪除 {id}回覆 成功&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e5%88%aa%e9%99%a4id%e5%9b%9e%e8%a6%86---%e6%88%90%e5%8a%9f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-delete.webp" data-zoomable alt="刪除 {id}回覆 成功" width="700"loading="lazy"
+/>&lt;figcaption>刪除 {id}回覆 成功&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>刪除{id}回覆 - 失敗&lt;span class="hx:absolute hx:-mt-20" id="刪除id回覆---失敗">&lt;/span>
-&lt;a href="#%e5%88%aa%e9%99%a4id%e5%9b%9e%e8%a6%86---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-delete-error.webp"
-alt="刪除 {id}回覆 失敗" width="700">&lt;figcaption>
-&lt;p>刪除 {id}回覆 失敗&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e5%88%aa%e9%99%a4id%e5%9b%9e%e8%a6%86---%e5%a4%b1%e6%95%97" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-restful-api-repository-messageboard/reply-delete-error.webp" data-zoomable alt="刪除 {id}回覆 失敗" width="700"loading="lazy"
+/>&lt;figcaption>刪除 {id}回覆 失敗&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Node.js 官網：&lt;a href="https://nodejs.dev/learn/introduction-to-nodejs"target="_blank" rel="noopener">https://nodejs.dev/learn/introduction-to-nodejs&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Node.js 官網：&lt;a href="https://nodejs.dev/learn/introduction-to-nodejs"target="_blank" rel="noopener">https://nodejs.dev/learn/introduction-to-nodejs&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Sequelize：&lt;a href="https://sequelize.org/v6/index.html"target="_blank" rel="noopener">https://sequelize.org/v6/index.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Sequelize：&lt;a href="https://sequelize.org/v6/index.html"target="_blank" rel="noopener">https://sequelize.org/v6/index.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>透過 sequelize 來達成 DB Schema Migration：&lt;a href="https://hackmd.io/@TSMI_E7ORNeP8YBbWm-lFA/ryCtaVW_M?print-pdf#%E4%BD%BF%E7%94%A8sequelize%E5%BB%BA%E7%AB%8B%E4%B8%80%E5%BC%B5user-table"target="_blank" rel="noopener">https://hackmd.io/@TSMI_E7ORNeP8YBbWm-lFA/ryCtaVW_M?print-pdf#%E4%BD%BF%E7%94%A8sequelize%E5%BB%BA%E7%AB%8B%E4%B8%80%E5%BC%B5user-table&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>透過 sequelize 來達成 DB Schema Migration：&lt;a href="https://hackmd.io/@TSMI_E7ORNeP8YBbWm-lFA/ryCtaVW_M?print-pdf#%E4%BD%BF%E7%94%A8sequelize%E5%BB%BA%E7%AB%8B%E4%B8%80%E5%BC%B5user-table"target="_blank" rel="noopener">https://hackmd.io/@TSMI_E7ORNeP8YBbWm-lFA/ryCtaVW_M?print-pdf#%E4%BD%BF%E7%94%A8sequelize%E5%BB%BA%E7%AB%8B%E4%B8%80%E5%BC%B5user-table&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>How to create JOIN queries with Sequelize：&lt;a href="https://sebhastian.com/sequelize-join/"target="_blank" rel="noopener">https://sebhastian.com/sequelize-join/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>How to create JOIN queries with Sequelize：&lt;a href="https://sebhastian.com/sequelize-join/"target="_blank" rel="noopener">https://sebhastian.com/sequelize-join/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>Node.js 介紹</title><link>https://pin-yi.me/blog/nodejs/nodejs-introduce/</link><pubDate>Wed, 30 Mar 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/nodejs/nodejs-introduce/</guid><description>
 &lt;h2>什麼是 Node.js ?&lt;span class="hx:absolute hx:-mt-20" id="什麼是-nodejs-">&lt;/span>
@@ -1158,13 +1137,10 @@ alt="刪除 {id}回覆 失敗" width="700">&lt;figcaption>
 &lt;p>Node.js 的出現，讓前端網站開發人員可以使用 JaveScript 來做後端或是系統層面的工作。讓前端開發網站開發人員使用已懂的 JavaScript 語言就可以自行設定網站伺服器。&lt;/p>
 &lt;p>Node.js 採用 Google 開發的 Chrome V8 JavaScript 引擎和 libuv 函式庫，可以用指令去執行 JavaScript，使用非阻塞輸入輸出、非同步、事件驅動等技術來提高效能，可最佳化應用程式的傳輸量和規模。這些技術通常用於資料密集的即時應用程式。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-introduce/main-nodejs.webp"
-alt="主要的 Node.js 組件 (An Intro to Node.js That You May Have Missed )" width="700">&lt;figcaption>
-&lt;p>主要的 Node.js 組件 (&lt;a href="https://itnext.io/an-intro-to-node-js-that-you-may-have-missed-b175ef4277f7"target="_blank" rel="noopener">An Intro to Node.js That You May Have Missed&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-introduce/main-nodejs.webp" data-zoomable alt="主要的 Node.js 組件 ([An Intro to Node.js That You May Have Missed](https://itnext.io/an-intro-to-node-js-that-you-may-have-missed-b175ef4277f7))" width="700"loading="lazy"
+/>&lt;figcaption>主要的 Node.js 組件 (&lt;a href="https://itnext.io/an-intro-to-node-js-that-you-may-have-missed-b175ef4277f7"target="_blank" rel="noopener">An Intro to Node.js That You May Have Missed&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>其他開源、低級組件，主要用 C/C++ 編寫：&lt;/p>
 &lt;ul>
@@ -1273,6 +1249,8 @@ alt="主要的 Node.js 組件 (An Intro to Node.js That You May Have Missed )" w
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1291,6 +1269,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1308,6 +1288,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1336,6 +1318,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1365,6 +1349,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1390,6 +1376,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1413,6 +1401,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1450,6 +1440,8 @@ Promise 是一個物件，代表著一個尚未完成，但最終會完成的一
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1471,6 +1463,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1490,6 +1484,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1523,6 +1519,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1565,6 +1563,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1593,6 +1593,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1638,6 +1640,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1684,6 +1688,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1694,13 +1700,10 @@ title="Copy code"
 &lt;br>
 &lt;p>我們可以看到下面這張圖，他是 Node.js 運行時的縮圖，一旦你的 Node.js 應用程序啟動，它會先開始一個初始化階段，運行啟動腳本，包括請求模組和註冊事件 callback。然後應用程序進入事件循環（也稱為主線程、事件線程等），從概念上講，它是為通過執行適當的 JS callback 來響應傳入的客戶端請求而構建的。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-introduce/run-nodejs.webp"
-alt="Node.js 運行時的圖示 (An Intro to Node.js That You May Have Missed )" width="700">&lt;figcaption>
-&lt;p>Node.js 運行時的圖示 (&lt;a href="https://itnext.io/an-intro-to-node-js-that-you-may-have-missed-b175ef4277f7"target="_blank" rel="noopener">An Intro to Node.js That You May Have Missed&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-introduce/run-nodejs.webp" data-zoomable alt="Node.js 運行時的圖示 ([An Intro to Node.js That You May Have Missed](https://itnext.io/an-intro-to-node-js-that-you-may-have-missed-b175ef4277f7))" width="700"loading="lazy"
+/>&lt;figcaption>Node.js 運行時的圖示 (&lt;a href="https://itnext.io/an-intro-to-node-js-that-you-may-have-missed-b175ef4277f7"target="_blank" rel="noopener">An Intro to Node.js That You May Have Missed&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>libuv 是非同步處理的函式庫（以 C 語言為主)，在面對非同步作業時，會開啟執行緒池 (thread pool / worker pool) ，預設共有四個執行緒 (也就是 worker threads)，運算這些 I/O 用的方式是事件迴圈 (event loop)。&lt;/p>
 &lt;p>所以就算 V8 處理程式碼是單執行緒，一但進入到 libuv 手上，它還是會幫你把會阻塞的 I/O 分工到執行緒池中交給不同的執行緒去處理，直到 callback 發生才會丟回應讓程式知道。&lt;/p>
@@ -1720,22 +1723,16 @@ alt="Node.js 運行時的圖示 (An Intro to Node.js That You May Have Missed )"
 &lt;a href="#%e4%ba%8b%e4%bb%b6%e8%bf%b4%e5%9c%88-event-loop" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>因為 Node.js 只有一個執行緒，所以當 libuv 把非同步事件處理完後，callback 要被丟回應用程式中排隊，等待主執行緒的 stack 為空的時候，才會開始執行。這個排隊的地方就是事件佇列 (event queue)。&lt;/p>
 &lt;p>libuv 會不斷檢查有沒有 callback 需要被執行，有的話分配到主執行緒結束手邊的程式後處理，因此這個過程稱為 『事件迴圈』。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-introduce/event-loop.webp"
-alt="事件迴圈(event loop) (Node.js 101 — 單執行緒、非同步、非阻塞 I/O 與事件迴圈 )" width="700">&lt;figcaption>
-&lt;p>事件迴圈(event loop) (&lt;a href="https://medium.com/wenchin-rolls-around/node-js-101-%E5%96%AE%E5%9F%B7%E8%A1%8C%E7%B7%92-%E9%9D%9E%E5%90%8C%E6%AD%A5-%E9%9D%9E%E9%98%BB%E5%A1%9E-i-o-%E8%88%87%E4%BA%8B%E4%BB%B6%E8%BF%B4%E5%9C%88-ef94f8359eee"target="_blank" rel="noopener">Node.js 101 — 單執行緒、非同步、非阻塞 I/O 與事件迴圈&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-introduce/event-loop.webp" data-zoomable alt="事件迴圈(event loop) ([Node.js 101 — 單執行緒、非同步、非阻塞 I/O 與事件迴圈](https://medium.com/wenchin-rolls-around/node-js-101-%E5%96%AE%E5%9F%B7%E8%A1%8C%E7%B7%92-%E9%9D%9E%E5%90%8C%E6%AD%A5-%E9%9D%9E%E9%98%BB%E5%A1%9E-i-o-%E8%88%87%E4%BA%8B%E4%BB%B6%E8%BF%B4%E5%9C%88-ef94f8359eee))" width="700"loading="lazy"
+/>&lt;figcaption>事件迴圈(event loop) (&lt;a href="https://medium.com/wenchin-rolls-around/node-js-101-%E5%96%AE%E5%9F%B7%E8%A1%8C%E7%B7%92-%E9%9D%9E%E5%90%8C%E6%AD%A5-%E9%9D%9E%E9%98%BB%E5%A1%9E-i-o-%E8%88%87%E4%BA%8B%E4%BB%B6%E8%BF%B4%E5%9C%88-ef94f8359eee"target="_blank" rel="noopener">Node.js 101 — 單執行緒、非同步、非阻塞 I/O 與事件迴圈&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>libuv 事件迴圈有哪些階段呢？&lt;/p>
-&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-introduce/libuv.webp"
-alt="libuv 事件迴圈 (nexocode )" width="700">&lt;figcaption>
-&lt;p>libuv 事件迴圈 (&lt;a href="https://nexocode.com/blog/posts/behind-nodejs-event-loop/"target="_blank" rel="noopener">nexocode&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/nodejs/nodejs-introduce/libuv.webp" data-zoomable alt="libuv 事件迴圈 ([nexocode](https://nexocode.com/blog/posts/behind-nodejs-event-loop/))" width="700"loading="lazy"
+/>&lt;figcaption>libuv 事件迴圈 (&lt;a href="https://nexocode.com/blog/posts/behind-nodejs-event-loop/"target="_blank" rel="noopener">nexocode&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>libuv 的事件迴圈共有六個階段，每個階段的作用如下：&lt;/p>
 &lt;ol>
@@ -1778,6 +1775,8 @@ alt="libuv 事件迴圈 (nexocode )" width="700">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1805,6 +1804,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1838,6 +1839,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1858,6 +1861,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1884,6 +1889,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1904,6 +1911,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1917,6 +1926,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1930,6 +1941,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1956,6 +1969,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -1983,6 +1998,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2009,6 +2026,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2036,6 +2055,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2064,6 +2085,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2072,7 +2095,7 @@ title="Copy code"
 &lt;/div>
 &lt;br>
 &lt;h2>Express 框架&lt;span class="hx:absolute hx:-mt-20" id="express-框架">&lt;/span>
-&lt;a href="#express-%e6%a1%86%e6%9e%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Node.js 在實作上不會單獨使用，通常會搭配框架去使用，像是 &lt;a href="https://expressjs.com/"target="_blank" rel="noopener">Express JS 後端框架&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#express-%e6%a1%86%e6%9e%b6" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Node.js 在實作上不會單獨使用，通常會搭配框架去使用，像是 &lt;a href="https://expressjs.com/"target="_blank" rel="noopener">Express JS 後端框架&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>，可以讓開發人員在寫同一個功能時，少寫很多程式的工具。&lt;/p>
 &lt;p>Express 是 Node.js 環境下提供的輕量後端架構，自由度極高，透過豐富的 HTTP 工具，能快速發開後端應用程式，它提供：&lt;/p>
@@ -2099,6 +2122,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2112,6 +2137,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2140,6 +2167,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2154,6 +2183,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2177,6 +2208,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2192,6 +2225,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2207,6 +2242,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2222,6 +2259,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -2230,27 +2269,27 @@ title="Copy code"
 &lt;/div>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Node.js 官網：&lt;a href="https://nodejs.dev/learn/introduction-to-nodejs"target="_blank" rel="noopener">https://nodejs.dev/learn/introduction-to-nodejs&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Node.js 官網：&lt;a href="https://nodejs.dev/learn/introduction-to-nodejs"target="_blank" rel="noopener">https://nodejs.dev/learn/introduction-to-nodejs&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Node.js 101 — 單執行緒、非同步、非阻塞 I/O 與事件迴圈：&lt;a href="https://medium.com/wenchin-rolls-around/node-js-101-%E5%96%AE%E5%9F%B7%E8%A1%8C%E7%B7%92-%E9%9D%9E%E5%90%8C%E6%AD%A5-%E9%9D%9E%E9%98%BB%E5%A1%9E-i-o-%E8%88%87%E4%BA%8B%E4%BB%B6%E8%BF%B4%E5%9C%88-ef94f8359eee"target="_blank" rel="noopener">https://medium.com/wenchin-rolls-around/node-js-101-%E5%96%AE%E5%9F%B7%E8%A1%8C%E7%B7%92-%E9%9D%9E%E5%90%8C%E6%AD%A5-%E9%9D%9E%E9%98%BB%E5%A1%9E-i-o-%E8%88%87%E4%BA%8B%E4%BB%B6%E8%BF%B4%E5%9C%88-ef94f8359eee&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Node.js 101 — 單執行緒、非同步、非阻塞 I/O 與事件迴圈：&lt;a href="https://medium.com/wenchin-rolls-around/node-js-101-%E5%96%AE%E5%9F%B7%E8%A1%8C%E7%B7%92-%E9%9D%9E%E5%90%8C%E6%AD%A5-%E9%9D%9E%E9%98%BB%E5%A1%9E-i-o-%E8%88%87%E4%BA%8B%E4%BB%B6%E8%BF%B4%E5%9C%88-ef94f8359eee"target="_blank" rel="noopener">https://medium.com/wenchin-rolls-around/node-js-101-%E5%96%AE%E5%9F%B7%E8%A1%8C%E7%B7%92-%E9%9D%9E%E5%90%8C%E6%AD%A5-%E9%9D%9E%E9%98%BB%E5%A1%9E-i-o-%E8%88%87%E4%BA%8B%E4%BB%B6%E8%BF%B4%E5%9C%88-ef94f8359eee&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>An Intro to Node.js That You May Have Missed：&lt;a href="https://itnext.io/an-intro-to-node-js-that-you-may-have-missed-b175ef4277f7"target="_blank" rel="noopener">https://itnext.io/an-intro-to-node-js-that-you-may-have-missed-b175ef4277f7&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>An Intro to Node.js That You May Have Missed：&lt;a href="https://itnext.io/an-intro-to-node-js-that-you-may-have-missed-b175ef4277f7"target="_blank" rel="noopener">https://itnext.io/an-intro-to-node-js-that-you-may-have-missed-b175ef4277f7&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>Sequelize：&lt;a href="https://sequelize.org/v6/index.html"target="_blank" rel="noopener">https://sequelize.org/v6/index.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>Sequelize：&lt;a href="https://sequelize.org/v6/index.html"target="_blank" rel="noopener">https://sequelize.org/v6/index.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>透過 sequelize 來達成 DB Schema Migration：&lt;a href="https://hackmd.io/@TSMI_E7ORNeP8YBbWm-lFA/ryCtaVW_M?print-pdf#%E4%BD%BF%E7%94%A8sequelize%E5%BB%BA%E7%AB%8B%E4%B8%80%E5%BC%B5user-table"target="_blank" rel="noopener">https://hackmd.io/@TSMI_E7ORNeP8YBbWm-lFA/ryCtaVW_M?print-pdf#%E4%BD%BF%E7%94%A8sequelize%E5%BB%BA%E7%AB%8B%E4%B8%80%E5%BC%B5user-table&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>透過 sequelize 來達成 DB Schema Migration：&lt;a href="https://hackmd.io/@TSMI_E7ORNeP8YBbWm-lFA/ryCtaVW_M?print-pdf#%E4%BD%BF%E7%94%A8sequelize%E5%BB%BA%E7%AB%8B%E4%B8%80%E5%BC%B5user-table"target="_blank" rel="noopener">https://hackmd.io/@TSMI_E7ORNeP8YBbWm-lFA/ryCtaVW_M?print-pdf#%E4%BD%BF%E7%94%A8sequelize%E5%BB%BA%E7%AB%8B%E4%B8%80%E5%BC%B5user-table&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>認識同步與非同步 — Callback + Promise + Async/Await：&lt;a href="https://medium.com/%E9%BA%A5%E5%85%8B%E7%9A%84%E5%8D%8A%E8%B7%AF%E5%87%BA%E5%AE%B6%E7%AD%86%E8%A8%98/%E5%BF%83%E5%BE%97-%E8%AA%8D%E8%AD%98%E5%90%8C%E6%AD%A5%E8%88%87%E9%9D%9E%E5%90%8C%E6%AD%A5-callback-promise-async-await-640ea491ea64"target="_blank" rel="noopener">https://medium.com/%E9%BA%A5%E5%85%8B%E7%9A%84%E5%8D%8A%E8%B7%AF%E5%87%BA%E5%AE%B6%E7%AD%86%E8%A8%98/%E5%BF%83%E5%BE%97-%E8%AA%8D%E8%AD%98%E5%90%8C%E6%AD%A5%E8%88%87%E9%9D%9E%E5%90%8C%E6%AD%A5-callback-promise-async-await-640ea491ea64&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>認識同步與非同步 — Callback + Promise + Async/Await：&lt;a href="https://medium.com/%E9%BA%A5%E5%85%8B%E7%9A%84%E5%8D%8A%E8%B7%AF%E5%87%BA%E5%AE%B6%E7%AD%86%E8%A8%98/%E5%BF%83%E5%BE%97-%E8%AA%8D%E8%AD%98%E5%90%8C%E6%AD%A5%E8%88%87%E9%9D%9E%E5%90%8C%E6%AD%A5-callback-promise-async-await-640ea491ea64"target="_blank" rel="noopener">https://medium.com/%E9%BA%A5%E5%85%8B%E7%9A%84%E5%8D%8A%E8%B7%AF%E5%87%BA%E5%AE%B6%E7%AD%86%E8%A8%98/%E5%BF%83%E5%BE%97-%E8%AA%8D%E8%AD%98%E5%90%8C%E6%AD%A5%E8%88%87%E9%9D%9E%E5%90%8C%E6%AD%A5-callback-promise-async-await-640ea491ea64&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>你懂 JavaScript 嗎？#23 Callback：&lt;a href="https://ithelp.ithome.com.tw/articles/10206555"target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10206555&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>你懂 JavaScript 嗎？#23 Callback：&lt;a href="https://ithelp.ithome.com.tw/articles/10206555"target="_blank" rel="noopener">https://ithelp.ithome.com.tw/articles/10206555&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>How to create JOIN queries with Sequelize：&lt;a href="https://sebhastian.com/sequelize-join/"target="_blank" rel="noopener">https://sebhastian.com/sequelize-join/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>How to create JOIN queries with Sequelize：&lt;a href="https://sebhastian.com/sequelize-join/"target="_blank" rel="noopener">https://sebhastian.com/sequelize-join/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

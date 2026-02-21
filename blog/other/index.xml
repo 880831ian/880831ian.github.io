@@ -1,55 +1,40 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – 其他(還想不到分類)</title><link>https://pin-yi.me/blog/other/</link><description>Recent content in 其他(還想不到分類) on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><atom:link href="https://pin-yi.me/blog/other/index.xml" rel="self" type="application/rss+xml"/><item><title>Bookstack 開源知識庫筆記平台安裝 (K8s + docker)</title><link>https://pin-yi.me/blog/other/bookstack/</link><pubDate>Fri, 07 Apr 2023 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/other/bookstack/</guid><description>
-&lt;p>最近剛好有公司同事離職，想要把交接的資料給整理整理，雖然部門之前有架設專用的 wiki 給 RD 使用，但覺得介面沒有到很好用，於是就在網路上尋找，可以多人編輯的筆記系統，一開始有想過用 CodiMD (HackMD)，但考量到需要多層的架構來區分文件，最後選擇 &lt;a href="https://www.bookstackapp.com/"target="_blank" rel="noopener">Bookstack&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>最近剛好有公司同事離職，想要把交接的資料給整理整理，雖然部門之前有架設專用的 wiki 給 RD 使用，但覺得介面沒有到很好用，於是就在網路上尋找，可以多人編輯的筆記系統，一開始有想過用 CodiMD (HackMD)，但考量到需要多層的架構來區分文件，最後選擇 &lt;a href="https://www.bookstackapp.com/"target="_blank" rel="noopener">Bookstack&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 這個開源知識庫筆平台來作為組內的筆記系統，以下會簡單說一下 Bookstack 的特色以及使用 K8s 跟 docker 的安裝教學。&lt;/p>
 &lt;br>
 &lt;h2>Bookstack 介紹&lt;span class="hx:absolute hx:-mt-20" id="bookstack-介紹">&lt;/span>
-&lt;a href="#bookstack-%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>介紹部分主要參考 &lt;a href="https://docs.ossii.com.tw/books/bookstack/page/bookstack"target="_blank" rel="noopener">Bookstack 簡介&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#bookstack-%e4%bb%8b%e7%b4%b9" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>介紹部分主要參考 &lt;a href="https://docs.ossii.com.tw/books/bookstack/page/bookstack"target="_blank" rel="noopener">Bookstack 簡介&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>，以下列出會選擇它的三個特色：&lt;/p>
 &lt;h3>簡潔的書本列表模式&lt;span class="hx:absolute hx:-mt-20" id="簡潔的書本列表模式">&lt;/span>
-&lt;a href="#%e7%b0%a1%e6%bd%94%e7%9a%84%e6%9b%b8%e6%9c%ac%e5%88%97%e8%a1%a8%e6%a8%a1%e5%bc%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/1.webp"
-alt="書架分類" width="850">&lt;figcaption>
-&lt;p>書架分類&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;a href="#%e7%b0%a1%e6%bd%94%e7%9a%84%e6%9b%b8%e6%9c%ac%e5%88%97%e8%a1%a8%e6%a8%a1%e5%bc%8f" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/1.webp" data-zoomable alt="書架分類" width="850"loading="lazy"
+/>&lt;figcaption>書架分類&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/2.webp"
-alt="書本分類" width="850">&lt;figcaption>
-&lt;p>書本分類&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/2.webp" data-zoomable alt="書本分類" width="850"loading="lazy"
+/>&lt;figcaption>書本分類&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/3.webp"
-alt="頁面章節分類" width="850">&lt;figcaption>
-&lt;p>頁面章節分類&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/3.webp" data-zoomable alt="頁面章節分類" width="850"loading="lazy"
+/>&lt;figcaption>頁面章節分類&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>最主要是因為有以上幾個不同的分層架構，在資料整理上會更方便、更好彙整，可以自訂書架以及書本、頁面或是章節的封面以及內容。&lt;/p>
 &lt;br>
 &lt;h3>強大的搜尋功能&lt;span class="hx:absolute hx:-mt-20" id="強大的搜尋功能">&lt;/span>
 &lt;a href="#%e5%bc%b7%e5%a4%a7%e7%9a%84%e6%90%9c%e5%b0%8b%e5%8a%9f%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/4.webp"
-alt="搜尋功能" width="850">&lt;figcaption>
-&lt;p>搜尋功能&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/4.webp" data-zoomable alt="搜尋功能" width="850"loading="lazy"
+/>&lt;figcaption>搜尋功能&lt;/figcaption>&lt;/figure>
 &lt;p>當我們的筆記內容越來越多，雖然有上面提到的分類模式，想要找到內容還是需要花一段時間，但 Bookstack 有強大的搜尋功能，可以針對書架、書本、章節或是書面個別搜尋，可以利用時間、標籤、標題或是內容來快速找到想要的內容。&lt;/p>
 &lt;br>
 &lt;h3>畫圖功能&lt;span class="hx:absolute hx:-mt-20" id="畫圖功能">&lt;/span>
-&lt;a href="#%e7%95%ab%e5%9c%96%e5%8a%9f%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在討論系統或是程式的架構，最好的方式就是用畫圖的來表示。在以往都是使用 &lt;a href="https://app.diagrams.net/"target="_blank" rel="noopener">Draw.io&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e7%95%ab%e5%9c%96%e5%8a%9f%e8%83%bd" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在討論系統或是程式的架構，最好的方式就是用畫圖的來表示。在以往都是使用 &lt;a href="https://app.diagrams.net/"target="_blank" rel="noopener">Draw.io&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 來畫圖，當畫完圖後需要匯出畫好的圖以外，如果怕畫圖的原檔消失，還需要再另外下載原檔來保留，很不方便，又怕忘記下載，而 Bookstack 內建可直接編輯的功能，當畫完圖後有問題，可以直接點擊圖片來編輯，而這些功能還會搭配內建的版控，若有問題還可以還原到正確的圖片版本。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/5.gif"
-alt="畫圖功能" width="1000">&lt;figcaption>
-&lt;p>畫圖功能&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/5.gif" data-zoomable alt="畫圖功能" width="1000"loading="lazy"
+/>&lt;figcaption>畫圖功能&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>安裝說明&lt;span class="hx:absolute hx:-mt-20" id="安裝說明">&lt;/span>
-&lt;a href="#%e5%ae%89%e8%a3%9d%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那簡單說明為什麼會選擇 Bookstack 我們就來安裝它，這邊有使用 K8s + docker 來測試安裝，那我們就一起來看程式碼吧，&lt;a href="https://github.com/880831ian/bookstack"target="_blank" rel="noopener">程式碼放在這&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%ae%89%e8%a3%9d%e8%aa%aa%e6%98%8e" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那簡單說明為什麼會選擇 Bookstack 我們就來安裝它，這邊有使用 K8s + docker 來測試安裝，那我們就一起來看程式碼吧，&lt;a href="https://github.com/880831ian/bookstack"target="_blank" rel="noopener">程式碼放在這&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a> 👈：&lt;/p>
 &lt;h3>K8s&lt;span class="hx:absolute hx:-mt-20" id="k8s">&lt;/span>
@@ -61,6 +46,8 @@ alt="畫圖功能" width="1000">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -132,6 +119,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -159,6 +148,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -190,6 +181,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -243,6 +236,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -250,34 +245,28 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;p>docker 的部分就更簡單了，一樣是把 &lt;strong>&amp;laquo;更換此處&amp;raquo;&lt;/strong> 換成對應的內容即可，env 的部分可以參考官方文件，這邊比較特別的是我們有多使用 Google 來 Oauth 登入，Bookstack 支援多種的 Oauth 登入方式，可以參考 &lt;a href="https://www.bookstackapp.com/docs/admin/third-party-auth/"target="_blank" rel="noopener">Third Party Authentication&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>docker 的部分就更簡單了，一樣是把 &lt;strong>&amp;laquo;更換此處&amp;raquo;&lt;/strong> 換成對應的內容即可，env 的部分可以參考官方文件，這邊比較特別的是我們有多使用 Google 來 Oauth 登入，Bookstack 支援多種的 Oauth 登入方式，可以參考 &lt;a href="https://www.bookstackapp.com/docs/admin/third-party-auth/"target="_blank" rel="noopener">Third Party Authentication&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>。&lt;/p>
 &lt;br>
 &lt;p>架設好 Bookstack 就可以開始寫部門或是組織內的筆記拉～ 如果有開放外網連線，要記得修改預設的管理員帳號，以及用管理員帳號登入，到功能與安全的公開存取給取消，這樣就必須要登入才可以瀏覽筆記了！那就交給大家自己去玩這個好用的筆記工具囉～～ 😍&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/6.webp"
-alt="功能與安全設定" width="850">&lt;figcaption>
-&lt;p>功能與安全設定&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/bookstack/6.webp" data-zoomable alt="功能與安全設定" width="850"loading="lazy"
+/>&lt;figcaption>功能與安全設定&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>BookStack 簡介：&lt;a href="https://docs.ossii.com.tw/books/bookstack/page/bookstack"target="_blank" rel="noopener">https://docs.ossii.com.tw/books/bookstack/page/bookstack&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>BookStack 簡介：&lt;a href="https://docs.ossii.com.tw/books/bookstack/page/bookstack"target="_blank" rel="noopener">https://docs.ossii.com.tw/books/bookstack/page/bookstack&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>BookStack Installation：&lt;a href="https://www.bookstackapp.com/docs/admin/installation/"target="_blank" rel="noopener">https://www.bookstackapp.com/docs/admin/installation/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>BookStack Installation：&lt;a href="https://www.bookstackapp.com/docs/admin/installation/"target="_blank" rel="noopener">https://www.bookstackapp.com/docs/admin/installation/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>找出程式碼、開源套件、容器的安全漏洞工具 - Snyk</title><link>https://pin-yi.me/blog/other/snyk/</link><pubDate>Tue, 20 Sep 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/other/snyk/</guid><description>
 &lt;p>前幾天有機會可以去參加 DevOpsDays Taipei 2022 活動，聽到了一門有關於如何將 Security 加入 DevOps - GitLab CI/CD with Snyk 的講座，覺得蠻有趣的，想說順便紀錄一下這幾天去聽的內容，文章底下有附上本次大會的共筆以及該講者於自己部落格所發的文章，歡迎大家先行查看歐 😆&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/devops.webp"
-alt="DevOps 圖片 (醫院 DevOps 如何落地(1) ─ DevOps 與醫院 )" width="500">&lt;figcaption>
-&lt;p>DevOps 圖片 &lt;a href="https://www.cio.com.tw/how-hospital-devops-landed-1-devops-and-hospitals/"target="_blank" rel="noopener">(醫院 DevOps 如何落地(1) ─ DevOps 與醫院&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/devops.webp" data-zoomable alt="DevOps 圖片 [(醫院 DevOps 如何落地(1) ─ DevOps 與醫院](https://www.cio.com.tw/how-hospital-devops-landed-1-devops-and-hospitals/))" width="500"loading="lazy"
+/>&lt;figcaption>DevOps 圖片 &lt;a href="https://www.cio.com.tw/how-hospital-devops-landed-1-devops-and-hospitals/"target="_blank" rel="noopener">(醫院 DevOps 如何落地(1) ─ DevOps 與醫院&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>我們平常熟知的 DevOps 文化應該是像上面這張圖一樣，可以透過自動化「軟體交付」和「架構變更」的流程，來使得構建、測試、發布軟體能夠更加地快捷、頻繁和可靠。&lt;/p>
 &lt;br>
@@ -287,16 +276,13 @@ alt="DevOps 圖片 (醫院 DevOps 如何落地(1) ─ DevOps 與醫院 )" width=
 &lt;br>
 &lt;p>所以單純的自動化整合與部署已經不能滿足需求，就像下圖一樣，開始有了 DevSecOps 這個詞產生，在 DevOps 的 CI/CD 流程中加入資安解決方案，藉由資安解決方案來減少開發人員去檢查程式漏洞的時間，也讓 DevOps 快速迭代更加的完整。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/devsecops.webp"
-alt="DevSecOps 圖片 (Apps Built Better: Why DevSecOps is Your Security Team’s Silver Bullet )" width="450">&lt;figcaption>
-&lt;p>DevSecOps 圖片 (&lt;a href="https://threatpost.com/apps-built-better-devsecops-security-silver-bullet/167793/"target="_blank" rel="noopener">Apps Built Better: Why DevSecOps is Your Security Team’s Silver Bullet&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/devsecops.webp" data-zoomable alt="DevSecOps 圖片 ([Apps Built Better: Why DevSecOps is Your Security Team’s Silver Bullet](https://threatpost.com/apps-built-better-devsecops-security-silver-bullet/167793/))" width="450"loading="lazy"
+/>&lt;figcaption>DevSecOps 圖片 (&lt;a href="https://threatpost.com/apps-built-better-devsecops-security-silver-bullet/167793/"target="_blank" rel="noopener">Apps Built Better: Why DevSecOps is Your Security Team’s Silver Bullet&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>Snyk&lt;span class="hx:absolute hx:-mt-20" id="snyk">&lt;/span>
-&lt;a href="#snyk" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那我們這次要使用的工具是 - Snyk，我先簡單介紹一下這個公司以及工具，它是位於波士頓的網絡安全公司，專門從事雲計算，提供增輕鬆集成，可以將安全掃描結合到 IDE、Repository、CI/CD 等，連續掃描以及一鍵修復等功能。他本身是一個 SaaS 的服務，所以需要到官網註冊一個帳號才能使用，也支援不同的 SSO 登入，詳細可以參考&lt;a href="https://app.snyk.io/login?cta=sign-up&amp;amp;loc=nav&amp;amp;page=homepage"target="_blank" rel="noopener">註冊畫面&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#snyk" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>那我們這次要使用的工具是 - Snyk，我先簡單介紹一下這個公司以及工具，它是位於波士頓的網絡安全公司，專門從事雲計算，提供增輕鬆集成，可以將安全掃描結合到 IDE、Repository、CI/CD 等，連續掃描以及一鍵修復等功能。他本身是一個 SaaS 的服務，所以需要到官網註冊一個帳號才能使用，也支援不同的 SSO 登入，詳細可以參考&lt;a href="https://app.snyk.io/login?cta=sign-up&amp;amp;loc=nav&amp;amp;page=homepage"target="_blank" rel="noopener">註冊畫面&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>。&lt;/p>
 &lt;br>
@@ -308,7 +294,7 @@ alt="DevSecOps 圖片 (Apps Built Better: Why DevSecOps is Your Security Team’
 &lt;li>IaC&lt;/li>
 &lt;/ul>
 &lt;br>
-&lt;p>那我們會依照這４種功能依序介紹，詳細的可以參考 &lt;a href="https://docs.snyk.io/#explore-snyk-products"target="_blank" rel="noopener">Snyk User Documentation # Explore Snyk products&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>那我們會依照這４種功能依序介紹，詳細的可以參考 &lt;a href="https://docs.snyk.io/#explore-snyk-products"target="_blank" rel="noopener">Snyk User Documentation # Explore Snyk products&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>。&lt;/p>
 &lt;br>
@@ -326,35 +312,23 @@ alt="DevSecOps 圖片 (Apps Built Better: Why DevSecOps is Your Security Team’
 &lt;li>首先先開啟左側的 Marketplace，搜尋 &lt;code>Snyk&lt;/code>，&lt;del>選擇下載量最高的準沒錯&lt;/del>，選擇 Snyk Security - Code and Open Source Dependencies。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/ide.webp"
-alt="VS Code Marketplace 安裝 Snyk" width="1000">&lt;figcaption>
-&lt;p>VS Code Marketplace 安裝 Snyk&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/ide.webp" data-zoomable alt="VS Code Marketplace 安裝 Snyk" width="1000"loading="lazy"
+/>&lt;figcaption>VS Code Marketplace 安裝 Snyk&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="2">
 &lt;li>安裝完後，在左側欄位應該就會看到 Snyk 的狗狗 Logo，如果沒有登入過，會先要求你登入 Snyk 並授權給 Plugins 使用。最後當你開啟專案時，會開始掃描程式碼，並且會依照開源套件安全性、程式碼安全性來分類，會顯示套件遇到什麼漏洞需要升級以及程式碼哪一段會有安全性的問題，能夠讓開發人員在第一時間就修復安全問題。&lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/ide2.webp"
-alt="IDE Plugins 掃描" width="1000">&lt;figcaption>
-&lt;p>IDE Plugins 掃描&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/ide2.webp" data-zoomable alt="IDE Plugins 掃描" width="1000"loading="lazy"
+/>&lt;figcaption>IDE Plugins 掃描&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h4>Web&lt;span class="hx:absolute hx:-mt-20" id="web">&lt;/span>
 &lt;a href="#web" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>登入 Snyk 網站，直接加入對應的 Project，會直接於網頁上掃描漏洞，並提示錯誤內容。&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/web.webp"
-alt="選擇加入 project" width="500">&lt;figcaption>
-&lt;p>選擇加入 project&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/web1.webp"
-alt="掃描漏洞並顯示錯誤內容" width="800">&lt;figcaption>
-&lt;p>掃描漏洞並顯示錯誤內容&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/web.webp" data-zoomable alt="選擇加入 project" width="500"loading="lazy"
+/>&lt;figcaption>選擇加入 project&lt;/figcaption>&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/web1.webp" data-zoomable alt="掃描漏洞並顯示錯誤內容" width="800"loading="lazy"
+/>&lt;figcaption>掃描漏洞並顯示錯誤內容&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h4>CLI&lt;span class="hx:absolute hx:-mt-20" id="cli">&lt;/span>
 &lt;a href="#cli" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h4>&lt;p>要使用 CLI 需要先安裝 Snyk CLI，我們一樣使用 Homebrew 來安裝：&lt;/p>
@@ -364,50 +338,43 @@ alt="掃描漏洞並顯示錯誤內容" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;/button>
 &lt;/div>
 &lt;/div>
-&lt;p>當然除了 Homebrew 以外還有其他的安裝方式，例如：curl 下載執行檔、npm、yarn、docker 執行等等，詳細可以參考以下&lt;a href="https://docs.snyk.io/snyk-cli/install-the-snyk-cli"target="_blank" rel="noopener">安裝連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>當然除了 Homebrew 以外還有其他的安裝方式，例如：curl 下載執行檔、npm、yarn、docker 執行等等，詳細可以參考以下&lt;a href="https://docs.snyk.io/snyk-cli/install-the-snyk-cli"target="_blank" rel="noopener">安裝連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>。&lt;/p>
 &lt;br>
-&lt;p>可以直接使用以下指令才進行測試 &lt;code>sync test&lt;/code>，還有其他 CLI 指令，詳細可以參考 &lt;a href="https://docs.snyk.io/snyk-cli"target="_blank" rel="noopener">Snyk CLI&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>可以直接使用以下指令才進行測試 &lt;code>sync test&lt;/code>，還有其他 CLI 指令，詳細可以參考 &lt;a href="https://docs.snyk.io/snyk-cli"target="_blank" rel="noopener">Snyk CLI&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/cli.webp"
-alt="CLI 掃描 (官網 )" width="800">&lt;figcaption>
-&lt;p>CLI 掃描 (&lt;a href="https://docs.snyk.io/snyk-cli"target="_blank" rel="noopener">官網&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/cli.webp" data-zoomable alt="CLI 掃描 ([官網](https://docs.snyk.io/snyk-cli))" width="800"loading="lazy"
+/>&lt;figcaption>CLI 掃描 (&lt;a href="https://docs.snyk.io/snyk-cli"target="_blank" rel="noopener">官網&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>Open Source&lt;span class="hx:absolute hx:-mt-20" id="open-source">&lt;/span>
-&lt;a href="#open-source" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>能夠掃描目前開發的 Project 中有沒有使用到有漏洞的 library，目前支援以下圖片語言，詳細可以參考 &lt;a href="https://docs.snyk.io/products/snyk-open-source/language-and-package-manager-support"target="_blank" rel="noopener">Open Source - Supported languages and package managers&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#open-source" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>能夠掃描目前開發的 Project 中有沒有使用到有漏洞的 library，目前支援以下圖片語言，詳細可以參考 &lt;a href="https://docs.snyk.io/products/snyk-open-source/language-and-package-manager-support"target="_blank" rel="noopener">Open Source - Supported languages and package managers&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/open.webp"
-alt="Open Source library 掃描 (官網 )" width="600">&lt;figcaption>
-&lt;p>Open Source library 掃描 (&lt;a href="https://docs.snyk.io/products/snyk-open-source/language-and-package-manager-support"target="_blank" rel="noopener">官網&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/open.webp" data-zoomable alt="Open Source library 掃描 ([官網](https://docs.snyk.io/products/snyk-open-source/language-and-package-manager-support))" width="600"loading="lazy"
+/>&lt;figcaption>Open Source library 掃描 (&lt;a href="https://docs.snyk.io/products/snyk-open-source/language-and-package-manager-support"target="_blank" rel="noopener">官網&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
-&lt;/svg>&lt;/a>)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;/svg>&lt;/a>)&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>Container&lt;span class="hx:absolute hx:-mt-20" id="container">&lt;/span>
 &lt;a href="#container" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>在 Container image 中會存放著不同的 base image ，在 base image 中又會使用不同的 library。所以這些 container 的安全性也是需要被關注的。&lt;/p>
 &lt;p>可以直接使用 web 來選擇相對的 Container 倉庫去做掃描，如果有安裝上面說的 Snyk CLI，也可以使用該指令執行 &lt;code>snyk container test &amp;lt;container image&amp;gt;&lt;/code>&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/container.webp"
-alt="Container 掃描" width="800">&lt;figcaption>
-&lt;p>Container 掃描&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/snyk/container.webp" data-zoomable alt="Container 掃描" width="800"loading="lazy"
+/>&lt;figcaption>Container 掃描&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h3>Iac&lt;span class="hx:absolute hx:-mt-20" id="iac">&lt;/span>
 &lt;a href="#iac" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>Snyk 的基礎設施即代碼 (IaC) 可幫助開發人員編寫安全的基礎設施配置，預防錯誤的設定產生，並且支援多種格式：&lt;/p>
@@ -420,13 +387,13 @@ alt="Container 掃描" width="800">&lt;figcaption>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
 &lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>DevOpsDays Taipei 2022 共同筆記 - 在你的 DevOps 中加入一點 Security — GitLab CI/CD with Snyk - 鄭荃樺 (Barry.Cheng)
-：&lt;a href="https://hackmd.io/@DevOpsDay/2022/%2F%40DevOpsDay%2FHkm1iY6xi"target="_blank" rel="noopener">https://hackmd.io/@DevOpsDay/2022/%2F%40DevOpsDay%2FHkm1iY6xi&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+：&lt;a href="https://hackmd.io/@DevOpsDay/2022/%2F%40DevOpsDay%2FHkm1iY6xi"target="_blank" rel="noopener">https://hackmd.io/@DevOpsDay/2022/%2F%40DevOpsDay%2FHkm1iY6xi&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>身為 DevOps 工程師，使用 Snyk 掃描漏洞也是很正常的：&lt;a href="https://barry-cheng.medium.com/%E8%BA%AB%E7%82%BAdevops%E5%B7%A5%E7%A8%8B%E5%B8%AB-%E4%BD%BF%E7%94%A8snyk%E6%8E%83%E6%8F%8F%E6%BC%8F%E6%B4%9E%E4%B9%9F%E6%98%AF%E5%BE%88%E6%AD%A3%E5%B8%B8%E7%9A%84-d7d8f2ad2304"target="_blank" rel="noopener">https://barry-cheng.medium.com/%E8%BA%AB%E7%82%BAdevops%E5%B7%A5%E7%A8%8B%E5%B8%AB-%E4%BD%BF%E7%94%A8snyk%E6%8E%83%E6%8F%8F%E6%BC%8F%E6%B4%9E%E4%B9%9F%E6%98%AF%E5%BE%88%E6%AD%A3%E5%B8%B8%E7%9A%84-d7d8f2ad2304&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>身為 DevOps 工程師，使用 Snyk 掃描漏洞也是很正常的：&lt;a href="https://barry-cheng.medium.com/%E8%BA%AB%E7%82%BAdevops%E5%B7%A5%E7%A8%8B%E5%B8%AB-%E4%BD%BF%E7%94%A8snyk%E6%8E%83%E6%8F%8F%E6%BC%8F%E6%B4%9E%E4%B9%9F%E6%98%AF%E5%BE%88%E6%AD%A3%E5%B8%B8%E7%9A%84-d7d8f2ad2304"target="_blank" rel="noopener">https://barry-cheng.medium.com/%E8%BA%AB%E7%82%BAdevops%E5%B7%A5%E7%A8%8B%E5%B8%AB-%E4%BD%BF%E7%94%A8snyk%E6%8E%83%E6%8F%8F%E6%BC%8F%E6%B4%9E%E4%B9%9F%E6%98%AF%E5%BE%88%E6%AD%A3%E5%B8%B8%E7%9A%84-d7d8f2ad2304&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>在你的 DevOps 中加入一點 Security — GitLab CI/CD with Snyk (講師簡報)：&lt;a href="https://s.itho.me/ccms_slides/2022/9/26/3a2ac1ef-4143-4328-9fef-066782ac7dc6.pdf"target="_blank" rel="noopener">https://s.itho.me/ccms_slides/2022/9/26/3a2ac1ef-4143-4328-9fef-066782ac7dc6.pdf&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>在你的 DevOps 中加入一點 Security — GitLab CI/CD with Snyk (講師簡報)：&lt;a href="https://s.itho.me/ccms_slides/2022/9/26/3a2ac1ef-4143-4328-9fef-066782ac7dc6.pdf"target="_blank" rel="noopener">https://s.itho.me/ccms_slides/2022/9/26/3a2ac1ef-4143-4328-9fef-066782ac7dc6.pdf&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>Linux 常用指令</title><link>https://pin-yi.me/blog/other/linux-command/</link><pubDate>Fri, 17 Jun 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/other/linux-command/</guid><description>
 &lt;p>因為最近在管理機器時，常常會使用各式各樣的指令來協助管理，所以把常用的指令依照不同類別整理在底下呦 😘&lt;/p>
@@ -442,6 +409,8 @@ alt="Container 掃描" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -455,6 +424,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -473,6 +444,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -486,6 +459,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -500,6 +475,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -513,6 +490,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -533,6 +512,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -553,6 +534,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -567,6 +550,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -580,6 +565,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -596,6 +583,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -610,6 +599,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -625,6 +616,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -644,6 +637,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -682,6 +677,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -707,6 +704,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -729,6 +728,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -738,7 +739,7 @@ title="Copy code"
 &lt;p>一樣會顯示到目前已經啟動多久，跟是幾點啟動等資訊&lt;/p>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>3 種檢查遠端埠號是否開啟的方法：&lt;a href="https://www.ltsplus.com/linux/3-ways-check-remote-server-open-port"target="_blank" rel="noopener">https://www.ltsplus.com/linux/3-ways-check-remote-server-open-port&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>3 種檢查遠端埠號是否開啟的方法：&lt;a href="https://www.ltsplus.com/linux/3-ways-check-remote-server-open-port"target="_blank" rel="noopener">https://www.ltsplus.com/linux/3-ways-check-remote-server-open-port&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item><item><title>清除 Linux 機器上的 Swap (Buff、Cache、Swap 比較)</title><link>https://pin-yi.me/blog/other/linux-clear-swap/</link><pubDate>Mon, 06 Jun 2022 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/other/linux-clear-swap/</guid><description>
 &lt;p>今天在工作時，遇到機器的 Swap 超過預警值，需要手動去清除 Swap，那剛好就由這次機會來介紹要如何清除 Linux 機器上的 Swap，以及查詢 Linux 記憶體的使用狀況！&lt;/p>
@@ -750,6 +751,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -765,6 +768,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -780,6 +785,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -834,11 +841,8 @@ title="Copy code"
 &lt;h2>清除 Swap&lt;span class="hx:absolute hx:-mt-20" id="清除-swap">&lt;/span>
 &lt;a href="#%e6%b8%85%e9%99%a4-swap" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>首先第一步我們先使用 &lt;code>free&lt;/code> 來查看目前的 Swap 使用狀態：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/linux-clear-swap/before.webp"
-alt="Swap 使用 (尚未清除)" width="800">&lt;figcaption>
-&lt;p>Swap 使用 (尚未清除)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/linux-clear-swap/before.webp" data-zoomable alt="Swap 使用 (尚未清除)" width="800"loading="lazy"
+/>&lt;figcaption>Swap 使用 (尚未清除)&lt;/figcaption>&lt;/figure>
 &lt;p>可以看到我們的 Swap used 是 797M，我們設定它不能超過 5%，超過就會通知，所以我們要把它手動清除。&lt;/p>
 &lt;br>
 &lt;h3>先檢查記憶體 available&lt;span class="hx:absolute hx:-mt-20" id="先檢查記憶體-available">&lt;/span>
@@ -851,6 +855,8 @@ alt="Swap 使用 (尚未清除)" width="800">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -865,6 +871,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -874,11 +882,8 @@ title="Copy code"
 &lt;br>
 &lt;p>確認都沒問題後，我們就使用 &lt;code>free&lt;/code> 來重新查看記憶體狀態：&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/other/linux-clear-swap/after.webp"
-alt="Swap 使用 (已清除)" width="800">&lt;figcaption>
-&lt;p>Swap 使用 (已清除)&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/other/linux-clear-swap/after.webp" data-zoomable alt="Swap 使用 (已清除)" width="800"loading="lazy"
+/>&lt;figcaption>Swap 使用 (已清除)&lt;/figcaption>&lt;/figure>
 &lt;p>可以看到我們清除完 Swap 後，Swap 的 used 已經從 797M 變成 0B。&lt;/p>
 &lt;br>
 &lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-green-200 hx:bg-green-100 hx:text-green-900 hx:dark:border-green-200/30 hx:dark:bg-green-900/30 hx:dark:text-green-200">
@@ -889,12 +894,12 @@ alt="Swap 使用 (已清除)" width="800">&lt;figcaption>
 &lt;/div>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Linux 內存、Swap、Cache、Buffer 詳細解析：&lt;a href="https://os.51cto.com/article/636622.html"target="_blank" rel="noopener">https://os.51cto.com/article/636622.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Linux 內存、Swap、Cache、Buffer 詳細解析：&lt;a href="https://os.51cto.com/article/636622.html"target="_blank" rel="noopener">https://os.51cto.com/article/636622.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>linux free 命令下 free/available 區別：&lt;a href="https://www.796t.com/content/1545715382.html"target="_blank" rel="noopener">https://www.796t.com/content/1545715382.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>linux free 命令下 free/available 區別：&lt;a href="https://www.796t.com/content/1545715382.html"target="_blank" rel="noopener">https://www.796t.com/content/1545715382.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>釋放 linux 的 swap 記憶體：&lt;a href="https://www.796t.com/article.php?id=207781"target="_blank" rel="noopener">https://www.796t.com/article.php?id=207781&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>釋放 linux 的 swap 記憶體：&lt;a href="https://www.796t.com/article.php?id=207781"target="_blank" rel="noopener">https://www.796t.com/article.php?id=207781&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

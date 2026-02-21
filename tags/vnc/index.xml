@@ -25,15 +25,12 @@
 &lt;/li>
 &lt;/ol>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-macos-ec2-vnc-gui/1.webp"
-alt="AmazonSSMManagedInstanceCore 權限" width="1000">&lt;figcaption>
-&lt;p>AmazonSSMManagedInstanceCore 權限&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-macos-ec2-vnc-gui/1.webp" data-zoomable alt="AmazonSSMManagedInstanceCore 權限" width="1000"loading="lazy"
+/>&lt;figcaption>AmazonSSMManagedInstanceCore 權限&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="3">
 &lt;li>
-&lt;p>確定 EC2 上有安裝 SSM Agent，macOS 可以查看：&lt;a href="https://docs.aws.amazon.com/zh_tw/systems-manager/latest/userguide/ssm-agent-macos.html"target="_blank" rel="noopener">在 macOS 專用 EC2 執行個體使用 SSM Agent - AWS Systems Manager&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>確定 EC2 上有安裝 SSM Agent，macOS 可以查看：&lt;a href="https://docs.aws.amazon.com/zh_tw/systems-manager/latest/userguide/ssm-agent-macos.html"target="_blank" rel="noopener">在 macOS 專用 EC2 執行個體使用 SSM Agent - AWS Systems Manager&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
 &lt;/li>
@@ -46,6 +43,8 @@ alt="AmazonSSMManagedInstanceCore 權限" width="1000">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -54,11 +53,8 @@ title="Copy code"
 &lt;/div>
 &lt;p>&lt;code>&amp;lt;instance-id&amp;gt;&lt;/code> 請帶上 EC2 的 instance id&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-macos-ec2-vnc-gui/2.webp"
-alt="SSM 連線" width="900">&lt;figcaption>
-&lt;p>SSM 連線&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-macos-ec2-vnc-gui/2.webp" data-zoomable alt="SSM 連線" width="900"loading="lazy"
+/>&lt;figcaption>SSM 連線&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>確認看看是否可以正常連線，可以下 &lt;code>sudo -i&lt;/code> 來切換成 root&lt;/p>
 &lt;br>
@@ -71,6 +67,8 @@ alt="SSM 連線" width="900">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -86,6 +84,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -104,6 +104,8 @@ title="Copy code"
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -112,11 +114,8 @@ title="Copy code"
 &lt;/div>
 &lt;p>就會看到這個類似的畫面&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-macos-ec2-vnc-gui/3.webp"
-alt="SSM Port Forwarding" width="750">&lt;figcaption>
-&lt;p>SSM Port Forwarding&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-macos-ec2-vnc-gui/3.webp" data-zoomable alt="SSM Port Forwarding" width="750"loading="lazy"
+/>&lt;figcaption>SSM Port Forwarding&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;ol start="8">
 &lt;li>開啟瀏覽器或是開啟 macOS 內建的螢幕共享，打上&lt;/li>
@@ -126,6 +125,8 @@ alt="SSM Port Forwarding" width="750">&lt;figcaption>
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -134,19 +135,16 @@ title="Copy code"
 &lt;/div>
 &lt;p>就可以看到此畫面囉&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-macos-ec2-vnc-gui/4.webp"
-alt="VNC 連線到 macOS" width="800">&lt;figcaption>
-&lt;p>VNC 連線到 macOS&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ssm-macos-ec2-vnc-gui/4.webp" data-zoomable alt="VNC 連線到 macOS" width="800"loading="lazy"
+/>&lt;figcaption>VNC 連線到 macOS&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;h2>備註&lt;span class="hx:absolute hx:-mt-20" id="備註">&lt;/span>
 &lt;a href="#%e5%82%99%e8%a8%bb" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>假設是建立其他的 User (不是用 ec2-user)，在第一次連線時，還是需要先登入 ec2-user 才可以切換其他帳號&lt;/p>
 &lt;br>
 &lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
-&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>How can I access my Amazon EC2 macOS instance through a GUI?：&lt;a href="https://repost.aws/knowledge-center/ec2-mac-instance-gui-access"target="_blank" rel="noopener">Access an EC2 macOS instance through a GUI&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>How can I access my Amazon EC2 macOS instance through a GUI?：&lt;a href="https://repost.aws/knowledge-center/ec2-mac-instance-gui-access"target="_blank" rel="noopener">Access an EC2 macOS instance through a GUI&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p>
-&lt;p>AWS Systems Manager 使用 Port-Forwarding：&lt;a href="https://docs.aws.amazon.com/zh_tw/systems-manager/latest/userguide/session-manager-working-with-sessions-start.html#sessions-start-port-forwarding"target="_blank" rel="noopener">https://docs.aws.amazon.com/zh_tw/systems-manager/latest/userguide/session-manager-working-with-sessions-start.html#sessions-start-port-forwarding&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>AWS Systems Manager 使用 Port-Forwarding：&lt;a href="https://docs.aws.amazon.com/zh_tw/systems-manager/latest/userguide/session-manager-working-with-sessions-start.html#sessions-start-port-forwarding"target="_blank" rel="noopener">https://docs.aws.amazon.com/zh_tw/systems-manager/latest/userguide/session-manager-working-with-sessions-start.html#sessions-start-port-forwarding&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

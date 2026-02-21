@@ -7,6 +7,8 @@
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -17,17 +19,11 @@ title="Copy code"
 &lt;p>開頭有說，EFS 只支援單一 VPC，所以該 EFS 產生的 Domain 只有設定的 VPC 才可以使用 (就算透過 VPC Peering 都不行)，也沒辦法另外去調整 EFS 建立的 DNS Domain，因此我們需要額外再建立一條 route53 internal-dns 來使用&lt;/p>
 &lt;p>新的一條 route53 internal-dns domain，需要用 A Record 解析到 EFS 的 Network interfaces IP Address 上&lt;/p>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cross-vpc-efs/1.webp"
-alt="EFS 的 IP" width="1200">&lt;figcaption>
-&lt;p>EFS 的 IP&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cross-vpc-efs/1.webp" data-zoomable alt="EFS 的 IP" width="1200"loading="lazy"
+/>&lt;figcaption>EFS 的 IP&lt;/figcaption>&lt;/figure>
 &lt;br>
-&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cross-vpc-efs/2.webp"
-alt="internal dns 設定新的 EFS Domain，並指向 EFS 的 Network interfaces IP" width="1200">&lt;figcaption>
-&lt;p>internal dns 設定新的 EFS Domain，並指向 EFS 的 Network interfaces IP&lt;/p>
-&lt;/figcaption>
-&lt;/figure>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-cross-vpc-efs/2.webp" data-zoomable alt="internal dns 設定新的 EFS Domain，並指向 EFS 的 Network interfaces IP" width="1200"loading="lazy"
+/>&lt;figcaption>internal dns 設定新的 EFS Domain，並指向 EFS 的 Network interfaces IP&lt;/figcaption>&lt;/figure>
 &lt;br>
 &lt;p>將需要使用的 VPC 都加到該 route53 internal-dns 內，接著回到 EFS，將對應的 Subnet 都設定到 SG，開啟對應 Subnet 的 2049 Port&lt;/p>
 &lt;br>
@@ -42,6 +38,8 @@ volumeHandle: fs-xxxxxx # 替換為你的 EFS ID&lt;/code>&lt;/pre>&lt;/div>&lt;
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -62,6 +60,8 @@ mounttargetip: &amp;lt;自訂的 route53-internal-dns domain&amp;gt;&lt;/code>&l
 &lt;button
 class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
 title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
 >
 &lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
 &lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
@@ -69,6 +69,6 @@ title="Copy code"
 &lt;/div>
 &lt;/div>
 &lt;br>
-&lt;p>就可以正常使用囉，文件可以參考：&lt;a href="https://github.com/kubernetes-sigs/aws-efs-csi-driver/blob/master/examples/kubernetes/static_provisioning/README.md"target="_blank" rel="noopener">aws-efs-csi-driver/examples/kubernetes/static_provisioning/README.md at master · kubernetes-sigs/aws-efs-csi-driver&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;p>就可以正常使用囉，文件可以參考：&lt;a href="https://github.com/kubernetes-sigs/aws-efs-csi-driver/blob/master/examples/kubernetes/static_provisioning/README.md"target="_blank" rel="noopener">aws-efs-csi-driver/examples/kubernetes/static_provisioning/README.md at master · kubernetes-sigs/aws-efs-csi-driver&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
 &lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
 &lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>
