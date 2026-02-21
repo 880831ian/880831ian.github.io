@@ -21,17 +21,21 @@ menu:
       name: Blog
       pageRef: /blog
       weight: 1
+    - identifier: archives
+      name: 時間軸
+      pageRef: /archives
+      weight: 2
     - identifier: projects
       name: 專案成就
       pageRef: /projects
-      weight: 2
+      weight: 3
     - identifier: uptime
       name: 服務狀態
-      weight: 3
+      weight: 4
       url: "https://uptime.pin-yi.me/"
     - identifier: about
       name: 關於我
-      weight: 4
+      weight: 5
     - name: "自我介紹"
       parent: about
       pageRef: /about
@@ -49,11 +53,11 @@ menu:
       url: "https://resume.pin-yi.me"
       weight: 4
     - name: Search
-      weight: 5
+      weight: 6
       params:
         type: search
     - name: GitHub
-      weight: 6
+      weight: 7
       url: "https://github.com/880831ian/"
       params:
         icon: github
@@ -64,6 +68,8 @@ menu:
         icon: linkedin
 
 params:
+  imageZoom:
+    enable: true
   banner:
     key: "announcement"
     message: "目前 Blog 頁籤支援折疊側邊欄功能，在閱讀文章會更方便，歡迎多加利用 💪"

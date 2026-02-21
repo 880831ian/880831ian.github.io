@@ -2,7 +2,9 @@
   aside.hextra-sidebar-container.hx\:flex.hx\:flex-col.hx\:print\:hidden.hx\:md\:top-16.hx\:md\:max-w-96.hx\:md\:self-start.hx\:max-md\:\[transform\:translate3d\(0\,-100\%\,0\)\].md\:sticky {
     width: 25% !important;
     max-width: none !important;
-    transition: width 0.3s ease, margin 0.3s ease;
+    transition:
+      width 0.3s ease,
+      margin 0.3s ease;
     position: relative;
   }
 
@@ -96,7 +98,7 @@ aside.hextra-sidebar-container.collapsed ~ .sidebar-expand-btn {
     margin: 0 !important;
     overflow: hidden;
   }
-  
+
   aside.hextra-sidebar-container.collapsed {
     width: 0 !important;
   }
@@ -109,3 +111,33 @@ aside.hextra-sidebar-container.collapsed ~ .sidebar-expand-btn {
 .code-block .filename {
   color: #ffff;
 }
+
+/* Image zoom */
+figure img[data-zoomable] {
+  cursor: zoom-in;
+  transition: transform 0.3s ease;
+}
+
+.medium-zoom-overlay {
+  z-index: 999;
+}
+
+.medium-zoom-image--opened {
+  z-index: 1000;
+}
+
+/* Sidebar section collapse/expand (hextra-sidebar-container override) */
+aside.hextra-sidebar-container li > div {
+  height: 0px;
+  overflow: hidden;
+}
+
+aside.hextra-sidebar-container li.open > div {
+  height: auto;
+  padding-top: 0.25rem;
+}
+
+aside.hextra-sidebar-container li.open > a > span > svg > path {
+  transform: rotate(90deg);
+}
+

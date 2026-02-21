@@ -4,3 +4,18 @@
     quicklink.listen();
   });
 </script>
+
+{{ if site.Params.imageZoom.enable }}
+<script defer src="https://cdnjs.cloudflare.com/ajax/libs/medium-zoom/1.1.0/medium-zoom.min.js"></script>
+<script>
+  window.addEventListener("load", () => {
+    if (typeof mediumZoom !== "undefined") {
+      mediumZoom("[data-zoomable]", {
+        margin: 24,
+        background: "rgba(0, 0, 0, 0.8)",
+      });
+    }
+  });
+</script>
+{{ end }}
+

@@ -1,0 +1,34 @@
+{{- $src := .Get "src" -}}
+{{- $alt := .Get "alt" | default (.Get "caption") | default "" -}}
+{{- $caption := .Get "caption" -}}
+{{- $width := .Get "width" -}}
+{{- $height := .Get "height" -}}
+{{- $class := .Get "class" -}}
+{{- $link := .Get "link" -}}
+{{- $target := .Get "target" -}}
+{{- $rel := .Get "rel" -}}
+{{- $attr := .Get "attr" -}}
+{{- $attrlink := .Get "attrlink" -}}
+{{- $title := .Get "title" -}}
+
+<figure{{ with $class }} class="{{ . }}"{{ end }}>
+  {{- with $link }}<a href="{{ . }}"{{ with $target }} target="{{ . }}"{{ end }}{{ with $rel }} rel="{{ . }}"{{ end }}>{{ end -}}
+  <img src="{{ $src }}" data-zoomable
+    {{- with $alt }} alt="{{ . }}"{{ end -}}
+    {{- with $width }} width="{{ . }}"{{ end -}}
+    {{- with $height }} height="{{ . }}"{{ end -}}
+    {{- with $title }} title="{{ . }}"{{ end -}}
+    loading="lazy"
+  />
+  {{- with $link }}</a>{{ end -}}
+  {{- if or $caption $attr -}}
+    <figcaption>
+      {{- with $caption }}{{ . | markdownify }}{{ end -}}
+      {{- with $attr -}}
+        {{- with $attrlink }} (<a href="{{ . }}">{{ end -}}
+          {{ . }}
+        {{- with $attrlink }}</a>){{ end -}}
+      {{- end -}}
+    </figcaption>
+  {{- end -}}
+</figure>

@@ -1,5 +1,5 @@
 module github.com/880831ian/pin-yi
 
-go 1.22.2
+go 1.26
 
-require github.com/imfing/hextra v0.11.1 // indirect
+require github.com/imfing/hextra v0.12.0 // indirect
