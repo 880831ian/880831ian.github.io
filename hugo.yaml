@@ -86,7 +86,12 @@ params:
     width: full
     tabs:
       sync: true
-
+    contextMenu:
+      enable: true
+      links:
+        - name: 在 ChatGPT 中打開
+          icon: chatgpt
+          url: "https://chatgpt.com/?hints=search&q=I%27m+looking+at+this+documentation%3A+{url}%0AHelp+me+understand+how+to+use+it."      
   theme:
     # light | dark | system
     default: system
@@ -123,3 +128,5 @@ services:
 
 outputs:
   home: [html, llms]
+  page: [html, markdown]
+  section: [html, rss, markdown]  

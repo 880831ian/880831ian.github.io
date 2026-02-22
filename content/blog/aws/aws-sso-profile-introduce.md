@@ -9,6 +9,10 @@ date: 2025-07-06
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
+  - AWS
+  - SSO
+  - Profile
 ---
 
 之前有介紹過 [設定 AWS CLI 以及 AWS CLI 指令說明](../aws-cli/)，大家應該已經知道要怎麼安裝 AWS CLI，以及設定 AWS IAM User 的 Access Key。
@@ -36,7 +40,6 @@ aws configure sso
 <br>
 
 瀏覽器開啟後，如果有登入完畢，會需要授予 Applications and AWS accounts 權限：
-
 
 <br>
 

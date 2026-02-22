@@ -9,6 +9,10 @@ date: 2025-07-06
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
+  - AWS
+  - Profile
+  - Granted
 ---
 
 由於 AWS 的服務越來越多，很多時候我們需要在不同的 AWS Account 之間切換來操作，不管是使用單純使用 IAM User 產生 Access Key，或是用 AWS SSO，都會需要頻繁的切換 AWS Profile，如果 AWS SSO 每一個 Account 還有不同的 Permission Set，那就更麻煩了。
@@ -43,11 +47,11 @@ brew install common-fate/granted/granted # 2025/11/14 更新 (原因請看下方
 
 <br>
 
-{{< callout type="important" >}} 
-  2025/11/14 更新：<br>
-  剛好在更新 [mac-install-kit](https://github.com/880831ian/mac-install-kit/blob/master/install.sh) 一鍵安裝腳本時發現，使用 `brew install granted` 安裝好後，沒辦法下 `assume` 指令，之前都是正常的<br>
-  深入研究後發現，應該是因為原本維護 Granted 的 Common Fate 即將解散，[相關公告可以點我查看](https://www.commonfate.io/blog/winding-down)，要轉移給 fwd:cloudsec，[fwdcloudsec Granted Repo 連結](https://github.com/fwdcloudsec/granted)，猜測是官網已經有點久沒更新，或是再維護 tap 的時候尚未討論好<br>
-  此問題會在 v0.38 版本的時候會出現 (v0.37 正常)，查看ㄧ下 Common Fate Slack 發現，也有人遇到相同問題，目前的解決辦法是：改使用 `brew install common-fate/granted/granted` 來安裝，詳細請參考：[What's going on with Homebrew? #897](https://github.com/fwdcloudsec/granted/discussions/897)
+{{< callout type="important" >}}
+2025/11/14 更新：<br>
+剛好在更新 [mac-install-kit](https://github.com/880831ian/mac-install-kit/blob/master/install.sh) 一鍵安裝腳本時發現，使用 `brew install granted` 安裝好後，沒辦法下 `assume` 指令，之前都是正常的<br>
+深入研究後發現，應該是因為原本維護 Granted 的 Common Fate 即將解散，[相關公告可以點我查看](https://www.commonfate.io/blog/winding-down)，要轉移給 fwd:cloudsec，[fwdcloudsec Granted Repo 連結](https://github.com/fwdcloudsec/granted)，猜測是官網已經有點久沒更新，或是再維護 tap 的時候尚未討論好<br>
+此問題會在 v0.38 版本的時候會出現 (v0.37 正常)，查看ㄧ下 Common Fate Slack 發現，也有人遇到相同問題，目前的解決辦法是：改使用 `brew install common-fate/granted/granted` 來安裝，詳細請參考：[What's going on with Homebrew? #897](https://github.com/fwdcloudsec/granted/discussions/897)
 
   <br>
   
@@ -92,7 +96,7 @@ assume
 <br>
 
 > [!NOTE] 提示
->如果已經設定好預設瀏覽器，之後想要調整，可以使用 `granted browser` 來更新。
+> 如果已經設定好預設瀏覽器，之後想要調整，可以使用 `granted browser` 來更新。
 
 <br>
 
@@ -124,7 +128,7 @@ Shell restart required to apply changes: please open a new terminal window and r
 <br>
 
 > [!WARNING] 提示
->上面出現的 Profile 名稱是從 `~/.aws/config` 檔案中取得的，如果沒有設定過 AWS Profile，可以上一篇文章 [AWS SSO Profile 設定介紹](../aws-sso-profile-introduce) 來設定。
+> 上面出現的 Profile 名稱是從 `~/.aws/config` 檔案中取得的，如果沒有設定過 AWS Profile，可以上一篇文章 [AWS SSO Profile 設定介紹](../aws-sso-profile-introduce) 來設定。
 
 <br>
 
@@ -184,7 +188,6 @@ aws sts get-caller-identity --no-cli-pager
 <br>
 
 可以快速開啟的資源清單可以參考：[https://github.com/fwdcloudsec/granted/blob/main/pkg/console/service_map.go](https://github.com/fwdcloudsec/granted/blob/main/pkg/console/service_map.go)
-
 
 <br>
 

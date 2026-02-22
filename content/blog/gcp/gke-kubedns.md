@@ -9,6 +9,7 @@ date: 2025-08-04
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
   - Google Cloud Platform
   - GCP
   - Kubernetes
@@ -49,6 +50,7 @@ kubedns_dnsmasq_misses{job="kubedns-dns"}
 <br>
 
 測試腳本：
+
 ```shell
 #!/bin/bash
 
@@ -88,6 +90,7 @@ echo "== NSLOOKUP TEST END: $END_TIME ==" | tee -a nslookup_full.log
 echo "成功次數: $SUCCESS_COUNT" | tee -a nslookup_full.log
 echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 ```
+
 10.36.16.255 是 nginx-svc 的 Cluster IP
 
 需要先確認 `nginx-svc` 的 IP 是多少，然後修改腳本中的 `EXPECTED_IP` 變數。
@@ -109,7 +112,7 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 <br>
 
 > [!TIP]結論
-可以觀察 kubedns_dnsmasq_hits hit 有持續上升
+> 可以觀察 kubedns_dnsmasq_hits hit 有持續上升
 
 <br>
 
@@ -138,7 +141,7 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 <br>
 
 > [!TIP]結論
-大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 8733 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
+> 大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 8733 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
 
 <br>
 
@@ -202,6 +205,7 @@ echo "== NSLOOKUP TEST END: $END_TIME ==" | tee -a nslookup_full.log
 echo "成功次數: $SUCCESS_COUNT" | tee -a nslookup_full.log
 echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 ```
+
 10.1.1.4 是隨機亂取的 IP，只是為了確認 domain 是否能夠正常解析
 
 <br>
@@ -221,7 +225,7 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 <br>
 
 > [!TIP]結論
-可以觀察 KubeDNS 內的指標 kubedns_dnsmasq_hits hit 有持續上升
+> 可以觀察 KubeDNS 內的指標 kubedns_dnsmasq_hits hit 有持續上升
 
 <br>
 
@@ -250,7 +254,7 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 <br>
 
 > [!TIP]結論
-大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 7130 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
+> 大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 7130 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
 
 <br>
 
@@ -268,6 +272,7 @@ kubedns_dnsmasq_misses{job="kubedns-dns"}
 <br>
 
 測試腳本：
+
 ```shell
 #!/bin/bash
 
@@ -307,6 +312,7 @@ echo "== NSLOOKUP TEST END: $END_TIME ==" | tee -a nslookup_full.log
 echo "成功次數: $SUCCESS_COUNT" | tee -a nslookup_full.log
 echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 ```
+
 34.160.111.145 是 ifconfig.me 的 IP，只是為了確認 domain 是否能夠正常解析
 
 <br>
@@ -326,21 +332,21 @@ echo "失敗次數: $FAIL_COUNT" | tee -a nslookup_full.log
 <br>
 
 > [!TIP]結論
-可以觀察 KubeDNS 內的指標 kubedns_dnsmasq_hits hit 有持續上升，且有比較特別的現象是 叢集內部 cluster.local  跟 internal-dns kubedns_dnsmasq_misses 會跟 kubedns_dnsmasq_hits 差不多，但外部 DNS 卻不會
-<br><br>
-cluster 內 / cloud DNS private zone 流程會是
-<br>
-Pod → dnsmasq (miss) → kubedns 回答 → dnsmasq cache → 下次 hit
-<br>
-所以會是 N hit + N miss
-<br><br>
-外部 domain 流程會是
-<br>
-Pod → kubedns → upstream → dnsmasq 只 cache 回應，不算 miss
-<br>
-加上 dnsmasq 本身會為不同類型的查詢（例如 A/AAAA 或 CNAME chain）各記一次 hit
-<br>
-所以會是 2N hit，0 miss
+> 可以觀察 KubeDNS 內的指標 kubedns_dnsmasq_hits hit 有持續上升，且有比較特別的現象是 叢集內部 cluster.local 跟 internal-dns kubedns_dnsmasq_misses 會跟 kubedns_dnsmasq_hits 差不多，但外部 DNS 卻不會
+> <br><br>
+> cluster 內 / cloud DNS private zone 流程會是
+> <br>
+> Pod → dnsmasq (miss) → kubedns 回答 → dnsmasq cache → 下次 hit
+> <br>
+> 所以會是 N hit + N miss
+> <br><br>
+> 外部 domain 流程會是
+> <br>
+> Pod → kubedns → upstream → dnsmasq 只 cache 回應，不算 miss
+> <br>
+> 加上 dnsmasq 本身會為不同類型的查詢（例如 A/AAAA 或 CNAME chain）各記一次 hit
+> <br>
+> 所以會是 2N hit，0 miss
 
 <br>
 
@@ -369,7 +375,7 @@ Pod → kubedns → upstream → dnsmasq 只 cache 回應，不算 miss
 <br>
 
 > [!TIP]結論
-大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 8934 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
+> 大約在 2000 筆請求時左右將 KubeDNS 關成 0 顆，但到了 8934 筆的時候才開始出現解析失敗，觀察後發現，因為 KubeDNS 切成 0，Pod 不會馬上關掉，所以還能夠解析 DNS，最後再將 KubeDNS 切成 1 顆後，就正常可以解析了
 
 <br>
 
@@ -436,7 +442,7 @@ IP (avg=321.47ms / 2337 RPS)、DNS (avg=254.11ms / 2775 RPS)
 <br>
 
 > [!TIP]結論
-理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定
+> 理論上 ip 應該會比 dns 還要快，但測試 4 次發現其實不一定
 
 <br>
 
@@ -471,10 +477,9 @@ Google：
 2. 如果是 Kube DNS，請求流向是 application pod -> kube-dns svc -> 隨機 kube-dns pod，如果 kube-dns 沒答案，跳轉該 kube-dns pod 上面的 VM/worker node 的 metadata server
 
 3. (情境2)如果是 node-local-dns，請求流向會是 application pod -> node-local-dns pod
-    1. 如果是 cluster.local 就會轉發到 kube-dns
-    2. 如果有設定 stubDomain 就轉發到設定的 DNS
-    3. 如果是其他的則轉發這台 VM/pod 的 metadata server
-
+   1. 如果是 cluster.local 就會轉發到 kube-dns
+   2. 如果有設定 stubDomain 就轉發到設定的 DNS
+   3. 如果是其他的則轉發這台 VM/pod 的 metadata server
 
 --
 

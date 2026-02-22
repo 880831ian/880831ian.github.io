@@ -9,6 +9,11 @@ date: 2025-06-25
 authors:
   - name: Ian_zhuang
     link: https://pin-yi.me/about/
+tags:
+  - AWS
+  - ECR
+  - AWS Organization
+  - AWS Account
 ---
 
 這篇主要是因為公司目前的 AWS 架構，會將各單位的系統依照產品、環境給拆分，但有時候部署，總會有一些共用的 Image。
@@ -17,7 +22,7 @@ authors:
 <br>
 
 > [!NOTE] 範例 AWS Account 說明
->為了方便說明，我會使用兩個 AWS Account 來做範例，632xxxxx1762 (後面簡稱 A 帳號) 以及 722xxxxx9750 (後面簡稱 B 帳號)，這兩個帳號都屬於同一個 AWS Organization。
+> 為了方便說明，我會使用兩個 AWS Account 來做範例，632xxxxx1762 (後面簡稱 A 帳號) 以及 722xxxxx9750 (後面簡稱 B 帳號)，這兩個帳號都屬於同一個 AWS Organization。
 
 <br>
 
@@ -95,6 +100,7 @@ spec:
 <br>
 
 簡單說明一下這邊的設定：
+
 - `Principal` 設定為 `*`，表示允許所有人。
 - `Action` 設定為 ECR 的相關拉取權限。
 - `Condition` 設定為 `aws:PrincipalOrgID`，這樣就限制了只有同一個 AWS Organization 的帳號可以拉取這個 ECR 的 Image。(當然我們也可以改指定特定的 AWS Account ID，這樣就只有指定的帳號可以拉取。)
