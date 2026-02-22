@@ -1,0 +1,117 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – AWS Account</title><link>https://pin-yi.me/tags/aws-account/</link><description>Recent content in AWS Account on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Wed, 25 Jun 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/aws-account/index.xml" rel="self" type="application/rss+xml"/><item><title>如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account EKS 使用</title><link>https://pin-yi.me/blog/aws/aws-ecr-permissions/</link><pubDate>Wed, 25 Jun 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-ecr-permissions/</guid><description>
+&lt;p>這篇主要是因為公司目前的 AWS 架構，會將各單位的系統依照產品、環境給拆分，但有時候部署，總會有一些共用的 Image。
+在這之前，我們需要一個一個將相同的 Image 搬到每個 AWS Account 的 ECR，當時就在想，是否可以直接共用 ECR 給同一個 AWS Organization 的其他 AWS Account 使用 (當然也不要用 Public ECR 來避免安全性問題)。&lt;/p>
+&lt;br>
+&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-blue-200 hx:bg-blue-100 hx:text-blue-900 hx:dark:border-blue-200/30 hx:dark:bg-blue-900/30 hx:dark:text-blue-200">
+&lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>範例 AWS Account 說明&lt;/p>
+&lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">&lt;p>為了方便說明，我會使用兩個 AWS Account 來做範例，632xxxxx1762 (後面簡稱 A 帳號) 以及 722xxxxx9750 (後面簡稱 B 帳號)，這兩個帳號都屬於同一個 AWS Organization。&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>那我們就直接來看要如何設定，首先我先在 632xxxxx1762 (後面簡稱 A 帳號) 放了一個 ECR，名稱是：&lt;code>audit/sa/cicd-runner&lt;/code>，Tag 是 &lt;code>latest&lt;/code>，它會是我之後想要共享給其他 AWS Account 使用的 ECR。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ecr-permissions/1.webp" data-zoomable alt="A 帳號 ECR" width="650"loading="lazy"
+/>&lt;figcaption>A 帳號 ECR&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;p>那如果我們使用另一個 AWS Account 722xxxxx9750 (後面簡稱 B 帳號) 直接拉這個 ECR 的 Image，會發生什麼錯誤呢？&lt;/p>
+&lt;p>我們先切換到 B 帳號，然後使用 &lt;code>kubectl&lt;/code> 來部署一個 Pod，Pod 的 Image 寫 A 帳號的 ECR Image 名稱。&lt;/p>
+&lt;ul>
+&lt;li>cicd-runner.yaml&lt;/li>
+&lt;/ul>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-yaml" data-lang="yaml">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">apiVersion&lt;/span>: &lt;span style="color:#ae81ff">apps/v1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">kind&lt;/span>: &lt;span style="color:#ae81ff">Pod&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">metadata&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">cicd-runner&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">spec&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">containers&lt;/span>:
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> - &lt;span style="color:#f92672">name&lt;/span>: &lt;span style="color:#ae81ff">cicd-runner&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">image&lt;/span>: &lt;span style="color:#ae81ff">632xxxxx1762.dkr.ecr.ap-southeast-1.amazonaws.com/audit/sa/cicd-runner:latest&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">imagePullPolicy&lt;/span>: &lt;span style="color:#ae81ff">Always&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>觀察一下 Pod 的狀態，會發現 Pod 會出現 &lt;code>ErrImagePull&lt;/code> 的錯誤，這是因為 B 帳號沒有權限去拉取 A 帳號的 ECR Image。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ecr-permissions/2.webp" data-zoomable alt="Pod ErrImagePull 錯誤" width="1200"loading="lazy"
+/>&lt;figcaption>Pod ErrImagePull 錯誤&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;p>那要怎麼解決呢？！
+以及我們要怎麼讓 B 帳號可以拉取 A 帳號的 ECR Image 呢？&lt;/p>
+&lt;p>其實很簡單，我們只需要在 A 帳號的 ECR 上設定一個 IAM Policy，讓 B 帳號可以拉取這個 ECR 的 Image。&lt;/p>
+&lt;p>如果以 Console 來設定的話，我們可以在 A 帳號的 ECR 上，點選 &lt;code>Private registry&lt;/code> &amp;gt; &lt;code>Permissions&lt;/code>，然後選擇 &lt;code>Edit policy JSON&lt;/code>。
+(如果之後使用 Terraform 來設定的話，可以參考 &lt;a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository_policy"target="_blank" rel="noopener">AWS ECR Repository Policy&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> 的相關文件。)&lt;/p>
+&lt;p>將以下的 JSON 給貼進去，當然相關的設定可以再自行調整：&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-json" data-lang="json">&lt;span style="display:flex;">&lt;span>{
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;Version&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;2008-10-17&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;Statement&amp;#34;&lt;/span>: [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;Sid&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;AllowPullFromOrg&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;Effect&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;Allow&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;Principal&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;*&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;Action&amp;#34;&lt;/span>: [
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;ecr:BatchCheckLayerAvailability&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;ecr:BatchGetImage&amp;#34;&lt;/span>,
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#e6db74">&amp;#34;ecr:GetDownloadUrlForLayer&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ],
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;Condition&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;StringEquals&amp;#34;&lt;/span>: {
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> &lt;span style="color:#f92672">&amp;#34;aws:PrincipalOrgID&amp;#34;&lt;/span>: &lt;span style="color:#e6db74">&amp;#34;o-xxxxxxx&amp;#34;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> }
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span> ]
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>}&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這裡的 &lt;code>o-xxxxxxx&lt;/code> 是你的 AWS Organization ID，可以在 AWS Organizations 的 Console 中找到。&lt;/p>
+&lt;br>
+&lt;p>簡單說明一下這邊的設定：&lt;/p>
+&lt;ul>
+&lt;li>&lt;code>Principal&lt;/code> 設定為 &lt;code>*&lt;/code>，表示允許所有人。&lt;/li>
+&lt;li>&lt;code>Action&lt;/code> 設定為 ECR 的相關拉取權限。&lt;/li>
+&lt;li>&lt;code>Condition&lt;/code> 設定為 &lt;code>aws:PrincipalOrgID&lt;/code>，這樣就限制了只有同一個 AWS Organization 的帳號可以拉取這個 ECR 的 Image。(當然我們也可以改指定特定的 AWS Account ID，這樣就只有指定的帳號可以拉取。)&lt;/li>
+&lt;/ul>
+&lt;br>
+&lt;p>設定完畢後，我們可以回到 B 帳號，重新部署剛剛的 Pod。&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>kubectl apply -f cicd-runner.yaml&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>就可以發現 Pod 成功啟動了，並且可以正常拉取 A 帳號的 ECR Image。&lt;/p>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-ecr-permissions/3.webp" data-zoomable alt="Pod 成功啟動" width="1200"loading="lazy"
+/>&lt;figcaption>Pod 成功啟動&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;p>這樣就完成了如何共用 ECR 給同一個 AWS Organization 的其他 AWS Account 使用的設定。&lt;/p></description></item></channel></rss>

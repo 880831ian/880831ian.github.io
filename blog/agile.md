@@ -1,0 +1,14 @@
+# 敏捷開發 (Agile)
+此分類包含 敏捷開發 (Agile) 相關的文章。
+
+<!--more-->
+
+{{< cards >}}
+{{< card
+  link="jira-to-google-chat"
+  title="串接 Jira 工單自動化通知到 Google Chat"
+  subtitle="發布日期：2024-08-06"
+  image="/agile/jira-to-google-chat/cover.webp"
+>}}
+{{< /cards >}}
+

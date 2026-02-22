@@ -1,0 +1,205 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – Granted</title><link>https://pin-yi.me/tags/granted/</link><description>Recent content in Granted on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Sun, 06 Jul 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/granted/index.xml" rel="self" type="application/rss+xml"/><item><title>手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！</title><link>https://pin-yi.me/blog/aws/aws-assuming-roles-tool-introduce/</link><pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-assuming-roles-tool-introduce/</guid><description>
+&lt;p>由於 AWS 的服務越來越多，很多時候我們需要在不同的 AWS Account 之間切換來操作，不管是使用單純使用 IAM User 產生 Access Key，或是用 AWS SSO，都會需要頻繁的切換 AWS Profile，如果 AWS SSO 每一個 Account 還有不同的 Permission Set，那就更麻煩了。&lt;/p>
+&lt;p>因此如果有一套好用的工具，可以讓我們更方便的切換 AWS Profile，那就太棒了！&lt;/p>
+&lt;p>今天就來介紹一個這樣的工具，叫做 Granted。&lt;/p>
+&lt;br>
+&lt;h2>什麼是 Granted？&lt;span class="hx:absolute hx:-mt-20" id="什麼是-granted">&lt;/span>
+&lt;a href="#%e4%bb%80%e9%ba%bc%e6%98%af-granted" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Granted 是一個用來管理多個 AWS Account 的工具，它可以讓你更方便的切換 AWS Profile，還支援使用瀏覽器開啟對應的 AWS Account Console 管理介面。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-assuming-roles-tool-introduce/1.webp" data-zoomable alt="Granted" width="1000"loading="lazy"
+/>&lt;figcaption>Granted&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;h2>如何安裝 Granted&lt;span class="hx:absolute hx:-mt-20" id="如何安裝-granted">&lt;/span>
+&lt;a href="#%e5%a6%82%e4%bd%95%e5%ae%89%e8%a3%9d-granted" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;ol>
+&lt;li>首先，我們使用 Homebrew 來安裝 Granted：&lt;/li>
+&lt;/ol>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>brew tap common-fate/granted
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>brew install granted
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>brew install common-fate/granted/granted &lt;span style="color:#75715e"># 2025/11/14 更新 (原因請看下方)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>（如果其他作業系統，請參考 &lt;a href="https://docs.commonfate.io/granted/getting-started/"target="_blank" rel="noopener">Granted 官方網站&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> 的安裝說明）&lt;/p>
+&lt;br>
+&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:rounded-lg hx:border hx:py-2 hx:ltr:pr-4 hx:rtl:pl-4 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-purple-200 hx:bg-purple-100 hx:text-purple-900 hx:dark:border-purple-200/30 hx:dark:bg-purple-900/30 hx:dark:text-purple-200">
+&lt;div class="hx:ltr:pl-3 hx:ltr:pr-2 hx:rtl:pr-3 hx:rtl:pl-2">&lt;svg height=1.2em class="hx:inline-block hx:align-middle" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>&lt;/div>
+&lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">&lt;p>2025/11/14 更新：&lt;br>
+剛好在更新 &lt;a href="https://github.com/880831ian/mac-install-kit/blob/master/install.sh"target="_blank" rel="noopener">mac-install-kit&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a> 一鍵安裝腳本時發現，使用 &lt;code>brew install granted&lt;/code> 安裝好後，沒辦法下 &lt;code>assume&lt;/code> 指令，之前都是正常的&lt;br>
+深入研究後發現，應該是因為原本維護 Granted 的 Common Fate 即將解散，&lt;a href="https://www.commonfate.io/blog/winding-down"target="_blank" rel="noopener">相關公告可以點我查看&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>，要轉移給 fwd:cloudsec，&lt;a href="https://github.com/fwdcloudsec/granted"target="_blank" rel="noopener">fwdcloudsec Granted Repo 連結&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>，猜測是官網已經有點久沒更新，或是再維護 tap 的時候尚未討論好&lt;br>
+此問題會在 v0.38 版本的時候會出現 (v0.37 正常)，查看ㄧ下 Common Fate Slack 發現，也有人遇到相同問題，目前的解決辦法是：改使用 &lt;code>brew install common-fate/granted/granted&lt;/code> 來安裝，詳細請參考：&lt;a href="https://github.com/fwdcloudsec/granted/discussions/897"target="_blank" rel="noopener">What&amp;rsquo;s going on with Homebrew? #897&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-assuming-roles-tool-introduce/slack.webp" data-zoomable alt="Slack 討論串" width="500"loading="lazy"
+/>&lt;figcaption>Slack 討論串&lt;/figcaption>&lt;/figure>
+&lt;br>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;ol start="2">
+&lt;li>安裝完成後，使用以下指令確定 Granted 已經安裝成功：&lt;/li>
+&lt;/ol>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>granted --version&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>如果有顯示版本，就代表安裝成功，例如：&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>Granted version: 0.38.0&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;h2>如何使用 Granted&lt;span class="hx:absolute hx:-mt-20" id="如何使用-granted">&lt;/span>
+&lt;a href="#%e5%a6%82%e4%bd%95%e4%bd%bf%e7%94%a8-granted" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>在使用前，我們需要先做一些初始化，可以先 &lt;code>assume&lt;/code> 來設定：&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>assume
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">[&lt;/span>i&lt;span style="color:#f92672">]&lt;/span> Thanks &lt;span style="color:#66d9ef">for&lt;/span> using Granted!
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">[&lt;/span>i&lt;span style="color:#f92672">]&lt;/span> By default, Granted will open the AWS console with this browser: Chrome
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#f92672">[&lt;/span>!&lt;span style="color:#f92672">]&lt;/span> Granted works best with Firefox but also supports Chrome, Brave, and Edge &lt;span style="color:#f92672">(&lt;/span>https://docs.commonfate.io/granted/introduction#supported-browsers&lt;span style="color:#f92672">)&lt;/span>. You can change this setting later by running &lt;span style="color:#e6db74">&amp;#39;granted browser set&amp;#39;&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>? Use Firefox as default Granted browser? &lt;span style="color:#f92672">(&lt;/span>y/N&lt;span style="color:#f92672">)&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>這邊可以先設定預設的瀏覽器，建議使用 Firefox，因為 Granted 在 Firefox 上的支援度較好。&lt;/p>
+&lt;br>
+&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-blue-200 hx:bg-blue-100 hx:text-blue-900 hx:dark:border-blue-200/30 hx:dark:bg-blue-900/30 hx:dark:text-blue-200">
+&lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>&lt;/svg>提示&lt;/p>
+&lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">&lt;p>如果已經設定好預設瀏覽器，之後想要調整，可以使用 &lt;code>granted browser&lt;/code> 來更新。&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>第二次再重新執行一次 &lt;code>assume&lt;/code>，就會出現以下畫面：&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>assume
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>ℹ️ To assume roles with Granted, we need to add an alias to your shell profile &lt;span style="color:#f92672">(&lt;/span>https://docs.commonfate.io/granted/internals/shell-alias&lt;span style="color:#f92672">)&lt;/span>.
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>? Install zsh alias at /Users/&amp;lt;username&amp;gt;/.zshenv Yes
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Added the Granted alias to /Users/&amp;lt;username&amp;gt;/.zshenv
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>Shell restart required to apply changes: please open a new terminal window and re-run your command.&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>來設定 shell 的 alias，這樣就可以在任何地方使用 &lt;code>assume&lt;/code> 指令了。&lt;/p>
+&lt;br>
+&lt;h2>測試切換 AWS Profile&lt;span class="hx:absolute hx:-mt-20" id="測試切換-aws-profile">&lt;/span>
+&lt;a href="#%e6%b8%ac%e8%a9%a6%e5%88%87%e6%8f%9b-aws-profile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>接下來我們可以先測試一下 &lt;code>assume&lt;/code> 指令是否可以正常切換 AWS Profile。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-assuming-roles-tool-introduce/2.webp" data-zoomable alt="測試 assume" width="1000"loading="lazy"
+/>&lt;figcaption>測試 assume&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;div class="hx:overflow-x-auto hx:mt-6 hx:flex hx:flex-col hx:rounded-lg hx:border hx:py-4 hx:px-4 hx:border-gray-200 hx:contrast-more:border-current hx:contrast-more:dark:border-current hx:border-amber-200 hx:bg-amber-100 hx:text-amber-900 hx:dark:border-amber-200/30 hx:dark:bg-amber-900/30 hx:dark:text-amber-200">
+&lt;p class="hx:flex hx:items-center hx:font-medium">&lt;svg height=16px class="hx:inline-block hx:align-middle hx:mr-2" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true">&lt;path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>&lt;/svg>提示&lt;/p>
+&lt;div class="hx:w-full hx:min-w-0 hx:leading-7">
+&lt;div class="hx:mt-6 hx:leading-7 hx:first:mt-0">&lt;p>上面出現的 Profile 名稱是從 &lt;code>~/.aws/config&lt;/code> 檔案中取得的，如果沒有設定過 AWS Profile，可以上一篇文章 &lt;a href="../aws-sso-profile-introduce">AWS SSO Profile 設定介紹&lt;/a> 來設定。&lt;/p>&lt;/div>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;p>切換成功後，會顯示如下：
+如果沒有驗證，或是需要重新驗證，一樣會跳出瀏覽器來驗證&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-assuming-roles-tool-introduce/3.webp" data-zoomable alt="切換成功" width="1000"loading="lazy"
+/>&lt;figcaption>切換成功&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;p>可以看到，這個登入的 Profile 有效期限是 12 小時，這樣就可以在這個時間內使用這個 Profile 來操作 AWS 服務了。&lt;/p>
+&lt;br>
+&lt;p>要怎麼知道目前登入的是哪一個 Profile 呢？可以使用以下指令：&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws sts get-caller-identity --no-cli-pager&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-assuming-roles-tool-introduce/4.webp" data-zoomable alt="顯示當前 Profile" width="1000"loading="lazy"
+/>&lt;figcaption>顯示當前 Profile&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;p>我們也再次切換 Profile，並使用指令查看是否有正確切換到新的 Profile：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-assuming-roles-tool-introduce/5.webp" data-zoomable alt="切換成功" width="1000"loading="lazy"
+/>&lt;figcaption>切換成功&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;h2>開啟 AWS Console&lt;span class="hx:absolute hx:-mt-20" id="開啟-aws-console">&lt;/span>
+&lt;a href="#%e9%96%8b%e5%95%9f-aws-console" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>有時候我們除了使用 CLI 指令來操作或是查看，更多的時候，還是會開啟 AWS Console 來進行操作。&lt;/p>
+&lt;p>那以往我們都需要到 AWS SSO 網頁來選擇對應的 AWS Account 以及 Permission Set，才可以進到對應帳號來查看相關資源。&lt;/p>
+&lt;p>現在我們可以在 assume 後面加上 &lt;code>--console&lt;/code> 或是 &lt;code>-c&lt;/code> 參數，這樣就可以直接開啟對應 AWS Account 的 Permission Set 權限的 AWS Console 了：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-assuming-roles-tool-introduce/6.webp" data-zoomable alt="開啟 AWS Console" width="1000"loading="lazy"
+/>&lt;figcaption>開啟 AWS Console&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;p>或是多加上 &lt;code>--service&lt;/code>or &lt;code>-s&lt;/code> 參數，這樣就可以直接開啟對應的 AWS 服務頁面：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-assuming-roles-tool-introduce/7.webp" data-zoomable alt="開啟 AWS 服務頁面" width="1000"loading="lazy"
+/>&lt;figcaption>開啟 AWS 服務頁面&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;p>可以快速開啟的資源清單可以參考：&lt;a href="https://github.com/fwdcloudsec/granted/blob/main/pkg/console/service_map.go"target="_blank" rel="noopener">https://github.com/fwdcloudsec/granted/blob/main/pkg/console/service_map.go&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>Granted 官方網站：&lt;a href="https://granted.dev/"target="_blank" rel="noopener">https://granted.dev/&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>

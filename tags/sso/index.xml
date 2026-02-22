@@ -1,0 +1,111 @@
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>PIN-YI – SSO</title><link>https://pin-yi.me/tags/sso/</link><description>Recent content in SSO on PIN-YI</description><generator>Hugo -- gohugo.io</generator><language>zh-tw</language><lastBuildDate>Sun, 06 Jul 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://pin-yi.me/tags/sso/index.xml" rel="self" type="application/rss+xml"/><item><title>AWS SSO Profile 設定介紹</title><link>https://pin-yi.me/blog/aws/aws-sso-profile-introduce/</link><pubDate>Sun, 06 Jul 2025 00:00:00 +0000</pubDate><guid>https://pin-yi.me/blog/aws/aws-sso-profile-introduce/</guid><description>
+&lt;p>之前有介紹過 &lt;a href="../aws-cli/">設定 AWS CLI 以及 AWS CLI 指令說明&lt;/a>，大家應該已經知道要怎麼安裝 AWS CLI，以及設定 AWS IAM User 的 Access Key。&lt;/p>
+&lt;p>而這次要介紹的是導入 AWS Organizations 以及 AWS IAM Identity Center(SSO) 後，要如何設定 AWS SSO Profile，用來存取 AWS Organizations 中的各個 AWS Account 以及對應的 Permission Set。&lt;/p>
+&lt;br>
+&lt;h2>aws configure sso 設定&lt;span class="hx:absolute hx:-mt-20" id="aws-configure-sso-設定">&lt;/span>
+&lt;a href="#aws-configure-sso-%e8%a8%ad%e5%ae%9a" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>步驟也很簡單，首先可以使用 AWS CLI 的 &lt;code>aws configure sso&lt;/code> 指令來設定 SSO Profile，這個指令會引導你完成整個設定。&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws configure sso&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>系統會要求你輸入一些資訊，例如 SSO Session 的名稱、SSO 的起始 URL、SSO 區域等等。&lt;/p>
+&lt;p>會像是下方圖片一樣，出現一個連結，也會自動幫你開瀏覽器，要你登入 AWS IAM Identity Center 來進行驗證。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/1.webp" data-zoomable alt="設定 aws configure sso" width="650"loading="lazy"
+/>&lt;figcaption>設定 aws configure sso&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;p>瀏覽器開啟後，如果有登入完畢，會需要授予 Applications and AWS accounts 權限：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/2.webp" data-zoomable width="450"loading="lazy"
+/>&lt;/figure>
+&lt;br>
+&lt;p>看到這個畫面，接著回到終端機，系統會要求你選擇要存取的 AWS Account 以及對應的 Permission Set：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/3.webp" data-zoomable width="350"loading="lazy"
+/>&lt;/figure>
+&lt;br>
+&lt;p>會跳出一個選單，讓你選擇要存取的 AWS Account。你可以使用上下鍵來選擇，然後按下 Enter 鍵來確認。&lt;/p>
+&lt;p>這邊會協助建立一個新的 Profile，並且會自動填入相關的資訊。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/4.webp" data-zoomable alt="選擇 AWS Account" width="650"loading="lazy"
+/>&lt;figcaption>選擇 AWS Account&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;p>接著，選擇這個 AWS Account 後，如果有不同的 Permission Set，你可以再選擇對應的 Permission Set：&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/5.webp" data-zoomable alt="設定 Permission Set" width="650"loading="lazy"
+/>&lt;figcaption>設定 Permission Set&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;p>最後如果跳出這個畫面，就代表已經設定完成了！&lt;/p>
+&lt;p>可以使用以下指令來確認是否有設定成功：&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-bash" data-lang="bash">&lt;span style="display:flex;">&lt;span>aws sts get-caller-identity --profile &amp;lt;your-profile-name&amp;gt;&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/6.webp" data-zoomable alt="設定 aws configure sso 完成" width="650"loading="lazy"
+/>&lt;figcaption>設定 aws configure sso 完成&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;h3>檢視設定的 Profile&lt;span class="hx:absolute hx:-mt-20" id="檢視設定的-profile">&lt;/span>
+&lt;a href="#%e6%aa%a2%e8%a6%96%e8%a8%ad%e5%ae%9a%e7%9a%84-profile" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h3>&lt;p>我們也可以來看一下 &lt;code>~/.aws/config&lt;/code> 檔案，裡面會有剛剛設定的 Profile 資訊：&lt;/p>
+&lt;div class="hextra-code-block hx:relative hx:mt-6 hx:first:mt-0 hx:group/code">
+&lt;div>&lt;div class="highlight">&lt;pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">&lt;code class="language-ini" data-lang="ini">&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">[profile AdministratorAccess-72XXXXXXXXX0]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_session&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">test&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_account_id&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">72XXXXXXXXX0&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_role_name&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">AdministratorAccess&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">region&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">ap-southeast-1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">output&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">json&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#66d9ef">[sso-session test]&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_start_url&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">https://d-XXXXXXX.awsapps.com/start/#&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_region&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">ap-southeast-1&lt;/span>
+&lt;/span>&lt;/span>&lt;span style="display:flex;">&lt;span>&lt;span style="color:#a6e22e">sso_registration_scopes&lt;/span> &lt;span style="color:#f92672">=&lt;/span> &lt;span style="color:#e6db74">sso:account:access&lt;/span>&lt;/span>&lt;/span>&lt;/code>&lt;/pre>&lt;/div>&lt;/div>&lt;div class="hextra-code-copy-btn-container hx:opacity-0 hx:transition hx:group-hover/code:opacity-100 hx:flex hx:gap-1 hx:absolute hx:m-[11px] hx:right-0 hx:top-0">
+&lt;button
+class="hextra-code-copy-btn hx:group/copybtn hx:cursor-pointer hx:transition-all hx:active:opacity-50 hx:bg-primary-700/5 hx:border hx:border-black/5 hx:text-gray-600 hx:hover:text-gray-900 hx:rounded-md hx:p-1.5 hx:dark:bg-primary-300/10 hx:dark:border-white/10 hx:dark:text-gray-400 hx:dark:hover:text-gray-50"
+title="Copy code"
+aria-label="Copy code"
+data-copied-label="Copied!"
+>
+&lt;div class="hextra-copy-icon hx:group-[.copied]/copybtn:hidden hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;div class="hextra-success-icon hx:hidden hx:group-[.copied]/copybtn:block hx:pointer-events-none hx:h-4 hx:w-4">&lt;/div>
+&lt;/button>
+&lt;/div>
+&lt;/div>
+&lt;p>可以看到會有兩個區塊，分別是 sso-session 以及剛剛設定的 Profile。&lt;/p>
+&lt;p>sso-session：
+會記錄 SSO 的起始 URL、SSO 區域以及 SSO 的註冊範圍。&lt;/p>
+&lt;p>Profile 區塊：
+則是記錄使用哪一個 SSO Session、AWS Account ID、Permission Set 以及預設的區域和輸出格式。&lt;/p>
+&lt;p>那我們通常只有一個 SSO Session，然後有多個 AWS Account，所以有多個 Profile，如果每個 AWS Account 都有不同的 Permission Set，就會有更多的 Profile。&lt;/p>
+&lt;br>
+&lt;p>那假設你想要手動輸入 SSO Profile 的話，也可以直接在 &lt;code>~/.aws/config&lt;/code> 檔案中新增一個 Profile 區塊，並填入對應的 AWS Account ID、Permission Set 以及 SSO Session 名稱，就可以囉。&lt;/p>
+&lt;br>
+&lt;h2>aws configure sso-session&lt;span class="hx:absolute hx:-mt-20" id="aws-configure-sso-session">&lt;/span>
+&lt;a href="#aws-configure-sso-session" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>或是你也可以使用 &lt;code>aws configure sso-session&lt;/code> 指令來設定 SSO Session，基本上流程跟 &lt;code>aws configure sso&lt;/code> 類似，但就不會協助設定後面的 Profile。&lt;/p>
+&lt;br>
+&lt;figure>&lt;img src="https://pin-yi.me/aws/aws-sso-profile-introduce/7.webp" data-zoomable alt="設定 aws configure sso-session" width="650"loading="lazy"
+/>&lt;figcaption>設定 aws configure sso-session&lt;/figcaption>&lt;/figure>
+&lt;br>
+&lt;p>那我們在使用 Profile 的時候，可以直接在指令後面多加上 &lt;code>--profile &amp;lt;your-profile-name&amp;gt;&lt;/code> 來指定要使用的 Profile。
+但這個方式很麻煩，所以我們下一篇會介紹「&lt;a href="../aws-assuming-roles-tool-introduce/">手動切 AWS Profile 太麻煩？試試 Granted，多帳號管理神器助你效率倍增！&lt;/a>」這個工具，可以讓你更方便地管理以及切換多個 AWS Profile。&lt;/p>
+&lt;br>
+&lt;h2>參考資料&lt;span class="hx:absolute hx:-mt-20" id="參考資料">&lt;/span>
+&lt;a href="#%e5%8f%83%e8%80%83%e8%b3%87%e6%96%99" class="subheading-anchor" aria-label="Permalink for this section">&lt;/a>&lt;/h2>&lt;p>使用 AWS CLI 設定 IAM Identity Center 驗證：&lt;a href="https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html"target="_blank" rel="noopener">https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-sso.html&lt;svg class="hx:inline hx:rtl:rotate-270 hx:align-baseline" height="1em" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+&lt;path d="m9.1716 7.7574h7.0711m0 0v7.0711m0-7.0711-8.4853 8.4853" stroke-linecap="round" stroke-linejoin="round"/>
+&lt;/svg>&lt;/a>&lt;/p></description></item></channel></rss>
