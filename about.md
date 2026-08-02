@@ -3,11 +3,11 @@
 
 <br>
 
-哈囉大家好，我叫莊品毅 (CHUANG,PIN-YI)，也可以叫我 Ian，目前是一位 System Architect (SA) 工程師，負責規劃以及測試公司的系統架構，並且協助技術團隊解決系統相關的問題。
-協助公司導入災難復原 (GCP > AWS)，並且負責 AWS 服務的架構設計、導入與權限管理，確保公司基礎設施具備高擴展性與靈活性。
-以及協助導入 Datadog ，來整合公司內分散的監控系統。
+哈囉大家好，我叫莊品毅 (CHUANG, PIN-YI)，也可以叫我 Ian，目前是一位資深 SRE 工程師，專注於雲原生架構、基礎設施自動化與系統穩定性，協助團隊打造高可用、可觀測且安全的服務環境。
 
-除此之後，也熟悉使用 Google Cloud Platform (GCP) 雲端相關服務，喜歡使用 Terraform + Terragrunt 來管理雲端大量的 IaC 資源 (GCP Module：12、AWS Module：22)，當然也會使用 Grafana、Prometheus、EFK 等監控 Log 收集工具來確保服務的穩定性以及可追蹤性。並協助 RD 建立 CICD 部署流程。
+近期主要負責 API Gateway 由 Kong 遷移至 APISIX 的現代化改造、導入 Teleport 集中式安全審計中樞強化存取控管，並透過 Terraform + Terragrunt 推動基礎設施即程式碼（IaC）與全面版控，同時結合 ArgoCD 實踐 GitOps 部署流程。
+
+在雲端方面，熟悉 Google Cloud Platform (GCP) 與 Amazon Web Services (AWS) 相關服務，喜歡使用 Terraform + Terragrunt 來管理雲端大量的 IaC 資源，也曾協助導入跨雲災難復原 (GCP > AWS) 與 Datadog 監控整合；平常也會搭配 Grafana、Prometheus、EFK 等工具收集與分析 Log，確保服務的穩定性與可追蹤性，並協助 RD 建立 CI/CD 部署流程。
 
 在下班空閒時間，我喜歡閱讀技術相關的文件、寫部落格，也會參加一些線下技術社群的活動，曾參加過：Google Next 2025、AWS Summit 2025、DevOpsDay 2022|2023|2024、Cloud Summit 2024|2025、Kube Summit 2025、AWS Community Day 2025，希望能夠透過這些活動來學習更多的知識，並且與更多的技術人員交流。
 
@@ -27,6 +27,30 @@
 ## 工作經驗
 
 {{% steps %}}
+
+
+### 天瀚國際科技有限公司 - 資深 SRE 工程師
+
+(2026/01/05 - 現職)
+
+核心 API 網關現代化遷移與雲原生架構升級（Kong to APISIX）
+1. 主導新世代 API Gateway 技術調研，擬定由 Kong 遷移至 Apache APISIX 的架構計畫；同步採用新版 Kubernetes Gateway API 架構，**提前化解舊版 Ingress 棄用導致的服務中斷風險**，目前已完成既有 Kong Plugins 遷移與服務改寫重構，並推進至 Alpha 環境進行整體驗證測試。
+2. 協助將服務由傳統 Ansible 部署模式全面遷移至 Kubernetes 叢集，利用自動擴展與自我修復特性，**提升服務的高可用性與容錯能力**。
+3. 針對「轉帳」與「GIF 上傳」等核心／特殊 API 進行架構解耦，**透過獨立拆分路由實現資源隔離**，避免單一突發流量影響其他主體服務。
+
+<br>
+
+Teleport 集中式安全審計中樞導入與資安架構升級
+1. 主導 Teleport 技術調研與架構規劃，將內部伺服器（VM）、資料庫（DB）及 Kubernetes 叢集納入統一權限控制中樞，目前已將線上服務接入使用。
+2. 推動淘汰發放「永久性 Public Key」的維運模式，**預期根除人員離職或密鑰外洩的資安隱患**；並透過審計日誌（Audit Log）追蹤體系，**大幅強化公司資安合規性**。
+
+<br>
+
+導入 Terragrunt IaC 架構、全面版控與自動化部署流程
+1. 建構多雲供應商（GCP、Teleport 等）的基礎設施即程式碼（IaC）管理，**將過往手動點擊 UI 的配置全面轉化為程式碼**，並建立完善的 Code Review 與版本回滾機制，**大幅提升基礎設施的變更安全度與可追溯性**。
+2. 修正並優化 ArgoCD Repo 本地腳本，使團隊能於本機順利進行開發與測試，**有效降低環境部署錯誤率並提升整體開發效率**。
+
+<br>
 
 ### 凡谷興業有限公司 - SA 架構師
 
@@ -125,7 +149,7 @@ GCP 成本優化實踐
 {{< card
   link="/about/resume-tw.pdf"
   title="中文版"
-  subtitle="最後上傳日期：2025-11-18"
+  subtitle="最後上傳日期：2026-08-02"
   image="/about/resume-tw.webp"
   target="_blank"
   tag="New" tagType="error"
@@ -133,7 +157,7 @@ GCP 成本優化實踐
 {{< card
   link="/about/resume-en.pdf"
   title="英文版"
-  subtitle="最後上傳日期：2025-11-18"
+  subtitle="最後上傳日期：2026-08-02"
   image="/about/resume-en.webp"
   tag="New" tagType="error"
 >}}

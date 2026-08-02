@@ -154,8 +154,8 @@ Laravel 內建會員系統 Laravel 這個框架，很方便的 … - Published 2
 
 ## Root Pages
 - [專案成就](https://pin-yi.me/projects/): Google Cloud Platform IP Search (Raycast Extension)一個 Raycast 擴充功能，能快速搜尋所有 Google Cloud Platform 專案 …
-- [關於我](https://pin-yi.me/about/): 哈囉大家好，我叫莊品毅 (CHUANG,PIN-YI)，也可以叫我 Ian，目前是一位 System Architect (SA) 工程師，負責規劃以及測試公司的系統架構，並且協助技術團隊解決系統相 …
+- [關於我](https://pin-yi.me/about/): 哈囉大家好，我叫莊品毅 (CHUANG, PIN-YI)，也可以叫我 Ian，目前是一位資深 SRE 工程師，專注於雲原生架構、基礎設施自動化與系統穩定性，協助團隊打造高可用、可觀測且安全的服務環 …
 
 ---
-Generated on 2026-02-22 11:58:29 UTC
+Generated on 2026-08-02 13:47:57 UTC
 Site: https://pin-yi.me/
